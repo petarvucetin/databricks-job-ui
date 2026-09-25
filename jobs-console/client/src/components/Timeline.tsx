@@ -1,4 +1,4 @@
-import { useRef, type PointerEvent as ReactPointerEvent } from 'react';
+import { useMemo, useRef, type PointerEvent as ReactPointerEvent } from 'react';
 import { RUN_KINDS, type Run, type RunKind } from '../../../shared/domain/types';
 import { fmtEdge } from '../../../shared/domain/format';
 import type { TimeWindow } from '../model/filters';
@@ -24,8 +24,8 @@ export function Timeline({ runs, end, scale, window, cube, dispatch }: {
   cube: { col: number; kind: RunKind } | null;
   dispatch: (a: Action) => void;
 }) {
-  const bks = buckets(scale, end);
-  const counts = countByBucket(runs, bks);
+  const bks = useMemo(() => buckets(scale, end), [scale, end]);
+  const counts = useMemo(() => countByBucket(runs, bks), [runs, bks]);
   const used = RUN_KINDS.filter((k) => counts.some((c) => c[k]));
   const inside = bks.map((b) => b.end > window.from && b.start < window.to);
   const first = inside.indexOf(true);
