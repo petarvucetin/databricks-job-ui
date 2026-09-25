@@ -9,6 +9,9 @@ Working notes for the Databricks Jobs UI revamp. One entry per decision, newest 
 | 1 | End product: clickable prototype | React app with realistic mock data; live mode later |
 | 2 | Personas: operator, author, admin in one product | Visibility follows the signed-in user |
 | 3 | Stack: AppKit (Databricks App) from day one | Custom Express routes over the Databricks SDK; the built-in `jobs()` plugin is NOT used (it is scoped to declared job IDs) |
+
+> Implementation: the app lives in `jobs-console/` (AppKit 0.57.0, CLI profile `jobs-console`). `GET /api/runs` serves from a `RunSource`; `JOBS_CONSOLE_DATA=mock` (default) uses the generator ported from the prototype. Attention screen MVP plan: `docs/superpowers/plans/2026-09-25-attention-screen-mvp.md`.
+
 | 4 | Auth: user authorization with the `jobs` scope | App sees exactly what the user sees in the native UI |
 | 5 | Data layer: one interface, two backends (mock, live) | Mock responses shaped exactly like Jobs API 2.2 |
 | 6 | ~~Scope: jobs only~~ → **Jobs and pipelines** (reversed 2026-09-22) | Pipelines (Lakeflow Declarative, formerly DLT) join the console as their own item type, so the UI must tell an ETL pipeline apart from a job. See "Pipelines API constraints" below |

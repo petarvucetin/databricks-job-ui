@@ -65,44 +65,18 @@ databricks bundle deploy --profile production
 
 **Note:** Personal Access Tokens (PATs) are legacy authentication. OAuth is strongly recommended for better security.
 
-## Getting Started
+## Getting started
 
-### Install Dependencies
-
-```bash
+```powershell
+cd jobs-console
 npm install
+npm run dev        # http://localhost:8000, mock data
+npm test           # unit + component tests
 ```
 
-### Development
-
-Run the app in development mode with hot reload:
-
-```bash
-npm run dev
-```
-
-The app will be available at the URL shown in the console output.
-
-### Build
-
-Build both client and server for production:
-
-```bash
-npm run build
-```
-
-This creates:
-
-- `dist/server.js` - Compiled server bundle
-- `client/dist/` - Bundled client assets
-
-### Production
-
-Run the production build:
-
-```bash
-npm start
-```
+- Data source: `JOBS_CONSOLE_DATA=mock` (default). Live data is not implemented yet.
+- Press `L` in the app to show the numbered reference rows used in design reviews.
+- npm scripts run through Git Bash (`.npmrc` `script-shell`), so the POSIX-style scripts work on Windows.
 
 ## Code Quality
 
