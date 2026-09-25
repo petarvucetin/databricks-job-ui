@@ -1,0 +1,5 @@
+.rl { padding: 6px 24px 24px 24px; }
+.rl-empty { color: var(--ink-3); padding: 24px 2px; margin: 0; }
+.rl-more { display: block; width: 100%; text-align: center; padding: 12px; color: var(--ink-2); background: none; border: 0; cursor: pointer; }
+.att-status { padding: 24px; color: var(--ink-2); }
+.att-status button { margin-left: 12px; padding: 3px 12px; border: 1px solid var(--rule); border-radius: 999px; background: var(--sheet); cursor: pointer; }
