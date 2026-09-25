@@ -45,6 +45,7 @@ describe('AttentionView', () => {
     fireEvent.change(screen.getByPlaceholderText('search job, task, run id, cause, error'), { target: { value: 'zzzz-no-match' } });
     expect(screen.getByText('Nothing matches these filters.')).toBeTruthy();
     expect(container.querySelector('.ref')).toBeNull();
+    for (const b of container.querySelectorAll('.tile b')) expect(b.textContent).toBe('0');
   });
 
   it('toggles reference labels with the L key', () => {
