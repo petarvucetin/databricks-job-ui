@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { makeRun } from '../test/fixtures';
 import {
   buckets, domainStart, fitScale, clampWindow, presetWindow, sameWindow, countByBucket, columnLabel,
@@ -94,12 +94,10 @@ describe('timeline', () => {
 describe('timeline DST regression', () => {
   const prevTZ = process.env.TZ ?? undefined;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   beforeAll(() => {
     Object.assign(process.env, { TZ: 'America/New_York' });
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   afterAll(() => {
     if (prevTZ === undefined) {
       delete process.env.TZ;

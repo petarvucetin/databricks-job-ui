@@ -1,0 +1,62 @@
+.rr { position: relative; display: grid; grid-template-columns: minmax(460px, 1.35fr) minmax(320px, 1fr) 230px; gap: 0 24px; align-items: start; padding: 10px 16px; margin-bottom: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; }
+.rr:hover { background: #fffcf6; }
+.rr.b-red { border-color: var(--red); }
+.rr.b-amber { border-color: var(--amber); }
+.rr.b-blue { border-color: var(--blue); }
+.rr.on { box-shadow: inset 0 0 0 1px var(--amber); background: #fffaf0; }
+
+.rr-lft { min-width: 0; }
+.rr-l1 { display: flex; align-items: baseline; gap: 10px; }
+.rr-tag { flex: none; display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; line-height: 1.5; position: relative; top: -1px; }
+.rr-tag.job { background: var(--wash-sand); color: var(--ink-2); border: 1px solid #e3d7c6; }
+.rr-tag.pipeline { background: var(--wash-purple); color: var(--purple); border: 1px solid #d6cbee; }
+.rr-name { font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; line-height: 1.4; }
+.rr-name i { font-style: normal; color: var(--ink-3); }
+.rr-l2 { display: flex; align-items: center; gap: 14px; margin-top: 6px; }
+.rr-ra { font-size: 12.5px; color: var(--ink-3); }
+.rr-ra b { color: var(--ink-2); font-weight: 500; }
+.rr-hist { display: inline-flex; gap: 2px; align-items: center; }
+.rr-hist i { width: 6px; height: 12px; border-radius: 1px; background: #bfe0cf; }
+.rr-hist i.f { background: var(--red); } .rr-hist i.a { background: #f0d9a6; } .rr-hist i.n { background: #e9e2d8; }
+
+.rr-mid { min-width: 0; }
+.rr-chain { display: flex; align-items: center; gap: 3px; margin-top: 3px; flex-wrap: wrap; }
+.rr-chain i { width: 14px; height: 14px; border-radius: 3px; background: #bfe0cf; border: 1px solid #9fd1b8; }
+.rr-chain i.f { background: var(--wash-red); border-color: var(--red); }
+.rr-chain i.s { background: transparent; border: 1px dashed #d6ccbf; }
+.rr-chain i.r { background: var(--wash-blue); border-color: var(--blue); }
+.rr-chain i.q { background: transparent; border: 1px solid #d6ccbf; }
+.rr-chain em { font-style: normal; color: var(--ink-3); font-size: 11.5px; margin-left: 6px; }
+.rr-msg { margin-top: 7px; font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rr-msg.red { color: var(--red); }
+.rr-msg .dim { color: var(--ink-3); }
+.rr-park { margin-top: 6px; display: inline-flex; align-items: center; gap: 8px; padding: 3px 8px; border: 1px dashed #d6ccbf; border-radius: 6px; opacity: .7; }
+.rr.live .rr-park { margin-top: 8px; }
+.rr-park .pk { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.rr-cause { display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: 12px; white-space: nowrap; background: var(--wash-sand); border: 1px solid #eadfcf; color: var(--ink-2); }
+.rr-task { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); white-space: nowrap; }
+
+.rr-rgt { text-align: right; font-variant-numeric: tabular-nums; }
+.rr-when { font-size: 12.5px; color: var(--ink-3); white-space: nowrap; display: block; }
+.rr-st { margin-top: 6px; display: inline-grid; grid-auto-flow: column; border: 1px solid var(--rule); border-radius: 6px; background: #fdfaf5; text-align: left; }
+.rr-st > div { padding: 4px 12px 5px 12px; }
+.rr-st > div + div { border-left: 1px solid var(--rule); }
+.rr-st span { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.rr-st em { font-style: normal; font-size: 13px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+.rr-now { background: var(--wash-amber); border-radius: 5px 0 0 5px; }
+.rr-now b { display: block; font-size: 24px; line-height: 1.1; font-weight: 600; color: var(--amber-ink); white-space: nowrap; }
+.rr.b-blue .rr-now { background: var(--wash-blue); }
+.rr.b-blue .rr-now b { color: var(--blue); }
+
+/* Running indicator, option C: bottom edge fills toward the average; past it, moving amber stripes and a tick at the average. */
+.rr.live { overflow: hidden; padding-bottom: 14px; --c: var(--amber); --c2: #f0d9a6; }
+.rr.live.b-blue { --c: var(--blue); --c2: #b9cfea; }
+.rr-trk { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--c2); opacity: .5; }
+.rr-bar { position: absolute; left: 0; bottom: 0; height: 4px; width: calc(min(var(--p), 1) * 100%); background: var(--c); }
+.rr-bar::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 40px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent); animation: rr-shimmer 1.6s ease-in-out infinite; }
+.rr.over .rr-bar { width: 100%; background: repeating-linear-gradient(135deg, var(--amber) 0 8px, #e9a93f 8px 16px); background-size: 22.6px 22.6px; animation: rr-slide 1s linear infinite; }
+.rr.over .rr-bar::after { display: none; }
+.rr-avg { position: absolute; bottom: 0; width: 2px; height: 10px; background: var(--ink); left: calc(100% / var(--p)); }
+@keyframes rr-shimmer { 0% { transform: translateX(-60px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateX(0); opacity: 0; } }
+@keyframes rr-slide { to { background-position: 22.6px 0; } }
+@media (prefers-reduced-motion: reduce) { .rr-bar, .rr-bar::after { animation: none; } }
