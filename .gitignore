@@ -1,0 +1,8 @@
+# brainstorm preview server state and tool settings
+.superpowers/
+.obsidian/
+.codex/
+# real workspace task logs, kept local
+task-logs/
+node_modules/
+.env

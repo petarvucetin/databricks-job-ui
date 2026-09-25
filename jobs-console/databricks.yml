@@ -1,0 +1,22 @@
+bundle:
+  name: jobs-console
+
+resources:
+  apps:
+    app:
+      name: "jobs-console"
+      description: "Jobs and pipelines console: attention list, run timeline, run details"
+      source_code_path: ./
+
+      # Start the app automatically on deploy.
+      lifecycle:
+        started: true
+      # Uncomment to enable on behalf of user API scopes. Available scopes: sql, dashboards.genie, files.files, serving.serving-endpoints
+      # user_api_scopes:
+      #   - sql
+
+targets:
+  default:
+    default: true
+    workspace:
+      host: https://adb-7405612029409959.19.azuredatabricks.net

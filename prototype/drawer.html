@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Jobs · attention</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  @font-face { font-family: "IBM Plex Sans"; font-weight: 400; font-style: normal; font-display: swap; src: url("/files/IBMPlexSans-400.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Sans"; font-weight: 500; font-style: normal; font-display: swap; src: url("/files/IBMPlexSans-500.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Sans"; font-weight: 600; font-style: normal; font-display: swap; src: url("/files/IBMPlexSans-600.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 400; font-style: normal; font-display: swap; src: url("/files/IBMPlexMono-400.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-style: normal; font-display: swap; src: url("/files/IBMPlexMono-500.woff2") format("woff2"); }
+  :root {
+    --paper: #f6f0e7; --sheet: #fffdf9; --ink: #27211c; --ink-2: #5b524a; --ink-3: #948a80; --rule: #e6ddd2;
+    --red: #d6452f; --amber: #d98a12; --green: #2c8c6a; --blue: #2f6fb3;
+    --wash-red: #fbe7e1; --wash-amber: #fdf0d8; --wash-green: #e3f2ea; --wash-sand: #f4ece1;
+    --sans: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--sheet); color: var(--ink); font-family: var(--sans); font-size: 13.5px; line-height: 1.45; overflow: hidden; }
+  button { font: inherit; }
+
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--wash-sand); border: 1px solid #eadfcf; color: var(--ink-2); font-size: 12px; line-height: 1.4; white-space: nowrap; }
+  .pill.red { background: var(--wash-red); border-color: #f1c4b8; color: var(--red); }
+  .pill.amber { background: var(--wash-amber); border-color: #f0d9a6; color: #9a5f05; }
+  .pill.green { background: var(--wash-green); border-color: #bfe0cf; color: var(--green); }
+
+  .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; background: var(--sheet); }
+  .seg span { padding: 5px 12px; cursor: pointer; color: var(--ink-2); }
+  .seg span + span { border-left: 1px solid var(--rule); }
+  .seg span.on { background: var(--wash-amber); color: var(--ink); font-weight: 500; }
+  .fc { position: relative; }
+  .fc > .btn { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border: 1px solid var(--rule); border-radius: 999px; background: var(--sheet); color: var(--ink-2); cursor: pointer; white-space: nowrap; font: inherit; }
+  .fc > .btn.on { border-color: #e8c98a; background: var(--wash-amber); color: var(--ink); }
+  .fc > .btn .chev { color: var(--ink-3); font-size: 10px; }
+  .fc > .btn .x { color: var(--ink-3); margin-left: 2px; }
+  .fc > .btn .x:hover { color: var(--ink); }
+  .fc .menu { position: absolute; top: 34px; left: 0; z-index: 6; min-width: 200px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 10px 28px rgba(60,40,20,.14); padding: 6px 0; display: none; }
+  .fc.open .menu { display: block; }
+  .fc .menu label { display: flex; align-items: center; gap: 10px; padding: 6px 14px; cursor: pointer; color: var(--ink); font-size: 13px; }
+  .fc .menu label:hover { background: #faf5ec; }
+  .fc .menu label .n { margin-left: auto; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .fc .menu input { accent-color: var(--amber); }
+  .tgl { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border: 1px solid var(--rule); border-radius: 999px; background: var(--sheet); color: var(--ink-2); cursor: pointer; white-space: nowrap; font: inherit; }
+  .tgl i { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
+  .tgl em { font-style: normal; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .tgl.on { border-color: #b9cfea; background: #e3ecf7; color: var(--ink); }
+  .tgl.on i { animation: blink 1.2s ease-in-out infinite; }
+  .tgl.on em { color: var(--blue); }
+  @keyframes blink { 50% { opacity: .25; } }
+  .range { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border: 1px solid var(--rule); border-radius: 999px; background: var(--sheet); color: var(--ink-2); white-space: nowrap; }
+  .range b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .range .x { color: var(--ink-3); cursor: pointer; }
+  .search { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border: 1px solid var(--rule); border-radius: 999px; background: var(--sheet); }
+  .search input { border: 0; outline: 0; background: transparent; font: inherit; font-size: 13px; color: var(--ink); width: 110px; }
+  .search input::placeholder { color: var(--ink-3); }
+  .search.name input { width: 330px; }
+
+  .wrap { position: absolute; top: 0; bottom: 0; left: 0; right: 0; overflow: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { position: sticky; top: 0; background: var(--sheet); text-align: left; font-weight: 500; color: var(--ink-3); font-size: 12px; padding: 6px 12px; border-bottom: 1px solid var(--rule); z-index: 1; }
+  thead th:first-child { padding-left: 24px; }
+  tbody td { padding: 6px 12px; border-bottom: 1px solid #f1eadf; white-space: nowrap; vertical-align: middle; }
+  tbody td:first-child { padding-left: 21px; border-left: 3px solid transparent; }
+  tbody tr.item { cursor: pointer; }
+  tbody tr.item:hover td { background: #faf5ec; }
+  tbody tr.item.on td { background: var(--wash-amber); }
+  tbody tr.item.on td:first-child { border-left-color: var(--amber); }
+  tbody tr.grp td { padding: 14px 12px 6px 24px; border-bottom: 1px solid var(--rule); font-weight: 500; cursor: pointer; background: var(--sheet); }
+  tbody tr.grp td .cnt { display: inline-block; margin-left: 8px; padding: 1px 9px; border-radius: 999px; font-weight: 500; font-size: 12px; background: var(--wash-sand); color: var(--ink-2); }
+  tbody tr.grp td .cnt.red { background: var(--wash-red); color: var(--red); }
+  tbody tr.grp td .cnt.amber { background: var(--wash-amber); color: #9a5f05; }
+  tbody tr.grp td .n { color: var(--ink-3); font-weight: 400; margin-left: 8px; }
+  tbody tr.grp td .chev { color: var(--ink-3); font-size: 11px; margin-right: 8px; display: inline-block; width: 10px; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #c9bfb2; margin-right: 10px; vertical-align: 0; }
+  .dot.red { background: var(--red); } .dot.amber { background: var(--amber); }
+  td.name { font-family: var(--mono); font-size: 12.5px; max-width: 520px; overflow: hidden; text-overflow: ellipsis; }
+  td.name i { font-style: normal; color: var(--ink-3); }
+  td.dim { color: var(--ink-2); }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+  td.mono { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); }
+
+  .scp { margin: 12px 24px 8px 24px; padding: 9px 14px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .scp .vr { width: 1px; height: 20px; background: var(--rule); margin: 0 6px; }
+  .scp .clear { margin-left: auto; color: var(--ink-3); cursor: pointer; font-size: 13px; }
+  .scp .clear:hover { color: var(--ink); }
+  .scp .meta { color: var(--ink-3); font-size: 12.5px; padding-left: 12px; border-left: 1px solid var(--rule); }
+  .scp .t { font-size: 12.5px; font-weight: 500; color: var(--ink); margin-right: 4px; }
+  .scp .seg span i { font-style: normal; color: var(--ink-3); margin-left: 8px; font-variant-numeric: tabular-nums; }
+  .scp .seg span.on i { color: #9a5f05; }
+  /* temporary component labels */
+  .refblk [data-c]::before, .lgd b { content: attr(data-c); display: inline-block; flex: none; vertical-align: 1px; margin-right: 5px; min-width: 16px; height: 16px; padding: 0 3px; border-radius: 8px; background: #6b3fd6; color: #fff; font: 600 10px/16px var(--sans); font-style: normal; text-align: center; text-indent: 0; letter-spacing: 0; text-transform: none; }
+  .refblk .st[data-c] { position: relative; }
+  .refblk .st[data-c]::before { position: absolute; left: -24px; top: 4px; margin: 0; }
+  .refblk .st .now b[data-c]::before { vertical-align: 6px; }
+  .refblk { display: none; margin: 10px 24px 0 24px; padding: 10px 12px 2px 12px; border: 1px dashed #b9a6ea; border-radius: 10px; }
+  body.lbl .refblk { display: block; }
+  .refblk .rt { font-size: 12px; font-weight: 500; color: #6b3fd6; margin: 0 0 8px 2px; }
+  .refblk .card { cursor: default; }
+  .lgd { margin: 4px 0 10px 0; padding: 4px 4px; font-size: 12.5px; color: var(--ink-2); display: grid; grid-template-columns: 1fr 1fr; gap: 7px 36px; }
+  .lgd div { display: grid; grid-template-columns: 22px 150px 1fr; align-items: baseline; }
+  .lgd div > span:first-of-type { color: var(--ink); font-weight: 500; }
+  .lgd .k { grid-column: 1 / -1; color: var(--ink-3); font-size: 11px; text-align: right; }
+  /* day × time matrix */
+  .mx { margin: 10px 24px 6px 24px; padding: 10px 14px 14px 14px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; }
+  .mxhead { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .mxhead .t { font-size: 12.5px; font-weight: 500; color: var(--ink); }
+  .mxhead .sp { font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .mxsc span { padding: 2px 10px; font-size: 12px; }
+  .mxd .cubes .cube { max-width: 80px; margin: 0 auto; }
+  .mxdays { display: flex; gap: 6px; padding: 0; margin-left: auto; }
+  .mxdays span { font-size: 12px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink-2); cursor: pointer; }
+  .mxdays span.on { background: var(--wash-amber); border-color: #e8c98a; color: var(--ink); }
+  .mxgrid { display: grid; grid-template-columns: repeat(30, 1fr); gap: 3px; align-items: start; position: relative; isolation: isolate; margin-top: 20px; }
+  .mxwin-n { position: absolute; top: -17px; transform: translateX(-50%); font-size: 11px; line-height: 14px; font-weight: 600; color: #b7791f; background: var(--sheet); padding: 0 6px; white-space: nowrap; pointer-events: none; }
+  .mxwin { position: absolute; top: 0; bottom: 0; z-index: -1; border: 1px solid var(--amber); box-shadow: inset 0 0 0 1px var(--amber); border-radius: 6px; background: #fffaf0; pointer-events: none; }
+  .mxd { border: 1px solid transparent; border-radius: 5px; padding: 3px 2px 4px 2px; cursor: pointer; min-width: 0; }
+  .mxd:hover { border-color: var(--rule); background: #fdfaf5; }
+  .mxd .cubes { display: flex; flex-direction: column; gap: 2px; margin-top: 3px; }
+  .mxd .cubes .cube { min-width: 0; width: 100%; height: 15px; padding: 0; font-size: 10px; border-radius: 3px; }
+  .mxd .cubes .empty { height: 15px; }
+  .mxh { display: block; text-align: center; font-size: 11.5px; font-weight: 500; color: var(--ink); line-height: 1.25; }
+  .mxh small { display: block; font-weight: 400; color: var(--ink-3); font-size: 9.5px; letter-spacing: .02em; }
+  .mxh .mon { color: var(--amber); }
+  .mxh:hover { color: var(--amber); }
+  .mxh.on { color: var(--amber); }
+  .mxr { font-size: 11px; color: var(--ink-3); text-align: right; padding-right: 8px; cursor: pointer; font-variant-numeric: tabular-nums; display: flex; align-items: center; justify-content: flex-end; }
+  .mxr:hover, .mxr.on { color: var(--ink); }
+  .mxc { display: flex; gap: 3px; align-items: center; min-height: 20px; padding: 1px 0; border-bottom: 1px solid #f3ede4; }
+  .mxc.dim { opacity: .3; }
+  .cube { display: inline-flex; align-items: center; justify-content: center; min-width: 26px; height: 18px; padding: 0 5px; border-radius: 3px; border: 1px solid; font-size: 10.5px; font-variant-numeric: tabular-nums; cursor: pointer; }
+  .cube:hover { box-shadow: 0 0 0 1px currentColor inset; }
+  .cube.sel { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .cube.failed { background: var(--wash-red); border-color: var(--red); color: var(--red); }
+  .cube.retrying { background: var(--wash-amber); border-color: var(--amber); color: #9a5f05; }
+  .cube.slow { background: var(--wash-amber); border-color: var(--amber); border-style: dashed; color: #9a5f05; }
+  .cube.queued { background: var(--wash-sand); border-color: #c9bfb2; color: var(--ink-2); }
+  .cube.snoozed { background: var(--wash-sand); border-color: #c9bfb2; border-style: dashed; color: var(--ink-2); }
+  .cube.succeeded { background: var(--wash-green); border-color: var(--green); color: var(--green); }
+  .dline { position: relative; height: 22px; margin: 5px 0 0 0; user-select: none; }
+  .dline::before { content: ""; position: absolute; left: 0; right: 0; top: 5px; height: 2px; background: #cfc3b3; }
+  .dsel { position: absolute; top: 0; height: 12px; z-index: 1; cursor: grab; }
+  .dsel::before { content: ""; position: absolute; left: 0; right: 0; top: 4px; height: 4px; background: var(--amber); border-radius: 2px; }
+  .dsel:hover::before { top: 3px; height: 6px; }
+  .dsel.grabbing { cursor: grabbing; }
+  .dsel.grabbing::before { top: 3px; height: 6px; }
+  .dh { position: absolute; top: 0; width: 10px; height: 12px; margin-left: -5px; border-radius: 3px; background: var(--sheet); border: 1.5px solid var(--amber); cursor: ew-resize; z-index: 2; }
+  .dlab { position: absolute; top: 12px; font-size: 11px; color: var(--ink); white-space: nowrap; transform: translateX(-50%); font-variant-numeric: tabular-nums; }
+  /* time window (legacy) */
+  .tw { display: grid; grid-template-columns: 110px 1fr 110px; gap: 14px; align-items: end; padding: 8px 24px 2px 24px; }
+  .twl { padding-bottom: 6px; }
+  .twl { font-size: 12.5px; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #tw-to { text-align: right; }
+  .twtrack { position: relative; height: 154px; user-select: none; }
+  .twtrack svg { position: absolute; left: 0; right: 0; bottom: 8px; width: 100%; height: 138px; }
+  .twtrack svg g.col { opacity: .3; }
+  .twtrack svg g.col.in { opacity: 1; }
+  .twtrack svg rect.cube { rx: 3; }
+  .twtrack svg rect.failed { fill: var(--wash-red); stroke: var(--red); }
+  .twtrack svg rect.retrying { fill: var(--wash-amber); stroke: var(--amber); }
+  .twtrack svg rect.slow { fill: var(--wash-amber); stroke: var(--amber); stroke-dasharray: 2 2; }
+  .twtrack svg rect.queued { fill: var(--wash-sand); stroke: #c9bfb2; }
+  .twtrack svg rect.snoozed { fill: var(--wash-sand); stroke: #c9bfb2; stroke-dasharray: 2 2; }
+  .twtrack svg rect.succeeded { fill: var(--wash-green); stroke: var(--green); }
+  .twtrack svg text { font-family: var(--sans); font-size: 10px; fill: var(--ink); text-anchor: middle; font-variant-numeric: tabular-nums; }
+  .twtrack svg text.failed { fill: var(--red); } .twtrack svg text.retrying, .twtrack svg text.slow { fill: #9a5f05; } .twtrack svg text.succeeded { fill: var(--green); } .twtrack svg text.queued, .twtrack svg text.snoozed { fill: var(--ink-2); }
+  .twtrack svg rect.hit { fill: transparent; }
+  .twrows { position: absolute; left: -112px; top: 0; width: 100px; height: 138px; display: grid; grid-template-rows: repeat(6, 1fr); font-size: 11px; color: var(--ink-3); text-align: right; }
+  .twrows span { display: flex; align-items: center; justify-content: flex-end; }
+  .twdays { grid-column: 2; display: flex; gap: 6px; padding: 0 0 6px 0; }
+  .twdays span { font-size: 12px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink-2); cursor: pointer; }
+  .twdays span:hover { border-color: #d9cdbd; }
+  .twdays span.on { background: var(--wash-amber); border-color: #e8c98a; color: var(--ink); }
+  .twtrack svg rect.cube { cursor: pointer; }
+  .twtrack svg rect.cube:hover { stroke-width: 2; }
+  .twtrack svg rect.cube.sel { stroke: var(--ink); stroke-width: 2; stroke-dasharray: none; }
+  .twtrack::after { content: ""; position: absolute; left: 0; right: 0; bottom: 8px; height: 2px; background: #cfc3b3; }
+  .twsel { position: absolute; bottom: 7px; height: 4px; background: var(--amber); border-radius: 2px; }
+  .twh { position: absolute; bottom: -1px; width: 14px; height: 18px; margin-left: -7px; border-radius: 4px; background: var(--sheet); border: 1.5px solid var(--amber); cursor: ew-resize; box-shadow: 0 1px 3px rgba(60,40,20,.15); }
+  .twh::after { content: ""; position: absolute; left: 5px; top: 5px; width: 2px; height: 6px; background: var(--amber); box-shadow: 3px 0 0 var(--amber); }
+  .stat.green::before { background: var(--green); }
+  .stats { grid-template-columns: repeat(7, 1fr); }
+  .stat.blue::before { background: var(--blue); }
+  .cube.running { background: #e3ecf7; border-color: var(--blue); color: var(--blue); }
+  /* status panels */
+  .stats { display: grid; gap: 10px; padding: 6px 24px 4px 24px; }
+  .stat { position: relative; padding: 8px 14px 8px 16px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; display: grid; grid-template-columns: auto 1fr; column-gap: 10px; align-items: baseline; }
+  .stat:hover { border-color: #d9cdbd; background: #fffcf6; }
+  .stat b { font-size: 20px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .stat span { color: var(--ink-2); }
+  .stat .sub { grid-column: 1 / span 2; margin-left: 0; color: var(--ink-3); font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 15px; }
+  .stat::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 0 2px 2px 0; background: #c9bfb2; }
+  .stat.red::before { background: var(--red); } .stat.amber::before { background: var(--amber); }
+  .stat.on { border-color: var(--amber); box-shadow: inset 0 0 0 1px var(--amber); background: #fffaf0; }
+  .stat.dim { opacity: .45; }
+  /* cards */
+  .cards { padding: 6px 24px 24px 24px; }
+  .ghead { display: flex; align-items: center; gap: 10px; padding: 16px 2px 8px 2px; font-weight: 500; cursor: pointer; }
+  .ghead .chev { color: var(--ink-3); font-size: 11px; width: 10px; }
+  .ghead .cnt { display: inline-block; padding: 1px 9px; border-radius: 999px; font-weight: 500; font-size: 12px; background: var(--wash-sand); color: var(--ink-2); }
+  .ghead .cnt.red { background: var(--wash-red); color: var(--red); }
+  .ghead .cnt.amber { background: var(--wash-amber); color: #9a5f05; }
+  .card { display: grid; grid-template-columns: 14px minmax(380px, 1fr) minmax(380px, 1.1fr) 150px; gap: 2px 18px; align-items: start; padding: 9px 16px 9px 14px; margin-bottom: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; }
+  .card .mid { grid-column: 3; grid-row: 1 / span 2; min-width: 0; }
+  .card .chain { display: flex; align-items: center; gap: 3px; margin-top: 3px; flex-wrap: wrap; }
+  .card .chain i { width: 14px; height: 14px; border-radius: 3px; background: #bfe0cf; border: 1px solid #9fd1b8; }
+  .card .chain i.f { background: var(--wash-red); border-color: var(--red); }
+  .card .chain i.s { background: transparent; border: 1px dashed #d6ccbf; }
+  .card .chain i.r { background: #e3ecf7; border-color: var(--blue); }
+  .card .chain i.q { background: transparent; border: 1px solid #d6ccbf; }
+  .card .chain em { font-style: normal; color: var(--ink-3); font-size: 11.5px; margin-left: 6px; }
+  .card .msg { margin-top: 7px; font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card .msg.red { color: var(--red); }
+  .card .msg .dim { color: var(--ink-3); }
+  .card .cmpm { margin-top: 5px; display: grid; grid-template-columns: 34px 1fr; gap: 3px 6px; align-items: center; font-size: 10.5px; color: var(--ink-3); }
+  .card .cmpm i { display: block; height: 5px; border-radius: 2px; background: #d9cfc2; }
+  .card .cmpm i.now { background: var(--red); } .card .cmpm i.now.amb { background: var(--amber); } .card .cmpm i.now.grn { background: #7fc9a9; }
+  .card:hover { border-color: #d9cdbd; background: #fffcf6; }
+  .card.on { border-color: var(--amber); box-shadow: inset 0 0 0 1px var(--amber); background: #fffaf0; }
+  .card .sd { grid-column: 1; grid-row: 1; width: 8px; height: 8px; border-radius: 50%; background: #c9bfb2; margin-top: 7px; }
+  .card .sd.red { background: var(--red); } .card .sd.amber { background: var(--amber); }
+  .card .l1 { grid-column: 2; grid-row: 1; display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .card .nm { font-family: var(--mono); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .card .nm i { font-style: normal; color: var(--ink-3); }
+  .ty { flex: none; display: inline-flex; width: 16px; height: 16px; color: var(--ink-3); }
+  .ty svg { width: 16px; height: 16px; }
+  #d-title .ty { vertical-align: -2px; margin-right: 8px; }
+  .card .cause { display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: 12px; white-space: nowrap; background: var(--wash-sand); border: 1px solid #eadfcf; color: var(--ink-2); }
+  .card .cause.red { background: var(--wash-red); border-color: #f1c4b8; color: var(--red); }
+  .card .cause.amber { background: var(--wash-amber); border-color: #f0d9a6; color: #9a5f05; }
+  .card .cause.green { background: var(--wash-green); border-color: #bfe0cf; color: var(--green); }
+  .card .sd.green { background: var(--green); }
+  .more { text-align: center; padding: 12px; color: var(--ink-2); cursor: pointer; }
+  .card .task { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); white-space: nowrap; }
+  .card .l2 { grid-column: 2; grid-row: 2; display: flex; align-items: center; gap: 12px; row-gap: 4px; color: var(--ink-3); font-size: 12.5px; flex-wrap: wrap; margin-top: 4px; }
+  .card .l2 .runas { display: inline-block; padding: 1px 8px; border-radius: 999px; background: var(--wash-sand); border: 1px solid #eadfcf; color: var(--ink-2); font-size: 11.5px; }
+  .card .l2 b { color: var(--ink-2); font-weight: 500; }
+  .card .hist { display: inline-flex; gap: 2px; align-items: center; }
+  .card .hist i { width: 6px; height: 12px; border-radius: 1px; background: #bfe0cf; }
+  .card .hist i.f { background: var(--red); } .card .hist i.a { background: #f0d9a6; } .card .hist i.n { background: #e9e2d8; }
+  .card .when { grid-column: 4; grid-row: 1 / span 2; text-align: right; color: var(--ink-3); font-size: 12.5px; white-space: nowrap; font-variant-numeric: tabular-nums; align-self: start; }
+  .card .when b { display: block; color: var(--ink); font-weight: 500; font-size: 13px; }
+  /* row v2: no status dot, status in the border, full name, stats block */
+  .card { grid-template-columns: minmax(460px, 1.35fr) minmax(320px, 1fr) 230px; gap: 0 24px; padding: 10px 16px; }
+  .card.b-red { border-color: var(--red); }
+  .card.b-amber { border-color: var(--amber); }
+  .card.b-red:hover { border-color: var(--red); } .card.b-amber:hover { border-color: var(--amber); }
+  .card .lft { min-width: 0; }
+  .card .l1 { display: flex; align-items: baseline; gap: 10px; }
+  .card .nm { white-space: normal; overflow: visible; overflow-wrap: anywhere; line-height: 1.4; }
+  .card .nm i { color: var(--ink-3); }
+  .tg { flex: none; display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; line-height: 1.5; position: relative; top: -1px; }
+  .tg.job { background: var(--wash-sand); color: var(--ink-2); border: 1px solid #e3d7c6; }
+  .tg.pipeline { background: #e3ecf7; color: var(--blue); border: 1px solid #b9cfea; }
+  .card .l2 { margin-top: 6px; gap: 14px; }
+  .card .ra { font-size: 12.5px; color: var(--ink-3); }
+  .card .ra b { color: var(--ink-2); font-weight: 500; }
+  .card .mid { grid-column: auto; grid-row: auto; }
+  .card .park { margin-top: 6px; display: inline-flex; align-items: center; gap: 8px; padding: 3px 8px; border: 1px dashed #d6ccbf; border-radius: 6px; opacity: .7; }
+  .card .running .park, .card.running .park { margin-top: 8px; }
+  .card .park .pk { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+  .card .rgt { text-align: right; font-variant-numeric: tabular-nums; }
+  .card .wn { font-size: 12.5px; color: var(--ink-3); white-space: nowrap; }
+  .card .st { margin-top: 6px; display: inline-grid; grid-auto-flow: column; gap: 0; border: 1px solid var(--rule); border-radius: 6px; background: #fdfaf5; text-align: left; }
+  .card .st > div { padding: 4px 12px 5px 12px; }
+  .card .st > div + div { border-left: 1px solid var(--rule); }
+  .card .st span { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+  .card .st em { font-style: normal; font-size: 13px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+  .card .st .now b { display: block; font-size: 24px; line-height: 1.1; font-weight: 600; color: #9a5f05; white-space: nowrap; }
+  .card .st .now { background: var(--wash-amber); border-radius: 5px 0 0 5px; }
+  .card.b-blue { border-color: var(--blue); } .card.b-blue:hover { border-color: var(--blue); }
+  .card.b-blue .st .now { background: #e3ecf7; } .card.b-blue .st .now b { color: var(--blue); }
+  .tg.pipeline { background: #eee8f8; color: #6a4fb0; border-color: #d6cbee; }
+  /* running indicator, option C: the bottom edge fills as elapsed time approaches the average; past it, moving amber stripes and a tick at the average */
+  .card.live { position: relative; overflow: hidden; padding-bottom: 14px; --c: var(--amber); --c2: #f0d9a6; }
+  .card.live.b-blue { --c: var(--blue); --c2: #b9cfea; }
+  .card.live .trk { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--c2); opacity: .5; }
+  .card.live .bar { position: absolute; left: 0; bottom: 0; height: 4px; width: calc(min(var(--p), 1) * 100%); background: var(--c); }
+  .card.live .bar::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 40px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent); animation: shimmer 1.6s ease-in-out infinite; }
+  @keyframes shimmer { 0% { transform: translateX(-60px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateX(0); opacity: 0; } }
+  .card.live.over .bar { width: 100%; background: repeating-linear-gradient(135deg, var(--c) 0 8px, #e9a93f 8px 16px); background-size: 22.6px 22.6px; animation: slide 1s linear infinite; }
+  .card.live.over .bar::after { display: none; }
+  @keyframes slide { to { background-position: 22.6px 0; } }
+  .card.live .avg { position: absolute; bottom: 0; width: 2px; height: 10px; background: var(--ink); left: calc(100% / var(--p)); }
+  .card.live .avgl { display: none; position: absolute; bottom: 10px; font-size: 10px; color: var(--ink-2); transform: translateX(-50%); left: calc(100% / var(--p)); }
+  @media (prefers-reduced-motion: reduce) { .card.live .bar, .card.live .bar::after, .tgl.on i { animation: none; } }
+
+  /* drawer */
+  .scrim { position: absolute; inset: 0; z-index: 4; background: rgba(60,40,20,.22); opacity: 0; pointer-events: none; transition: opacity .18s; }
+  .scrim.on { opacity: 1; pointer-events: auto; }
+  .drawer { position: absolute; top: 0; right: 0; bottom: 0; width: 780px; z-index: 5; background: var(--sheet); border-left: 1px solid var(--rule); box-shadow: -16px 0 40px rgba(60,40,20,.16); transform: translateX(102%); transition: transform .22s ease; overflow: auto; }
+  .drawer.on { transform: none; }
+  .drawer .dh { display: flex; align-items: flex-start; gap: 14px; padding: 18px 24px 14px 24px; position: sticky; top: 0; background: var(--paper); border-bottom: 1px solid var(--rule); z-index: 2; }
+  .drawer .dh { width: auto; height: auto; margin-left: 0; border: 0; border-bottom: 1px solid var(--rule); border-radius: 0; cursor: auto; }
+  .drawer .dh .title { flex: 1 1 auto; min-width: 0; font-family: var(--mono); font-size: 13px; word-break: break-all; }
+  .drawer .dh .title i { font-style: normal; color: var(--ink-3); }
+  .drawer .dh .when { white-space: nowrap; margin-top: 0; }
+  .drawer .dh .x { margin-left: auto; border: 0; background: none; color: var(--ink-3); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 2px; }
+  .drawer .dh .x:hover { color: var(--ink); }
+  .trace { padding: 20px 24px 28px 24px; }
+  .route { position: relative; padding-left: 34px; }
+  .route::before { content: ""; position: absolute; left: 9px; top: 18px; bottom: 30px; width: 2px; background: var(--ink); }
+  .panel { position: relative; border: 1px solid var(--rule); border-radius: 6px; margin-bottom: 8px; background: var(--sheet); }
+  .panel::before { content: ""; position: absolute; left: -30px; top: 14px; width: 10px; height: 10px; border-radius: 50%; background: var(--sheet); border: 2px solid var(--ink); }
+  .panel.fail::before { border-color: var(--red); background: var(--red); box-shadow: 0 0 0 4px var(--wash-red); }
+  .panel.last::before { background: var(--ink); }
+  .panel.open { border-color: #d9cdbd; }
+  .hd { display: flex; align-items: center; gap: 12px; padding: 8px 12px; cursor: pointer; user-select: none; }
+  .hd .k { flex: none; width: 58px; text-align: center; }
+  .hd .v { font-weight: 500; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hd .v.mono { font-family: var(--mono); font-weight: 400; font-size: 12.5px; }
+  .hd .r { margin-left: auto; }
+  .hd .chev { color: var(--ink-3); font-size: 11px; width: 14px; text-align: right; flex: none; }
+  .panel.fail .hd .v { color: var(--red); }
+  .bd { display: none; border-top: 1px solid var(--rule); padding: 10px 14px 12px 84px; color: var(--ink-2); }
+  .panel.open .bd { display: block; }
+
+  .cmp { display: grid; grid-template-columns: 56px 1fr 70px; gap: 5px 12px; align-items: center; font-size: 12.5px; max-width: 460px; }
+  .cmp .barx { height: 7px; background: #eee6da; border-radius: 2px; position: relative; overflow: hidden; }
+  .cmp .barx i { position: absolute; left: 0; top: 0; bottom: 0; background: #c4b7a6; }
+  .cmp .barx i.now { background: var(--red); }
+  .cmp .barx i.now.amber { background: var(--amber); }
+  .cmp .num { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .tasks { display: grid; grid-template-columns: repeat(auto-fill, 9px); gap: 3px; max-width: 640px; }
+  .tasks i { width: 9px; height: 9px; border-radius: 2px; background: #bfe0cf; }
+  .tasks i.f { background: var(--red); cursor: pointer; }
+  .tasks i.f.sel { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .tasks i.s { background: #e9e2d8; }
+  .tasks i.r { background: #b9cfea; }
+  .tkey { margin-top: 8px; display: flex; gap: 18px; font-size: 12.5px; color: var(--ink-2); }
+  .tkey i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; vertical-align: -1px; margin-right: 6px; }
+  .vsw { display: flex; gap: 14px; font-size: 12.5px; color: var(--ink-3); margin-bottom: 10px; }
+  .vsw span { cursor: pointer; padding-bottom: 2px; }
+  .vsw span.on { color: var(--ink); box-shadow: inset 0 -2px 0 var(--amber); }
+  .vsw .all { margin-left: auto; }
+  .gantt { font-size: 12px; max-width: 660px; }
+  .gantt .axis { display: grid; grid-template-columns: 170px 1fr; margin-bottom: 4px; }
+  .gantt .axis .ticks { position: relative; height: 14px; color: var(--ink-3); font-size: 11px; }
+  .gantt .axis .ticks span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+  .gantt .axis .ticks span:last-child { transform: translateX(-100%); }
+  .gantt .axis .ticks span:first-child { transform: none; }
+  .gantt .grow { display: grid; grid-template-columns: 170px 1fr; align-items: center; min-height: 22px; }
+  .gantt { position: relative; overflow-x: auto; overflow-y: hidden; padding-bottom: 8px; }
+  .gantt .axis, .gantt .grow { min-width: 720px; }
+  .gantt .trk, .gantt .axis .ticks { margin-right: 96px; }
+  .gantt svg.links { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+  .gantt svg.links path { fill: none; stroke: #b9ab99; stroke-width: 1.2; }
+  .gantt svg.links .f { stroke: var(--red); }
+  .gantt .grow.sel { background: var(--wash-amber); }
+  .gantt .grow.fold { color: var(--ink-3); cursor: pointer; }
+  .gantt .grow.fold:hover { color: var(--ink); }
+  .gantt .lbl { font-family: var(--mono); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px 0 4px; }
+  .gantt .lbl small { font-family: var(--sans); color: var(--ink-3); margin-left: 6px; font-size: 11px; }
+  .gantt .trk { position: relative; height: 22px; background: repeating-linear-gradient(90deg, transparent 0 24.9%, #f1eadf 24.9% 25%); }
+  .gantt .sq { position: absolute; top: 3px; height: 20px; line-height: 18px; padding: 0 7px; border-radius: 4px; font-size: 11px; white-space: nowrap; background: var(--wash-green); border: 1px solid #7fc9a9; color: #1f6b50; font-variant-numeric: tabular-nums; }
+  .gantt .sq.f { background: var(--wash-red); border-color: var(--red); color: var(--red); }
+  .gantt .sq.fa { background: repeating-linear-gradient(135deg, #fbe7e1 0 4px, #f6cfc6 4px 8px); border-color: #e59a8c; color: var(--red); }
+  .gantt .sq.r { background: #e3ecf7; border-color: var(--blue); color: var(--blue); }
+  .gantt .sq.s { background: none; border: 1px dashed #d6ccbf; color: var(--ink-3); }
+  .gantt .sq.sel { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .gantt .grow { min-height: 26px; }
+  .gantt .trk { height: 26px; }
+  .gantt .dep { top: 13px; }
+  .gantt .b { position: absolute; top: 6px; height: 10px; border-radius: 2px; background: #7fc9a9; }
+  .gantt .b.f { background: var(--red); }
+  .gantt .b.fa { background: repeating-linear-gradient(135deg, var(--red) 0 3px, #f0a89b 3px 6px); }
+  .gantt .b.r { background: var(--blue); }
+  .gantt .b.s { background: transparent; border: 1px dashed #d6ccbf; height: 8px; top: 7px; }
+  .gantt .b.sel { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .gantt .dep { position: absolute; top: 10px; height: 0; border-top: 1px solid #c4b7a6; }
+  .gantt .dep::after { content: ""; position: absolute; right: -1px; top: -3px; border: 3px solid transparent; border-left-color: #c4b7a6; }
+  .gantt .dur { position: absolute; top: 4px; font-size: 11px; color: var(--ink-3); white-space: nowrap; }
+  .flist { margin-top: 12px; max-width: 520px; border-top: 1px solid var(--rule); }
+  .fgrp { display: flex; gap: 10px; align-items: baseline; padding: 8px 0 4px 0; font-size: 12.5px; color: var(--ink); font-weight: 500; }
+  .fgrp .n { color: var(--ink-3); font-weight: 400; }
+  .frow { display: flex; align-items: baseline; padding: 4px 8px 4px 12px; border-left: 3px solid transparent; font-size: 12.5px; cursor: pointer; font-family: var(--mono); }
+  .frow:hover { background: #faf5ec; }
+  .frow.on { background: var(--wash-amber); border-left-color: var(--amber); }
+  .frow .r { margin-left: auto; color: var(--ink-3); font-variant-numeric: tabular-nums; font-family: var(--sans); }
+  .err { font-family: var(--mono); font-size: 12.5px; color: var(--ink); background: var(--wash-red); border-left: 3px solid var(--red); padding: 8px 12px; max-width: 70ch; }
+  .err .dim { color: var(--ink-3); }
+  .logh { display: flex; align-items: baseline; gap: 12px; margin: 14px 0 6px 0; font-size: 12.5px; color: var(--ink-3); }
+  .logh b { color: var(--ink); font-weight: 500; }
+  .logh .r { margin-left: auto; color: var(--blue); }
+  .log { font-family: var(--mono); font-size: 11.5px; line-height: 1.5; background: #fbf7f1; border: 1px solid var(--rule); border-radius: 6px; padding: 8px 12px; max-height: 300px; overflow: auto; color: var(--ink-2); white-space: pre; }
+  .log .ts { color: #b3a894; }
+  .log .tag { color: #7a6f63; }
+  .log .err { color: var(--red); background: var(--wash-red); display: inline-block; width: 100%; }
+  .log .warn { color: #9a5f05; }
+  .log .ok { color: var(--green); }
+  .log .cur { background: var(--wash-amber); display: inline-block; width: 100%; }
+  .kv { display: grid; grid-template-columns: 90px 1fr; gap: 6px 14px; font-size: 12.5px; color: var(--ink-2); max-width: 78ch; }
+  .kv > span:nth-child(odd) { color: var(--ink-3); }
+  .kv .mono { font-family: var(--mono); font-size: 12.5px; }
+  .kv .path { font-family: var(--mono); font-size: 12.5px; color: var(--blue); text-decoration: underline; text-decoration-color: #b9cfea; text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { .drawer, .scrim { transition: none; } }
+</style>
+</head>
+<body>
+
+
+<div class="wrap" id="wrap">
+<div class="scp" id="scp">
+  <span class="t">Showing</span>
+  <span class="seg" id="scope"><span data-v="mine">Mine<i id="c-mine"></i></span><span data-v="all" class="on">All I can see<i id="c-all"></i></span></span>
+  <span class="vr"></span>
+  <div class="fc" id="f-type"><button class="btn">Type <span class="chev">▾</span></button><div class="menu"></div></div>
+  <div class="fc" id="f-runas"><button class="btn">Run as <span class="chev">▾</span></button><div class="menu"></div></div>
+  <div class="fc" id="f-code"><button class="btn">Error code <span class="chev">▾</span></button><div class="menu"></div></div>
+  <button class="tgl" id="f-live"><i></i>Running now<em id="c-live"></em></button>
+  <span class="search name"><span style="color:var(--ink-3)">⌕</span><input id="q" placeholder="search job, task, run id, cause, error"></span>
+  <span class="clear" id="clear">clear filters</span>
+  <span class="meta" id="meta"></span>
+</div>
+<div class="mx" id="mx">
+  <div class="mxhead"><span class="t" id="mx-t">Runs by day</span><span class="seg mxsc" id="mx-scale"><span data-s="24h">24h</span><span data-s="7d">7d</span><span data-s="14d">14d</span><span data-s="30d" class="on">30d</span><span data-s="90d">90d</span></span><span class="sp" id="mx-span"></span><div class="mxdays" id="mx-days"><span data-r="all">all</span><span data-r="33120,43200">last 7 days</span><span data-r="40320,43200" class="on">last 2 days</span><span data-r="41760,43200">today</span></div></div>
+  <div class="mxgrid" id="mx-grid"></div>
+  <div class="dline" id="dline"><div class="dsel" id="dsel"></div><div class="dh" id="dh1"></div><div class="dh" id="dh2"></div><div class="dlab" id="dlab1"></div><div class="dlab" id="dlab2"></div></div>
+</div>
+<div class="stats" id="stats"></div>
+<div class="refblk" id="ref"></div>
+<div class="cards" id="tb"></div></div>
+<template id="lgd-t"><div class="lgd">
+  <div><b>2</b><span>Type tag</span><span>Job or Pipeline, as a word.</span></div>
+  <div><b>8</b><span>Live message</span><span>Running only: what the run is doing or waiting on right now.</span></div>
+  <div><b>3</b><span>Name</span><span>Full job or pipeline name; bundle target prefix dimmed.</span></div>
+  <div><b>9</b><span>Now / took</span><span>Big elapsed time while running; plain duration once finished.</span></div>
+  <div><b>13</b><span>Run as</span><span>Identity the run executes as, next to the name.</span></div>
+  <div><b>10</b><span>When</span><span>Failed, started, finished or queued since, with the timestamp.</span></div>
+  <div><b>12</b><span>Run history</span><span>Last 12 runs, oldest to newest: red failed, amber slow or retried.</span></div>
+  <div><b>11</b><span>Stats block</span><span>Now (running) or took, against the average duration.</span></div>
+  <div><b>6</b><span>Task chain</span><span>Running only: one square per task, green ok, red failed, dashed skipped, blue running.</span></div>
+  <div><b>4</b><span>Cause pill</span><span>Parked, to be reconsidered.</span></div>
+  <div><b>7</b><span>Chain summary</span><span>Running only: the chain counted.</span></div>
+  <div><b>5</b><span>Failing task / flow</span><span>Parked, to be reconsidered.</span></div>
+  <span class="k">Border: red failed, amber running. 1 status dot and 14 context notes removed. L hides this block.</span>
+</div></template>
+
+<script>document.body.classList.add('lbl'); document.addEventListener('keydown', function (e) { if ((e.key === 'l' || e.key === 'L') && e.target.tagName !== 'INPUT') document.body.classList.toggle('lbl'); });</script>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="dh">
+    <span class="title" id="d-title"></span>
+    <span class="when pill" id="d-when"></span>
+    <button class="x" id="d-close" aria-label="Close">×</button>
+  </div>
+  <div class="trace"><div class="route" id="route"></div></div>
+</aside>
+
+<script>
+(function () {
+  // ---------- deterministic synthetic data ----------
+  var seed = 7; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+  function pick(a) { return a[Math.floor(rnd() * a.length)]; }
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function dur(s) { var h = Math.floor(s/3600), m = Math.floor((s%3600)/60), x = s%60; return h ? h+'h '+pad(m)+'m' : (m ? m+'m '+pad(x)+'s' : x+'s'); }
+
+  var prefixes = ['[prod] aiges_ingest_sap_backfill_sys_bic_ngc_dwh_edw_', '[prod] aiges_ingest_sap_sap_erp1_edw_core_tables_', '[prod] aiges_ingest_sap_backfill_sys_bic_ngc_dwh_project_databricks_', '[prod] finance_gl_'];
+  var suffixA = ['ca','mfg','sc','hr','fin','md','pp','sd','mm','co','fi','wm'];
+  var suffixB = ['cvg_ct_ecc_stxl_stxh','cvg_ct_ecc_td_afvc','cvg_ct_ecc_td_afvv','cvg_ct_ecc_td_jcds','cvg_ct_ecc_td_equz','cvg_ct_ecc_td_stas','cds_zvcatslbraccum','core_tables_ca0','core_tables_fin0','core_tables_hr0','core_tables_jsto','core_tables_md0','core_tables_mfg_op','core_tables_mfg0','core_tables_mfg1','gl_accounts_v3','gl_balances_v3','gl_journals_v3','cost_centers_v3','profit_centers_v3','vendors_v3','customers_v3'];
+  var taskNames = ['setup','extract_bkpf','extract_bseg','extract_gl','transform','dq_checks','load_gl','load_gl_history','load_cost_centers','load_profit_centers','load_vendors','publish','notify'];
+
+  var causes = [
+    { kind:'failed', label:'Table not found', code:'CLIENT_ERROR', detail:'finance.gl_staging', w:92 },
+    { kind:'failed', label:'Cluster error', code:'CLOUD_FAILURE', detail:'spot instances reclaimed', w:31 },
+    { kind:'failed', label:'Timed out', code:'TIMEDOUT', detail:'limit 1h', w:9 },
+    { kind:'failed', label:'Permission denied', code:'CLIENT_ERROR', detail:'SELECT on finance.raw_bkpf', w:5 },
+    { kind:'retrying', label:'Retrying', code:'CLOUD_FAILURE', detail:'attempt 2 of 4', w:12 },
+    { kind:'slow', label:'Slow', code:'', detail:'', w:41 },
+    { kind:'queued', label:'Queued', code:'MAX_CONCURRENT_RUNS_REACHED', detail:'concurrency limit', w:63 },
+    { kind:'snoozed', label:'Snoozed', code:'', detail:'until 15:00', w:38 },
+    { kind:'succeeded', label:'Succeeded', code:'', detail:'', w:1620 }
+  ];
+  var kinds = [
+    { id:'failed', title:'Failed', dot:'red' }, { id:'retrying', title:'Retrying', dot:'amber' }, { id:'slow', title:'Slow', dot:'amber' }, { id:'running', title:'Running', dot:'blue' },
+    { id:'queued', title:'Queued', dot:'' }, { id:'snoozed', title:'Snoozed', dot:'' }, { id:'succeeded', title:'Succeeded', dot:'green' }
+  ];
+
+  // day label for day index d (0 = 24 Aug, 29 = 22 Sep, negatives = older history)
+  var DL = (function () {
+    var base = new Date(2026, 8, 22, 12), MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], DW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], memo = {};
+    return function (d) { if (memo[d]) return memo[d]; var dt = new Date(base.getTime() - (29 - d) * 86400000); return (memo[d] = { num: dt.getDate(), mon: MON[dt.getMonth()], dow: DW[dt.getDay()], full: dt.getDate() + ' ' + MON[dt.getMonth()] }); };
+  })();
+  var items = [], id = 0;
+  causes.forEach(function (c) {
+    for (var i = 0; i < c.w; i++) {
+      var ntasks = 2 + Math.floor(rnd() * 19);
+      var startAbs = (c.kind === 'retrying' || c.kind === 'queued') ? 41760 + Math.floor(rnd() * 480) : Math.floor(rnd() * 42240); var hh = Math.floor((startAbs % 1440) / 60), mm = startAbs % 60; var dayLabel = DL(Math.floor(startAbs / 1440)).full;
+      var usual = 600 + Math.floor(rnd() * 6000);
+      var total = c.kind === 'slow' ? Math.floor(usual * (1.6 + rnd() * 2)) : c.kind === 'queued' ? 0 : Math.floor(usual * (0.9 + rnd() * 0.3));
+      if (c.kind === 'succeeded') { ntasks = 2 + Math.floor(rnd() * 19); }
+      var nfail = c.kind === 'failed' ? Math.min(ntasks - 1, (rnd() < 0.7 ? 1 : 2 + Math.floor(rnd() * 8))) : 0;
+      var failed = [];
+      var pool = taskNames.slice(1);
+      for (var f = 0; f < nfail; f++) { var t = pool.splice(Math.floor(rnd() * pool.length), 1)[0]; failed.push({ name: t, cause: (f === 0 || rnd() < 0.75) ? c : pick(causes.slice(0,4)), secs: 2 + Math.floor(rnd() * 5) }); }
+      items.push({ mine: rnd() < 0.055, id: ++id, kind: c.kind, cause: c, name: pick(prefixes), suffix: pick(suffixA) + '_' + pick(suffixB), start: dayLabel + ' ' + pad(hh) + ':' + pad(mm), startAbs: startAbs, startMin: startAbs, total: total, usual: usual, last: Math.floor(usual * (0.95 + rnd() * 0.1)), ntasks: ntasks, failed: failed, runId: 630000000000000 + Math.floor(rnd() * 999999999), runAs: pick(['sp-finance','sp-ingest','sp-analytics']) });
+    }
+  });
+  // older history for the wider scales: days -61..-1, mostly completed runs, a few failures and slow ones (own seed, so the last 30 days stay unchanged)
+  var seed2 = 11; function rnd2() { seed2 = (seed2 * 9301 + 49297) % 233280; return seed2 / 233280; }
+  function pick2(a) { return a[Math.floor(rnd2() * a.length)]; }
+  for (var od = -61; od < 0; od++) {
+    var plan = [], q, nOk = 48 + Math.floor(rnd2() * 14), nF = Math.floor(rnd2() * 7), nS = Math.floor(rnd2() * 3);
+    for (q = 0; q < nOk; q++) plan.push(causes[8]);
+    for (q = 0; q < nF; q++) plan.push(causes[Math.floor(rnd2() * 4)]);
+    for (q = 0; q < nS; q++) plan.push(causes[5]);
+    plan.forEach(function (c) {
+      var m = Math.floor(rnd2() * 1440), sa = od * 1440 + m, usual = 600 + Math.floor(rnd2() * 6000);
+      var total = c.kind === 'slow' ? Math.floor(usual * (1.6 + rnd2() * 2)) : Math.floor(usual * (0.9 + rnd2() * 0.3));
+      var failed = c.kind === 'failed' ? [{ name: pick2(taskNames.slice(1)), cause: c, secs: 3 }] : [];
+      items.push({ old: true, mine: rnd2() < 0.055, id: ++id, kind: c.kind, cause: c, name: pick2(prefixes), suffix: pick2(suffixA) + '_' + pick2(suffixB), start: DL(od).full + ' ' + pad(Math.floor(m / 60)) + ':' + pad(m % 60), startAbs: sa, startMin: sa, total: total, usual: usual, last: usual, ntasks: 2 + Math.floor(rnd2() * 19), failed: failed, runId: 630000000000000 + Math.floor(rnd2() * 999999999), runAs: pick2(['sp-finance','sp-ingest','sp-analytics']) });
+    });
+  }
+  // runs in progress right now (NOW = 22 Sep 08:00), on track
+  var NOW = 42240, RUN = { kind: 'running', label: 'Running', code: '', detail: '', w: 0 };
+  for (var rr = 0; rr < 26; rr++) {
+    var usualR = 900 + Math.floor(rnd2() * 5400), elR = Math.floor(usualR * (0.15 + rnd2() * 0.7)), saR = NOW - Math.ceil(elR / 60), mR = saR - 29 * 1440;
+    items.push({ id: ++id, kind: 'running', cause: RUN, mine: rnd2() < 0.08, name: pick2(prefixes), suffix: pick2(suffixA) + '_' + pick2(suffixB), start: DL(29).full + ' ' + pad(Math.floor(mR / 60)) + ':' + pad(mR % 60), startAbs: saR, startMin: saR, total: elR, usual: usualR, last: usualR, ntasks: 4 + Math.floor(rnd2() * 12), failed: [], runId: 630000000000000 + Math.floor(rnd2() * 999999999), runAs: pick2(['sp-finance','sp-ingest','sp-analytics']) });
+  }
+  var PIPE_PREFIX = '[prod] raw_bronze_sap_sap_erp1_edw_core_tables_';
+  var PIPE_SUFFIX = ['mfg_op','md0','ca0','sc0','fin0','hr0','jsto','mfg1','pp0','sd0','mm0','co0'];
+  var FLOWS = ['bronze_bkpf','bronze_bseg','silver_bkpf','silver_bseg','silver_gl_accounts','gold_gl_balances','gold_cost_centers','gold_vendors'];
+  items.forEach(function (it) {
+    it.type = it.id % 10 < 3 ? 'pipeline' : 'job';
+    if (it.type !== 'pipeline') return;
+    it.name = PIPE_PREFIX; it.suffix = PIPE_SUFFIX[it.id % PIPE_SUFFIX.length] + '_dev';
+    it.continuous = it.kind === 'slow' && it.id % 2 === 0 && !it.old;
+    if (it.continuous) { it.startAbs = it.startMin = 42300 + (it.id * 37) % 700; var cm = it.startAbs % 1440; it.start = DL(Math.floor(it.startAbs / 1440)).full + ' ' + pad(Math.floor(cm / 60)) + ':' + pad(cm % 60); }
+    it.failed.forEach(function (f, i) { f.name = FLOWS[(it.id + i * 3) % FLOWS.length]; });
+    it.runId = 'upd ' + (it.id * 2654435761 % 4294967296).toString(16).slice(0, 8);
+  });
+  // quiet days: 10-15 Sep and 21 Sep, every run completed, no errors
+  var OK = causes.filter(function (c) { return c.kind === 'succeeded'; })[0];
+  items.forEach(function (it) {
+    var L = DL(Math.floor(it.startAbs / 1440));
+    if (L.mon !== 'Sep' || !((L.num >= 10 && L.num <= 15) || L.num === 21) || it.kind === 'succeeded' || it.kind === 'running') return;
+    it.kind = 'succeeded'; it.cause = OK; it.failed = []; it.continuous = false; it.total = Math.floor(it.usual * (0.9 + (it.id % 20) / 100));
+  });
+  // live = the run is still going at NOW
+  items.forEach(function (it) { it.live = it.kind === 'running' || it.kind === 'retrying' || !!it.continuous || (it.kind === 'slow' && it.startAbs + it.total / 60 >= NOW); });
+  items.sort(function (a, b) { return b.startMin - a.startMin; });
+
+  var total = items.filter(function (x) { return x.kind !== 'succeeded'; }).length, jobsInView = 2180;
+  document.getElementById('meta').textContent = 'updated 12 seconds ago';
+
+  // ---------- table ----------
+  var tb = document.getElementById('tb'), collapsed = {}, filter = '', selected = null, renderCap = 120;
+  var F = { scope: 'all', type: {}, runAs: {}, status: {}, code: {}, from: 40320, to: 43200, hour: null, cube: null };
+  function anyOn(o) { for (var k in o) if (o[k]) return true; return false; }
+  function inWindow(it) { return it.startAbs >= F.from && it.startAbs < F.to; }
+  function inScope(it) { return F.scope === 'mine' ? it.mine : true; }
+  function passesExceptStatus(it) {
+    if (!inScope(it)) return false;
+    if (F.live && !it.live) return false;
+    if (!inWindow(it)) return false;
+    if (anyOn(F.runAs) && !F.runAs[it.runAs]) return false;
+    if (anyOn(F.type) && !F.type[it.type]) return false;
+    if (anyOn(F.code) && !F.code[it.cause.code || 'none']) return false;
+    return true;
+  }
+  function renderStats() {}
+  // status filters follow the time window: turn on every status that occurs in it
+  function autoStatus() { F.status = {}; items.forEach(function (it) { if (passesExceptStatus(it)) F.status[it.kind] = true; }); }
+  var ERRWORDS = { 'Table not found': 'analysisexception table_or_view_not_found finance.gl_staging missing table', 'Cluster error': 'cloud_provider_shutdown spot reclaimed executor lost cluster terminated', 'Timed out': 'timedout timeout cancelled partitions', 'Permission denied': 'insufficient_permissions select grant unauthorized' };
+  function searchText(it) {
+    if (it._s) return it._s;
+    var parts = [it.type === 'pipeline' ? 'pipeline etl update' + (it.continuous ? ' continuous lagging' : '') : 'job', it.name, it.suffix, it.runId, it.runAs, it.kind, it.cause.label, it.cause.code || '', it.cause.detail || '', ERRWORDS[it.cause.label] || '', problemText(it), it.start, it.mine ? 'mine me' : 'service principal deployed'];
+    it.failed.forEach(function (f) { parts.push(f.name); parts.push(f.cause.label); });
+    if (!it.failed.length) parts.push(taskText(it));
+    it._s = parts.join(' ').toLowerCase();
+    return it._s;
+  }
+  function matchesQuery(it, q) {
+    if (!q) return true;
+    var hay = searchText(it), toks = q.split(/\s+/);
+    for (var i = 0; i < toks.length; i++) { if (toks[i] && hay.indexOf(toks[i]) < 0) return false; }
+    return true;
+  }
+  function passes(it) {
+    if (!inScope(it)) return false;
+    if (F.live && !it.live) return false;
+    if (!inWindow(it)) return false;
+    if (anyOn(F.status) === false && it.kind === 'succeeded') return false;
+    if (anyOn(F.runAs) && !F.runAs[it.runAs]) return false;
+    if (anyOn(F.type) && !F.type[it.type]) return false;
+    if (anyOn(F.status) && !F.status[it.kind]) return false;
+    if (anyOn(F.code) && !F.code[it.cause.code || 'none']) return false;
+    return true;
+  }
+  function countBy(fn) { var c = {}; items.forEach(function (it) { var k = fn(it); c[k] = (c[k] || 0) + 1; }); return c; }
+  function buildMenu(id, key, values, labels) {
+    var fc = document.getElementById(id), menu = fc.querySelector('.menu'), btn = fc.querySelector('.btn');
+    var counts = countBy(function (it) { return key === 'runAs' ? it.runAs : key === 'type' ? it.type : key === 'status' ? it.kind : (it.cause.code || 'none'); });
+    menu.innerHTML = values.map(function (v) { return '<label><input type="checkbox" data-v="' + v + '"' + (F[key][v] ? ' checked' : '') + '> ' + (labels ? labels[v] : v) + '<span class="n">' + (counts[v] || 0) + '</span></label>'; }).join('');
+    menu.querySelectorAll('input').forEach(function (cb) { cb.addEventListener('change', function () { F[key][cb.dataset.v] = cb.checked; render(); paintBtn(); }); });
+    function paintBtn() { var on = Object.keys(F[key]).filter(function (k) { return F[key][k]; }); var base = btn.dataset.base; btn.innerHTML = (on.length ? (on.length === 1 ? (labels ? labels[on[0]] : on[0]) : base + ' · ' + on.length) : base) + ' <span class="chev">▾</span>' + (on.length ? '<span class="x" data-clear="1">×</span>' : ''); btn.classList.toggle('on', on.length > 0); }
+    if (!btn.dataset.base) btn.dataset.base = btn.textContent.replace('▾', '').trim(); paintBtn();
+    if (btn.dataset.wired) return; btn.dataset.wired = '1';
+    btn.addEventListener('click', function (e) { if (e.target.dataset.clear) { F[key] = {}; render(); buildMenu(id, key, values, labels); return; } document.querySelectorAll('.fc.open').forEach(function (o) { if (o !== fc) o.classList.remove('open'); }); fc.classList.toggle('open'); });
+  }
+  buildMenu('f-type', 'type', ['job', 'pipeline'], { job: 'Job', pipeline: 'Pipeline' });
+  buildMenu('f-runas', 'runAs', ['sp-finance', 'sp-ingest', 'sp-analytics']);
+  buildMenu('f-code', 'code', ['CLIENT_ERROR', 'CLOUD_FAILURE', 'TIMEDOUT', 'MAX_CONCURRENT_RUNS_REACHED', 'none'], { CLIENT_ERROR: 'CLIENT_ERROR', CLOUD_FAILURE: 'CLOUD_FAILURE', TIMEDOUT: 'TIMEDOUT', MAX_CONCURRENT_RUNS_REACHED: 'MAX_CONCURRENT_RUNS_REACHED', none: 'no error code' });
+  document.addEventListener('click', function (e) { if (!e.target.closest('.fc')) document.querySelectorAll('.fc.open').forEach(function (o) { o.classList.remove('open'); }); });
+  (function () {
+    var STATES = ['failed', 'retrying', 'slow', 'running', 'queued', 'snoozed', 'succeeded'];
+    var grid = document.getElementById('mx-grid');
+    // timeline scale: how much history the grid shows (span) and the column size (b), both in minutes; the timeline ends at 23 Sep 00:00
+    var END = 43200, ORDER = ['24h', '7d', '14d', '30d', '90d'];
+    var SCALES = { '24h': { span: 1440, b: 60, unit: 'hour' }, '7d': { span: 10080, b: 1440, unit: 'day' }, '14d': { span: 20160, b: 1440, unit: 'day' }, '30d': { span: 43200, b: 1440, unit: 'day' }, '90d': { span: 131040, b: 10080, unit: 'week' } };
+    var SC = '30d';
+    function S() { var s = SCALES[SC]; return { span: s.span, b: s.b, unit: s.unit, d0: END - s.span, n: s.span / s.b }; }
+    function fit() { var i = ORDER.indexOf(SC); while (F.from < END - SCALES[SC].span && i < ORDER.length - 1) SC = ORDER[++i]; }
+    function fmtAbs(a) { var d = Math.floor(a / 1440), m = a - d * 1440; return DL(d).full + (m ? ' ' + pad(Math.floor(m / 60)) + ':' + pad(m % 60) : ''); }
+    function spanText(m) { var n; if (m % 10080 === 0 && m > 10080 * 2) { n = m / 10080; return n + ' weeks'; } if (m % 1440 === 0) { n = m / 1440; return n + (n === 1 ? ' day' : ' days'); } n = Math.round(m / 60); return n + (n === 1 ? ' hour' : ' hours'); }
+    function colHead(lo, ci, prev) {
+      var d = Math.floor(lo / 1440), L = DL(d), s = S();
+      if (s.b === 60) { var h = (lo - d * 1440) / 60; return { num: pad(h), small: ci === 0 ? '<span class="mon">' + L.full + '</span>' : '&nbsp;', title: L.full + ' ' + pad(h) + ':00' }; }
+      if (s.b === 10080) { var newMon = !prev || DL(Math.floor(prev / 1440)).mon !== L.mon; return { num: L.num, small: newMon ? '<span class="mon">' + L.mon + '</span>' : 'wk', title: 'week of ' + L.full }; }
+      return { num: L.num, small: ci === 0 || L.num === 1 ? '<span class="mon">' + L.mon + '</span>' : L.dow, title: L.dow + ' ' + L.full };
+    }
+    function paint() {
+      fit();
+      var s = S(), cells = [];
+      for (var i = 0; i < s.n; i++) cells.push({ n: 0 });
+      items.forEach(function (it) { if (it.startAbs < s.d0 || it.startAbs >= END) return; var c = cells[Math.floor((it.startAbs - s.d0) / s.b)]; c[it.kind] = (c[it.kind] || 0) + 1; c.n++; });
+      var rowsUsed = STATES.filter(function (k) { return cells.some(function (c) { return c[k]; }); });
+      var html = '';
+      for (var ci = 0; ci < s.n; ci++) {
+        var lo = s.d0 + ci * s.b, hi = lo + s.b, on = F.from === lo && F.to === hi, inside = hi > F.from && lo < F.to, c = cells[ci], inner = '', H = colHead(lo, ci, ci ? lo - s.b : null);
+        rowsUsed.forEach(function (k) {
+          if (!c[k]) { inner += '<span class="empty"></span>'; return; }
+          var sel = F.cube && F.cube.col === ci && F.cube.state === k;
+          inner += '<span class="cube ' + k + (sel ? ' sel' : '') + '" data-col="' + ci + '" data-state="' + k + '" title="' + H.title + ': ' + c[k] + ' ' + k + '">' + c[k] + '</span>';
+        });
+        html += '<div class="mxd' + (on ? ' on' : '') + (inside ? '' : ' dim') + '" data-col="' + ci + '" title="' + H.title + ', ' + c.n + ' runs"><div class="mxh">' + H.num + '<small>' + H.small + '</small></div><div class="cubes">' + inner + '</div></div>';
+      }
+      grid.style.gridTemplateColumns = 'repeat(' + s.n + ', 1fr)';
+      grid.innerHTML = html;
+      var ins = grid.querySelectorAll('.mxd:not(.dim)');
+      if (ins.length) {
+        var g = grid.getBoundingClientRect(), a = ins[0].getBoundingClientRect(), z = ins[ins.length - 1].getBoundingClientRect();
+        var w = document.createElement('div'); w.className = 'mxwin';
+        w.style.left = (a.left - g.left - 2) + 'px'; w.style.width = (z.right - a.left + 4) + 'px';
+        grid.appendChild(w);
+        if (ins.length > 1) { var t = document.createElement('div'); t.className = 'mxwin-n'; t.textContent = spanText(F.to - F.from); t.style.left = (a.left - g.left + (z.right - a.left) / 2) + 'px'; grid.appendChild(t); }
+      }
+      document.getElementById('mx-t').textContent = 'Runs by ' + s.unit;
+      document.querySelectorAll('#mx-scale span').forEach(function (el) { el.classList.toggle('on', el.dataset.s === SC); });
+      document.querySelectorAll('#mx-days span').forEach(function (el) { var r = el.dataset.r === 'all' ? [s.d0, END] : el.dataset.r.split(','); el.classList.toggle('on', +r[0] === F.from && +r[1] === F.to && !F.cube); });
+      document.getElementById('mx-span').textContent = fmtAbs(F.from) + ' to ' + fmtAbs(F.to) + ', ' + spanText(F.to - F.from);
+    }
+    document.getElementById('mx-scale').addEventListener('click', function (e) {
+      var el = e.target.closest('[data-s]'); if (!el || el.dataset.s === SC) return;
+      SC = el.dataset.s; F.cube = null;
+      var s = S(); if (F.from < s.d0) F.from = s.d0; if (F.to <= F.from) { F.from = s.d0; F.to = END; }
+      autoStatus(); paint(); render();
+    });
+    document.getElementById('mx-days').addEventListener('click', function (e) { var el = e.target.closest('[data-r]'); if (!el) return; if (el.dataset.r === 'all') { F.from = S().d0; F.to = END; } else { var r = el.dataset.r.split(','); F.from = +r[0]; F.to = +r[1]; } F.cube = null; autoStatus(); paint(); render(); });
+    grid.addEventListener('click', function (e) {
+      var s = S(), cube = e.target.closest('.cube');
+      if (cube) { var ci = +cube.dataset.col, k = cube.dataset.state;
+        if (F.cube && F.cube.col === ci && F.cube.state === k) { F.cube = null; F.from = s.d0; F.to = END; autoStatus(); }
+        else { F.cube = { col: ci, state: k }; F.from = s.d0 + ci * s.b; F.to = F.from + s.b; F.status = {}; F.status[k] = true; }
+        paint(); render(); return; }
+      var h = e.target.closest('.mxd'); if (h) { var lo = s.d0 + (+h.dataset.col) * s.b; if (F.from === lo && F.to === lo + s.b && !F.cube) { F.from = s.d0; F.to = END; } else { F.from = lo; F.to = lo + s.b; } F.cube = null; autoStatus(); paint(); render(); }
+    });
+    var line = document.getElementById('dline'), dh1 = document.getElementById('dh1'), dh2 = document.getElementById('dh2'), dsel = document.getElementById('dsel');
+    function paintLine() {
+      var s = S(), w = line.clientWidth || 900, a = (F.from - s.d0) / s.span, b = (F.to - s.d0) / s.span, x1 = w * a, x2 = w * b;
+      dh1.style.left = x1 + 'px'; dh2.style.left = x2 + 'px'; dsel.style.left = x1 + 'px'; dsel.style.width = (x2 - x1) + 'px';
+      var l1 = document.getElementById('dlab1'), l2 = document.getElementById('dlab2');
+      l1.style.left = x1 + 'px'; l2.style.left = x2 + 'px'; l1.textContent = fmtAbs(F.from); l2.textContent = fmtAbs(F.to);
+      l1.style.transform = a <= 0 ? 'none' : 'translateX(-50%)'; l2.style.transform = b >= 1 ? 'translateX(-100%)' : 'translateX(-50%)';
+      l1.style.visibility = (x2 - x1) < 90 ? 'hidden' : 'visible';
+    }
+    function dragDay(handle, which) {
+      handle.addEventListener('pointerdown', function (e) {
+        e.preventDefault(); handle.setPointerCapture(e.pointerId);
+        var move = function (ev) { var s = S(), r = line.getBoundingClientRect(); var col = Math.round(Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width)) * s.n); var m = s.d0 + col * s.b; if (which === 1) F.from = Math.min(m, F.to - s.b); else F.to = Math.max(m, F.from + s.b); F.cube = null; autoStatus(); paint(); render(); };
+        var up = function () { handle.removeEventListener('pointermove', move); handle.removeEventListener('pointerup', up); };
+        handle.addEventListener('pointermove', move); handle.addEventListener('pointerup', up);
+      });
+    }
+    dragDay(dh1, 1); dragDay(dh2, 2);
+    dsel.addEventListener('pointerdown', function (e) {
+      var s = S();
+      if (F.to - F.from >= s.span) return;
+      e.preventDefault(); dsel.setPointerCapture(e.pointerId); dsel.classList.add('grabbing');
+      var r = line.getBoundingClientRect(), span = F.to - F.from, x0 = e.clientX, from0 = F.from;
+      var move = function (ev) {
+        var delta = Math.round((ev.clientX - x0) / (r.width / s.n)) * s.b;
+        var nf = Math.max(s.d0, Math.min(END - span, from0 + delta));
+        if (nf !== F.from) { F.from = nf; F.to = nf + span; F.cube = null; autoStatus(); paint(); render(); }
+      };
+      var up = function () { dsel.classList.remove('grabbing'); dsel.removeEventListener('pointermove', move); dsel.removeEventListener('pointerup', up); };
+      dsel.addEventListener('pointermove', move); dsel.addEventListener('pointerup', up);
+    });
+    var _paint = paint; paint = function () { _paint(); paintLine(); };
+    window.addEventListener('resize', function () { paint(); });
+    paint();
+    window.__twPaint = paint;
+  })();
+  (function () {
+    var att = function (it) { return it.kind !== 'succeeded' && !it.old; };
+    var counts = { mine: items.filter(function (it) { return it.mine && att(it); }).length, all: items.filter(att).length };
+    ['mine', 'all'].forEach(function (k) { document.getElementById('c-' + k).textContent = counts[k]; });
+    document.getElementById('scope').addEventListener('click', function (e) {
+      var t = e.target.closest('[data-v]'); if (!t) return;
+      F.scope = t.dataset.v; F.cube = null;
+      document.querySelectorAll('#scope span').forEach(function (x) { x.classList.toggle('on', x === t); });
+      render(); if (window.__twPaint) window.__twPaint();
+    });
+  })();
+  document.getElementById('clear').addEventListener('click', function () { F = { scope: F.scope, type: {}, runAs: {}, status: {}, code: {}, from: 40320, to: 43200, hour: null, cube: null }; if (window.__twPaint) window.__twPaint(); filter = ''; document.getElementById('q').value = ''; autoStatus(); render(); buildMenu('f-type', 'type', ['job', 'pipeline'], { job: 'Job', pipeline: 'Pipeline' }); buildMenu('f-runas', 'runAs', ['sp-finance', 'sp-ingest', 'sp-analytics']); renderStats(); buildMenu('f-code', 'code', ['CLIENT_ERROR', 'CLOUD_FAILURE', 'TIMEDOUT', 'MAX_CONCURRENT_RUNS_REACHED', 'none'], { CLIENT_ERROR: 'CLIENT_ERROR', CLOUD_FAILURE: 'CLOUD_FAILURE', TIMEDOUT: 'TIMEDOUT', MAX_CONCURRENT_RUNS_REACHED: 'MAX_CONCURRENT_RUNS_REACHED', none: 'no error code' }); });
+  var GLYPH = {
+    job: '<span class="ty" title="Job"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="2" width="5" height="4" rx="1"/><rect x="9.5" y="10" width="5" height="4" rx="1"/><path d="M4 6v3.5a2 2 0 0 0 2 2h3.5"/></svg></span>',
+    pipeline: '<span class="ty" title="Pipeline"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M1.5 4h5.5c2 0 2.5 4 4.5 4h3"/><path d="M1.5 12h5.5c2 0 2.5-4 4.5-4"/><path d="M12.5 6l2 2-2 2"/></svg></span>'
+  };
+  function problemText(it) {
+    if (it.type === 'pipeline') {
+      if (it.kind === 'failed') return it.failed.length > 1 ? it.cause.label + ', ' + it.failed.length + ' flows' : it.cause.label;
+      if (it.kind === 'slow' && it.continuous) return 'lagging, backlog rising';
+      if (it.kind === 'queued') return 'waiting for resources';
+      if (it.kind === 'retrying') return 'retry on failure, update 2';
+    }
+    if (it.kind === 'failed') return it.failed.length > 1 ? it.cause.label + ', ' + it.failed.length + ' tasks' : it.cause.label;
+    if (it.kind === 'slow') return '+' + dur(it.total - it.usual) + ' over usual';
+    if (it.kind === 'queued') return 'queued, concurrency limit';
+    if (it.kind === 'retrying') return 'attempt 2 of 4';
+    if (it.kind === 'succeeded') return 'succeeded';
+    if (it.kind === 'running') return 'running, on track';
+    return 'snoozed until 15:00';
+  }
+  function taskText(it) { if (it.type === 'pipeline' && !it.failed.length) return it.continuous ? 'bronze_bkpf' : ''; return it.failed.length ? (it.failed.length > 1 ? it.failed[0].name + ' +' + (it.failed.length - 1) : it.failed[0].name) : (it.kind === 'retrying' ? 'extract_bseg' : ''); }
+  function hist(it) {
+    var h = '', n = 12, x = it.id * 7919;
+    for (var i = 0; i < n; i++) { x = (x * 1103515245 + 12345) % 2147483648; var v = x / 2147483648; var cls = i === n - 1 ? (it.kind === 'failed' ? 'f' : it.kind === 'slow' || it.kind === 'retrying' ? 'a' : '') : (v < 0.08 ? 'f' : v < 0.14 ? 'a' : it.kind === 'queued' && v < 0.4 ? 'n' : ''); h += '<i class="' + cls + '"></i>'; }
+    return '<span class="hist">' + h + '</span>';
+  }
+  function extra(it) {
+    var bits = [];
+    if (it.kind === 'failed' && it.cause.label === 'Table not found') bits.push('same error in <b>87</b> other jobs');
+    if (it.kind === 'failed' && it.cause.label === 'Cluster error') bits.push('<b>not your code</b>');
+    if (it.kind === 'slow') bits.push('usual <b>' + dur(it.usual) + '</b>');
+    if (it.kind === 'queued') bits.push('previous run still going');
+    if (it.type === 'pipeline') { if (it.continuous) bits.push('continuous'); }
+    else {
+      if (it.id % 3 === 0) bits.push('blocks <b>' + (1 + it.id % 3) + '</b> jobs');
+      if (it.id % 4 === 1) bits.push('launched by <b>Run All Owned Jobs</b>');
+    }
+    return bits.map(function (b) { return '<span>' + b + '</span>'; }).join('');
+  }
+  function chainHtml(it) {
+    var rows = schedule(it), h = '';
+    rows.forEach(function (r) { h += '<i class="' + (r.st === 'f' ? 'f' : r.st === 'p' ? 'q' : r.st === 's' ? 's' : r.st === 'r' ? 'r' : it.kind === 'queued' ? 'q' : '') + '" title="' + r.name + '"></i>'; });
+    var okc = rows.filter(function (r) { return r.st === 'ok'; }).length, sk = rows.filter(function (r) { return r.st === 's'; }).length;
+    var rk = runIdx(it), em = it.kind === 'running' ? rk + ' ok, 1 running, ' + (it.ntasks - rk - 1) + ' to go' : it.kind === 'succeeded' ? 'all ok' : it.kind === 'queued' ? 'waiting to start' : it.failed.length ? okc + ' ok, ' + it.failed.length + ' failed' + (sk ? ', ' + sk + ' skipped' : '') : it.kind === 'retrying' ? (it.type === 'pipeline' ? 'whole update retrying' : 'one task retrying') : it.continuous ? 'all flows running' : 'all running';
+    return '<div class="chain" data-c="6">' + h + '<em data-c="7">' + em + '</em></div>';
+  }
+  function msgHtml(it) {
+    if (it.type === 'pipeline') {
+      if (it.kind === 'slow' && it.continuous) return '<div class="msg">backlog 48,210 files, rising for 35m <span class="dim">Auto Loader source raw_bkpf</span></div>';
+      if (it.kind === 'queued') return '<div class="msg">WAITING_FOR_RESOURCES <span class="dim">serverless compute starting, ' + (it.id % 50) + 'm</span></div>';
+      if (it.kind === 'retrying') return '<div class="msg">RETRY_ON_FAILURE <span class="dim">update 1 lost its cluster after 48m, a new update started</span></div>';
+      if (it.kind === 'failed' && it.cause.label === 'Timed out') return '<div class="msg red">UPDATE_TIMEOUT <span class="dim">flow ' + it.failed[0].name + ' exceeded 3600s</span></div>';
+    }
+    if (it.kind === 'failed') {
+      var c = it.cause.label;
+      if (c === 'Table not found') return '<div class="msg red">AnalysisException: [TABLE_OR_VIEW_NOT_FOUND] <span class="dim">`finance`.`gl_staging` cannot be found</span></div>';
+      if (c === 'Cluster error') return '<div class="msg red">CLOUD_PROVIDER_SHUTDOWN <span class="dim">spot capacity reclaimed, 2 of 6 workers, cluster terminated</span></div>';
+      if (c === 'Timed out') return '<div class="msg red">TIMEDOUT <span class="dim">task exceeded 3600s, 171 of 180 partitions done</span></div>';
+      return '<div class="msg red">INSUFFICIENT_PERMISSIONS <span class="dim">no SELECT on finance.raw_bkpf</span></div>';
+    }
+    if (it.kind === 'running') return '<div class="msg">' + taskNames[1 + runIdx(it) % (taskNames.length - 1)] + ' running <span class="dim">' + runIdx(it) + ' of ' + it.ntasks + ' tasks done, ' + Math.round(100 * it.total / it.usual) + '% of the average time</span></div>';
+    if (it.kind === 'retrying') return '<div class="msg">attempt 2 of 4 <span class="dim">attempt 1 lost its cluster after 48m, resuming from checkpoint</span></div>';
+    if (it.kind === 'slow') return '<div class="msg">' + dur(it.total - it.usual) + ' over usual <span class="dim">same parameters, code and cluster as last run</span></div>';
+    if (it.kind === 'succeeded') return '<div class="msg"><span class="dim">finished in ' + dur(it.total) + ', usual ' + dur(it.usual) + '</span></div>';
+    if (it.kind === 'queued') return '<div class="msg">MAX_CONCURRENT_RUNS_REACHED <span class="dim">job allows 1 run at a time, previous run still going</span></div>';
+    return '<div class="msg"><span class="dim">snoozed until 15:00</span></div>';
+  }
+  function cmpHtml(it) {
+    var m = Math.max(it.total, it.usual, 1), now = Math.round(100 * it.total / m), us = Math.round(100 * it.usual / m);
+    var cls = it.kind === 'failed' ? '' : it.kind === 'slow' || it.kind === 'retrying' ? ' amb' : ' grn';
+    return '<div class="cmpm"><span>now</span><i class="now' + cls + '" style="width:' + now + '%"></i><span>usual</span><i style="width:' + us + '%"></i></div>';
+  }
+  function render() {
+    var q = filter.toLowerCase(), html = '';
+    var match = function (it) { return passes(it) && matchesQuery(it, q); };
+    var subs = { failed: function (r) { var c = {}; r.forEach(function (it) { c[it.cause.label] = (c[it.cause.label] || 0) + 1; }); var top = Object.keys(c).sort(function (a, b) { return c[b] - c[a]; })[0]; return top ? c[top] + ' ' + top.toLowerCase() : ''; }, retrying: function (r) { return r.length ? 'attempt 2 of 4' : ''; }, slow: function (r) { var w = 0; r.forEach(function (it) { w = Math.max(w, it.total - it.usual); }); return w ? 'worst +' + dur(w) : ''; }, queued: function (r) { var w = 0; r.forEach(function (it) { w = Math.max(w, it.id % 50); }); return w ? 'longest ' + w + 'm' : ''; }, snoozed: function (r) { return r.length ? 'until 15:00' : ''; }, running: function (r) { return r.length ? 'on track' : ''; }, succeeded: function (r) { var f = 0; r.forEach(function (it) { if (it.total > it.usual * 1.1) f++; }); return f ? f + ' slower than usual' : ''; } };
+    document.getElementById('f-live').classList.toggle('on', !!F.live);
+    document.getElementById('c-live').textContent = items.filter(function (it) { return it.live && inScope(it); }).length;
+    var statsHtml = '';
+    kinds.forEach(function (k) {
+      var all = items.filter(function (it) { return it.kind === k.id; });
+      var shownK = all.filter(function (it) { return passesExceptStatus(it) && matchesQuery(it, q); });
+      var on = !!F.status[k.id], anyStatus = anyOn(F.status);
+      statsHtml += '<div class="stat ' + k.dot + (on ? ' on' : '') + (anyStatus && !on ? ' dim' : '') + '" data-k="' + k.id + '"><b>' + shownK.length + '</b><span>' + k.title + '</span><span class="sub">' + subs[k.id](shownK) + '</span></div>';
+    });
+    document.getElementById('stats').innerHTML = statsHtml;
+    var order = { failed: 0, retrying: 1, slow: 2, running: 3, queued: 4, snoozed: 5, succeeded: 6 };
+    var rows = items.filter(match).sort(function (a, b) { return order[a.kind] - order[b.kind] || b.startMin - a.startMin; });
+    rows.slice(0, renderCap).forEach(function (it) { html += cardHtml(it); });
+    if (rows.length > renderCap) html += '<div class="more" id="more">' + (rows.length - renderCap) + ' more, show next 120</div>';
+    tb.innerHTML = html;
+    // reference block: one finished and one running row, labelled, with the legend
+    var a = rows.filter(function (it) { return !isRunning(it); })[0], b = rows.filter(isRunning)[0];
+    document.getElementById('ref').innerHTML = '<div class="rt">Reference rows</div>' + (a ? cardHtml(a) : '') + (b ? cardHtml(b) : '') + document.getElementById('lgd-t').innerHTML;
+  }
+  // running = the run is still going (retrying, or slow and not finished yet)
+  function isRunning(it) { return !!it.live; }
+  function durLive(s) { var h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return h ? h + 'h ' + pad(m) + 'm ' + pad(x) + 's' : m + 'm ' + pad(x) + 's'; }
+  // live runs tick once a second
+  setInterval(function () { var byId = {}; items.forEach(function (it) { if (it.live) { it.total++; byId[it.id] = it; } }); document.querySelectorAll('[data-live]').forEach(function (b) { var it = byId[b.dataset.live]; if (it) b.textContent = durLive(it.total); }); }, 1000);
+  // index of the task currently running, from elapsed vs average
+  function runIdx(it) { return Math.min(it.ntasks - 1, Math.floor(it.ntasks * it.total / it.usual)); }
+  function cardHtml(it) {
+    var run = isRunning(it), bc = it.kind === 'failed' ? ' b-red' : it.kind === 'running' ? ' b-blue' : (it.kind === 'slow' || it.kind === 'retrying') ? ' b-amber' : '';
+    var over = it.total > it.usual, edge = run ? '<span class="trk"></span><span class="bar"></span>' + (over ? '<span class="avg"></span><span class="avgl">average</span>' : '') : '';
+    var verb = it.kind === 'failed' ? 'failed ' : it.kind === 'queued' ? 'queued since ' : it.kind === 'succeeded' ? 'finished ' : it.kind === 'snoozed' ? 'snoozed, last ' : 'started ';
+    var pre = (it.name.match(/^\[[^\]]+\] /) || [''])[0];
+    var stat = run
+      ? '<div class="st" data-c="11"><div class="now"><span>now</span><b data-c="9" data-live="' + it.id + '">' + durLive(it.total) + '</b></div><div><span>average</span><em>' + dur(it.usual) + '</em></div></div>'
+      : '<div class="st" data-c="11"><div><span>' + (it.kind === 'queued' ? 'waiting' : 'took') + '</span><em data-c="9">' + (it.total ? dur(it.total) : (it.id % 50) + 'm') + '</em></div><div><span>average</span><em>' + dur(it.usual) + '</em></div></div>';
+    return '<div class="card' + bc + (run ? ' running live' + (over ? ' over' : '') : '') + (selected === it.id ? ' on' : '') + '" data-id="' + it.id + '"' + (run ? ' style="--p:' + (it.total / it.usual).toFixed(3) + '"' : '') + '>' +
+      '<div class="lft"><div class="l1"><span class="tg ' + it.type + '" data-c="2">' + (it.type === 'pipeline' ? 'Pipeline' : 'Job') + '</span><span class="nm" data-c="3"><i>' + pre + '</i>' + it.name.slice(pre.length) + it.suffix + '</span></div>' +
+      '<div class="l2"><span class="ra" data-c="13">run as: <b>' + it.runAs + '</b></span>' + hist(it).replace('<span class="hist"', '<span data-c="12" class="hist"') + '</div></div>' +
+      '<div class="mid">' + (run ? chainHtml(it) + msgHtml(it).replace('<div class="msg', '<div data-c="8" class="msg') : '') +
+        '<div class="park"><span class="pk">parked</span><span class="cause" data-c="4">' + problemText(it) + '</span>' + (taskText(it) ? '<span class="task" data-c="5">' + taskText(it) + '</span>' : '') + '</div></div>' +
+      '<div class="rgt"><span class="wn" data-c="10">' + verb + it.start + '</span>' + stat + '</div>' + edge +
+      '</div>';
+  }
+  autoStatus(); render();
+  document.getElementById('f-live').addEventListener('click', function () { F.live = !F.live; F.cube = null; autoStatus(); render(); if (window.__twPaint) window.__twPaint(); });
+  tb.addEventListener('click', function (e) { if (e.target.id === 'more') { renderCap += 120; render(); return; } var r = e.target.closest('.card'); if (r) open(+r.dataset.id); });
+  document.getElementById('stats').addEventListener('click', function (e) { var st = e.target.closest('.stat'); if (!st) return; F.status[st.dataset.k] = !F.status[st.dataset.k]; F.cube = null; render(); if (window.__twPaint) window.__twPaint(); });
+  document.getElementById('q').addEventListener('input', function (e) { filter = e.target.value; render(); });
+
+  // ---------- drawer ----------
+  var drawer = document.getElementById('drawer'), scrim = document.getElementById('scrim'), route = document.getElementById('route');
+  function open(itemId) {
+    selected = itemId; render();
+    var it = items.filter(function (x) { return x.id === itemId; })[0];
+    document.getElementById('d-title').innerHTML = GLYPH[it.type] + '<i>' + it.name + '</i>' + it.suffix;
+    document.getElementById('d-when').textContent = (it.kind === 'failed' ? 'failed ' : it.kind === 'queued' ? 'queued since ' : 'started ') + it.start + (it.total ? ', ' + (it.kind === 'failed' ? 'after ' : '') + dur(it.total) : '');
+    buildRoute(it, 0);
+    drawer.classList.add('on'); scrim.classList.add('on'); drawer.setAttribute('aria-hidden', 'false');
+    drawer.scrollTop = 0;
+  }
+  function close() { drawer.classList.remove('on'); scrim.classList.remove('on'); drawer.setAttribute('aria-hidden', 'true'); selected = null; render(); }
+  document.getElementById('d-close').addEventListener('click', close);
+  scrim.addEventListener('click', close);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') close();
+    if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && selected) {
+      var vis = Array.prototype.slice.call(tb.querySelectorAll('.card')).map(function (r) { return +r.dataset.id; });
+      var i = vis.indexOf(selected) + (e.key === 'ArrowDown' ? 1 : -1);
+      if (i >= 0 && i < vis.length) { open(vis[i]); e.preventDefault(); }
+    }
+  });
+
+  function panel(cls, k, v, r, body, openIt) {
+    return '<div class="panel ' + cls + (openIt ? ' open' : '') + '"><div class="hd"><span class="k pill' + (cls.indexOf('fail') >= 0 ? ' red' : '') + '">' + k + '</span><span class="v' + (cls.indexOf('mono') >= 0 ? ' mono' : '') + '">' + v + '</span>' + (r ? '<span class="r pill' + (/cause/.test(r) ? ' amber' : '') + '">' + r + '</span>' : '') + '<span class="chev">' + (openIt ? '▾' : '▸') + '</span></div>' + (body ? '<div class="bd">' + body + '</div>' : '') + '</div>';
+  }
+  var taskView = 'timeline', showAll = true, curSel = null;
+  function schedule(it) {
+    // synthetic per-task schedule: start/end in seconds within the run, status, depends-on
+    var n = it.ntasks, total = it.total || it.usual, out = [], failIdx = {}, step = Math.floor(n / (it.failed.length + 1));
+    it.failed.forEach(function (f, i) { failIdx[step * (i + 1)] = i; });
+    var firstFail = it.failed.length ? step : Infinity, lanes = 4, t = 0;
+    for (var i = 0; i < n; i++) {
+      var name = i === 0 ? 'setup' : (failIdx[i] !== undefined ? it.failed[failIdx[i]].name : taskNames[1 + (i % (taskNames.length - 1))] + (i > 12 ? '_' + Math.floor(i / 12) : ''));
+      var lane = i % lanes, start = Math.floor((i / n) * total * 0.92), d = Math.max(20, Math.floor(total / n * (1.2 + (i % 3) * 0.6)));
+      var st = 'ok';
+      if (failIdx[i] !== undefined) { st = 'f'; d = it.failed[failIdx[i]].secs; }
+      else if (i > firstFail && i % 5 !== 0) { st = 's'; start = Math.floor((firstFail / n) * total * 0.92) + it.failed[0].secs; d = 0; }
+      else if (it.kind === 'retrying' && i === Math.floor(n / 2)) { st = 'r'; d = Math.floor(total - start); }
+      else if (it.kind === 'running' && i === runIdx(it)) { st = 'r'; }
+      else if (it.kind === 'running' && i > runIdx(it)) { st = 'p'; d = 0; }
+      var dep = i === 0 ? -1 : Math.max(0, i - 1 - (i % 3));
+      if (dep >= 0) { var pd = out[dep]; var minStart = st === 's' ? pd.start + Math.floor(total * 0.045) : pd.start + pd.dur + Math.floor(total * 0.01); start = Math.min(Math.max(start, minStart), Math.floor(total * 0.96)); }
+      out.push({ i: i, name: name, start: start, dur: d, st: st, dep: dep, fail: failIdx[i] });
+    }
+    return out;
+  }
+  function ganttHtml(it, selTask) {
+    var rows = schedule(it), total = it.total || it.usual, n = rows.length;
+    var keep = {};
+    if (!showAll) {
+      // every failed or retrying task, the selected one with its neighbours, setup, and what the failures depended on
+      rows.forEach(function (r) { if (r.st === 'f' || r.st === 'r') { keep[r.i] = 1; if (r.dep >= 0) keep[r.dep] = 1; } });
+      var selRow = rows.filter(function (r) { return r.st === 'f' && r.fail === selTask; })[0] || rows.filter(function (r) { return r.st === 'r'; })[0];
+      if (selRow) { for (var k = -1; k <= 2; k++) if (selRow.i + k >= 0 && selRow.i + k < n) keep[selRow.i + k] = 1; }
+      if (!Object.keys(keep).length) { var m = Math.floor(n / 2); for (var q = -3; q <= 3; q++) if (m + q >= 0 && m + q < n) keep[m + q] = 1; }
+      keep[0] = 1;
+    }
+    var ticks = '', k; for (k = 0; k <= 4; k++) ticks += '<span style="left:' + (k * 25) + '%">' + (k === 0 ? '0' : dur(Math.floor(total * k / 4))) + '</span>';
+    var html = '<div class="gantt"><div class="axis"><div></div><div class="ticks">' + ticks + '</div></div>';
+    var i = 0;
+    while (i < n) {
+      if (showAll || keep[i]) {
+        var r = rows[i], left = (100 * r.start / total), w = Math.max(0.6, 100 * r.dur / total);
+        var sel = (curSel !== undefined && curSel !== null) ? r.i === curSel : (r.st === 'f' && r.fail === selTask);
+        var bar = '';
+        var dtxt = r.st === 's' ? 'skipped' : dur(r.dur);
+        if (r.st === 'p') bar = '<span class="sq s" style="left:' + left + '%">not started</span>';
+        else if (r.st === 'r' && it.kind === 'running') bar = '<span class="sq r" style="left:' + left + '%">running</span>';
+        else if (r.st === 'r') bar = '<span class="sq fa" style="left:' + left + '%">48m 22s</span><span class="sq fa" style="left:calc(' + left + '% + 66px)">38m 29s</span><span class="sq r" style="left:calc(' + left + '% + 132px)">' + dur(r.dur) + '</span>';
+        else bar = '<span class="sq ' + (r.st === 's' ? 's' : r.st === 'f' ? 'f' : '') + (sel ? ' sel' : '') + '" style="left:' + left + '%">' + dtxt + (r.st === 'f' ? ', failed' : '') + '</span>';
+        var dep = '';
+        html += '<div class="grow' + (sel ? ' sel' : '') + '" data-i="' + r.i + '" data-dep="' + r.dep + '" data-f="' + (r.fail !== undefined ? r.fail : '') + '"><div class="lbl">' + r.name + '</div><div class="trk">' + dep + bar + '</div></div>';
+        i++;
+      } else {
+        var j = i, okc = 0, skc = 0; while (j < n && !keep[j]) { if (rows[j].st === 's') skc++; else okc++; j++; }
+        html += '<div class="grow fold" data-fold="1"><div class="lbl">' + (okc ? okc + ' ok' : '') + (okc && skc ? ', ' : '') + (skc ? skc + ' skipped' : '') + '<small>show</small></div><div class="trk"></div></div>';
+        i = j;
+      }
+    }
+    return html + '</div>';
+  }
+  var logCache = {};
+  function loadLog(name) {
+    if (logCache[name]) return Promise.resolve(logCache[name]);
+    return fetch('/files/' + name).then(function (r) { return r.text(); }).then(function (t) { logCache[name] = t; return t; });
+  }
+  function mockTail(t, task, cause, hh) {
+    var ts = function (m) { return hh + ':' + pad(m); };
+    var lines = t.split('\n');
+    var keep = lines.slice(0, Math.max(40, lines.length - 12));
+    var base = keep.length ? keep[keep.length - 1].slice(0, 5) : '12:00';
+    var m = parseInt(base.slice(3), 10) || 0, h = base.slice(0, 2);
+    var T = function (dm) { var mm = (m + dm) % 60; return h + ':' + pad(mm) + ':' + pad(12 + dm * 7 % 47); };
+    var tail = [];
+    if (cause === 'Table not found') tail = [
+      T(0) + ' [pipeline] ' + task + ' ctor', T(0) + ' ctor took 0.000s', T(0) + ' [' + task + '] [pipeline] pre_execute', T(0) + ' [' + task + '] pre_execute took 0.011s',
+      T(1) + ' [' + task + '] [pipeline] execute', T(1) + ' [load] target=finance.gl_staging mode=merge keys=[MANDT,BUKRS,BELNR,GJAHR]',
+      T(1) + ' [load] resolving target table',
+      T(1) + ' ERROR [' + task + '] execute failed after 2.104s',
+      'Traceback (most recent call last):', '  File "/Workspace/Repos/finance-gl/src/gl/' + task + '.py", line 41, in execute', '    spark.table("finance.gl_staging")',
+      'pyspark.errors.exceptions.captured.AnalysisException: [TABLE_OR_VIEW_NOT_FOUND] The table or view `finance`.`gl_staging` cannot be found. Verify the spelling and correctness of the schema and catalog. SQLSTATE: 42P01',
+      T(1) + ' [pipeline] failed: ' + task, T(1) + ' [pipeline] skipped: Publish, Notify'];
+    else if (cause === 'Cluster error') tail = [
+      T(0) + ' [' + task + '] [pipeline] execute', T(0) + ' [read] partitions=24 parallelism=6',
+      T(3) + ' WARN  [spark] Executor 4 lost: Spot instance reclaimed by cloud provider',
+      T(3) + ' WARN  [spark] Executor 2 lost: Spot instance reclaimed by cloud provider',
+      T(4) + ' ERROR [cluster] Driver terminated: CLOUD_PROVIDER_SHUTDOWN (spot capacity reclaimed, 2 of 6 workers)',
+      T(4) + ' [pipeline] failed: ' + task + ' (cluster terminated)'];
+    else if (cause === 'Timed out') tail = [
+      T(0) + ' [' + task + '] [pipeline] execute', T(0) + ' [read] partitions=180 parallelism=6',
+      T(20) + ' [read] progress 61/180 partitions, elapsed 20m 14s', T(40) + ' [read] progress 114/180 partitions, elapsed 40m 02s',
+      T(59) + ' [read] progress 171/180 partitions, elapsed 59m 48s',
+      T(59) + ' ERROR [runner] task timed out after 3600s (timeout_seconds=3600); cancelling',
+      T(59) + ' [pipeline] failed: ' + task + ' (TIMEDOUT)'];
+    else if (cause === 'Permission denied') tail = [
+      T(0) + ' [' + task + '] [pipeline] execute', T(0) + ' [read] source=finance.raw_bkpf',
+      T(0) + ' ERROR [' + task + '] execute failed after 0.412s',
+      'pyspark.errors.exceptions.captured.AnalysisException: [INSUFFICIENT_PERMISSIONS] User does not have SELECT on Table finance.raw_bkpf. SQLSTATE: 42501',
+      T(0) + ' [pipeline] failed: ' + task];
+    else if (cause === 'retrying') tail = [
+      T(0) + ' [' + task + '] [pipeline] execute (attempt 3)', T(0) + ' [read] resuming from checkpoint 2022-11 (attempt 2 reached 2022-10)',
+      T(5) + ' [read] partition 2024-06 8,412,003 rows 3m 41s', T(9) + ' [read] partition 2024-07 8,977,210 rows 3m 18s',
+      T(12) + ' WARN  [read] partition 2025-03 skew on key MANDT=100, 71% of rows on one executor',
+      T(14) + ' [read] progress 78/92 partitions, elapsed 1h 32m, eta 26m'];
+    else tail = [T(0) + ' [pipeline] ' + task + ' done', T(0) + ' [pipeline] run complete, 0 errors'];
+    return keep.concat(tail).join('\n');
+  }
+  function renderLog(el, text, status) {
+    var out = text.split('\n').map(function (l) {
+      var cls = /ERROR|Traceback|Exception|failed:/.test(l) ? 'err' : /WARN/.test(l) ? 'warn' : /complete|done$/.test(l) ? 'ok' : '';
+      var h = l.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+      h = h.replace(/^(\d\d:\d\d:\d\d) /, '<span class="ts">$1</span> ').replace(/(\[[A-Za-z_]+\])/g, '<span class="tag">$1</span>');
+      return cls ? '<span class="' + cls + '">' + h + '</span>' : h;
+    }).join('\n');
+    el.innerHTML = out;
+    if (status === 'f') el.scrollTop = el.scrollHeight;
+  }
+  function buildRoute(it, selTask, selIdx) {
+    curSel = selIdx;
+    var ok = it.ntasks - it.failed.length, skipped = it.failed.length ? Math.floor(it.ntasks * 0.19) : 0; ok -= skipped;
+    var pct = function (s) { var m = Math.max(it.total, it.last, it.usual); return Math.round(100 * s / m) + '%'; };
+    var runBody = '<div class="cmp"><span>this run</span><div class="barx"><i class="now' + (it.kind === 'slow' ? ' amber' : '') + '" style="width:' + pct(it.total) + '"></i></div><span class="num">' + (it.total ? dur(it.total) : '0s') + '</span>' +
+      '<span>last run</span><div class="barx"><i style="width:' + pct(it.last) + '"></i></div><span class="num">' + dur(it.last) + '</span>' +
+      '<span>usual</span><div class="barx"><i style="width:' + pct(it.usual) + '"></i></div><span class="num">' + dur(it.usual) + '</span></div>';
+
+    // task strip
+    var failIdx = {}, step = Math.floor(it.ntasks / (it.failed.length + 1));
+    it.failed.forEach(function (f, i) { failIdx[step * (i + 1)] = i; });
+    var firstFail = step; var strip = '<div class="tasks">';
+    for (var i = 0; i < it.ntasks; i++) {
+      var cls = '';
+      if (failIdx[i] !== undefined) cls = 'f' + (failIdx[i] === selTask ? ' sel' : '');
+      else if (it.failed.length && i > firstFail && i % 5 !== 0) cls = 's';
+      else if (it.kind === 'retrying' && i === Math.floor(it.ntasks / 2)) cls = 'r';
+      strip += '<i class="' + cls + '" data-f="' + (failIdx[i] !== undefined ? failIdx[i] : '') + '"></i>';
+    }
+    strip += '</div><div class="tkey"><span><i style="background:#bfe0cf"></i>ok</span>' + (it.failed.length ? '<span><i style="background:var(--red)"></i>failed</span><span><i style="background:#e9e2d8"></i>skipped after a failure</span>' : '') + (it.kind === 'retrying' ? '<span><i style="background:#b9cfea"></i>retrying</span>' : '') + '</div>';
+
+    // failed list grouped by cause
+    var flist = '';
+    if (it.failed.length > 1) {
+      var byCause = {};
+      it.failed.forEach(function (f, i) { (byCause[f.cause.label] = byCause[f.cause.label] || []).push({ f: f, i: i }); });
+      flist = '<div class="flist">';
+      Object.keys(byCause).forEach(function (lab) {
+        flist += '<div class="fgrp"><span>' + lab + '</span><span class="n">' + byCause[lab].length + '</span></div>';
+        byCause[lab].forEach(function (x) { flist += '<div class="frow' + (x.i === selTask ? ' on' : '') + '" data-f="' + x.i + '"><span>' + x.f.name + '</span><span class="r">' + it.start + ', ' + x.f.secs + 's</span></div>'; });
+      });
+      flist += '</div>';
+    }
+    var causesN = {}; it.failed.forEach(function (f) { causesN[f.cause.label] = 1; });
+    var tasksHead = it.failed.length ? it.failed.length + ' failed, ' + ok + ' ok, ' + skipped + ' skipped' : it.kind === 'retrying' ? '1 retrying, ' + (it.ntasks - 1) + ' ok' : it.ntasks + ' tasks';
+    var tasksR = it.failed.length > 1 ? Object.keys(causesN).length + (Object.keys(causesN).length > 1 ? ' causes' : ' cause') : '';
+
+    var html = panel('', 'Job', it.ntasks + ' tasks', 'daily 06:00, runs as ' + it.runAs, '', false) +
+      panel('', 'Run', it.total ? dur(it.total) : 'not started', 'usual ' + dur(it.usual), runBody, true) +
+      panel('', 'Tasks', tasksHead, tasksR,
+        '<div class="vsw"><span class="' + (taskView === 'timeline' ? 'on' : '') + '" data-view="timeline">Timeline</span><span class="' + (taskView === 'grid' ? 'on' : '') + '" data-view="grid">Grid</span>' + '' + '</div>' +
+        (taskView === 'timeline' ? ganttHtml(it, selTask) : strip) + flist, true);
+
+    if (it.failed.length) {
+      var f = it.failed[selTask];
+      html += panel('fail', 'Root', f.cause.label, '', '<div class="err">' + f.cause.detail + '<br><span class="dim">' + f.name + ', line 41.' + (f.cause.label === 'Table not found' ? ' Same error in 87 other jobs since 07:10.' : '') + '</span></div>', true);
+      var trow = (selIdx !== undefined && selIdx !== null) ? schedule(it)[selIdx] : null;
+      var tname = trow ? trow.name : f.name, tst = trow ? trow.st : 'f', tcause = trow && trow.st === 'f' ? it.failed[trow.fail].cause.label : (trow && trow.st !== 'f' ? 'ok' : f.cause.label);
+      html += panel('last', 'Task', '<span class="mono" style="font-family:var(--mono);font-weight:400">' + tname + '</span>', 'Python script',
+        '<div class="kv"><span>source</span><a href="#" class="path">/Workspace/Repos/finance-gl/src/gl/' + tname + '.py</a>' +
+        '<span>parameters</span><span class="mono">date=2026-09-18  catalog=finance  mode=incremental</span>' +
+        '<span>compute</span><span>ingest_cluster, 15.4 LTS, i4i.2xlarge, 2 to 10 workers, spot</span>' +
+        '<span>cluster</span><span class="mono">0918-0600-gl4x</span></div>' +
+        '<div class="logh"><b>Log</b><span id="logmeta">loading</span><span class="r">open full log ↗</span></div><div class="log" id="tasklog" data-task="' + tname + '" data-st="' + tst + '" data-cause="' + tcause + '"></div>', true);
+    } else if (it.kind === 'slow') {
+      html += panel('fail', 'Root', 'Slower than usual', '', '<div class="err">transform<br><span class="dim">' + dur(it.total) + ' so far, usually ' + dur(it.usual) + '. Same parameters, code and cluster as the last run.</span></div>', true);
+      html += panel('last', 'Task', '<span style="font-family:var(--mono);font-weight:400">transform</span>', 'Notebook', '<div class="kv"><span>source</span><a href="#" class="path">/Workspace/Repos/finance-gl/src/gl/transform</a><span>parameters</span><span class="mono">date=2026-09-18  catalog=finance</span><span>compute</span><span>serverless</span></div>', true);
+    } else if (it.kind === 'running') {
+      html += panel('last', 'Root', 'Running, on track', '', '<div class="kv"><span>progress</span><span>' + runIdx(it) + ' of ' + it.ntasks + ' tasks done</span><span>elapsed</span><span>' + dur(it.total) + ', average ' + dur(it.usual) + '</span></div>', true);
+    } else if (it.kind === 'queued') {
+      html += panel('fail', 'Root', 'Queued', '', '<div class="err">MAX_CONCURRENT_RUNS_REACHED<br><span class="dim">Job allows 1 concurrent run. The previous run is still going.</span></div>', true);
+    } else if (it.kind === 'retrying') {
+      html += panel('fail', 'Root', 'Cluster error, retrying', '', '<div class="err">spot instances reclaimed<br><span class="dim">extract_bseg, attempt 1 failed after 48m 22s. Attempt 2 running on on-demand workers.</span></div>', true);
+      html += panel('last', 'Task', '<span style="font-family:var(--mono);font-weight:400">extract_bseg</span>', 'Python script', '<div class="kv"><span>source</span><a href="#" class="path">/Workspace/Repos/finance-gl/src/gl/extract_bseg.py</a><span>parameters</span><span class="mono">date=2026-09-18  catalog=finance  mode=incremental</span><span>compute</span><span>ingest_cluster, 15.4 LTS, i4i.2xlarge, 2 to 10 workers, spot</span></div>', true);
+    } else {
+      html += panel('last', 'Root', 'Snoozed until 15:00', '', '', false);
+    }
+    route.innerHTML = html;
+
+    route.querySelectorAll('.hd').forEach(function (h) { h.addEventListener('click', function () { var p = h.parentNode; if (!p.querySelector('.bd')) return; p.classList.toggle('open'); h.querySelector('.chev').textContent = p.classList.contains('open') ? '▾' : '▸'; }); });
+    route.querySelectorAll('.frow, .tasks i.f').forEach(function (el) { el.addEventListener('click', function (e) { e.stopPropagation(); buildRoute(it, +el.dataset.f, null); }); });
+    route.querySelectorAll('.vsw [data-view]').forEach(function (el) { el.addEventListener('click', function (e) { e.stopPropagation(); taskView = el.dataset.view; buildRoute(it, selTask); }); });
+    route.querySelectorAll('.vsw [data-all], .grow.fold').forEach(function (el) { el.addEventListener('click', function (e) { e.stopPropagation(); showAll = !showAll; buildRoute(it, selTask); }); });
+    (function drawLinks() {
+      var g = route.querySelector('.gantt'); if (!g) return;
+      var gr = g.getBoundingClientRect();
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', 'links'); svg.setAttribute('width', g.scrollWidth); svg.setAttribute('height', g.scrollHeight);
+      svg.innerHTML = '<defs><marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#b9ab99"/></marker><marker id="arrf" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#d6452f"/></marker></defs>';
+      var rowsEl = {}; g.querySelectorAll('.grow[data-i]').forEach(function (el) { rowsEl[el.dataset.i] = el; });
+      g.querySelectorAll('.grow[data-i]').forEach(function (el) {
+        var dep = el.dataset.dep; if (dep === '-1' || !rowsEl[dep]) return;
+        var a = rowsEl[dep].querySelector('.sq'), b = el.querySelector('.sq'); if (!a || !b) return;
+        var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+        var x1 = ra.left - gr.left + 1, y1 = ra.bottom - gr.top;
+        var y2 = rb.top - gr.top + rb.height / 2;
+        var x2 = (rb.left - gr.left) >= x1 ? rb.left - gr.left - 1 : rb.right - gr.left + 1;
+        var dpath = 'M' + x1 + ',' + y1 + ' V' + y2 + ' H' + x2;
+        var isF = b.classList.contains('f');
+        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', dpath); path.setAttribute('marker-end', isF ? 'url(#arrf)' : 'url(#arr)'); if (isF) path.setAttribute('class', 'f');
+        svg.appendChild(path);
+      });
+      g.appendChild(svg);
+    })();
+    route.querySelectorAll('.grow[data-i]').forEach(function (el) { el.addEventListener('click', function (e) { e.stopPropagation(); buildRoute(it, el.dataset.f !== '' ? +el.dataset.f : selTask, +el.dataset.i); }); });
+    (function () {
+      var el = route.querySelector('#tasklog'); if (!el) return;
+      var name = el.dataset.task, st = el.dataset.st, cause = el.dataset.cause;
+      var pickLog = ['log-a.txt', 'log-b.txt', 'log-c.txt'][(name.length + it.id) % 3];
+      loadLog(pickLog).then(function (t) {
+        var text = st === 'f' ? mockTail(t, name, cause) : (it.kind === 'retrying' && st === 'r') ? mockTail(t, name, 'retrying') : t;
+        renderLog(el, text, st);
+        var meta = route.querySelector('#logmeta'); if (meta) meta.textContent = text.split('\n').length + ' lines' + (st === 'f' ? ', ends at the error' : '');
+      }).catch(function () { el.textContent = 'log not available'; });
+    })();
+  }
+  var navUrl = ((performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {}).name || '';
+  if (/open=(\d+)/.test(navUrl + ' ' + location.hash + location.search)) { var want = +RegExp.$1; var cand = items.filter(function (x) { return x.kind === 'failed' && x.failed.length >= want; })[0]; if (cand) { var st = document.createElement('style'); st.textContent = '* { transition: none !important; }'; document.head.appendChild(st); open(cand.id); } }
+})();
+</script>
+</body>
+</html>
