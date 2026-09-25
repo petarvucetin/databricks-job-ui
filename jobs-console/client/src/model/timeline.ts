@@ -34,7 +34,18 @@ export function buckets(scale: ScaleId, end: number): Bucket[] {
   const out: Bucket[] = [];
   if (s.unit === 'hour') {
     const d0 = addDays(end, -1);
-    for (let i = 0; i < 24; i++) out.push({ start: d0 + i * 3600000, end: i === 23 ? end : d0 + (i + 1) * 3600000 });
+    const d = new Date(d0);
+    const y = d.getFullYear();
+    const m = d.getMonth();
+    const dt = d.getDate();
+    const starts: number[] = [];
+    for (let h = 0; h < 24; h++) {
+      const start = new Date(y, m, dt, h).getTime();
+      if (!starts.length || start !== starts[starts.length - 1]) starts.push(start);
+    }
+    for (let i = 0; i < starts.length; i++) {
+      out.push({ start: starts[i], end: i === starts.length - 1 ? end : starts[i + 1] });
+    }
   } else {
     const step = s.unit === 'week' ? 7 : 1;
     for (let i = 0; i < s.days / step; i++) out.push({ start: addDays(end, -s.days + i * step), end: addDays(end, -s.days + (i + 1) * step) });

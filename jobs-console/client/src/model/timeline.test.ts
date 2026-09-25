@@ -90,3 +90,41 @@ describe('timeline', () => {
     expect(moved.from).toBeGreaterThanOrEqual(domainStart('90d', end));
   });
 });
+
+describe('timeline DST regression', () => {
+  const prevTZ = process.env.TZ ?? undefined;
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  beforeAll(() => {
+    Object.assign(process.env, { TZ: 'America/New_York' });
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  afterAll(() => {
+    if (prevTZ === undefined) {
+      delete process.env.TZ;
+    } else {
+      Object.assign(process.env, { TZ: prevTZ });
+    }
+  });
+
+  it('handles spring-forward DST (23-hour day)', () => {
+    const dstEnd = new Date(2026, 2, 9).getTime(); // March 9, 2026 (day after spring-forward on March 8)
+    const bks = buckets('24h', dstEnd);
+    expect(bks).toHaveLength(23);
+    for (const bk of bks) {
+      expect(bk.end).toBeGreaterThan(bk.start);
+    }
+    expect(bks[0].start).toBe(new Date(2026, 2, 8).getTime());
+    expect(bks[bks.length - 1].end).toBe(dstEnd);
+  });
+
+  it('keeps existing UTC expectations in DST mode', () => {
+    // Verify UTC test expectations still hold
+    const utcEnd = timelineEnd(new Date(2026, 8, 22, 8, 0).getTime());
+    expect(utcEnd).toBe(new Date(2026, 8, 23).getTime());
+    const utcBks = buckets('24h', utcEnd);
+    expect(utcBks).toHaveLength(24);
+    expect(utcBks[0].start).toBe(new Date(2026, 8, 22).getTime());
+  });
+});
