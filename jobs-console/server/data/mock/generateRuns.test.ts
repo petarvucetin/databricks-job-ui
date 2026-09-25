@@ -56,3 +56,21 @@ describe('generateRuns', () => {
     for (const r of data.runs.filter((x) => x.kind === 'failed')) expect(r.failed.length).toBeGreaterThan(0);
   });
 });
+
+describe('generateRuns with an explicit time zone offset (UTC+2)', () => {
+  const data2 = generateRuns(-120);
+
+  it('pins "now" to 08:00 in the caller\'s zone, not the server\'s', () => {
+    expect(data2.asOf).toBe(Date.UTC(2026, 8, 22, 6, 0));
+  });
+
+  it('keeps the quiet days quiet by the caller\'s calendar day', () => {
+    const quietDays = [10, 11, 12, 13, 14, 15, 21];
+    for (const r of data2.runs) {
+      const shifted = new Date(r.startTime + 120 * 60000);
+      if (shifted.getUTCMonth() === 8 && quietDays.includes(shifted.getUTCDate())) {
+        expect(r.kind).toBe('succeeded');
+      }
+    }
+  });
+});

@@ -42,9 +42,11 @@ const FLOWS = ['bronze_bkpf', 'bronze_bseg', 'silver_bkpf', 'silver_bseg', 'silv
 /** Minute 0 is 24 Aug 2026 00:00 local; the data set's "now" is minute 42240, 22 Sep 08:00. */
 export const NOW_MIN = 42240;
 
-export function minuteToMs(min: number): number {
+const DEFAULT_TZ_OFFSET_MIN = new Date(2026, 8, 22).getTimezoneOffset();
+
+export function minuteToMs(min: number, tzOffsetMin: number = DEFAULT_TZ_OFFSET_MIN): number {
   const day = Math.floor(min / 1440);
-  return new Date(2026, 7, 24 + day, 0, min - day * 1440).getTime();
+  return Date.UTC(2026, 7, 24 + day, 0, min - day * 1440) + tzOffsetMin * 60000;
 }
 
 interface Draft {
@@ -68,7 +70,7 @@ interface Draft {
 
 const toCause = (c: CauseSpec): Cause => ({ label: c.label, code: c.code, detail: c.detail });
 
-export function generateRuns(): RunsResponse {
+export function generateRuns(tzOffsetMin: number = DEFAULT_TZ_OFFSET_MIN): RunsResponse {
   const drafts: Draft[] = [];
   let id = 0;
 
@@ -153,8 +155,8 @@ export function generateRuns(): RunsResponse {
 
   // Quiet days: 10-15 Sep and 21 Sep, every run completed with no errors.
   for (const d of drafts) {
-    const day = new Date(minuteToMs(d.startMin));
-    const quiet = day.getMonth() === 8 && ((day.getDate() >= 10 && day.getDate() <= 15) || day.getDate() === 21);
+    const wall = new Date(minuteToMs(d.startMin, tzOffsetMin) - tzOffsetMin * 60000);
+    const quiet = wall.getUTCMonth() === 8 && ((wall.getUTCDate() >= 10 && wall.getUTCDate() <= 15) || wall.getUTCDate() === 21);
     if (!quiet || d.kind === 'succeeded' || d.kind === 'running') continue;
     d.kind = 'succeeded';
     d.cause = SUCCEEDED;
@@ -173,7 +175,7 @@ export function generateRuns(): RunsResponse {
       name: d.name + d.suffix,
       kind: d.kind,
       cause: toCause(d.cause),
-      startTime: minuteToMs(d.startMin),
+      startTime: minuteToMs(d.startMin, tzOffsetMin),
       durationSec: d.total,
       usualSec: d.usual,
       ntasks: d.ntasks,
@@ -185,5 +187,5 @@ export function generateRuns(): RunsResponse {
     };
   });
   runs.sort((a, b) => b.startTime - a.startTime || b.id - a.id);
-  return { asOf: minuteToMs(NOW_MIN), source: 'mock', runs };
+  return { asOf: minuteToMs(NOW_MIN, tzOffsetMin), source: 'mock', runs };
 }

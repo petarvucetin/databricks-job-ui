@@ -32,6 +32,21 @@ describe('GET /api/runs handler', () => {
       expect(res.body).toEqual({ error: 'since must be epoch milliseconds' });
     }
   });
+
+  it('accepts a valid tzOffset and generates the data set in that zone', async () => {
+    const res = await listRuns(source, { tzOffset: '-120' });
+    expect(res.status).toBe(200);
+    const body = res.body as RunsResponse;
+    expect(body.asOf).toBe(Date.UTC(2026, 8, 22, 6, 0));
+  });
+
+  it('rejects a bad tzOffset with 400', async () => {
+    for (const bad of ['banana', '1.5', '900', '-900', '', ['1', '2']]) {
+      const res = await listRuns(source, { tzOffset: bad });
+      expect(res.status).toBe(400);
+      expect(res.body).toEqual({ error: 'tzOffset must be minutes between -840 and 840' });
+    }
+  });
 });
 
 describe('selectRunSource', () => {
