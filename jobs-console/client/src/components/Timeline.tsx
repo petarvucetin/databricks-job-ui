@@ -42,48 +42,38 @@ export function Timeline({ runs, end, scale, window, cube, dispatch }: {
     return Math.round(Math.max(0, Math.min(1, (clientX - r.left) / r.width)) * bks.length);
   };
 
-  const startHandleDrag = (which: 'from' | 'to') => (e: ReactPointerEvent<HTMLDivElement>) => {
+  const trackDrag = (e: ReactPointerEvent<HTMLDivElement>, nextFor: (ev: PointerEvent) => TimeWindow) => {
     e.preventDefault();
     const el = e.currentTarget;
     el.setPointerCapture(e.pointerId);
     let current = window;
     const move = (ev: PointerEvent) => {
-      const next = dragHandle(bks, current, which, colFromPointer(ev.clientX));
+      const next = nextFor(ev);
       if (!sameWindow(next, current)) {
         current = next;
         dispatch({ type: 'window', window: next });
       }
     };
-    const up = () => {
+    const end = () => {
       el.removeEventListener('pointermove', move);
-      el.removeEventListener('pointerup', up);
+      el.removeEventListener('pointerup', end);
+      el.removeEventListener('pointercancel', end);
     };
     el.addEventListener('pointermove', move);
-    el.addEventListener('pointerup', up);
+    el.addEventListener('pointerup', end);
+    el.addEventListener('pointercancel', end);
+  };
+
+  const startHandleDrag = (which: 'from' | 'to') => (e: ReactPointerEvent<HTMLDivElement>) => {
+    trackDrag(e, (ev) => dragHandle(bks, window, which, colFromPointer(ev.clientX)));
   };
 
   const startBarDrag = (e: ReactPointerEvent<HTMLDivElement>) => {
     if (sameWindow(window, { from: d0, to: end })) return;
-    e.preventDefault();
-    const el = e.currentTarget;
-    el.setPointerCapture(e.pointerId);
     const x0 = e.clientX;
     const colWidth = (lineRef.current?.getBoundingClientRect().width ?? 1) / bks.length;
     const start = window;
-    let current = window;
-    const move = (ev: PointerEvent) => {
-      const next = shiftWindow(bks, start, Math.round((ev.clientX - x0) / colWidth));
-      if (!sameWindow(next, current)) {
-        current = next;
-        dispatch({ type: 'window', window: next });
-      }
-    };
-    const up = () => {
-      el.removeEventListener('pointermove', move);
-      el.removeEventListener('pointerup', up);
-    };
-    el.addEventListener('pointermove', move);
-    el.addEventListener('pointerup', up);
+    trackDrag(e, (ev) => shiftWindow(bks, start, Math.round((ev.clientX - x0) / colWidth)));
   };
 
   return (
