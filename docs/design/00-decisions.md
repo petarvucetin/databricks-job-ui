@@ -9,9 +9,6 @@ Working notes for the Databricks Jobs UI revamp. One entry per decision, newest 
 | 1 | End product: clickable prototype | React app with realistic mock data; live mode later |
 | 2 | Personas: operator, author, admin in one product | Visibility follows the signed-in user |
 | 3 | Stack: AppKit (Databricks App) from day one | Custom Express routes over the Databricks SDK; the built-in `jobs()` plugin is NOT used (it is scoped to declared job IDs) |
-
-> Implementation: the app lives in `jobs-console/` (AppKit 0.57.0, CLI profile `jobs-console`). `GET /api/runs` serves from a `RunSource`; `JOBS_CONSOLE_DATA=mock` (default) uses the generator ported from the prototype. Attention screen MVP plan: `docs/superpowers/plans/2026-09-25-attention-screen-mvp.md`.
-
 | 4 | Auth: user authorization with the `jobs` scope | App sees exactly what the user sees in the native UI |
 | 5 | Data layer: one interface, two backends (mock, live) | Mock responses shaped exactly like Jobs API 2.2 |
 | 6 | ~~Scope: jobs only~~ → **Jobs and pipelines** (reversed 2026-09-22) | Pipelines (Lakeflow Declarative, formerly DLT) join the console as their own item type, so the UI must tell an ETL pipeline apart from a job. See "Pipelines API constraints" below |
@@ -25,6 +22,8 @@ Working notes for the Databricks Jobs UI revamp. One entry per decision, newest 
 | 14 | Two item types: **Job** and **Pipeline** (2026-09-22) | Follows the native "Jobs & Pipelines → Runs" list, which interleaves job runs and pipeline updates as peer rows with a Type column (Job / Pipeline - ETL). Ingestion (Lakeflow Connect) pipelines count as Pipeline, and the kind is a detail shown only after selection |
 | 15 | Pipelines are standalone items, with no job ↔ pipeline linking | A pipeline update is its own item whatever triggered it. The feed doesn't cross-reference job runs and pipeline updates (no "launched by" between them). Job → job "launched by" (F1g) is unchanged |
 | 16 | Continuous pipelines are flagged on failure AND on lag | Lag comes from `flow_progress` event metrics (`backlog_bytes/records/files/seconds`). Units depend on the source (Kafka: bytes+records; Auto Loader/Delta: bytes+files; Kinesis: bytes+seconds), so "lagging" = backlog rising over the last N progress events, not a fixed threshold. **To verify in live mode:** whether `flow_progress` events come back from the events API or only from the event-log table / `system.lakeflow` (METRICS level isn't filterable in the API) |
+
+> Decision 3 implementation: the app lives in `jobs-console/` (AppKit 0.57.0, CLI profile `jobs-console`). `GET /api/runs` serves from a `RunSource`; `JOBS_CONSOLE_DATA=mock` (default) uses the generator ported from the prototype. Attention screen MVP plan: `docs/superpowers/plans/2026-09-25-attention-screen-mvp.md`.
 
 ## Pain points being attacked (user-stated)
 
