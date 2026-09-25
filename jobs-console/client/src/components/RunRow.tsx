@@ -20,7 +20,7 @@ export function RunRow({ run, nowMs, loadedAt, asOf, selected, onSelect }: {
   const tone = borderTone(run);
   const stat = statBlock(run, elapsed, asOf);
   const { prefix, rest } = splitName(run.name);
-  const msg = run.live ? liveMessage(run) : null;
+  const msg = run.live ? liveMessage(run, elapsed) : null;
   const task = taskText(run);
   const cls = ['rr', tone && `b-${tone}`, run.live && 'live', run.live && over && 'over', selected && 'on'].filter(Boolean).join(' ');
   const style = run.live ? ({ '--p': String(p) } as CSSProperties) : undefined;
@@ -41,8 +41,8 @@ export function RunRow({ run, nowMs, loadedAt, asOf, selected, onSelect }: {
         {run.live && (
           <>
             <div className="rr-chain" data-c="6">
-              {taskStates(run).map((s, i) => <i key={i} className={CHAIN_CLASS[s]} />)}
-              <em data-c="7">{chainSummary(run)}</em>
+              {taskStates(run, elapsed).map((s, i) => <i key={i} className={CHAIN_CLASS[s]} />)}
+              <em data-c="7">{chainSummary(run, elapsed)}</em>
             </div>
             {msg && <div className={`rr-msg${msg.red ? ' red' : ''}`} data-c="8">{msg.lead} <span className="dim">{msg.dim}</span></div>}
           </>

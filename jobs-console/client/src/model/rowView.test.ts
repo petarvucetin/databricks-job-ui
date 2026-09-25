@@ -44,9 +44,17 @@ describe('rowView', () => {
     expect(chainSummary(running)).toBe('5 ok, 1 running, 4 to go');
   });
 
+  it('keeps the chain in step with an explicit elapsed, so live rows do not freeze between polls', () => {
+    expect(chainSummary(running, 1200)).toBe('9 ok, 1 running, 0 to go');
+  });
+
   it('writes the live message', () => {
     expect(liveMessage(running)).toEqual({ lead: 'load_gl running', dim: '5 of 10 tasks done, 50% of the average time', red: false });
     expect(liveMessage(makeRun({ kind: 'retrying', failed: [] })).lead).toBe('attempt 2 of 4');
+  });
+
+  it('keeps the live message in step with an explicit elapsed', () => {
+    expect(liveMessage(running, 900).dim).toContain('75% of the average time');
   });
 
   it('says when, and picks the border tone', () => {

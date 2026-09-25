@@ -50,16 +50,16 @@ export function historyMarks(r: Run): HistMark[] {
 }
 
 /** Index of the task running now, estimated from elapsed vs average. */
-export function runningIndex(r: Run): number {
-  return Math.min(r.ntasks - 1, Math.floor((r.ntasks * r.durationSec) / Math.max(1, r.usualSec)));
+export function runningIndex(r: Run, elapsed: number = r.durationSec): number {
+  return Math.min(r.ntasks - 1, Math.floor((r.ntasks * elapsed) / Math.max(1, r.usualSec)));
 }
 
-export function taskStates(r: Run): TaskState[] {
+export function taskStates(r: Run, elapsed: number = r.durationSec): TaskState[] {
   const n = r.ntasks;
   const step = Math.floor(n / (r.failed.length + 1));
   const failAt = new Set(r.failed.map((_, i) => step * (i + 1)));
   const firstFail = r.failed.length ? step : Infinity;
-  const k = runningIndex(r);
+  const k = runningIndex(r, elapsed);
   const out: TaskState[] = [];
   for (let i = 0; i < n; i++) {
     if (failAt.has(i)) out.push('f');
@@ -72,12 +72,12 @@ export function taskStates(r: Run): TaskState[] {
   return out;
 }
 
-export function chainSummary(r: Run): string {
-  const s = taskStates(r);
+export function chainSummary(r: Run, elapsed: number = r.durationSec): string {
+  const s = taskStates(r, elapsed);
   const okc = s.filter((x) => x === 'ok').length;
   const sk = s.filter((x) => x === 's').length;
   if (r.kind === 'running') {
-    const k = runningIndex(r);
+    const k = runningIndex(r, elapsed);
     return `${k} ok, 1 running, ${r.ntasks - k - 1} to go`;
   }
   if (r.kind === 'succeeded') return 'all ok';
@@ -87,17 +87,17 @@ export function chainSummary(r: Run): string {
   return r.continuous ? 'all flows running' : 'all running';
 }
 
-export function liveMessage(r: Run): { lead: string; dim: string; red: boolean } {
+export function liveMessage(r: Run, elapsed: number = r.durationSec): { lead: string; dim: string; red: boolean } {
   if (r.type === 'pipeline') {
     if (r.kind === 'slow' && r.continuous) return { lead: 'backlog 48,210 files, rising for 35m', dim: 'Auto Loader source raw_bkpf', red: false };
     if (r.kind === 'retrying') return { lead: 'RETRY_ON_FAILURE', dim: 'update 1 lost its cluster after 48m, a new update started', red: false };
   }
   if (r.kind === 'running') {
-    const k = runningIndex(r);
-    return { lead: `${TASK_NAMES[1 + (k % (TASK_NAMES.length - 1))]} running`, dim: `${k} of ${r.ntasks} tasks done, ${Math.round((100 * r.durationSec) / Math.max(1, r.usualSec))}% of the average time`, red: false };
+    const k = runningIndex(r, elapsed);
+    return { lead: `${TASK_NAMES[1 + (k % (TASK_NAMES.length - 1))]} running`, dim: `${k} of ${r.ntasks} tasks done, ${Math.round((100 * elapsed) / Math.max(1, r.usualSec))}% of the average time`, red: false };
   }
   if (r.kind === 'retrying') return { lead: 'attempt 2 of 4', dim: 'attempt 1 lost its cluster after 48m, resuming from checkpoint', red: false };
-  return { lead: `${dur(r.durationSec - r.usualSec)} over usual`, dim: 'same parameters, code and cluster as last run', red: false };
+  return { lead: `${dur(elapsed - r.usualSec)} over usual`, dim: 'same parameters, code and cluster as last run', red: false };
 }
 
 export function whenText(r: Run): string {
