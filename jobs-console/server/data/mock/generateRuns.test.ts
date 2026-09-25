@@ -1,0 +1,58 @@
+import { describe, it, expect } from 'vitest';
+import { generateRuns, minuteToMs, NOW_MIN } from './generateRuns';
+
+const data = generateRuns();
+const onDay = (ms: number, month: number, day: number) => {
+  const d = new Date(ms);
+  return d.getMonth() === month && d.getDate() === day;
+};
+
+describe('generateRuns', () => {
+  it('is deterministic', () => {
+    expect(generateRuns()).toEqual(data);
+  });
+
+  it('pins "now" to 22 Sep 2026 08:00 local', () => {
+    expect(data.asOf).toBe(new Date(2026, 8, 22, 8, 0).getTime());
+    expect(minuteToMs(NOW_MIN)).toBe(data.asOf);
+    expect(data.source).toBe('mock');
+  });
+
+  it('never starts a run after now, and covers 91 days back to 24 Jun', () => {
+    for (const r of data.runs) expect(r.startTime).toBeLessThanOrEqual(data.asOf);
+    const oldest = Math.min(...data.runs.map((r) => r.startTime));
+    expect(oldest).toBeGreaterThanOrEqual(new Date(2026, 5, 24).getTime());
+    expect(oldest).toBeLessThan(new Date(2026, 5, 25).getTime());
+  });
+
+  it('keeps 10-15 Sep and 21 Sep all succeeded', () => {
+    const quiet = data.runs.filter((r) => [10, 11, 12, 13, 14, 15, 21].some((d) => onDay(r.startTime, 8, d)));
+    expect(quiet.length).toBeGreaterThan(300);
+    for (const r of quiet) expect(r.kind).toBe('succeeded');
+  });
+
+  it('has 26 on-track running runs and only in-progress kinds are live', () => {
+    expect(data.runs.filter((r) => r.kind === 'running')).toHaveLength(26);
+    for (const r of data.runs.filter((x) => x.live)) expect(['running', 'retrying', 'slow']).toContain(r.kind);
+    for (const r of data.runs.filter((x) => x.continuous)) expect(r.live).toBe(true);
+  });
+
+  it('gives pipelines update ids and full names', () => {
+    const pipes = data.runs.filter((r) => r.type === 'pipeline');
+    expect(pipes.length).toBeGreaterThan(0);
+    for (const r of pipes) {
+      expect(r.runId).toMatch(/^upd [0-9a-f]{1,8}$/);
+      expect(r.name.startsWith('[prod] raw_bronze_sap_sap_erp1_edw_core_tables_')).toBe(true);
+      expect(r.name.endsWith('_dev')).toBe(true);
+    }
+  });
+
+  it('sorts newest first with unique ids', () => {
+    for (let i = 1; i < data.runs.length; i++) expect(data.runs[i - 1].startTime).toBeGreaterThanOrEqual(data.runs[i].startTime);
+    expect(new Set(data.runs.map((r) => r.id)).size).toBe(data.runs.length);
+  });
+
+  it('gives failed runs at least one failed task', () => {
+    for (const r of data.runs.filter((x) => x.kind === 'failed')) expect(r.failed.length).toBeGreaterThan(0);
+  });
+});
