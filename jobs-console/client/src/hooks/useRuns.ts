@@ -13,14 +13,16 @@ export function useRuns(): RunsState {
 
   useEffect(() => {
     let alive = true;
-    fetch(`/api/runs?tzOffset=${new Date().getTimezoneOffset()}`)
+    fetch(`/api/runs?tzOffset=${new Date().getTimezoneOffset()}`, { signal: AbortSignal.timeout(15000) })
       .then(async (res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = (await res.json()) as RunsResponse;
         if (alive) setResult({ attempt, value: { state: 'ready', data, loadedAt: Date.now() } });
       })
       .catch((err: unknown) => {
-        const message = `Could not load runs: ${err instanceof Error ? err.message : String(err)}`;
+        const message = err instanceof DOMException && err.name === 'TimeoutError'
+          ? 'Could not load runs: request timed out'
+          : `Could not load runs: ${err instanceof Error ? err.message : String(err)}`;
         if (alive) setResult({ attempt, value: { state: 'error', message, retry } });
       });
     return () => {

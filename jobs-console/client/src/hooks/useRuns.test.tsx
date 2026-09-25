@@ -35,4 +35,11 @@ describe('useRuns', () => {
     await waitFor(() => expect(result.current.state).toBe('error'));
     if (result.current.state === 'error') expect(result.current.message).toBe('Could not load runs: HTTP 500');
   });
+
+  it('reports a timeout in plain language', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new DOMException('x', 'TimeoutError'))));
+    const { result } = renderHook(() => useRuns());
+    await waitFor(() => expect(result.current.state).toBe('error'));
+    if (result.current.state === 'error') expect(result.current.message).toBe('Could not load runs: request timed out');
+  });
 });
