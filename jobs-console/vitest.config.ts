@@ -6,6 +6,7 @@ export default defineConfig({
     passWithNoTests: true,
     globals: true,
     environment: 'node',
+    env: { TZ: 'UTC' },
     exclude: ['**/node_modules/**', '**/dist/**', '**/.databricks/**'],
   },
   resolve: {

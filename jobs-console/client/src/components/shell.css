@@ -1,0 +1,4 @@
+.shell-top { display: flex; align-items: center; gap: 12px; padding: 10px 24px; background: var(--paper); border-bottom: 1px solid var(--rule); }
+.shell-top h1 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: .01em; }
+.shell-badge { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); background: var(--wash-sand); border: 1px solid #e3d7c6; border-radius: 4px; padding: 1px 7px; }
+.shell-body { min-height: calc(100vh - 44px); }
