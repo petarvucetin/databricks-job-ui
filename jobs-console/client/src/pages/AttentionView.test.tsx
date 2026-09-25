@@ -55,6 +55,13 @@ describe('AttentionView', () => {
     expect(container.querySelectorAll('.ref .rr')).toHaveLength(2);
     expect(localStorage.getItem('jobs-console:labels')).toBe('1');
   });
+
+  it('ignores a Ctrl+L press so the reference block stays hidden', () => {
+    const { container } = render(<AttentionView data={data} loadedAt={Date.now()} />);
+    expect(container.querySelector('.ref')).toBeNull();
+    fireEvent.keyDown(document, { key: 'l', ctrlKey: true });
+    expect(container.querySelector('.ref')).toBeNull();
+  });
 });
 
 describe('AttentionPage', () => {
