@@ -48,7 +48,7 @@ describe('RunRow', () => {
     const boxes = [...container.querySelectorAll('.rr-hist .rh')];
     expect(boxes.map((b) => b.querySelector('.rh-t')!.textContent)).toEqual(['1h05', '42s', '10m', '23m']);
     expect(boxes.map((b) => b.querySelector('.rh-w')!.textContent)).toEqual(['19/05:00', '20/05:00', '21/05:00', '22/05:00']);
-    expect(boxes.map((b) => b.className)).toEqual(['rh succeeded', 'rh cancelled', 'rh partial', 'rh failed cur']);
+    expect(boxes.map((b) => b.className)).toEqual(['rh succeeded', 'rh cancelled', 'rh partial', 'rh failed']);
     expect(container.querySelector('.rr-hist .rh-more')).toBeNull();
   });
 

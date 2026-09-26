@@ -4,7 +4,7 @@ import './reference.css';
 
 const LEGEND: [string, string, string][] = [
   ['2', 'Type tag', 'Job or Pipeline, as a word.'],
-  ['12', 'Run history', "This job's finished runs in the timeline window, oldest to newest: runtime on top, start day/time (e.g. 18/06:00) under it; green succeeded, red failed, grey struck cancelled, split partially succeeded; outlined box is this run."],
+  ['12', 'Run history', "This job's finished runs in the timeline window, oldest to newest: runtime on top, start day/time (e.g. 18/06:00) under it; green succeeded, red failed, grey struck cancelled, split partially succeeded; the outlined box is the one whose popup is open."],
   ['3', 'Name', 'Full job or pipeline name; bundle target prefix dimmed.'],
   ['6', 'Task chain', 'One square per task, green ok, red failed, dashed skipped, blue running. Running rows only: the current run.'],
   ['13', 'Run as', 'Pill next to the type tag, above the name: the identity the run executes as.'],

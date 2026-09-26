@@ -27,10 +27,10 @@
 .rh.cancelled { background: #f1ede7; border-color: #c9bfb2; border-style: dashed; color: var(--ink-3); }
 .rh.cancelled .rh-t { text-decoration: line-through; text-decoration-color: #b3a894; }
 .rh.partial { background: linear-gradient(135deg, var(--wash-green) 0 50%, var(--wash-red) 50% 100%); border-color: #d9a092; color: var(--ink-2); }
-.rh.cur { outline: 2px solid var(--ink); outline-offset: 1px; font-weight: 600; }
 .rh.now.job { background: var(--wash-amber); border-color: #d9a21b; color: var(--amber-ink); }
 .rh.now.pipeline { background: var(--wash-blue); border-color: var(--blue); color: var(--blue); }
 .rh:hover { filter: brightness(.97); }
+.rh.pick { outline: 2px solid var(--ink); outline-offset: 1px; }
 .rh.pick::after { content: ""; position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%); border: 4px solid transparent; border-top-color: var(--ink); }
 .rh-wrap { position: relative; display: inline-flex; }
 .rh-pop { position: absolute; top: calc(100% + 10px); left: 0; z-index: 30; width: max-content; min-width: 240px; max-width: 400px; padding: 9px 12px 6px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 6px 20px rgba(60, 40, 10, .14); cursor: default; }

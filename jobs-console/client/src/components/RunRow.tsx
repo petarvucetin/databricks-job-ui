@@ -115,7 +115,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
             <span key={h.id} className="rh-wrap">
               <button
                 type="button"
-                className={`rh ${h.result ?? ''}${h.id === run.id ? ' cur' : ''}${h.id === open ? ' pick' : ''}`}
+                className={`rh ${h.result ?? ''}${h.id === open ? ' pick' : ''}`}
                 aria-label={`${fmtStart(h.startTime)}, ${RESULT_LABEL[h.result ?? 'failed']}, ${dur(h.durationSec)}`}
                 aria-expanded={h.id === open}
                 onClick={toggle(h.id)}
@@ -130,7 +130,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
             <span className="rh-wrap">
               <button
                 type="button"
-                className={`rh now ${run.type} cur${open === run.id ? ' pick' : ''}`}
+                className={`rh now ${run.type}${open === run.id ? ' pick' : ''}`}
                 aria-label={`${fmtStart(run.startTime)}, running now`}
                 aria-expanded={open === run.id}
                 onClick={toggle(run.id)}
