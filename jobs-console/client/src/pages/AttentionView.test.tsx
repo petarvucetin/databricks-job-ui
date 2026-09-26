@@ -48,16 +48,26 @@ describe('AttentionView', () => {
     for (const b of container.querySelectorAll('.tile b')) expect(b.textContent).toBe('0');
   });
 
-  it('toggles reference labels with the L key', () => {
+  it('shows reference labels by default and toggles them with the L key', () => {
     const { container } = render(<AttentionView data={data} loadedAt={Date.now()} />);
-    expect(container.querySelector('.ref')).toBeNull();
-    fireEvent.keyDown(document, { key: 'l' });
     expect(container.querySelector('.ref')).not.toBeNull();
     expect(container.querySelectorAll('.ref .rr')).toHaveLength(2);
+    fireEvent.keyDown(document, { key: 'l' });
+    expect(container.querySelector('.ref')).toBeNull();
+    expect(localStorage.getItem('jobs-console:labels')).toBe('0');
+    fireEvent.keyDown(document, { key: 'l' });
+    expect(container.querySelector('.ref')).not.toBeNull();
     expect(localStorage.getItem('jobs-console:labels')).toBe('1');
   });
 
-  it('ignores a Ctrl+L press so the reference block stays hidden', () => {
+  it('remembers hidden labels', () => {
+    localStorage.setItem('jobs-console:labels', '0');
+    const { container } = render(<AttentionView data={data} loadedAt={Date.now()} />);
+    expect(container.querySelector('.ref')).toBeNull();
+  });
+
+  it('ignores a Ctrl+L press so the reference block stays as it is', () => {
+    localStorage.setItem('jobs-console:labels', '0');
     const { container } = render(<AttentionView data={data} loadedAt={Date.now()} />);
     expect(container.querySelector('.ref')).toBeNull();
     fireEvent.keyDown(document, { key: 'l', ctrlKey: true });
