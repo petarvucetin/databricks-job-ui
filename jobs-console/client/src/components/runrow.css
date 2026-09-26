@@ -60,12 +60,13 @@
 .rr-st span { color: var(--ink-3); }
 .rr-st b, .rr-st em { font-style: normal; font-weight: 500; color: var(--ink); }
 
-/* Running indicator: solid bottom band fills toward the average, gold for jobs, blue for pipelines, current runtime printed at the fill's end; past the average it stays full with a tick at the average. */
-.rr.live { padding-bottom: 32px; --c: #d9a21b; --c-b: #e8bb4a; --c2: #f6e7bf; --ct: #3b2a05; }
+/* Running indicator: solid band under the name, inside the name column (never past the Run history column), gold for jobs, blue for pipelines, filling toward the average with the current runtime at the fill's end; past the average it stays full with a tick at the average. */
+.rr.live { --c: #d9a21b; --c-b: #e8bb4a; --c2: #f6e7bf; --ct: #3b2a05; }
 .rr.live.bar-pipeline { --c: var(--blue); --c-b: #4d88c7; --c2: #d3e1f2; --ct: #fff; }
-.rr-trk { position: absolute; left: 0; right: 0; bottom: 0; height: 22px; border-radius: 0 0 7px 7px; background: var(--c2); }
-.rr-bar { position: absolute; left: 0; bottom: 0; height: 22px; border-radius: 0 0 0 7px; min-width: 78px; width: calc(min(var(--p), 1) * 100%); background: var(--c); display: flex; align-items: center; justify-content: flex-end; }
+.rr-prog { position: relative; height: 22px; margin-top: 10px; border-radius: 5px; background: var(--c2); overflow: hidden; }
+.rr-bar { position: absolute; left: 0; top: 0; bottom: 0; min-width: 78px; width: calc(min(var(--p), 1) * 100%); background: var(--c); display: flex; align-items: center; justify-content: flex-end; }
 .rr-bar b { position: relative; z-index: 1; padding: 0 10px; font-size: 13px; font-weight: 600; color: var(--ct); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.rr.over .rr-bar { width: 100%; border-radius: 0 0 7px 7px; }
-.rr-avg { position: absolute; bottom: 0; width: 2px; height: 22px; z-index: 1; background: var(--ink); left: calc(100% / var(--p)); }
+.rr.over .rr-bar { width: 100%; }
+.rr.over .rr-bar b { z-index: 2; background: var(--c); } /* runtime sits over the average tick instead of being cut by it */
+.rr-avg { position: absolute; top: 0; bottom: 0; width: 2px; z-index: 1; background: var(--ink); left: calc(100% / var(--p)); }
 

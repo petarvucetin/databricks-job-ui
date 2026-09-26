@@ -102,6 +102,12 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
           )}
         </div>
         <span className="rr-name" data-c="3"><i>{prefix}</i>{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</span>
+        {run.live && (
+          <div className="rr-prog">
+            <span className="rr-bar"><b data-c="9">{stat.value}</b></span>
+            {over && <span className="rr-avg" />}
+          </div>
+        )}
       </div>
       <div className="rr-hist" data-c="12">
         <div className="rr-hist-t">
@@ -144,13 +150,6 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
           {hist.shown.length === 0 && !run.live && <span className="rh-none">no finished runs in this window</span>}
         </div>
       </div>
-      {run.live && (
-        <>
-          <span className="rr-trk" />
-          <span className="rr-bar"><b data-c="9">{stat.value}</b></span>
-          {over && <span className="rr-avg" />}
-        </>
-      )}
     </div>
   );
 }
