@@ -77,13 +77,11 @@ describe('RunRow', () => {
     expect(container.querySelector('.rr-bar [data-c="9"]')).not.toBeNull();
     expect(row.className).toContain('bar-job');
     expect(container.querySelector('.rr-hist-t [data-c="14"]')).not.toBeNull();
-    expect(container.querySelectorAll('[data-c="6"] i')).toHaveLength(10);
-    expect(container.querySelector('[data-c="7"]')!.textContent).toBe('5 ok, 1 running, 4 to go');
+    expect(container.querySelector('.rr-chain')).toBeNull();
     expect(container.querySelector('[data-c="8"]')).toBeNull();
     const now = container.querySelector('.rh.now')!;
     expect(now.textContent).toContain('5 of 10');
     expect(now.className).not.toContain('pick');
-    expect(container.querySelector('.rr-main [data-c="6"]')).not.toBeNull();
     expect(container.querySelector('.rr-bar')).not.toBeNull();
     expect(container.querySelector('.rr-avg')).toBeNull();
   });
@@ -109,8 +107,6 @@ describe('RunRow', () => {
     expect(pop.textContent).not.toContain('all ok');
     expect(pop.textContent).toContain('succeeded');
     expect(boxes[0].className).toContain('pick');
-    // the row's own chain stays on the current run
-    expect(container.querySelectorAll('.rr-main [data-c="6"] i')).toHaveLength(10);
     fireEvent.mouseEnter(pop.querySelectorAll('.rr-chain i')[2]);
     expect(pop.querySelector('.rr-task')!.textContent).toBe('extract_bseg');
     expect(pop.querySelector('.rr-task')!.nextElementSibling!.className).toBe('rr-chain');
@@ -130,13 +126,16 @@ describe('RunRow', () => {
     expect(container.querySelector('.rh-pop')).toBeNull();
   });
 
-  it('shows only the task name under the chain while a square is hovered', () => {
+  it("shows the current run's chain and count in its popup, with only the hovered task name above the chain", () => {
     const { container } = render(<RunRow run={live} nowMs={5000} loadedAt={0} asOf={0} />);
-    const sq = container.querySelectorAll('[data-c="6"] i');
-    expect(container.querySelector('[data-c="15"]')!.textContent.trim()).toBe('');
-    fireEvent.mouseEnter(sq[3]);
-    expect(container.querySelector('[data-c="15"]')!.textContent).toBe('extract_gl');
-    fireEvent.mouseLeave(container.querySelector('[data-c="6"]')!);
-    expect(container.querySelector('[data-c="15"]')!.textContent.trim()).toBe('');
+    fireEvent.click(container.querySelector('.rh.now')!);
+    const pop = container.querySelector('.rh-pop')!;
+    expect(pop.querySelectorAll('.rr-chain i')).toHaveLength(10);
+    expect(pop.querySelector('.rr-chain em')!.textContent).toBe('5 ok, 1 running, 4 to go');
+    expect(pop.querySelector('.rr-task')!.textContent.trim()).toBe('');
+    fireEvent.mouseEnter(pop.querySelectorAll('.rr-chain i')[3]);
+    expect(pop.querySelector('.rr-task')!.textContent).toBe('extract_gl');
+    fireEvent.mouseLeave(pop.querySelector('.rr-chain')!);
+    expect(pop.querySelector('.rr-task')!.textContent.trim()).toBe('');
   });
 });

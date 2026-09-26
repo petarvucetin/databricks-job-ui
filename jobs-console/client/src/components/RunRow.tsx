@@ -10,21 +10,19 @@ import './runrow.css';
 const CHAIN_CLASS = { ok: '', f: 'f', s: 's', r: 'r', p: 'q' } as const;
 const RESULT_LABEL = { succeeded: 'succeeded', failed: 'failed', cancelled: 'cancelled', partial: 'partially succeeded' } as const;
 
-/** One square per task plus the counted summary; hovering a square shows only its task name, on the line below (or above, in the popup). */
-function TaskChain({ run, elapsed, labels, nameAbove }: { run: Run; elapsed: number; labels?: boolean; nameAbove?: boolean }) {
+/** One square per task plus the counted summary; hovering a square shows only its task name on the line above. */
+function TaskChain({ run, elapsed }: { run: Run; elapsed: number }) {
   const [hover, setHover] = useState<number | null>(null);
   const states = taskStates(run, elapsed);
   const names = taskNames(run);
   const summary = chainSummary(run, elapsed);
-  const name = <div className="rr-task" data-c={labels ? '15' : undefined}>{hover !== null && names[hover] ? names[hover] : ' '}</div>;
   return (
     <>
-      {nameAbove && name}
-      <div className="rr-chain" data-c={labels ? '6' : undefined} onMouseLeave={() => setHover(null)}>
+      <div className="rr-task">{hover !== null && names[hover] ? names[hover] : ' '}</div>
+      <div className="rr-chain" onMouseLeave={() => setHover(null)}>
         {states.map((s, i) => <i key={i} className={`${CHAIN_CLASS[s]}${hover === i ? ' hov' : ''}`} onMouseEnter={() => setHover(i)} />)}
-        {summary !== 'all ok' && <em data-c={labels ? '7' : undefined}>{summary}</em>}
+        {summary !== 'all ok' && <em>{summary}</em>}
       </div>
-      {!nameAbove && name}
     </>
   );
 }
@@ -60,7 +58,7 @@ function RunPopup({ run, elapsed, live, onClose }: { run: Run; elapsed: number; 
         <span>{dur(elapsed)}</span>
         <button type="button" className="rh-pop-x" aria-label="Close" onClick={onClose}>×</button>
       </div>
-      <TaskChain run={run} elapsed={elapsed} nameAbove />
+      <TaskChain run={run} elapsed={elapsed} />
     </div>
   );
 }
@@ -105,7 +103,6 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
           )}
         </div>
         <span className="rr-name" data-c="3"><i>{prefix}</i>{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</span>
-        {run.live && <TaskChain run={run} elapsed={elapsed} labels />}
       </div>
       <div className="rr-hist" data-c="12">
         <div className="rr-hist-t">
