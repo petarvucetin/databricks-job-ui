@@ -1,4 +1,6 @@
-.tiles { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; padding: 6px 24px 4px 24px; }
+.tiles { display: flex; gap: 28px; padding: 6px 24px 4px 24px; }
+.tile-grp { flex: 1 1 0; min-width: 0; display: grid; gap: 4px 10px; align-content: start; }
+.tile-grp-t { grid-column: 1 / -1; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); padding-left: 2px; }
 .tile { position: relative; padding: 8px 14px 8px 16px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; display: grid; grid-template-columns: auto 1fr; column-gap: 10px; align-items: baseline; text-align: left; }
 .tile:hover { border-color: #d9cdbd; background: #fffcf6; }
 .tile b { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; }
