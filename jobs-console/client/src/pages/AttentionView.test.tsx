@@ -27,7 +27,7 @@ const data: RunsResponse = {
 describe('AttentionView', () => {
   it('shows the default view: last 2 days, tiles with counts, rows sorted by status', () => {
     const { container } = render(<AttentionView data={data} loadedAt={Date.now()} />);
-    expect(container.querySelectorAll('.tile')).toHaveLength(7);
+    expect(container.querySelectorAll('.tile')).toHaveLength(6);
     expect(screen.getByRole('button', { name: /^1\s*Failed/ })).toBeTruthy();
     expect([...container.querySelectorAll('.rl .rr')].map((r) => r.getAttribute('data-id'))).toEqual(['3', '1', '2']);
   });

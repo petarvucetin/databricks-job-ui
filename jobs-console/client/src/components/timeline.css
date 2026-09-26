@@ -28,7 +28,6 @@
 .cube.slow { background: var(--wash-amber); border-color: var(--amber); border-style: dashed; color: var(--amber-ink); }
 .cube.running { background: var(--wash-blue); border-color: var(--blue); color: var(--blue); }
 .cube.queued { background: var(--wash-sand); border-color: #c9bfb2; color: var(--ink-2); }
-.cube.snoozed { background: var(--wash-sand); border-color: #c9bfb2; border-style: dashed; color: var(--ink-2); }
 .cube.succeeded { background: var(--wash-green); border-color: var(--green); color: var(--green); }
 /* collapsed (T): one line, just the date range */
 .tl-min { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 8px 14px; }

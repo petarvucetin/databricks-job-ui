@@ -3,7 +3,7 @@ import { KIND_TITLES, STATUS_GROUPS, tileSubtitle } from '../model/filters';
 import type { Action } from '../model/viewState';
 import './tiles.css';
 
-const TONE: Record<RunKind, string> = { failed: 'red', retrying: 'amber', slow: 'amber', running: 'blue', queued: '', snoozed: '', succeeded: 'green' };
+const TONE: Record<RunKind, string> = { failed: 'red', retrying: 'amber', slow: 'amber', running: 'blue', queued: '', succeeded: 'green' };
 
 export function StatusTiles({ tiles, statuses, asOf, dispatch }: {
   tiles: Record<RunKind, Run[]>;

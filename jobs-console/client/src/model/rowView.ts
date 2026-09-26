@@ -25,8 +25,6 @@ export function problemText(r: Run): string {
       return 'running, on track';
     case 'succeeded':
       return 'succeeded';
-    case 'snoozed':
-      return 'snoozed until 15:00';
   }
 }
 
@@ -90,7 +88,7 @@ export function chainSummary(r: Run, elapsed: number = r.durationSec): string {
 }
 
 export function whenText(r: Run): string {
-  const verb = r.kind === 'failed' ? 'failed' : r.kind === 'queued' ? 'queued since' : r.kind === 'succeeded' ? 'finished' : r.kind === 'snoozed' ? 'snoozed, last' : 'started';
+  const verb = r.kind === 'failed' ? 'failed' : r.kind === 'queued' ? 'queued since' : r.kind === 'succeeded' ? 'finished' : 'started';
   return `${verb} ${fmtStart(r.startTime)}`;
 }
 

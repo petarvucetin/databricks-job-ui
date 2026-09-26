@@ -4,6 +4,8 @@ import { lcg } from './random';
 interface CauseSpec extends Cause {
   kind: RunKind;
   w: number;
+  /** Stands in for the prototype's "snoozed" runs (not a Databricks state): ordinary failures now, drawn without extra random numbers so the rest of the data stays put. */
+  plain?: boolean;
 }
 
 const CAUSES: CauseSpec[] = [
@@ -14,7 +16,7 @@ const CAUSES: CauseSpec[] = [
   { kind: 'retrying', label: 'Retrying', code: 'CLOUD_FAILURE', detail: 'attempt 2 of 4', w: 12 },
   { kind: 'slow', label: 'Slow', code: '', detail: '', w: 41 },
   { kind: 'queued', label: 'Queued', code: 'MAX_CONCURRENT_RUNS_REACHED', detail: 'concurrency limit', w: 63 },
-  { kind: 'snoozed', label: 'Snoozed', code: '', detail: 'until 15:00', w: 38 },
+  { kind: 'failed', label: 'Table not found', code: 'CLIENT_ERROR', detail: 'finance.gl_staging', w: 38, plain: true },
   { kind: 'succeeded', label: 'Succeeded', code: '', detail: '', w: 1620 },
 ];
 const SUCCEEDED = CAUSES[8];
@@ -70,11 +72,11 @@ interface Draft {
 
 /**
  * Final outcome of a finished run; null while it is still going or waiting.
- * Failed and snoozed runs failed; a sprinkling of otherwise-successful runs were cancelled or only partially succeeded.
+ * Failed runs failed; a sprinkling of otherwise-successful runs were cancelled or only partially succeeded.
  */
 function resultOf(d: { id: number; kind: RunKind }, live: boolean): RunResult | null {
   if (live || d.kind === 'queued' || d.kind === 'running' || d.kind === 'retrying') return null;
-  if (d.kind === 'failed' || d.kind === 'snoozed') return 'failed';
+  if (d.kind === 'failed') return 'failed';
   if (d.id % 13 === 0) return 'cancelled';
   if (d.id % 11 === 0) return 'partial';
   return 'succeeded';
@@ -98,7 +100,7 @@ export function generateRuns(tzOffsetMin: number = DEFAULT_TZ_OFFSET_MIN): RunsR
       const usual = 600 + Math.floor(rnd() * 6000);
       const total = c.kind === 'slow' ? Math.floor(usual * (1.6 + rnd() * 2)) : c.kind === 'queued' ? 0 : Math.floor(usual * (0.9 + rnd() * 0.3));
       if (c.kind === 'succeeded') ntasks = 2 + Math.floor(rnd() * 19);
-      const nfail = c.kind === 'failed' ? Math.min(ntasks - 1, rnd() < 0.7 ? 1 : 2 + Math.floor(rnd() * 8)) : 0;
+      const nfail = c.kind === 'failed' && !c.plain ? Math.min(ntasks - 1, rnd() < 0.7 ? 1 : 2 + Math.floor(rnd() * 8)) : 0;
       const pool = TASK_NAMES.slice(1);
       const failed: Draft['failed'] = [];
       for (let f = 0; f < nfail; f++) {
@@ -106,6 +108,7 @@ export function generateRuns(tzOffsetMin: number = DEFAULT_TZ_OFFSET_MIN): RunsR
         const cause = f === 0 || rnd() < 0.75 ? c : pick(CAUSES.slice(0, 4));
         failed.push({ name, cause, secs: 2 + Math.floor(rnd() * 5) });
       }
+      if (c.plain) failed.push({ name: TASK_NAMES[1 + ((id + 1) % (TASK_NAMES.length - 1))], cause: c, secs: 3 });
       const mine = rnd() < 0.055;
       const name = pick(PREFIXES);
       const suffix = pick(SUFFIX_A) + '_' + pick(SUFFIX_B);

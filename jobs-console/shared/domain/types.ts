@@ -1,4 +1,4 @@
-export const RUN_KINDS = ['failed', 'retrying', 'slow', 'running', 'queued', 'snoozed', 'succeeded'] as const;
+export const RUN_KINDS = ['failed', 'retrying', 'slow', 'running', 'queued', 'succeeded'] as const;
 export type RunKind = (typeof RUN_KINDS)[number];
 export type RunType = 'job' | 'pipeline';
 /** Finished-run outcome (Databricks result state): SUCCESS, FAILED, CANCELED, SUCCESS_WITH_FAILURES. */

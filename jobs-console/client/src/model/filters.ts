@@ -29,12 +29,12 @@ export interface Filters {
 export const STATUS_GROUPS: { title: string; kinds: RunKind[] }[] = [
   { title: 'Running now', kinds: ['running', 'slow', 'retrying'] },
   { title: 'Waiting', kinds: ['queued'] },
-  { title: 'Finished', kinds: ['failed', 'succeeded', 'snoozed'] },
+  { title: 'Finished', kinds: ['failed', 'succeeded'] },
 ];
 const ROW_ORDER: RunKind[] = STATUS_GROUPS.flatMap((g) => g.kinds);
 
 export const KIND_TITLES: Record<RunKind, string> = {
-  failed: 'Failed', retrying: 'Retrying', slow: 'Slow', running: 'Running', queued: 'Queued', snoozed: 'Snoozed', succeeded: 'Succeeded',
+  failed: 'Failed', retrying: 'Retrying', slow: 'Slow', running: 'Running', queued: 'Queued', succeeded: 'Succeeded',
 };
 
 const ERRWORDS: Record<string, string> = {
@@ -142,8 +142,6 @@ export function tileSubtitle(kind: RunKind, runs: Run[], asOf: number): string {
       return 'on track';
     case 'queued':
       return `longest ${dur(Math.max(...runs.map((r) => (asOf - r.startTime) / 1000)))}`;
-    case 'snoozed':
-      return 'until 15:00';
     case 'succeeded': {
       const slower = runs.filter((r) => r.durationSec > r.usualSec * 1.1).length;
       return slower ? `${slower} slower than usual` : '';

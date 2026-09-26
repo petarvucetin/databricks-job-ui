@@ -51,8 +51,7 @@ describe('filters', () => {
     const slow = makeRun({ id: 12, kind: 'slow', startTime: 3 });
     const retrying = makeRun({ id: 13, kind: 'retrying', startTime: 4 });
     const queued = makeRun({ id: 14, kind: 'queued', startTime: 5 });
-    const snoozed = makeRun({ id: 15, kind: 'snoozed', startTime: 6 });
-    expect(sortRuns([snoozed, ok, queued, live, a, retrying, b, slow]).map((r) => r.id)).toEqual([3, 12, 13, 14, 11, 10, 2, 15]);
+    expect(sortRuns([ok, queued, live, a, retrying, b, slow]).map((r) => r.id)).toEqual([3, 12, 13, 14, 11, 10, 2]);
   });
 
   it('counts scope, menus, live and tiles', () => {
