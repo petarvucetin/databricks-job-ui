@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { makeRun } from '../test/fixtures';
-import { historyByJob, visibleHistory, durShort, HISTORY_MAX } from './history';
+import { historyByJob, visibleHistory, durShort, dayTime, HISTORY_MAX } from './history';
 
 const day = 86400000;
 const end = new Date(2026, 8, 23).getTime();
@@ -41,5 +41,10 @@ describe('history', () => {
     expect(durShort(1404)).toBe('23m');
     expect(durShort(3900)).toBe('1h05');
     expect(durShort(36000)).toBe('10h');
+  });
+
+  it('labels when a run started as day/HH:MM', () => {
+    expect(dayTime(new Date(2026, 8, 18, 6, 0).getTime())).toBe('18/06:00');
+    expect(dayTime(new Date(2026, 8, 3, 9, 30).getTime())).toBe('3/09:30');
   });
 });

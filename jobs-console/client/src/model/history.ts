@@ -1,5 +1,6 @@
 import type { Run } from '../../../shared/domain/types';
 import type { TimeWindow } from './filters';
+import { pad } from '../../../shared/domain/format';
 
 /** Most boxes a row shows; older runs in the window collapse into an "+N earlier" chip. */
 export const HISTORY_MAX = 24;
@@ -29,4 +30,10 @@ export function durShort(sec: number): string {
   const m = Math.floor((s % 3600) / 60);
   if (h) return m ? `${h}h${m < 10 ? '0' : ''}${m}` : `${h}h`;
   return m ? `${m}m` : `${s}s`;
+}
+
+/** When a run started, compact enough for a history box: "18/06:00" (day of month / local time). */
+export function dayTime(ms: number): string {
+  const d = new Date(ms);
+  return `${d.getDate()}/${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }

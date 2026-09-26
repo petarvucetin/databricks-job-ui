@@ -4,7 +4,7 @@ import { dur, fmtStart } from '../../../shared/domain/format';
 import {
   borderTone, chainSummary, elapsedSec, liveMessage, problemText, progress, splitName, statBlock, taskStates, taskText, whenText,
 } from '../model/rowView';
-import { durShort, visibleHistory } from '../model/history';
+import { dayTime, durShort, visibleHistory } from '../model/history';
 import './runrow.css';
 
 const CHAIN_CLASS = { ok: '', f: 'f', s: 's', r: 'r', p: 'q' } as const;
@@ -44,9 +44,13 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
           <div className="rr-hist-boxes">
             {hist.earlier > 0 && <span className="rh-more">+{hist.earlier} earlier</span>}
             {hist.shown.map((h) => (
-              <span key={h.id} className="rh-cell" title={`${fmtStart(h.startTime)}, ${RESULT_LABEL[h.result ?? 'failed']}, ${dur(h.durationSec)}`}>
-                <span className={`rh ${h.result ?? ''}${h.id === run.id ? ' cur' : ''}`}>{durShort(h.durationSec)}</span>
-                <span className="rh-day">{new Date(h.startTime).getDate()}</span>
+              <span
+                key={h.id}
+                className={`rh ${h.result ?? ''}${h.id === run.id ? ' cur' : ''}`}
+                title={`${fmtStart(h.startTime)}, ${RESULT_LABEL[h.result ?? 'failed']}, ${dur(h.durationSec)}`}
+              >
+                <span className="rh-t">{durShort(h.durationSec)}</span>
+                <span className="rh-w">{dayTime(h.startTime)}</span>
               </span>
             ))}
             {hist.shown.length === 0 && <span className="rh-none">no finished runs in this window</span>}

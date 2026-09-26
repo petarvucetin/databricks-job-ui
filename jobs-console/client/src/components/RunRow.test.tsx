@@ -28,7 +28,7 @@ describe('RunRow', () => {
     expect(container.querySelectorAll('.rr-hist .rh')).toHaveLength(1);
   });
 
-  it('draws one runtime box per finished run in the window, coloured by result, with the day under it', () => {
+  it('draws one runtime box per finished run in the window, coloured by result, with runtime over start day/time', () => {
     const d = (day: number) => new Date(2026, 8, day, 5).getTime();
     const ok = makeRun({ id: 2, kind: 'succeeded', failed: [], result: 'succeeded', durationSec: 3900, startTime: d(19) });
     const cancelled = makeRun({ id: 4, kind: 'succeeded', failed: [], result: 'cancelled', durationSec: 42, startTime: d(20) });
@@ -36,9 +36,9 @@ describe('RunRow', () => {
     const cur = makeRun({ id: 3, startTime: d(22) });
     const { container } = render(<RunRow run={cur} history={[ok, cancelled, partial, cur]} nowMs={0} loadedAt={0} asOf={0} />);
     const boxes = [...container.querySelectorAll('.rr-hist .rh')];
-    expect(boxes.map((b) => b.textContent)).toEqual(['1h05', '42s', '10m', '23m']);
+    expect(boxes.map((b) => b.querySelector('.rh-t')!.textContent)).toEqual(['1h05', '42s', '10m', '23m']);
+    expect(boxes.map((b) => b.querySelector('.rh-w')!.textContent)).toEqual(['19/05:00', '20/05:00', '21/05:00', '22/05:00']);
     expect(boxes.map((b) => b.className)).toEqual(['rh succeeded', 'rh cancelled', 'rh partial', 'rh failed cur']);
-    expect([...container.querySelectorAll('.rr-hist .rh-day')].map((e) => e.textContent)).toEqual(['19', '20', '21', '22']);
     expect(container.querySelector('.rr-hist .rh-more')).toBeNull();
   });
 

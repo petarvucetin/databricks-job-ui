@@ -9,7 +9,7 @@ const LEGEND: [string, string, string][] = [
   ['9', 'Now / took', 'Big elapsed time while running; plain duration once finished.'],
   ['13', 'Run as', 'Pill before the name: the identity the run executes as.'],
   ['10', 'When', 'Failed, started, finished or queued since, with the timestamp.'],
-  ['12', 'Run history', "This job's finished runs in the timeline window, oldest to newest: runtime in the box, day under it; green succeeded, red failed, grey struck cancelled, split partially succeeded; outlined box is this run."],
+  ['12', 'Run history', "This job's finished runs in the timeline window, oldest to newest: runtime on top, start day/time (e.g. 18/06:00) under it; green succeeded, red failed, grey struck cancelled, split partially succeeded; outlined box is this run."],
   ['11', 'Stats block', 'Now (running) or took, against the average duration.'],
   ['6', 'Task chain', 'Running only: one square per task, green ok, red failed, dashed skipped, blue running.'],
   ['4', 'Cause pill', 'Parked, to be reconsidered.'],
