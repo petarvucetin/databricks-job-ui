@@ -37,6 +37,14 @@ describe('generateRuns', () => {
     for (const r of data.runs.filter((x) => x.continuous)) expect(r.live).toBe(true);
   });
 
+  it('gives every job still going at now at least one finished run earlier today, ending before it started', () => {
+    const today = new Date(2026, 8, 22).getTime();
+    for (const r of data.runs.filter((x) => x.live)) {
+      const earlier = data.runs.filter((x) => x.name === r.name && x.result !== null && x.startTime >= today && x.startTime + x.durationSec * 1000 <= r.startTime);
+      expect(earlier.length).toBeGreaterThanOrEqual(1);
+    }
+  });
+
   it('gives pipelines update ids and full names', () => {
     const pipes = data.runs.filter((r) => r.type === 'pipeline');
     expect(pipes.length).toBeGreaterThan(0);

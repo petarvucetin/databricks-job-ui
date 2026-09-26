@@ -80,6 +80,8 @@ function resultOf(d: { id: number; kind: RunKind }, live: boolean): RunResult | 
   return 'succeeded';
 }
 
+const isLive = (d: Draft): boolean => d.kind === 'running' || d.kind === 'retrying' || d.continuous || (d.kind === 'slow' && d.startMin + d.total / 60 >= NOW_MIN);
+
 const toCause = (c: CauseSpec): Cause => ({ label: c.label, code: c.code, detail: c.detail });
 
 export function generateRuns(tzOffsetMin: number = DEFAULT_TZ_OFFSET_MIN): RunsResponse {
@@ -177,9 +179,35 @@ export function generateRuns(tzOffsetMin: number = DEFAULT_TZ_OFFSET_MIN): RunsR
     d.total = Math.floor(d.usual * (0.9 + (d.id % 20) / 100));
   }
 
+  // Earlier today (seed 23): each job still going at now gets 1-6 finished runs back to back before the current one, so its run history has something to show.
+  const rnd3 = lcg(23);
+  const dayStart = NOW_MIN - 480;
+  for (const d of drafts.filter(isLive)) {
+    const want = 1 + Math.floor(rnd3() * 6);
+    let before = d.startMin;
+    for (let k = 0; k < want; k++) {
+      let gap = 5 + Math.floor(rnd3() * 25);
+      let total = Math.floor(d.usual * (0.85 + rnd3() * 0.3));
+      if (total / 60 > before - gap - dayStart) {
+        if (k > 0) break;
+        // at least one run today: tighten the gap, and shorten the run if it still does not fit
+        gap = 2;
+        total = Math.min(total, Math.floor((before - gap - dayStart) * 60 * 0.9));
+        if (total < 120) break;
+      }
+      const fail = rnd3() < 0.15;
+      const cause = fail ? CAUSES[Math.floor(rnd3() * 4)] : SUCCEEDED;
+      const startMin = before - gap - Math.ceil(total / 60);
+      const failed: Draft['failed'] = fail ? [{ name: d.type === 'pipeline' ? FLOWS[(id + 1) % FLOWS.length] : TASK_NAMES[1 + ((id + 1) % (TASK_NAMES.length - 1))], cause, secs: 3 }] : [];
+      const runId = d.type === 'pipeline' ? 'upd ' + (((id + 1) * 2654435761) % 4294967296).toString(16).slice(0, 8) : String(630000000000000 + Math.floor(rnd3() * 999999999));
+      drafts.push({ ...d, id: ++id, kind: cause.kind, cause, startMin, total, failed, runId, old: false, continuous: false });
+      before = startMin;
+    }
+  }
+
   const runs: Run[] = drafts.map((d) => {
     const failed: FailedTask[] = d.failed.map((f) => ({ name: f.name, cause: toCause(f.cause), secs: f.secs }));
-    const live = d.kind === 'running' || d.kind === 'retrying' || d.continuous || (d.kind === 'slow' && d.startMin + d.total / 60 >= NOW_MIN);
+    const live = isLive(d);
     return {
       result: resultOf(d, live),
       id: d.id,
