@@ -16,12 +16,14 @@ const PRESETS: { id: Preset; label: string }[] = [
   { id: 'today', label: 'today' },
 ];
 
-export function Timeline({ runs, end, scale, window, cube, dispatch }: {
+export function Timeline({ runs, end, scale, window, cube, collapsed, dispatch }: {
   runs: Run[];
   end: number;
   scale: ScaleId;
   window: TimeWindow;
   cube: { col: number; kind: RunKind } | null;
+  /** One line with just the selected date range (T toggles). */
+  collapsed?: boolean;
   dispatch: (a: Action) => void;
 }) {
   const bks = useMemo(() => buckets(scale, end), [scale, end]);
@@ -43,7 +45,7 @@ export function Timeline({ runs, end, scale, window, cube, dispatch }: {
     const ro = new ResizeObserver((entries) => setLineWidth(entries[0]?.contentRect.width ?? 0));
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [collapsed]);
   const showStartLabel = lineWidth === 0 || (b - a) * lineWidth >= 90;
 
   const colFromPointer = (clientX: number) => {
@@ -86,6 +88,17 @@ export function Timeline({ runs, end, scale, window, cube, dispatch }: {
     trackDrag(e, (ev) => shiftWindow(bks, start, Math.round((ev.clientX - x0) / colWidth)));
   };
 
+  const rangeText = `${fmtEdge(window.from)} to ${fmtEdge(window.to)}, ${spanText(window.to - window.from)}`;
+
+  if (collapsed) {
+    return (
+      <section className="tl tl-min" aria-label="Timeline, collapsed">
+        <span className="tl-span">{rangeText}</span>
+        <span className="tl-key">T to expand</span>
+      </section>
+    );
+  }
+
   return (
     <section className="tl">
       <div className="tl-head-row">
@@ -95,7 +108,7 @@ export function Timeline({ runs, end, scale, window, cube, dispatch }: {
             <button key={s} type="button" className={s === scale ? 'on' : ''} onClick={() => dispatch({ type: 'scale', scale: s })}>{s}</button>
           ))}
         </span>
-        <span className="tl-span">{`${fmtEdge(window.from)} to ${fmtEdge(window.to)}, ${spanText(window.to - window.from)}`}</span>
+        <span className="tl-span">{rangeText}</span>
         <span className="tl-presets">
           {PRESETS.map((p) => (
             <button key={p.id} type="button" className={!cube && sameWindow(window, presetWindow(p.id, scale, end)) ? 'on' : ''} onClick={() => dispatch({ type: 'preset', preset: p.id })}>{p.label}</button>

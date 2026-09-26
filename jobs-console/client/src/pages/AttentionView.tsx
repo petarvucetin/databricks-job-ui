@@ -5,7 +5,7 @@ import { timelineEnd } from '../model/timeline';
 import { historyByJob } from '../model/history';
 import { applyAction, initialState, type Action, type MenuKey, type ViewCtx } from '../model/viewState';
 import { useNow } from '../hooks/useNow';
-import { useReferenceLabels } from '../hooks/useReferenceLabels';
+import { useReferenceLabels, useTimelineCollapsed } from '../hooks/useKeyToggle';
 import { FilterBar } from '../components/FilterBar';
 import { Timeline } from '../components/Timeline';
 import { StatusTiles } from '../components/StatusTiles';
@@ -22,6 +22,7 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
   const [selected, setSelected] = useState<number | null>(null);
   const nowMs = useNow(1000);
   const labels = useReferenceLabels();
+  const timelineCollapsed = useTimelineCollapsed();
   const f = state.filters;
 
   const rows = useMemo(() => sortRuns(data.runs.filter((r) => passes(r, f))), [data.runs, f]);
@@ -51,7 +52,7 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
         updatedText={ago < 60 ? `updated ${ago}s ago` : `updated ${Math.floor(ago / 60)}m ago`}
         dispatch={dispatch}
       />
-      <Timeline runs={data.runs} end={ctx.end} scale={state.scale} window={f.window} cube={state.cube} dispatch={dispatch} />
+      <Timeline runs={data.runs} end={ctx.end} scale={state.scale} window={f.window} cube={state.cube} collapsed={timelineCollapsed} dispatch={dispatch} />
       <StatusTiles tiles={tiles} statuses={f.statuses} asOf={data.asOf} dispatch={dispatch} />
       {labels && rows.length > 0 && <ReferenceBlock rows={rows} history={history} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} />}
       <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} dispatch={dispatch} />
