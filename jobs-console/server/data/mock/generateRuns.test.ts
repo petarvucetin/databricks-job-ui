@@ -55,6 +55,17 @@ describe('generateRuns', () => {
   it('gives failed runs at least one failed task', () => {
     for (const r of data.runs.filter((x) => x.kind === 'failed')) expect(r.failed.length).toBeGreaterThan(0);
   });
+
+  it('gives every finished run a result and unfinished runs none', () => {
+    for (const r of data.runs) {
+      const unfinished = r.live || r.kind === 'queued' || r.kind === 'running' || r.kind === 'retrying';
+      if (unfinished) expect(r.result).toBeNull();
+      else expect(['succeeded', 'failed', 'cancelled', 'partial']).toContain(r.result);
+      if (r.kind === 'failed' || r.kind === 'snoozed') expect(r.result).toBe('failed');
+    }
+    const seen = new Set(data.runs.map((r) => r.result));
+    for (const v of ['succeeded', 'failed', 'cancelled', 'partial']) expect(seen.has(v as never)).toBe(true);
+  });
 });
 
 describe('generateRuns with an explicit time zone offset (UTC+2)', () => {

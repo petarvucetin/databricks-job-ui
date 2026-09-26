@@ -6,7 +6,7 @@ import { makeRun } from '../test/fixtures';
 
 afterEach(cleanup);
 
-const live = makeRun({ id: 40, kind: 'running', failed: [], live: true, ntasks: 10, durationSec: 600, usualSec: 1200, cause: { label: 'Running', code: '', detail: '' } });
+const live = makeRun({ id: 40, kind: 'running', failed: [], live: true, result: null, ntasks: 10, durationSec: 600, usualSec: 1200, cause: { label: 'Running', code: '', detail: '' } });
 
 describe('RunRow', () => {
   it('renders a finished failed run: full name, run as, took + average, red border, no running parts', () => {
@@ -28,18 +28,28 @@ describe('RunRow', () => {
     expect(container.querySelectorAll('.rr-hist .rh')).toHaveLength(1);
   });
 
-  it('draws one runtime box per run of this job in the window, oldest first, current run marked', () => {
-    const prev = makeRun({ id: 2, kind: 'succeeded', failed: [], durationSec: 3900, startTime: 1 });
-    const cur = makeRun({ id: 3, startTime: 2 });
-    const { container } = render(<RunRow run={cur} history={[prev, cur]} nowMs={0} loadedAt={0} asOf={0} />);
+  it('draws one runtime box per finished run in the window, coloured by result, with the day under it', () => {
+    const d = (day: number) => new Date(2026, 8, day, 5).getTime();
+    const ok = makeRun({ id: 2, kind: 'succeeded', failed: [], result: 'succeeded', durationSec: 3900, startTime: d(19) });
+    const cancelled = makeRun({ id: 4, kind: 'succeeded', failed: [], result: 'cancelled', durationSec: 42, startTime: d(20) });
+    const partial = makeRun({ id: 5, kind: 'succeeded', failed: [], result: 'partial', durationSec: 600, startTime: d(21) });
+    const cur = makeRun({ id: 3, startTime: d(22) });
+    const { container } = render(<RunRow run={cur} history={[ok, cancelled, partial, cur]} nowMs={0} loadedAt={0} asOf={0} />);
     const boxes = [...container.querySelectorAll('.rr-hist .rh')];
-    expect(boxes.map((b) => b.textContent)).toEqual(['1h05', '23m']);
-    expect(boxes.map((b) => b.className)).toEqual(['rh succeeded', 'rh failed cur']);
+    expect(boxes.map((b) => b.textContent)).toEqual(['1h05', '42s', '10m', '23m']);
+    expect(boxes.map((b) => b.className)).toEqual(['rh succeeded', 'rh cancelled', 'rh partial', 'rh failed cur']);
+    expect([...container.querySelectorAll('.rr-hist .rh-day')].map((e) => e.textContent)).toEqual(['19', '20', '21', '22']);
     expect(container.querySelector('.rr-hist .rh-more')).toBeNull();
   });
 
+  it('shows no boxes for a run still going when the job has no finished runs in the window', () => {
+    const { container } = render(<RunRow run={live} nowMs={0} loadedAt={0} asOf={0} />);
+    expect(container.querySelectorAll('.rr-hist .rh')).toHaveLength(0);
+    expect(container.querySelector('.rr-hist')!.textContent).toContain('no finished runs in this window');
+  });
+
   it('collapses runs beyond the box limit into an "earlier" chip', () => {
-    const many = Array.from({ length: 30 }, (_, i) => makeRun({ id: 100 + i, kind: 'succeeded', failed: [], startTime: i }));
+    const many = Array.from({ length: 30 }, (_, i) => makeRun({ id: 100 + i, kind: 'succeeded', failed: [], result: 'succeeded', startTime: i }));
     const { container } = render(<RunRow run={many[29]} history={many} nowMs={0} loadedAt={0} asOf={0} />);
     expect(container.querySelectorAll('.rr-hist .rh')).toHaveLength(24);
     expect(container.querySelector('.rr-hist .rh-more')!.textContent).toBe('+6 earlier');

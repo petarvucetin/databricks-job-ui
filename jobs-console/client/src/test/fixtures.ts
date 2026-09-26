@@ -19,6 +19,7 @@ export function makeRun(over: Partial<Run> = {}): Run {
     mine: false,
     live: false,
     continuous: false,
+    result: 'failed',
     ...over,
   };
 }

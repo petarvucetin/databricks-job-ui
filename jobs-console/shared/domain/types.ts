@@ -1,6 +1,8 @@
 export const RUN_KINDS = ['failed', 'retrying', 'slow', 'running', 'queued', 'snoozed', 'succeeded'] as const;
 export type RunKind = (typeof RUN_KINDS)[number];
 export type RunType = 'job' | 'pipeline';
+/** Finished-run outcome (Databricks result state): SUCCESS, FAILED, CANCELED, SUCCESS_WITH_FAILURES. */
+export type RunResult = 'succeeded' | 'failed' | 'cancelled' | 'partial';
 
 export interface Cause {
   label: string;
@@ -36,6 +38,8 @@ export interface Run {
   live: boolean;
   /** Continuous pipeline. */
   continuous: boolean;
+  /** Final outcome once the run has finished; null while queued or running. */
+  result: RunResult | null;
 }
 
 export interface RunsResponse {

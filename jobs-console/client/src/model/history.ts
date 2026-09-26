@@ -4,11 +4,11 @@ import type { TimeWindow } from './filters';
 /** Most boxes a row shows; older runs in the window collapse into an "+N earlier" chip. */
 export const HISTORY_MAX = 24;
 
-/** Runs of each job (keyed by full name) that started inside the timeline window, oldest first. */
+/** Finished runs (with a result) of each job, keyed by full name, that started inside the timeline window, oldest first. */
 export function historyByJob(runs: Run[], w: TimeWindow): Map<string, Run[]> {
   const out = new Map<string, Run[]>();
   for (const r of runs) {
-    if (r.startTime < w.from || r.startTime >= w.to) continue;
+    if (r.result === null || r.startTime < w.from || r.startTime >= w.to) continue;
     const list = out.get(r.name);
     if (list) list.push(r);
     else out.set(r.name, [r]);

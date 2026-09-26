@@ -18,6 +18,14 @@ describe('history', () => {
     expect(h.has('job_c')).toBe(false);
   });
 
+  it('leaves out runs that have not finished (no result yet)', () => {
+    const done = makeRun({ id: 1, name: 'job_a', startTime: end - 3 * 3600000, result: 'succeeded' });
+    const queued = makeRun({ id: 2, name: 'job_a', kind: 'queued', result: null, startTime: end - 2 * 3600000 });
+    const running = makeRun({ id: 3, name: 'job_a', kind: 'running', live: true, result: null, startTime: end - 3600000 });
+    expect(historyByJob([done, queued, running], win).get('job_a')?.map((r) => r.id)).toEqual([1]);
+    expect(historyByJob([queued], win).has('job_a')).toBe(false);
+  });
+
   it('keeps the newest HISTORY_MAX runs and counts the rest as earlier', () => {
     const runs = Array.from({ length: HISTORY_MAX + 5 }, (_, i) => makeRun({ id: i + 1, name: 'p', startTime: end - (HISTORY_MAX + 5 - i) * 60000 }));
     const v = visibleHistory(runs);

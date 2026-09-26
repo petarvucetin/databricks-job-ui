@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { Run } from '../../../shared/domain/types';
-import { dur } from '../../../shared/domain/format';
+import { dur, fmtStart } from '../../../shared/domain/format';
 import {
   borderTone, chainSummary, elapsedSec, liveMessage, problemText, progress, splitName, statBlock, taskStates, taskText, whenText,
 } from '../model/rowView';
@@ -8,10 +8,11 @@ import { durShort, visibleHistory } from '../model/history';
 import './runrow.css';
 
 const CHAIN_CLASS = { ok: '', f: 'f', s: 's', r: 'r', p: 'q' } as const;
+const RESULT_LABEL = { succeeded: 'succeeded', failed: 'failed', cancelled: 'cancelled', partial: 'partially succeeded' } as const;
 
 export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect }: {
   run: Run;
-  /** This job's runs inside the timeline window, oldest first (defaults to just this run). */
+  /** This job's finished runs inside the timeline window, oldest first (defaults to this run if finished). */
   history?: Run[];
   nowMs: number;
   loadedAt: number;
@@ -26,7 +27,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   const { prefix, rest } = splitName(run.name);
   const msg = run.live ? liveMessage(run, elapsed) : null;
   const task = taskText(run);
-  const hist = visibleHistory(history ?? [run]);
+  const hist = visibleHistory(history ?? (run.result ? [run] : []));
   const cls = ['rr', tone && `b-${tone}`, run.live && 'live', run.live && over && 'over', selected && 'on'].filter(Boolean).join(' ');
   const style = run.live ? ({ '--p': String(p) } as CSSProperties) : undefined;
 
@@ -42,15 +43,13 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
           <span className="rr-hist-t">Run history</span>
           <div className="rr-hist-boxes">
             {hist.earlier > 0 && <span className="rh-more">+{hist.earlier} earlier</span>}
-            {hist.shown.map((h) => {
-              const secs = h.id === run.id ? elapsed : h.durationSec;
-              const label = h.kind === 'queued' ? 'wait' : durShort(secs);
-              return (
-                <span key={h.id} className={`rh ${h.kind}${h.id === run.id ? ' cur' : ''}`} title={`${whenText(h)}, ${h.kind === 'queued' ? 'queued' : dur(secs)}`}>
-                  {label}
-                </span>
-              );
-            })}
+            {hist.shown.map((h) => (
+              <span key={h.id} className="rh-cell" title={`${fmtStart(h.startTime)}, ${RESULT_LABEL[h.result ?? 'failed']}, ${dur(h.durationSec)}`}>
+                <span className={`rh ${h.result ?? ''}${h.id === run.id ? ' cur' : ''}`}>{durShort(h.durationSec)}</span>
+                <span className="rh-day">{new Date(h.startTime).getDate()}</span>
+              </span>
+            ))}
+            {hist.shown.length === 0 && <span className="rh-none">no finished runs in this window</span>}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import type { Cause, FailedTask, Run, RunKind, RunType, RunsResponse } from '../../../shared/domain/types';
+import type { Cause, FailedTask, Run, RunKind, RunResult, RunType, RunsResponse } from '../../../shared/domain/types';
 import { lcg } from './random';
 
 interface CauseSpec extends Cause {
@@ -66,6 +66,18 @@ interface Draft {
   old: boolean;
   type: RunType;
   continuous: boolean;
+}
+
+/**
+ * Final outcome of a finished run; null while it is still going or waiting.
+ * Failed and snoozed runs failed; a sprinkling of otherwise-successful runs were cancelled or only partially succeeded.
+ */
+function resultOf(d: { id: number; kind: RunKind }, live: boolean): RunResult | null {
+  if (live || d.kind === 'queued' || d.kind === 'running' || d.kind === 'retrying') return null;
+  if (d.kind === 'failed' || d.kind === 'snoozed') return 'failed';
+  if (d.id % 13 === 0) return 'cancelled';
+  if (d.id % 11 === 0) return 'partial';
+  return 'succeeded';
 }
 
 const toCause = (c: CauseSpec): Cause => ({ label: c.label, code: c.code, detail: c.detail });
@@ -169,6 +181,7 @@ export function generateRuns(tzOffsetMin: number = DEFAULT_TZ_OFFSET_MIN): RunsR
     const failed: FailedTask[] = d.failed.map((f) => ({ name: f.name, cause: toCause(f.cause), secs: f.secs }));
     const live = d.kind === 'running' || d.kind === 'retrying' || d.continuous || (d.kind === 'slow' && d.startMin + d.total / 60 >= NOW_MIN);
     return {
+      result: resultOf(d, live),
       id: d.id,
       runId: d.runId,
       type: d.type,
