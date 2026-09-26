@@ -36,20 +36,15 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
         <div className="rr-l1">
           <span className={`rr-tag ${run.type}`} data-c="2">{run.type === 'pipeline' ? 'Pipeline' : 'Job'}</span>
           <span className="rr-ra" data-c="13">run as <b>{run.runAs}</b></span>
+          <span className={`rr-st${stat.big ? ' rr-now' : ''}`} data-c="11">
+            <span>{stat.label}</span>
+            <b data-c="9">{stat.value}</b>
+            <i />
+            <span>average</span>
+            <em>{stat.average}</em>
+          </span>
         </div>
         <span className="rr-name" data-c="3"><i>{prefix}</i>{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</span>
-        <div className="rr-side">
-          <div className="rr-st" data-c="11">
-            <div className={stat.big ? 'rr-now' : undefined}>
-              <span>{stat.label}</span>
-              {stat.big ? <b data-c="9">{stat.value}</b> : <em data-c="9">{stat.value}</em>}
-            </div>
-            <div>
-              <span>average</span>
-              <em>{stat.average}</em>
-            </div>
-          </div>
-        </div>
         {run.live && (
           <>
             <div className="rr-chain" data-c="6">

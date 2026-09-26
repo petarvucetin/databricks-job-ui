@@ -39,18 +39,16 @@
 .rr-msg.red { color: var(--red); }
 .rr-msg .dim { color: var(--ink-3); }
 
-.rr-side { margin-top: 8px; font-variant-numeric: tabular-nums; }
 .rr-main { min-width: 0; }
 .rr-main .rr-chain { margin-top: 8px; }
-.rr-st { margin-top: 0; display: inline-grid; grid-auto-flow: column; border: 1px solid var(--rule); border-radius: 6px; background: #fdfaf5; text-align: left; }
-.rr-st > div { padding: 4px 12px 5px 12px; }
-.rr-st > div + div { border-left: 1px solid var(--rule); }
-.rr-st span { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
-.rr-st em { font-style: normal; font-size: 13px; font-weight: 500; color: var(--ink); white-space: nowrap; }
-.rr-now { background: var(--wash-amber); border-radius: 5px 0 0 5px; }
-.rr-now b { display: block; font-size: 24px; line-height: 1.1; font-weight: 600; color: var(--amber-ink); white-space: nowrap; }
-.rr.b-blue .rr-now { background: var(--wash-blue); }
-.rr.b-blue .rr-now b { color: var(--blue); }
+.rr-st { flex: none; display: inline-flex; align-items: baseline; gap: 5px; padding: 1px 10px; border-radius: 999px; background: #fdfaf5; border: 1px solid var(--rule); font-size: 11.5px; line-height: 1.5; font-variant-numeric: tabular-nums; white-space: nowrap; position: relative; top: -1px; }
+.rr-st span { color: var(--ink-3); }
+.rr-st b, .rr-st em { font-style: normal; font-weight: 500; color: var(--ink); }
+.rr-st i { align-self: stretch; width: 1px; margin: 2px 3px; background: var(--rule); }
+.rr-st.rr-now { background: var(--wash-amber); border-color: #f0d9a6; }
+.rr-st.rr-now b { font-weight: 600; color: var(--amber-ink); }
+.rr.b-blue .rr-st.rr-now { background: var(--wash-blue); border-color: #b9cfea; }
+.rr.b-blue .rr-st.rr-now b { color: var(--blue); }
 
 /* Running indicator, option C: bottom edge fills toward the average; past it, moving amber stripes and a tick at the average. */
 .rr.live { overflow: hidden; padding-bottom: 14px; --c: var(--amber); --c2: #f0d9a6; }
@@ -65,7 +63,3 @@
 @keyframes rr-slide { to { background-position: 22.6px 0; } }
 @media (prefers-reduced-motion: reduce) { .rr-bar, .rr-bar::after { animation: none; } }
 
-/* completed rows: compact stats block */
-.rr:not(.live) .rr-st > div { padding: 2px 9px 3px; }
-.rr:not(.live) .rr-st span { font-size: 9px; }
-.rr:not(.live) .rr-st em { font-size: 11.5px; }
