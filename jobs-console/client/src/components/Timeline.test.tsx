@@ -26,6 +26,7 @@ describe('Timeline', () => {
     expect(screen.getByText('Runs by day')).toBeTruthy();
     expect(screen.getByText('21 Sep to 23 Sep, 2 days')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'last 2 days' }).className).toContain('on');
+    expect([...container.querySelectorAll('.tl-lab')].map((l) => l.textContent)).toEqual(['21 Sep', '23 Sep']);
   });
 
   it('draws hour columns at 24h and week columns at 90d', () => {

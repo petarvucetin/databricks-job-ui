@@ -14,7 +14,6 @@
 .tl-win-n { position: absolute; top: -17px; left: 50%; transform: translateX(-50%); font-size: 11px; line-height: 14px; font-weight: 600; color: #b7791f; background: var(--sheet); padding: 0 6px; white-space: nowrap; }
 .tl-col { border: 1px solid transparent; border-radius: 5px; padding: 3px 2px 4px 2px; min-width: 0; }
 .tl-col:hover { border-color: var(--rule); background: #fdfaf5; }
-.tl-col.dim { opacity: .3; }
 .tl-head { display: block; width: 100%; text-align: center; font-size: 11.5px; font-weight: 500; line-height: 1.25; border: 0; background: none; cursor: pointer; padding: 0; }
 .tl-head:hover { color: var(--amber); }
 .tl-head small { display: block; font-weight: 400; color: var(--ink-3); font-size: 9.5px; letter-spacing: .02em; min-height: 12px; }

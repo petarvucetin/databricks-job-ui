@@ -1,4 +1,4 @@
-import { useMemo, useRef, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { RUN_KINDS, type Run, type RunKind } from '../../../shared/domain/types';
 import { fmtEdge } from '../../../shared/domain/format';
 import type { TimeWindow } from '../model/filters';
@@ -35,6 +35,16 @@ export function Timeline({ runs, end, scale, window, cube, dispatch }: {
   const a = Math.max(0, (window.from - d0) / span);
   const b = Math.min(1, (window.to - d0) / span);
   const lineRef = useRef<HTMLDivElement>(null);
+  // Track width in px, so the start label hides only when it would collide with the end label (as in the prototype).
+  const [lineWidth, setLineWidth] = useState(0);
+  useEffect(() => {
+    const el = lineRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver((entries) => setLineWidth(entries[0]?.contentRect.width ?? 0));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const showStartLabel = lineWidth === 0 || (b - a) * lineWidth >= 90;
 
   const colFromPointer = (clientX: number) => {
     const r = lineRef.current?.getBoundingClientRect();
@@ -128,7 +138,7 @@ export function Timeline({ runs, end, scale, window, cube, dispatch }: {
         <div className="tl-sel" style={{ left: `${a * 100}%`, width: `${(b - a) * 100}%` }} onPointerDown={startBarDrag} />
         <div className="tl-handle" style={{ left: `${a * 100}%` }} onPointerDown={startHandleDrag('from')} aria-label="window start" role="slider" aria-valuenow={window.from} />
         <div className="tl-handle" style={{ left: `${b * 100}%` }} onPointerDown={startHandleDrag('to')} aria-label="window end" role="slider" aria-valuenow={window.to} />
-        {(b - a) * 100 > 8 && <span className="tl-lab" style={{ left: `${a * 100}%`, transform: a === 0 ? 'none' : 'translateX(-50%)' }}>{fmtEdge(window.from)}</span>}
+        {showStartLabel && <span className="tl-lab" style={{ left: `${a * 100}%`, transform: a === 0 ? 'none' : 'translateX(-50%)' }}>{fmtEdge(window.from)}</span>}
         <span className="tl-lab" style={{ left: `${b * 100}%`, transform: b >= 1 ? 'translateX(-100%)' : 'translateX(-50%)' }}>{fmtEdge(window.to)}</span>
       </div>
     </section>
