@@ -6,12 +6,13 @@ const LEGEND: [string, string, string][] = [
   ['2', 'Type tag', 'Job or Pipeline, as a word.'],
   ['12', 'Run history', "This job's finished runs in the timeline window, oldest to newest: runtime on top, start day/time (e.g. 18/06:00) under it; green succeeded, red failed, grey struck cancelled, split partially succeeded; outlined box is this run."],
   ['3', 'Name', 'Full job or pipeline name; bundle target prefix dimmed.'],
-  ['6', 'Task chain', 'Running only: one square per task, green ok, red failed, dashed skipped, blue running.'],
+  ['6', 'Task chain', 'One square per task, green ok, red failed, dashed skipped, blue running. Shows the current run on running rows; click a history box to show that run, click again to close.'],
   ['13', 'Run as', 'Pill next to the type tag, above the name: the identity the run executes as.'],
-  ['7', 'Chain summary', 'Running only: the chain counted.'],
+  ['7', 'Chain summary', 'The chain counted.'],
+  ['15', 'Task name', 'Hover a square in the chain: its task name appears under the chain.'],
+  ['16', 'Current run', "Last box in a running row's history: tasks done of total, and when it started."],
   ['11', 'Waiting pill', 'Queued only: pill on the top line with the time spent waiting.'],
-  ['8', 'Live message', 'Running only: what the run is doing or waiting on right now.'],
-  ['9', 'Progress bar', 'Running only: band along the bottom, gold for jobs, blue for pipelines, filling toward the average with the current runtime at its end; striped past the average.'],
+  ['9', 'Progress bar', 'Running only: band along the bottom, gold for jobs, blue for pipelines, solid, filling toward the average with the current runtime at its end; past the average it stays full with a tick where the average falls.'],
   ['14', 'Average', 'Average duration for this job, next to the Run history title.'],
 ];
 

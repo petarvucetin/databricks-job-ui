@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { describe, it, expect, afterEach } from 'vitest';
-import { render, cleanup } from '@testing-library/react';
+import { describe, it, expect, afterEach, vi } from 'vitest';
+import { render, cleanup, fireEvent } from '@testing-library/react';
 import { RunRow } from './RunRow';
 import { makeRun } from '../test/fixtures';
 
@@ -52,10 +52,11 @@ describe('RunRow', () => {
     expect(container.querySelector('.rr-hist .rh-more')).toBeNull();
   });
 
-  it('shows no boxes for a run still going when the job has no finished runs in the window', () => {
+  it('shows only the current-run box for a run still going when the job has no finished runs in the window', () => {
     const { container } = render(<RunRow run={live} nowMs={0} loadedAt={0} asOf={0} />);
-    expect(container.querySelectorAll('.rr-hist .rh')).toHaveLength(0);
-    expect(container.querySelector('.rr-hist')!.textContent).toContain('no finished runs in this window');
+    expect(container.querySelectorAll('.rr-hist .rh')).toHaveLength(1);
+    expect(container.querySelector('.rr-hist .rh.now')).not.toBeNull();
+    expect(container.querySelector('.rr-hist')!.textContent).not.toContain('no finished runs in this window');
   });
 
   it('collapses runs beyond the box limit into an "earlier" chip', () => {
@@ -78,15 +79,44 @@ describe('RunRow', () => {
     expect(container.querySelector('.rr-hist-t [data-c="14"]')).not.toBeNull();
     expect(container.querySelectorAll('[data-c="6"] i')).toHaveLength(10);
     expect(container.querySelector('[data-c="7"]')!.textContent).toBe('5 ok, 1 running, 4 to go');
-    expect(container.querySelector('[data-c="8"]')!.textContent).toContain('load_gl running');
+    expect(container.querySelector('[data-c="8"]')).toBeNull();
+    const now = container.querySelector('.rh.now')!;
+    expect(now.textContent).toContain('5 of 10');
+    expect(now.className).toContain('pick');
     expect(container.querySelector('.rr-main [data-c="6"]')).not.toBeNull();
     expect(container.querySelector('.rr-bar')).not.toBeNull();
     expect(container.querySelector('.rr-avg')).toBeNull();
   });
 
-  it('marks an over-average live run with stripes and the average tick', () => {
+  it('marks an over-average live run with a full solid bar and the average tick', () => {
     const { container } = render(<RunRow run={live} nowMs={700_000} loadedAt={0} asOf={0} />);
     expect(container.querySelector('.rr')!.className).toContain('over');
     expect(container.querySelector('.rr-avg')).not.toBeNull();
+  });
+
+  it("opens a history run's task chain on click, closes it on a second click, without selecting the row", () => {
+    const d = (day: number) => new Date(2026, 8, day, 5).getTime();
+    const past = makeRun({ id: 7, kind: 'succeeded', failed: [], result: 'succeeded', startTime: d(21), ntasks: 4 });
+    const onSelect = vi.fn();
+    const { container } = render(<RunRow run={live} history={[past]} nowMs={5000} loadedAt={0} asOf={0} onSelect={onSelect} />);
+    const boxes = container.querySelectorAll<HTMLButtonElement>('.rr-hist .rh');
+    expect(boxes).toHaveLength(2);
+    fireEvent.click(boxes[0]);
+    expect(onSelect).not.toHaveBeenCalled();
+    expect(container.querySelectorAll('[data-c="6"] i')).toHaveLength(4);
+    expect(container.querySelector('[data-c="7"]')!.textContent).toBe('all ok');
+    expect(boxes[0].className).toContain('pick');
+    fireEvent.click(boxes[0]);
+    expect(container.querySelector('[data-c="6"]')).toBeNull();
+  });
+
+  it('shows only the task name under the chain while a square is hovered', () => {
+    const { container } = render(<RunRow run={live} nowMs={5000} loadedAt={0} asOf={0} />);
+    const sq = container.querySelectorAll('[data-c="6"] i');
+    expect(container.querySelector('[data-c="15"]')!.textContent.trim()).toBe('');
+    fireEvent.mouseEnter(sq[3]);
+    expect(container.querySelector('[data-c="15"]')!.textContent).toBe('extract_gl');
+    fireEvent.mouseLeave(container.querySelector('[data-c="6"]')!);
+    expect(container.querySelector('[data-c="15"]')!.textContent.trim()).toBe('');
   });
 });

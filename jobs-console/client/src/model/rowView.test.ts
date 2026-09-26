@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { makeRun } from '../test/fixtures';
 import {
-  problemText, taskText, taskStates, runningIndex, chainSummary, liveMessage,
+  problemText, taskText, taskStates, runningIndex, chainSummary, taskNames,
   whenText, borderTone, elapsedSec, progress, statBlock, splitName,
 } from './rowView';
 
@@ -40,13 +40,14 @@ describe('rowView', () => {
     expect(chainSummary(running, 1200)).toBe('9 ok, 1 running, 0 to go');
   });
 
-  it('writes the live message', () => {
-    expect(liveMessage(running)).toEqual({ lead: 'load_gl running', dim: '5 of 10 tasks done, 50% of the average time', red: false });
-    expect(liveMessage(makeRun({ kind: 'retrying', failed: [] })).lead).toBe('attempt 2 of 4');
-  });
-
-  it('keeps the live message in step with an explicit elapsed', () => {
-    expect(liveMessage(running, 900).dim).toContain('75% of the average time');
+  it('names every task in chain order, failed ones by the name the run reported', () => {
+    expect(taskNames(running)).toEqual(['setup', 'extract_bkpf', 'extract_bseg', 'extract_gl', 'transform', 'dq_checks', 'load_gl', 'load_gl_history', 'load_cost_centers', 'load_profit_centers']);
+    const long = taskNames(makeRun({ ntasks: 15, failed: [] }));
+    expect(long[13]).toBe('setup_2');
+    const failed = makeRun({ ntasks: 6, failed: [{ name: 'boom_task', cause: ok, secs: 3 }] });
+    expect(taskNames(failed)[3]).toBe('boom_task');
+    expect(taskStates(failed)[3]).toBe('f');
+    expect(taskNames(makeRun({ type: 'pipeline', ntasks: 2, failed: [] }))).toEqual(['bronze_bkpf', 'bronze_bseg']);
   });
 
   it('says when, and picks the border tone', () => {

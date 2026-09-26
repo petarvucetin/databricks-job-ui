@@ -59,6 +59,19 @@ export function taskStates(r: Run, elapsed: number = r.durationSec): TaskState[]
   return out;
 }
 
+const FLOW_NAMES = ['bronze_bkpf', 'bronze_bseg', 'silver_bkpf', 'silver_bseg', 'silver_gl_accounts', 'gold_gl_balances', 'gold_cost_centers', 'gold_vendors'] as const;
+
+/** Name of each task (flow, for pipelines) in chain order; failed ones carry the name the run reported. */
+export function taskNames(r: Run): string[] {
+  const base: readonly string[] = r.type === 'pipeline' ? FLOW_NAMES : TASK_NAMES;
+  const names = Array.from({ length: r.ntasks }, (_, i) => (i < base.length ? base[i] : `${base[i % base.length]}_${Math.floor(i / base.length) + 1}`));
+  const step = Math.floor(r.ntasks / (r.failed.length + 1));
+  r.failed.forEach((f, i) => {
+    if (step * (i + 1) < r.ntasks) names[step * (i + 1)] = f.name;
+  });
+  return names;
+}
+
 export function chainSummary(r: Run, elapsed: number = r.durationSec): string {
   const s = taskStates(r, elapsed);
   const okc = s.filter((x) => x === 'ok').length;
@@ -72,19 +85,6 @@ export function chainSummary(r: Run, elapsed: number = r.durationSec): string {
   if (r.failed.length) return `${okc} ok, ${r.failed.length} failed${sk ? `, ${sk} skipped` : ''}`;
   if (r.kind === 'retrying') return r.type === 'pipeline' ? 'whole update retrying' : 'one task retrying';
   return r.continuous ? 'all flows running' : 'all running';
-}
-
-export function liveMessage(r: Run, elapsed: number = r.durationSec): { lead: string; dim: string; red: boolean } {
-  if (r.type === 'pipeline') {
-    if (r.kind === 'slow' && r.continuous) return { lead: 'backlog 48,210 files, rising for 35m', dim: 'Auto Loader source raw_bkpf', red: false };
-    if (r.kind === 'retrying') return { lead: 'RETRY_ON_FAILURE', dim: 'update 1 lost its cluster after 48m, a new update started', red: false };
-  }
-  if (r.kind === 'running') {
-    const k = runningIndex(r, elapsed);
-    return { lead: `${TASK_NAMES[1 + (k % (TASK_NAMES.length - 1))]} running`, dim: `${k} of ${r.ntasks} tasks done, ${Math.round((100 * elapsed) / Math.max(1, r.usualSec))}% of the average time`, red: false };
-  }
-  if (r.kind === 'retrying') return { lead: 'attempt 2 of 4', dim: 'attempt 1 lost its cluster after 48m, resuming from checkpoint', red: false };
-  return { lead: `${dur(elapsed - r.usualSec)} over usual`, dim: 'same parameters, code and cluster as last run', red: false };
 }
 
 export function whenText(r: Run): string {

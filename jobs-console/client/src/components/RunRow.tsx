@@ -1,8 +1,8 @@
-import { Fragment, type CSSProperties } from 'react';
+import { Fragment, useState, type CSSProperties, type MouseEvent } from 'react';
 import type { Run } from '../../../shared/domain/types';
 import { dur, fmtStart } from '../../../shared/domain/format';
 import {
-  borderTone, chainSummary, elapsedSec, liveMessage, progress, splitName, statBlock, taskStates,
+  borderTone, chainSummary, elapsedSec, progress, splitName, statBlock, taskNames, taskStates,
 } from '../model/rowView';
 import { dayTime, durShort, visibleHistory } from '../model/history';
 import './runrow.css';
@@ -25,8 +25,20 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   const tone = borderTone(run);
   const stat = statBlock(run, elapsed, asOf);
   const { prefix, rest } = splitName(run.name);
-  const msg = run.live ? liveMessage(run, elapsed) : null;
   const hist = visibleHistory(history ?? (run.result ? [run] : []));
+  // Which run's task chain is open: a running row starts on its current run; clicking a history box opens that run, clicking it again closes.
+  const [picked, setPicked] = useState<number | null>(run.live ? run.id : null);
+  const [hover, setHover] = useState<number | null>(null);
+  const chainRun = picked === null ? null : picked === run.id && run.live ? run : hist.shown.find((h) => h.id === picked) ?? null;
+  const chainElapsed = chainRun === run ? elapsed : chainRun?.durationSec;
+  const chain = chainRun ? taskStates(chainRun, chainElapsed) : [];
+  const names = chainRun ? taskNames(chainRun) : [];
+  const pick = (id: number) => (e: MouseEvent) => {
+    e.stopPropagation();
+    setHover(null);
+    setPicked((p) => (p === id ? null : id));
+  };
+  const nowStates = run.live ? taskStates(run, elapsed) : [];
   const cls = ['rr', tone && `b-${tone}`, run.live && 'live', run.live && `bar-${run.type}`, run.live && over && 'over', selected && 'on'].filter(Boolean).join(' ');
   const style = run.live ? ({ '--p': String(p) } as CSSProperties) : undefined;
 
@@ -44,13 +56,13 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
           )}
         </div>
         <span className="rr-name" data-c="3"><i>{prefix}</i>{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</span>
-        {run.live && (
+        {chainRun && (
           <>
-            <div className="rr-chain" data-c="6">
-              {taskStates(run, elapsed).map((s, i) => <i key={i} className={CHAIN_CLASS[s]} />)}
-              <em data-c="7">{chainSummary(run, elapsed)}</em>
+            <div className="rr-chain" data-c="6" onMouseLeave={() => setHover(null)}>
+              {chain.map((s, i) => <i key={i} className={`${CHAIN_CLASS[s]}${hover === i ? ' hov' : ''}`} onMouseEnter={() => setHover(i)} />)}
+              <em data-c="7">{chainSummary(chainRun, chainElapsed)}</em>
             </div>
-            {msg && <div className={`rr-msg${msg.red ? ' red' : ''}`} data-c="8">{msg.lead} <span className="dim">{msg.dim}</span></div>}
+            <div className="rr-task" data-c="15">{hover !== null && names[hover] ? names[hover] : ' '}</div>
           </>
         )}
       </div>
@@ -62,16 +74,30 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
         <div className="rr-hist-boxes">
           {hist.earlier > 0 && <span className="rh-more">+{hist.earlier} earlier</span>}
           {hist.shown.map((h) => (
-            <span
+            <button
+              type="button"
               key={h.id}
-              className={`rh ${h.result ?? ''}${h.id === run.id ? ' cur' : ''}`}
+              className={`rh ${h.result ?? ''}${h.id === run.id ? ' cur' : ''}${h.id === picked ? ' pick' : ''}`}
               title={`${fmtStart(h.startTime)}, ${RESULT_LABEL[h.result ?? 'failed']}, ${dur(h.durationSec)}`}
+              onClick={pick(h.id)}
             >
               <span className="rh-t">{durShort(h.durationSec)}</span>
               <span className="rh-w">{dayTime(h.startTime)}</span>
-            </span>
+            </button>
           ))}
-          {hist.shown.length === 0 && <span className="rh-none">no finished runs in this window</span>}
+          {run.live && (
+            <button
+              type="button"
+              className={`rh now ${run.type} cur${picked === run.id ? ' pick' : ''}`}
+              title={`${fmtStart(run.startTime)}, running now`}
+              onClick={pick(run.id)}
+              data-c="16"
+            >
+              <span className="rh-t">{nowStates.filter((s) => s === 'ok').length} of {run.ntasks}</span>
+              <span className="rh-w">{dayTime(run.startTime)}</span>
+            </button>
+          )}
+          {hist.shown.length === 0 && !run.live && <span className="rh-none">no finished runs in this window</span>}
         </div>
       </div>
       {run.live && (
