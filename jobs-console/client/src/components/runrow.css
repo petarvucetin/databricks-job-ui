@@ -1,20 +1,19 @@
-.rr { position: relative; display: grid; grid-template-columns: minmax(460px, 1.35fr) minmax(320px, 1fr) 230px; gap: 0 24px; align-items: start; padding: 10px 16px; margin-bottom: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; }
+.rr { position: relative; display: grid; grid-template-columns: 200px 520px minmax(0, 1fr); gap: 0 24px; align-items: start; padding: 10px 16px; margin-bottom: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; }
 .rr:hover { background: #fffcf6; }
 .rr.b-red { border-color: var(--red); }
 .rr.b-amber { border-color: var(--amber); }
 .rr.b-blue { border-color: var(--blue); }
 .rr.on { box-shadow: inset 0 0 0 1px var(--amber); background: #fffaf0; }
 
-.rr-lft { min-width: 0; }
 .rr-l1 { display: flex; align-items: baseline; gap: 10px; }
 .rr-tag { flex: none; display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; line-height: 1.5; position: relative; top: -1px; }
 .rr-tag.job { background: var(--wash-sand); color: var(--ink-2); border: 1px solid #e3d7c6; }
 .rr-tag.pipeline { background: var(--wash-purple); color: var(--purple); border: 1px solid #d6cbee; }
-.rr-name { font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; line-height: 1.4; }
+.rr-name { font-family: var(--mono); font-size: 13px; overflow-wrap: break-word; line-height: 1.4; }
 .rr-name i { font-style: normal; color: var(--ink-3); }
 .rr-ra { flex: none; display: inline-block; padding: 1px 9px; border-radius: 999px; background: var(--wash-sand); border: 1px solid #e3d7c6; font-size: 11.5px; color: var(--ink-3); line-height: 1.5; position: relative; top: -1px; white-space: nowrap; }
 .rr-ra b { color: var(--ink-2); font-weight: 500; }
-.rr-hist { margin-top: 8px; }
+.rr-hist { min-width: 0; }
 .rr-hist-t { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); margin-bottom: 3px; }
 .rr-hist-boxes { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
 .rh { min-width: 50px; padding: 3px 6px 2px; display: inline-flex; flex-direction: column; align-items: center; gap: 1px; border-radius: 4px; border: 1px solid; font-variant-numeric: tabular-nums; white-space: nowrap; line-height: 1.15; }
@@ -29,7 +28,6 @@
 .rh-more { font-size: 11px; color: var(--ink-3); margin-right: 4px; white-space: nowrap; }
 .rh-none { font-size: 11.5px; color: var(--ink-3); }
 
-.rr-mid { min-width: 0; }
 .rr-chain { display: flex; align-items: center; gap: 3px; margin-top: 3px; flex-wrap: wrap; }
 .rr-chain i { width: 14px; height: 14px; border-radius: 3px; background: #bfe0cf; border: 1px solid #9fd1b8; }
 .rr-chain i.f { background: var(--wash-red); border-color: var(--red); }
@@ -40,14 +38,11 @@
 .rr-msg { margin-top: 7px; font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rr-msg.red { color: var(--red); }
 .rr-msg .dim { color: var(--ink-3); }
-.rr-park { margin-top: 6px; display: inline-flex; align-items: center; gap: 8px; padding: 3px 8px; border: 1px dashed #d6ccbf; border-radius: 6px; opacity: .7; }
-.rr.live .rr-park { margin-top: 8px; }
-.rr-park .pk { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
-.rr-cause { display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: 12px; white-space: nowrap; background: var(--wash-sand); border: 1px solid #eadfcf; color: var(--ink-2); }
-.rr-task { font-family: var(--mono); font-size: 12.5px; color: var(--ink-2); white-space: nowrap; }
 
-.rr-rgt { text-align: right; font-variant-numeric: tabular-nums; }
+.rr-side { font-variant-numeric: tabular-nums; }
 .rr-when { font-size: 12.5px; color: var(--ink-3); white-space: nowrap; display: block; }
+.rr-main { min-width: 0; }
+.rr-main .rr-chain { margin-top: 8px; }
 .rr-st { margin-top: 6px; display: inline-grid; grid-auto-flow: column; border: 1px solid var(--rule); border-radius: 6px; background: #fdfaf5; text-align: left; }
 .rr-st > div { padding: 4px 12px 5px 12px; }
 .rr-st > div + div { border-left: 1px solid var(--rule); }

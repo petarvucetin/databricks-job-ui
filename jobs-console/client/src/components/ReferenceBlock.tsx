@@ -12,9 +12,7 @@ const LEGEND: [string, string, string][] = [
   ['12', 'Run history', "This job's finished runs in the timeline window, oldest to newest: runtime on top, start day/time (e.g. 18/06:00) under it; green succeeded, red failed, grey struck cancelled, split partially succeeded; outlined box is this run."],
   ['11', 'Stats block', 'Now (running) or took, against the average duration.'],
   ['6', 'Task chain', 'Running only: one square per task, green ok, red failed, dashed skipped, blue running.'],
-  ['4', 'Cause pill', 'Parked, to be reconsidered.'],
   ['7', 'Chain summary', 'Running only: the chain counted.'],
-  ['5', 'Failing task / flow', 'Parked, to be reconsidered.'],
 ];
 
 export function ReferenceBlock({ rows, history, nowMs, loadedAt, asOf }: { rows: Run[]; history: Map<string, Run[]>; nowMs: number; loadedAt: number; asOf: number }) {

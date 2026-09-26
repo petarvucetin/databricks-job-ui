@@ -23,7 +23,11 @@ describe('RunRow', () => {
     expect(container.textContent).toContain('took');
     expect(container.textContent).toContain('25m 52s');
     expect(container.querySelector('[data-c="6"]')).toBeNull();
-    expect(container.querySelector('[data-c="4"]')!.textContent).toBe('Cluster error');
+    expect(container.querySelector('[data-c="4"]')).toBeNull();
+    expect(container.querySelector('[data-c="5"]')).toBeNull();
+    expect(container.querySelector('.rr-park')).toBeNull();
+    const cols = [...container.querySelector('.rr')!.children].map((c) => c.className);
+    expect(cols).toEqual(['rr-side', 'rr-main', 'rr-hist']);
     expect(container.querySelector('.rr-hist')!.textContent).toContain('Run history');
     expect(container.querySelectorAll('.rr-hist .rh')).toHaveLength(1);
   });
@@ -66,6 +70,7 @@ describe('RunRow', () => {
     expect(container.querySelectorAll('[data-c="6"] i')).toHaveLength(10);
     expect(container.querySelector('[data-c="7"]')!.textContent).toBe('5 ok, 1 running, 4 to go');
     expect(container.querySelector('[data-c="8"]')!.textContent).toContain('load_gl running');
+    expect(container.querySelector('.rr-main [data-c="6"]')).not.toBeNull();
     expect(container.querySelector('.rr-bar')).not.toBeNull();
     expect(container.querySelector('.rr-avg')).toBeNull();
   });
