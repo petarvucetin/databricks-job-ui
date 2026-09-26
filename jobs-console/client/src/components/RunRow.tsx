@@ -36,17 +36,12 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
         <div className="rr-l1">
           <span className={`rr-tag ${run.type}`} data-c="2">{run.type === 'pipeline' ? 'Pipeline' : 'Job'}</span>
           <span className="rr-ra" data-c="13">run as <b>{run.runAs}</b></span>
-          <span className={`rr-st${stat.big ? ' rr-now' : ''}`} data-c="11">
-            {stat.label !== 'took' && (
-              <>
-                <span>{stat.label}</span>
-                <b data-c="9">{stat.value}</b>
-                <i />
-              </>
-            )}
-            <span>average</span>
-            <em>{stat.average}</em>
-          </span>
+          {stat.label !== 'took' && (
+            <span className={`rr-st${stat.big ? ' rr-now' : ''}`} data-c="11">
+              <span>{stat.label}</span>
+              <b data-c="9">{stat.value}</b>
+            </span>
+          )}
         </div>
         <span className="rr-name" data-c="3"><i>{prefix}</i>{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</span>
         {run.live && (
@@ -60,7 +55,10 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
         )}
       </div>
       <div className="rr-hist" data-c="12">
-        <span className="rr-hist-t">Run history</span>
+        <div className="rr-hist-t">
+          <span>Run history</span>
+          <span className="rr-avg-t" data-c="14">average <em>{stat.average}</em></span>
+        </div>
         <div className="rr-hist-boxes">
           {hist.earlier > 0 && <span className="rh-more">+{hist.earlier} earlier</span>}
           {hist.shown.map((h) => (

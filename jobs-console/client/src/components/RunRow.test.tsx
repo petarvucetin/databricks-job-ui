@@ -16,14 +16,15 @@ describe('RunRow', () => {
     expect(row.className).not.toContain('live');
     expect(container.querySelector('[data-c="3"]')!.textContent).toBe('[prod] finance_gl_co_gl_journals_v3');
     const l1 = [...container.querySelector('.rr-l1')!.children].map((c) => c.getAttribute('data-c'));
-    expect(l1).toEqual(['2', '13', '11']);
+    expect(l1).toEqual(['2', '13']);
     const main = [...container.querySelector('.rr-main')!.children].map((c) => c.getAttribute('data-c') ?? c.className);
     expect(main).toEqual(['rr-l1', '3']);
     expect(container.querySelector('[data-c="13"]')!.className).toContain('rr-ra');
     expect(container.querySelector('[data-c="13"]')!.textContent).toBe('run as sp-finance');
     expect(container.querySelector('[data-c="9"]')).toBeNull();
     expect(container.textContent).not.toContain('took');
-    expect(container.querySelector('[data-c="11"]')!.textContent).toBe('average25m 52s');
+    expect(container.querySelector('[data-c="11"]')).toBeNull();
+    expect(container.querySelector('.rr-hist-t [data-c="14"]')!.textContent).toBe('average 25m 52s');
     expect(container.textContent).toContain('25m 52s');
     expect(container.querySelector('[data-c="6"]')).toBeNull();
     expect(container.querySelector('[data-c="4"]')).toBeNull();
@@ -71,7 +72,9 @@ describe('RunRow', () => {
     expect(row.className).toContain('live');
     expect(row.style.getPropertyValue('--p')).toBe('0.504');
     expect(container.querySelector('[data-c="9"]')!.textContent).toBe('10m 05s');
-    expect(container.querySelector('.rr-now')).not.toBeNull();
+    expect(container.querySelector('.rr-l1 [data-c="11"].rr-now')).not.toBeNull();
+    expect(container.querySelector('[data-c="11"]')!.textContent).not.toContain('average');
+    expect(container.querySelector('.rr-hist-t [data-c="14"]')).not.toBeNull();
     expect(container.querySelectorAll('[data-c="6"] i')).toHaveLength(10);
     expect(container.querySelector('[data-c="7"]')!.textContent).toBe('5 ok, 1 running, 4 to go');
     expect(container.querySelector('[data-c="8"]')!.textContent).toContain('load_gl running');
