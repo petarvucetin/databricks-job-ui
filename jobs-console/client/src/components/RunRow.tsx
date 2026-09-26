@@ -2,7 +2,7 @@ import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState, ty
 import type { Run } from '../../../shared/domain/types';
 import { dur, fmtStart } from '../../../shared/domain/format';
 import {
-  borderTone, chainSummary, elapsedSec, progress, splitName, statBlock, taskNames, taskStates,
+  chainSummary, elapsedSec, progress, splitName, statBlock, taskNames, taskStates,
 } from '../model/rowView';
 import { dayTime, durShort, visibleHistory } from '../model/history';
 import './runrow.css';
@@ -75,7 +75,6 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
 }) {
   const elapsed = elapsedSec(run, nowMs, loadedAt);
   const { p, over } = progress(run, elapsed);
-  const tone = borderTone(run);
   const stat = statBlock(run, elapsed, asOf);
   const { prefix, rest } = splitName(run.name);
   const hist = visibleHistory(history ?? (run.result ? [run] : []));
@@ -86,7 +85,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
     setOpen((o) => (o === id ? null : id));
   };
   const nowDone = run.live ? taskStates(run, elapsed).filter((s) => s === 'ok').length : 0;
-  const cls = ['rr', tone && `b-${tone}`, run.live && 'live', run.live && `bar-${run.type}`, run.live && over && 'over', selected && 'on'].filter(Boolean).join(' ');
+  const cls = ['rr', run.live && 'live', run.live && `bar-${run.type}`, run.live && over && 'over', selected && 'on'].filter(Boolean).join(' ');
   const style = run.live ? ({ '--p': String(p) } as CSSProperties) : undefined;
 
   return (

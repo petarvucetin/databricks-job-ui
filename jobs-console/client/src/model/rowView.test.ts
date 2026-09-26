@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { makeRun } from '../test/fixtures';
 import {
   problemText, taskText, taskStates, runningIndex, chainSummary, taskNames,
-  whenText, borderTone, elapsedSec, progress, statBlock, splitName,
+  whenText, elapsedSec, progress, statBlock, splitName,
 } from './rowView';
 
 const ok = { label: 'Succeeded', code: '', detail: '' };
@@ -50,13 +50,9 @@ describe('rowView', () => {
     expect(taskNames(makeRun({ type: 'pipeline', ntasks: 2, failed: [] }))).toEqual(['bronze_bkpf', 'bronze_bseg']);
   });
 
-  it('says when, and picks the border tone', () => {
+  it('says when', () => {
     expect(whenText(makeRun())).toBe('failed 22 Sep 02:41');
     expect(whenText(makeRun({ kind: 'queued' }))).toBe('queued since 22 Sep 02:41');
-    expect(borderTone(makeRun())).toBe('red');
-    expect(borderTone(running)).toBe('blue');
-    expect(borderTone(makeRun({ kind: 'slow' }))).toBe('amber');
-    expect(borderTone(makeRun({ kind: 'succeeded' }))).toBe('');
   });
 
   it('ticks elapsed time for live runs only', () => {

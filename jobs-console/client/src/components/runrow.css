@@ -1,9 +1,6 @@
-.rr { position: relative; display: grid; grid-template-columns: 520px minmax(0, 1fr); gap: 0 24px; align-items: start; padding: 10px 16px; margin-bottom: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; }
+.rr { position: relative; display: grid; grid-template-columns: 520px minmax(0, 1fr); gap: 0 24px; align-items: start; padding: 10px 16px; margin-bottom: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 1px 3px rgba(60, 40, 10, .07); cursor: pointer; }
 .rr:hover { background: #fffcf6; }
-.rr.b-red { border-color: var(--red); }
-.rr.b-amber { border-color: var(--amber); }
-.rr.b-blue { border-color: var(--blue); }
-.rr.on { box-shadow: inset 0 0 0 1px var(--amber); background: #fffaf0; }
+.rr.on { box-shadow: inset 0 0 0 1px var(--amber), 0 1px 3px rgba(60, 40, 10, .07); background: #fffaf0; }
 
 .rr-l1 { display: flex; align-items: baseline; gap: 10px; }
 .rr-tag { flex: none; display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; line-height: 1.5; position: relative; top: -1px; }

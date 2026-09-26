@@ -12,7 +12,7 @@ describe('RunRow', () => {
   it('renders a finished failed run: full name, run as, average only, red border, no running parts', () => {
     const { container } = render(<RunRow run={makeRun()} nowMs={0} loadedAt={0} asOf={0} />);
     const row = container.querySelector('.rr')!;
-    expect(row.className).toContain('b-red');
+    expect(row.className).toBe('rr');
     expect(row.className).not.toContain('live');
     expect(container.querySelector('[data-c="3"]')!.textContent).toBe('[prod] finance_gl_co_gl_journals_v3');
     const l1 = [...container.querySelector('.rr-l1')!.children].map((c) => c.getAttribute('data-c'));
@@ -69,7 +69,6 @@ describe('RunRow', () => {
   it('renders a running run: ticking big NOW, chain, live message, progress edge', () => {
     const { container } = render(<RunRow run={live} nowMs={5000} loadedAt={0} asOf={0} />);
     const row = container.querySelector<HTMLElement>('.rr')!;
-    expect(row.className).toContain('b-blue');
     expect(row.className).toContain('live');
     expect(row.style.getPropertyValue('--p')).toBe('0.504');
     expect(container.querySelector('[data-c="9"]')!.textContent).toBe('10m 05s');

@@ -92,13 +92,6 @@ export function whenText(r: Run): string {
   return `${verb} ${fmtStart(r.startTime)}`;
 }
 
-export function borderTone(r: Run): '' | 'red' | 'amber' | 'blue' {
-  if (r.kind === 'failed') return 'red';
-  if (r.kind === 'running') return 'blue';
-  if (r.kind === 'slow' || r.kind === 'retrying') return 'amber';
-  return '';
-}
-
 /** Live runs keep counting from when the data was loaded. */
 export function elapsedSec(r: Run, nowMs: number, loadedAt: number): number {
   return r.live ? r.durationSec + Math.max(0, Math.floor((nowMs - loadedAt) / 1000)) : r.durationSec;
