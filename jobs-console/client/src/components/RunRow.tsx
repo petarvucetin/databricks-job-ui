@@ -10,18 +10,21 @@ import './runrow.css';
 const CHAIN_CLASS = { ok: '', f: 'f', s: 's', r: 'r', p: 'q' } as const;
 const RESULT_LABEL = { succeeded: 'succeeded', failed: 'failed', cancelled: 'cancelled', partial: 'partially succeeded' } as const;
 
-/** One square per task plus the counted summary; hovering a square shows only its task name on the line below. */
-function TaskChain({ run, elapsed, labels }: { run: Run; elapsed: number; labels?: boolean }) {
+/** One square per task plus the counted summary; hovering a square shows only its task name, on the line below (or above, in the popup). */
+function TaskChain({ run, elapsed, labels, nameAbove }: { run: Run; elapsed: number; labels?: boolean; nameAbove?: boolean }) {
   const [hover, setHover] = useState<number | null>(null);
   const states = taskStates(run, elapsed);
   const names = taskNames(run);
+  const summary = chainSummary(run, elapsed);
+  const name = <div className="rr-task" data-c={labels ? '15' : undefined}>{hover !== null && names[hover] ? names[hover] : ' '}</div>;
   return (
     <>
+      {nameAbove && name}
       <div className="rr-chain" data-c={labels ? '6' : undefined} onMouseLeave={() => setHover(null)}>
         {states.map((s, i) => <i key={i} className={`${CHAIN_CLASS[s]}${hover === i ? ' hov' : ''}`} onMouseEnter={() => setHover(i)} />)}
-        <em data-c={labels ? '7' : undefined}>{chainSummary(run, elapsed)}</em>
+        {summary !== 'all ok' && <em data-c={labels ? '7' : undefined}>{summary}</em>}
       </div>
-      <div className="rr-task" data-c={labels ? '15' : undefined}>{hover !== null && names[hover] ? names[hover] : ' '}</div>
+      {!nameAbove && name}
     </>
   );
 }
@@ -57,7 +60,7 @@ function RunPopup({ run, elapsed, live, onClose }: { run: Run; elapsed: number; 
         <span>{dur(elapsed)}</span>
         <button type="button" className="rh-pop-x" aria-label="Close" onClick={onClose}>×</button>
       </div>
-      <TaskChain run={run} elapsed={elapsed} />
+      <TaskChain run={run} elapsed={elapsed} nameAbove />
     </div>
   );
 }

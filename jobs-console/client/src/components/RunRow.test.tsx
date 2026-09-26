@@ -106,13 +106,14 @@ describe('RunRow', () => {
     expect(onSelect).not.toHaveBeenCalled();
     const pop = boxes[0].parentElement!.querySelector('.rh-pop')!;
     expect(pop.querySelectorAll('.rr-chain i')).toHaveLength(4);
-    expect(pop.textContent).toContain('all ok');
+    expect(pop.textContent).not.toContain('all ok');
     expect(pop.textContent).toContain('succeeded');
     expect(boxes[0].className).toContain('pick');
     // the row's own chain stays on the current run
     expect(container.querySelectorAll('.rr-main [data-c="6"] i')).toHaveLength(10);
     fireEvent.mouseEnter(pop.querySelectorAll('.rr-chain i')[2]);
     expect(pop.querySelector('.rr-task')!.textContent).toBe('extract_bseg');
+    expect(pop.querySelector('.rr-task')!.nextElementSibling!.className).toBe('rr-chain');
     fireEvent.click(boxes[0]);
     expect(container.querySelector('.rh-pop')).toBeNull();
   });
