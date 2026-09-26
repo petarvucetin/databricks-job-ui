@@ -82,11 +82,14 @@ describe('timeline', () => {
     expect(shiftWindow(bks, w, 5)).toEqual(w);
   });
 
-  it('moves a window to start at a column, keeping its length and staying in the domain', () => {
+  it('centres a window on a column, keeping its length and staying in the domain', () => {
     const bks = buckets('30d', end);
-    const w = presetWindow('last2', '30d', end);
-    expect(moveWindowTo(bks, w, 10)).toEqual({ from: edgeAt(bks, 10), to: edgeAt(bks, 12) });
-    expect(moveWindowTo(bks, w, 29)).toEqual(w);
+    const w7 = presetWindow('last7', '30d', end);
+    expect(moveWindowTo(bks, w7, 10)).toEqual({ from: edgeAt(bks, 7), to: edgeAt(bks, 14) });
+    expect(moveWindowTo(bks, w7, 1)).toEqual({ from: edgeAt(bks, 0), to: edgeAt(bks, 7) });
+    expect(moveWindowTo(bks, w7, 28)).toEqual(w7);
+    const w2 = presetWindow('last2', '30d', end);
+    expect(moveWindowTo(bks, w2, 10)).toEqual({ from: edgeAt(bks, 9), to: edgeAt(bks, 11) });
   });
 
   it('snaps an unaligned window onto week edges when dragged in the 90d view', () => {

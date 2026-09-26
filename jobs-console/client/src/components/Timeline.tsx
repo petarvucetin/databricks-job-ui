@@ -88,15 +88,12 @@ export function Timeline({ runs, end, scale, window, cube, collapsed, dispatch }
     trackDrag(e, (ev) => shiftWindow(bks, start, Math.round((ev.clientX - x0) / colWidth)));
   };
 
-  // A double-click arrives as click (detail 1) then click (detail 2); the first has already selected the
-  // single day, so the move uses the window from before it.
+  // A double-click anywhere in a column arrives as click (detail 1) then click (detail 2). The first click
+  // may already have selected the day or a count, so the move uses the window from before it.
   const beforeClick = useRef(window);
-  const clickHead = (i: number, detail: number) => {
-    if (detail === 2) dispatch({ type: 'moveWindow', col: i, window: beforeClick.current });
-    else if (detail < 2) {
-      beforeClick.current = window;
-      dispatch({ type: 'column', col: i });
-    }
+  const clickCol = (i: number, detail: number) => {
+    if (detail <= 1) beforeClick.current = window;
+    else if (detail === 2) dispatch({ type: 'moveWindow', col: i, window: beforeClick.current });
   };
 
   const fromText = fmtEdge(window.from);
@@ -139,8 +136,8 @@ export function Timeline({ runs, end, scale, window, cube, collapsed, dispatch }
           const c = counts[i];
           const on = sameWindow(window, { from: bk.start, to: bk.end });
           return (
-            <div key={bk.start} className={`tl-col${on ? ' on' : ''}${inside[i] ? '' : ' dim'}`} style={{ gridColumn: i + 1, gridRow: 1 }} title={`${L.title}, ${c.n} runs`}>
-              <button type="button" className="tl-head" onClick={(e) => clickHead(i, e.detail)} title={`${L.title}, ${c.n} runs. Double-click to move the window here`}>
+            <div key={bk.start} className={`tl-col${on ? ' on' : ''}${inside[i] ? '' : ' dim'}`} style={{ gridColumn: i + 1, gridRow: 1 }} title={`${L.title}, ${c.n} runs. Double-click to centre the window here`} onClick={(e) => clickCol(i, e.detail)}>
+              <button type="button" className="tl-head" onClick={(e) => e.detail < 2 && dispatch({ type: 'column', col: i })}>
                 {L.num}
                 <small className={L.month ? 'mon' : undefined}>{L.small || ' '}</small>
               </button>
@@ -150,7 +147,7 @@ export function Timeline({ runs, end, scale, window, cube, collapsed, dispatch }
                   if (!n) return <span key={k} className="tl-empty" />;
                   const sel = cube !== null && cube.col === i && cube.kind === k;
                   return (
-                    <button key={k} type="button" className={`cube ${k}${sel ? ' sel' : ''}`} title={`${L.title}: ${n} ${k}`} onClick={() => dispatch({ type: 'cube', col: i, kind: k })}>
+                    <button key={k} type="button" className={`cube ${k}${sel ? ' sel' : ''}`} title={`${L.title}: ${n} ${k}`} onClick={(e) => e.detail < 2 && dispatch({ type: 'cube', col: i, kind: k })}>
                       {n}
                     </button>
                   );

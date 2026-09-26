@@ -147,7 +147,9 @@ export function shiftWindow(bks: Bucket[], w: TimeWindow, deltaCols: number): Ti
   return { from: edgeAt(bks, nf), to: edgeAt(bks, nf + span) };
 }
 
-/** Same-length window starting at column `col`, pulled back so it stays in the domain. */
+/** Same-length window centred on column `col` (an even span puts it just right of centre), kept in the domain. */
 export function moveWindowTo(bks: Bucket[], w: TimeWindow, col: number): TimeWindow {
-  return shiftWindow(bks, w, col - edgeIndex(bks, w.from));
+  const f = edgeIndex(bks, w.from);
+  const span = Math.max(1, edgeIndex(bks, w.to) - f);
+  return shiftWindow(bks, w, col - Math.floor(span / 2) - f);
 }

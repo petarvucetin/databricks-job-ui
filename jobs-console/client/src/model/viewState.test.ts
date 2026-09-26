@@ -31,12 +31,14 @@ describe('viewState', () => {
     expect(s2.filters.window).toEqual({ from: domainStart('30d', end), to: end });
   });
 
-  it('double-clicking a day moves the window there and keeps its length', () => {
-    const s0 = initialState(ctx);
+  it('double-clicking a day centres the window on it and keeps its length', () => {
+    const s0 = applyAction(initialState(ctx), { type: 'preset', preset: 'last7' }, ctx);
     const col = buckets('30d', end).findIndex((b) => b.start === new Date(2026, 8, 10).getTime());
-    const s1 = applyAction(s0, { type: 'column', col }, ctx);
+    const s1 = applyAction(s0, { type: 'cube', col, kind: 'succeeded' }, ctx);
     const s2 = applyAction(s1, { type: 'moveWindow', col, window: s0.filters.window }, ctx);
-    expect(s2.filters.window).toEqual({ from: new Date(2026, 8, 10).getTime(), to: new Date(2026, 8, 12).getTime() });
+    expect(s2.filters.window).toEqual({ from: new Date(2026, 8, 7).getTime(), to: new Date(2026, 8, 14).getTime() });
+    expect(s2.cube).toBeNull();
+    expect(s2.filters.statuses).toEqual(['succeeded']);
   });
 
   it('clicking a count filters to that column and status, and toggles back', () => {

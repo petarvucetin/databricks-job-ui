@@ -54,13 +54,18 @@ describe('Timeline', () => {
     expect(dispatch).toHaveBeenCalledWith({ type: 'cube', col: 29, kind: 'failed' });
   });
 
-  it('a double-click on a day moves the window from before the first click', () => {
+  it('a double-click anywhere in a day moves the window from before the first click', () => {
     const { dispatch, container } = setup();
+    const moved = { type: 'moveWindow', col: 10, window: presetWindow('last2', '30d', end) };
     const head = container.querySelectorAll('.tl-head')[10];
     fireEvent.click(head, { detail: 1 });
     fireEvent.click(head, { detail: 2 });
-    expect(dispatch).toHaveBeenNthCalledWith(1, { type: 'column', col: 10 });
-    expect(dispatch).toHaveBeenNthCalledWith(2, { type: 'moveWindow', col: 10, window: presetWindow('last2', '30d', end) });
+    expect(dispatch.mock.calls).toEqual([[{ type: 'column', col: 10 }], [moved]]);
+    dispatch.mockClear();
+    const body = container.querySelectorAll('.tl-cubes')[10];
+    fireEvent.click(body, { detail: 1 });
+    fireEvent.click(body, { detail: 2 });
+    expect(dispatch.mock.calls).toEqual([[moved]]);
   });
 
   it('drags the end handle to a new window and stops updating once the drag ends', () => {
