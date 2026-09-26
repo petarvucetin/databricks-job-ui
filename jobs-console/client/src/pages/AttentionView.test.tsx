@@ -29,7 +29,7 @@ describe('AttentionView', () => {
     const { container } = render(<AttentionView data={data} loadedAt={Date.now()} />);
     expect(container.querySelectorAll('.tile')).toHaveLength(7);
     expect(screen.getByRole('button', { name: /^1\s*Failed/ })).toBeTruthy();
-    expect([...container.querySelectorAll('.rl .rr')].map((r) => r.getAttribute('data-id'))).toEqual(['1', '3', '2']);
+    expect([...container.querySelectorAll('.rl .rr')].map((r) => r.getAttribute('data-id'))).toEqual(['3', '1', '2']);
   });
 
   it('filters to running runs with the Running now toggle', () => {

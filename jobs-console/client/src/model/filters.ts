@@ -25,6 +25,14 @@ export interface Filters {
   window: TimeWindow;
 }
 
+/** Statuses grouped by where the run is: still going, waiting to start, or finished. Tiles and row order follow it. */
+export const STATUS_GROUPS: { title: string; kinds: RunKind[] }[] = [
+  { title: 'Running now', kinds: ['running', 'slow', 'retrying'] },
+  { title: 'Waiting', kinds: ['queued'] },
+  { title: 'Finished', kinds: ['failed', 'succeeded', 'snoozed'] },
+];
+const ROW_ORDER: RunKind[] = STATUS_GROUPS.flatMap((g) => g.kinds);
+
 export const KIND_TITLES: Record<RunKind, string> = {
   failed: 'Failed', retrying: 'Retrying', slow: 'Slow', running: 'Running', queued: 'Queued', snoozed: 'Snoozed', succeeded: 'Succeeded',
 };
@@ -86,7 +94,7 @@ export function autoStatuses(runs: Run[], f: Filters): RunKind[] {
 }
 
 export function sortRuns(runs: Run[]): Run[] {
-  const order = (k: RunKind) => RUN_KINDS.indexOf(k);
+  const order = (k: RunKind) => ROW_ORDER.indexOf(k);
   return [...runs].sort((a, b) => order(a.kind) - order(b.kind) || b.startTime - a.startTime);
 }
 

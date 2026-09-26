@@ -45,10 +45,14 @@ describe('filters', () => {
     expect(autoStatuses([ok, failed, live], { ...base, live: true })).toEqual(['running']);
   });
 
-  it('sorts by status then newest first', () => {
+  it('sorts by status group (running now, waiting, finished) then newest first', () => {
     const a = makeRun({ id: 10, startTime: 1 });
     const b = makeRun({ id: 11, startTime: 2 });
-    expect(sortRuns([ok, live, a, b]).map((r) => r.id)).toEqual([11, 10, 3, 2]);
+    const slow = makeRun({ id: 12, kind: 'slow', startTime: 3 });
+    const retrying = makeRun({ id: 13, kind: 'retrying', startTime: 4 });
+    const queued = makeRun({ id: 14, kind: 'queued', startTime: 5 });
+    const snoozed = makeRun({ id: 15, kind: 'snoozed', startTime: 6 });
+    expect(sortRuns([snoozed, ok, queued, live, a, retrying, b, slow]).map((r) => r.id)).toEqual([3, 12, 13, 14, 11, 10, 2, 15]);
   });
 
   it('counts scope, menus, live and tiles', () => {

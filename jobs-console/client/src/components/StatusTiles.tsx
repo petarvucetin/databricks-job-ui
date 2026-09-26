@@ -1,16 +1,9 @@
 import type { Run, RunKind } from '../../../shared/domain/types';
-import { KIND_TITLES, tileSubtitle } from '../model/filters';
+import { KIND_TITLES, STATUS_GROUPS, tileSubtitle } from '../model/filters';
 import type { Action } from '../model/viewState';
 import './tiles.css';
 
 const TONE: Record<RunKind, string> = { failed: 'red', retrying: 'amber', slow: 'amber', running: 'blue', queued: '', snoozed: '', succeeded: 'green' };
-
-/** Tiles grouped by where the run is: still going, waiting to start, or finished. */
-const GROUPS: { title: string; kinds: RunKind[] }[] = [
-  { title: 'Running now', kinds: ['running', 'slow', 'retrying'] },
-  { title: 'Waiting', kinds: ['queued'] },
-  { title: 'Finished', kinds: ['failed', 'succeeded', 'snoozed'] },
-];
 
 export function StatusTiles({ tiles, statuses, asOf, dispatch }: {
   tiles: Record<RunKind, Run[]>;
@@ -20,7 +13,7 @@ export function StatusTiles({ tiles, statuses, asOf, dispatch }: {
 }) {
   return (
     <div className="tiles">
-      {GROUPS.map((g) => (
+      {STATUS_GROUPS.map((g) => (
         <section key={g.title} className="tile-grp" style={{ flexGrow: g.kinds.length, gridTemplateColumns: `repeat(${g.kinds.length}, 1fr)` }} aria-label={g.title}>
           <span className="tile-grp-t">{g.title}</span>
           {g.kinds.map((k) => {
