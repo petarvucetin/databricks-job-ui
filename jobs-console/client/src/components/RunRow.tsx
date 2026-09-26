@@ -1,4 +1,4 @@
-import { Fragment, useState, type CSSProperties, type MouseEvent } from 'react';
+import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
 import type { Run } from '../../../shared/domain/types';
 import { dur, fmtStart } from '../../../shared/domain/format';
 import {
@@ -9,6 +9,58 @@ import './runrow.css';
 
 const CHAIN_CLASS = { ok: '', f: 'f', s: 's', r: 'r', p: 'q' } as const;
 const RESULT_LABEL = { succeeded: 'succeeded', failed: 'failed', cancelled: 'cancelled', partial: 'partially succeeded' } as const;
+
+/** One square per task plus the counted summary; hovering a square shows only its task name on the line below. */
+function TaskChain({ run, elapsed, labels }: { run: Run; elapsed: number; labels?: boolean }) {
+  const [hover, setHover] = useState<number | null>(null);
+  const states = taskStates(run, elapsed);
+  const names = taskNames(run);
+  return (
+    <>
+      <div className="rr-chain" data-c={labels ? '6' : undefined} onMouseLeave={() => setHover(null)}>
+        {states.map((s, i) => <i key={i} className={`${CHAIN_CLASS[s]}${hover === i ? ' hov' : ''}`} onMouseEnter={() => setHover(i)} />)}
+        <em data-c={labels ? '7' : undefined}>{chainSummary(run, elapsed)}</em>
+      </div>
+      <div className="rr-task" data-c={labels ? '15' : undefined}>{hover !== null && names[hover] ? names[hover] : ' '}</div>
+    </>
+  );
+}
+
+/** Popup under a history box with that run's task boxes; closes on Escape, a click outside, or the box again. */
+function RunPopup({ run, elapsed, live, onClose }: { run: Run; elapsed: number; live: boolean; onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  // Keep the popup on screen: slide it left when it would run past the right edge.
+  useLayoutEffect(() => {
+    const el = ref.current;
+    const r = el?.getBoundingClientRect();
+    const limit = document.documentElement.clientWidth - 12;
+    if (el && r && r.right > limit) el.style.left = `${limit - r.right}px`;
+  }, []);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    const onDown = (e: PointerEvent) => {
+      const t = e.target as Node;
+      if (!ref.current?.contains(t) && !ref.current?.parentElement?.contains(t)) onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onDown);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onDown);
+    };
+  }, [onClose]);
+  return (
+    <div ref={ref} className="rh-pop" role="dialog" aria-label="Run tasks" data-c="17" onClick={(e) => e.stopPropagation()}>
+      <div className="rh-pop-t">
+        <span>{fmtStart(run.startTime)}</span>
+        <span className={`rh-pop-r ${live ? 'now' : run.result ?? ''}`}>{live ? 'running now' : RESULT_LABEL[run.result ?? 'failed']}</span>
+        <span>{dur(elapsed)}</span>
+        <button type="button" className="rh-pop-x" aria-label="Close" onClick={onClose}>×</button>
+      </div>
+      <TaskChain run={run} elapsed={elapsed} />
+    </div>
+  );
+}
 
 export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect }: {
   run: Run;
@@ -26,19 +78,13 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   const stat = statBlock(run, elapsed, asOf);
   const { prefix, rest } = splitName(run.name);
   const hist = visibleHistory(history ?? (run.result ? [run] : []));
-  // Which run's task chain is open: a running row starts on its current run; clicking a history box opens that run, clicking it again closes.
-  const [picked, setPicked] = useState<number | null>(run.live ? run.id : null);
-  const [hover, setHover] = useState<number | null>(null);
-  const chainRun = picked === null ? null : picked === run.id && run.live ? run : hist.shown.find((h) => h.id === picked) ?? null;
-  const chainElapsed = chainRun === run ? elapsed : chainRun?.durationSec;
-  const chain = chainRun ? taskStates(chainRun, chainElapsed) : [];
-  const names = chainRun ? taskNames(chainRun) : [];
-  const pick = (id: number) => (e: MouseEvent) => {
+  const [open, setOpen] = useState<number | null>(null);
+  const close = useCallback(() => setOpen(null), []);
+  const toggle = (id: number) => (e: MouseEvent) => {
     e.stopPropagation();
-    setHover(null);
-    setPicked((p) => (p === id ? null : id));
+    setOpen((o) => (o === id ? null : id));
   };
-  const nowStates = run.live ? taskStates(run, elapsed) : [];
+  const nowDone = run.live ? taskStates(run, elapsed).filter((s) => s === 'ok').length : 0;
   const cls = ['rr', tone && `b-${tone}`, run.live && 'live', run.live && `bar-${run.type}`, run.live && over && 'over', selected && 'on'].filter(Boolean).join(' ');
   const style = run.live ? ({ '--p': String(p) } as CSSProperties) : undefined;
 
@@ -56,15 +102,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
           )}
         </div>
         <span className="rr-name" data-c="3"><i>{prefix}</i>{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</span>
-        {chainRun && (
-          <>
-            <div className="rr-chain" data-c="6" onMouseLeave={() => setHover(null)}>
-              {chain.map((s, i) => <i key={i} className={`${CHAIN_CLASS[s]}${hover === i ? ' hov' : ''}`} onMouseEnter={() => setHover(i)} />)}
-              <em data-c="7">{chainSummary(chainRun, chainElapsed)}</em>
-            </div>
-            <div className="rr-task" data-c="15">{hover !== null && names[hover] ? names[hover] : ' '}</div>
-          </>
-        )}
+        {run.live && <TaskChain run={run} elapsed={elapsed} labels />}
       </div>
       <div className="rr-hist" data-c="12">
         <div className="rr-hist-t">
@@ -74,28 +112,35 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
         <div className="rr-hist-boxes">
           {hist.earlier > 0 && <span className="rh-more">+{hist.earlier} earlier</span>}
           {hist.shown.map((h) => (
-            <button
-              type="button"
-              key={h.id}
-              className={`rh ${h.result ?? ''}${h.id === run.id ? ' cur' : ''}${h.id === picked ? ' pick' : ''}`}
-              title={`${fmtStart(h.startTime)}, ${RESULT_LABEL[h.result ?? 'failed']}, ${dur(h.durationSec)}`}
-              onClick={pick(h.id)}
-            >
-              <span className="rh-t">{durShort(h.durationSec)}</span>
-              <span className="rh-w">{dayTime(h.startTime)}</span>
-            </button>
+            <span key={h.id} className="rh-wrap">
+              <button
+                type="button"
+                className={`rh ${h.result ?? ''}${h.id === run.id ? ' cur' : ''}${h.id === open ? ' pick' : ''}`}
+                aria-label={`${fmtStart(h.startTime)}, ${RESULT_LABEL[h.result ?? 'failed']}, ${dur(h.durationSec)}`}
+                aria-expanded={h.id === open}
+                onClick={toggle(h.id)}
+              >
+                <span className="rh-t">{durShort(h.durationSec)}</span>
+                <span className="rh-w">{dayTime(h.startTime)}</span>
+              </button>
+              {h.id === open && <RunPopup run={h} elapsed={h.durationSec} live={false} onClose={close} />}
+            </span>
           ))}
           {run.live && (
-            <button
-              type="button"
-              className={`rh now ${run.type} cur${picked === run.id ? ' pick' : ''}`}
-              title={`${fmtStart(run.startTime)}, running now`}
-              onClick={pick(run.id)}
-              data-c="16"
-            >
-              <span className="rh-t">{nowStates.filter((s) => s === 'ok').length} of {run.ntasks}</span>
-              <span className="rh-w">{dayTime(run.startTime)}</span>
-            </button>
+            <span className="rh-wrap">
+              <button
+                type="button"
+                className={`rh now ${run.type} cur${open === run.id ? ' pick' : ''}`}
+                aria-label={`${fmtStart(run.startTime)}, running now`}
+                aria-expanded={open === run.id}
+                onClick={toggle(run.id)}
+                data-c="16"
+              >
+                <span className="rh-t">{nowDone} of {run.ntasks}</span>
+                <span className="rh-w">{dayTime(run.startTime)}</span>
+              </button>
+              {open === run.id && <RunPopup run={run} elapsed={elapsed} live onClose={close} />}
+            </span>
           )}
           {hist.shown.length === 0 && !run.live && <span className="rh-none">no finished runs in this window</span>}
         </div>

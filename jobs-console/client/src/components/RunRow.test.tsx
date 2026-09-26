@@ -82,7 +82,7 @@ describe('RunRow', () => {
     expect(container.querySelector('[data-c="8"]')).toBeNull();
     const now = container.querySelector('.rh.now')!;
     expect(now.textContent).toContain('5 of 10');
-    expect(now.className).toContain('pick');
+    expect(now.className).not.toContain('pick');
     expect(container.querySelector('.rr-main [data-c="6"]')).not.toBeNull();
     expect(container.querySelector('.rr-bar')).not.toBeNull();
     expect(container.querySelector('.rr-avg')).toBeNull();
@@ -94,20 +94,39 @@ describe('RunRow', () => {
     expect(container.querySelector('.rr-avg')).not.toBeNull();
   });
 
-  it("opens a history run's task chain on click, closes it on a second click, without selecting the row", () => {
+  it("opens a popup with that run's task boxes under the clicked history box, without selecting the row", () => {
     const d = (day: number) => new Date(2026, 8, day, 5).getTime();
     const past = makeRun({ id: 7, kind: 'succeeded', failed: [], result: 'succeeded', startTime: d(21), ntasks: 4 });
     const onSelect = vi.fn();
     const { container } = render(<RunRow run={live} history={[past]} nowMs={5000} loadedAt={0} asOf={0} onSelect={onSelect} />);
     const boxes = container.querySelectorAll<HTMLButtonElement>('.rr-hist .rh');
     expect(boxes).toHaveLength(2);
+    expect(container.querySelector('.rh-pop')).toBeNull();
     fireEvent.click(boxes[0]);
     expect(onSelect).not.toHaveBeenCalled();
-    expect(container.querySelectorAll('[data-c="6"] i')).toHaveLength(4);
-    expect(container.querySelector('[data-c="7"]')!.textContent).toBe('all ok');
+    const pop = boxes[0].parentElement!.querySelector('.rh-pop')!;
+    expect(pop.querySelectorAll('.rr-chain i')).toHaveLength(4);
+    expect(pop.textContent).toContain('all ok');
+    expect(pop.textContent).toContain('succeeded');
     expect(boxes[0].className).toContain('pick');
+    // the row's own chain stays on the current run
+    expect(container.querySelectorAll('.rr-main [data-c="6"] i')).toHaveLength(10);
+    fireEvent.mouseEnter(pop.querySelectorAll('.rr-chain i')[2]);
+    expect(pop.querySelector('.rr-task')!.textContent).toBe('extract_bseg');
     fireEvent.click(boxes[0]);
-    expect(container.querySelector('[data-c="6"]')).toBeNull();
+    expect(container.querySelector('.rh-pop')).toBeNull();
+  });
+
+  it('closes the popup on Escape and on a click outside, and opens one for the current run too', () => {
+    const { container } = render(<RunRow run={live} nowMs={5000} loadedAt={0} asOf={0} />);
+    const now = container.querySelector<HTMLButtonElement>('.rh.now')!;
+    fireEvent.click(now);
+    expect(container.querySelector('.rh-pop')!.textContent).toContain('running now');
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(container.querySelector('.rh-pop')).toBeNull();
+    fireEvent.click(now);
+    fireEvent.pointerDown(document.body);
+    expect(container.querySelector('.rh-pop')).toBeNull();
   });
 
   it('shows only the task name under the chain while a square is hovered', () => {

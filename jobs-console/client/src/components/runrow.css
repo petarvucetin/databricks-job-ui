@@ -32,6 +32,18 @@
 .rh.now.pipeline { background: var(--wash-blue); border-color: var(--blue); color: var(--blue); }
 .rh:hover { filter: brightness(.97); }
 .rh.pick::after { content: ""; position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%); border: 4px solid transparent; border-top-color: var(--ink); }
+.rh-wrap { position: relative; display: inline-flex; }
+.rh-pop { position: absolute; top: calc(100% + 10px); left: 0; z-index: 30; width: max-content; min-width: 240px; max-width: 400px; padding: 9px 12px 6px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 6px 20px rgba(60, 40, 10, .14); cursor: default; }
+.rh-pop-t { display: flex; align-items: baseline; gap: 10px; font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rh-pop-r { font-weight: 600; }
+.rh-pop-r.succeeded { color: var(--green); }
+.rh-pop-r.failed { color: var(--red); }
+.rh-pop-r.cancelled { color: var(--ink-3); }
+.rh-pop-r.partial, .rh-pop-r.now { color: var(--amber-ink); }
+.rh-pop-x { margin-left: auto; padding: 0 2px; border: 0; background: none; font-size: 16px; line-height: 1; color: var(--ink-3); cursor: pointer; }
+.rh-pop-x:hover { color: var(--ink); }
+.rh-pop .rr-chain { margin-top: 9px; gap: 4px; }
+.rh-pop .rr-chain i { width: 18px; height: 18px; cursor: pointer; }
 .rh-more { font-size: 11px; color: var(--ink-3); margin-right: 4px; white-space: nowrap; }
 .rh-none { font-size: 11.5px; color: var(--ink-3); }
 
@@ -52,11 +64,11 @@
 .rr-st b, .rr-st em { font-style: normal; font-weight: 500; color: var(--ink); }
 
 /* Running indicator: solid bottom band fills toward the average, gold for jobs, blue for pipelines, current runtime printed at the fill's end; past the average it stays full with a tick at the average. */
-.rr.live { overflow: hidden; padding-bottom: 32px; --c: #d9a21b; --c-b: #e8bb4a; --c2: #f6e7bf; --ct: #3b2a05; }
+.rr.live { padding-bottom: 32px; --c: #d9a21b; --c-b: #e8bb4a; --c2: #f6e7bf; --ct: #3b2a05; }
 .rr.live.bar-pipeline { --c: var(--blue); --c-b: #4d88c7; --c2: #d3e1f2; --ct: #fff; }
-.rr-trk { position: absolute; left: 0; right: 0; bottom: 0; height: 22px; background: var(--c2); }
-.rr-bar { position: absolute; left: 0; bottom: 0; height: 22px; min-width: 78px; width: calc(min(var(--p), 1) * 100%); background: var(--c); display: flex; align-items: center; justify-content: flex-end; }
+.rr-trk { position: absolute; left: 0; right: 0; bottom: 0; height: 22px; border-radius: 0 0 7px 7px; background: var(--c2); }
+.rr-bar { position: absolute; left: 0; bottom: 0; height: 22px; border-radius: 0 0 0 7px; min-width: 78px; width: calc(min(var(--p), 1) * 100%); background: var(--c); display: flex; align-items: center; justify-content: flex-end; }
 .rr-bar b { position: relative; z-index: 1; padding: 0 10px; font-size: 13px; font-weight: 600; color: var(--ct); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.rr.over .rr-bar { width: 100%; }
+.rr.over .rr-bar { width: 100%; border-radius: 0 0 7px 7px; }
 .rr-avg { position: absolute; bottom: 0; width: 2px; height: 22px; z-index: 1; background: var(--ink); left: calc(100% / var(--p)); }
 
