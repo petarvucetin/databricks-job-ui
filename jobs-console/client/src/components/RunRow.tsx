@@ -36,7 +36,19 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
         <div className="rr-l1">
           <span className={`rr-tag ${run.type}`} data-c="2">{run.type === 'pipeline' ? 'Pipeline' : 'Job'}</span>
           <span className="rr-ra" data-c="13">run as <b>{run.runAs}</b></span>
-          <span className="rr-name" data-c="3"><i>{prefix}</i>{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</span>
+        </div>
+        <span className="rr-name" data-c="3"><i>{prefix}</i>{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</span>
+        <div className="rr-side">
+          <div className="rr-st" data-c="11">
+            <div className={stat.big ? 'rr-now' : undefined}>
+              <span>{stat.label}</span>
+              {stat.big ? <b data-c="9">{stat.value}</b> : <em data-c="9">{stat.value}</em>}
+            </div>
+            <div>
+              <span>average</span>
+              <em>{stat.average}</em>
+            </div>
+          </div>
         </div>
         {run.live && (
           <>
@@ -47,18 +59,6 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
             {msg && <div className={`rr-msg${msg.red ? ' red' : ''}`} data-c="8">{msg.lead} <span className="dim">{msg.dim}</span></div>}
           </>
         )}
-      </div>
-      <div className="rr-side">
-        <div className="rr-st" data-c="11">
-          <div className={stat.big ? 'rr-now' : undefined}>
-            <span>{stat.label}</span>
-            {stat.big ? <b data-c="9">{stat.value}</b> : <em data-c="9">{stat.value}</em>}
-          </div>
-          <div>
-            <span>average</span>
-            <em>{stat.average}</em>
-          </div>
-        </div>
       </div>
       <div className="rr-hist" data-c="12">
         <span className="rr-hist-t">Run history</span>

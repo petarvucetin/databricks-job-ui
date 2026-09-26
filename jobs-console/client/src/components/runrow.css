@@ -1,4 +1,4 @@
-.rr { position: relative; display: grid; grid-template-columns: 520px 260px minmax(0, 1fr); gap: 0 24px; align-items: start; padding: 10px 16px; margin-bottom: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; }
+.rr { position: relative; display: grid; grid-template-columns: 520px minmax(0, 1fr); gap: 0 24px; align-items: start; padding: 10px 16px; margin-bottom: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; }
 .rr:hover { background: #fffcf6; }
 .rr.b-red { border-color: var(--red); }
 .rr.b-amber { border-color: var(--amber); }
@@ -9,7 +9,7 @@
 .rr-tag { flex: none; display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; line-height: 1.5; position: relative; top: -1px; }
 .rr-tag.job { background: var(--wash-sand); color: var(--ink-2); border: 1px solid #e3d7c6; }
 .rr-tag.pipeline { background: var(--wash-purple); color: var(--purple); border: 1px solid #d6cbee; }
-.rr-name { font-family: var(--mono); font-size: 13px; overflow-wrap: break-word; line-height: 1.4; }
+.rr-name { display: block; margin-top: 6px; font-family: var(--mono); font-size: 13px; overflow-wrap: break-word; line-height: 1.4; }
 .rr-name i { font-style: normal; color: var(--ink-3); }
 .rr-ra { flex: none; display: inline-block; padding: 1px 9px; border-radius: 999px; background: var(--wash-sand); border: 1px solid #e3d7c6; font-size: 11.5px; color: var(--ink-3); line-height: 1.5; position: relative; top: -1px; white-space: nowrap; }
 .rr-ra b { color: var(--ink-2); font-weight: 500; }
@@ -39,7 +39,7 @@
 .rr-msg.red { color: var(--red); }
 .rr-msg .dim { color: var(--ink-3); }
 
-.rr-side { font-variant-numeric: tabular-nums; }
+.rr-side { margin-top: 8px; font-variant-numeric: tabular-nums; }
 .rr-main { min-width: 0; }
 .rr-main .rr-chain { margin-top: 8px; }
 .rr-st { margin-top: 0; display: inline-grid; grid-auto-flow: column; border: 1px solid var(--rule); border-radius: 6px; background: #fdfaf5; text-align: left; }

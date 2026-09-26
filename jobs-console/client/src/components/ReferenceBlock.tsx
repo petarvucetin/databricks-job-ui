@@ -7,7 +7,7 @@ const LEGEND: [string, string, string][] = [
   ['12', 'Run history', "This job's finished runs in the timeline window, oldest to newest: runtime on top, start day/time (e.g. 18/06:00) under it; green succeeded, red failed, grey struck cancelled, split partially succeeded; outlined box is this run."],
   ['3', 'Name', 'Full job or pipeline name; bundle target prefix dimmed.'],
   ['6', 'Task chain', 'Running only: one square per task, green ok, red failed, dashed skipped, blue running.'],
-  ['13', 'Run as', 'Pill before the name: the identity the run executes as.'],
+  ['13', 'Run as', 'Pill next to the type tag, above the name: the identity the run executes as.'],
   ['7', 'Chain summary', 'Running only: the chain counted.'],
   ['11', 'Stats block', 'Now (running) or took, against the average duration.'],
   ['8', 'Live message', 'Running only: what the run is doing or waiting on right now.'],
