@@ -37,7 +37,18 @@ describe('GET /api/runs handler', () => {
     const res = await listRuns(source, { tzOffset: '-120' });
     expect(res.status).toBe(200);
     const body = res.body as RunsResponse;
-    expect(body.asOf).toBe(Date.UTC(2026, 8, 22, 6, 0));
+    expect(body.runs.length).toBeGreaterThan(4000);
+  });
+
+  it('anchors the mock data to the current minute, so the timeline always ends today', async () => {
+    const now = Date.UTC(2026, 8, 26, 14, 37, 21);
+    const clocked = createMockRunSource(() => now);
+    const base = (await createMockRunSource(() => Date.UTC(2026, 8, 22, 8, 0)).listRuns(undefined, 0));
+    const body = await clocked.listRuns(undefined, 0);
+    expect(body.asOf).toBe(Date.UTC(2026, 8, 26, 14, 37));
+    for (const r of body.runs) expect(r.startTime).toBeLessThanOrEqual(body.asOf);
+    // relative timing is unchanged: every run keeps its distance from "now"
+    expect(body.asOf - body.runs[0].startTime).toBe(base.asOf - base.runs[0].startTime);
   });
 
   it('rejects a bad tzOffset with 400', async () => {

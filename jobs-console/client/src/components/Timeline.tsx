@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import { RUN_KINDS, type Run, type RunKind } from '../../../shared/domain/types';
-import { fmtEdge } from '../../../shared/domain/format';
+import { fmtEdge, fmtEdgeEnd } from '../../../shared/domain/format';
 import type { TimeWindow } from '../model/filters';
 import type { Action } from '../model/viewState';
 import {
@@ -88,7 +88,9 @@ export function Timeline({ runs, end, scale, window, cube, collapsed, dispatch }
     trackDrag(e, (ev) => shiftWindow(bks, start, Math.round((ev.clientX - x0) / colWidth)));
   };
 
-  const rangeText = `${fmtEdge(window.from)} to ${fmtEdge(window.to)}, ${spanText(window.to - window.from)}`;
+  const fromText = fmtEdge(window.from);
+  const toText = fmtEdgeEnd(window.to);
+  const rangeText = `${fromText === toText ? fromText : `${fromText} to ${toText}`}, ${spanText(window.to - window.from)}`;
 
   if (collapsed) {
     return (
@@ -152,7 +154,7 @@ export function Timeline({ runs, end, scale, window, cube, collapsed, dispatch }
         <div className="tl-handle" style={{ left: `${a * 100}%` }} onPointerDown={startHandleDrag('from')} aria-label="window start" role="slider" aria-valuenow={window.from} />
         <div className="tl-handle" style={{ left: `${b * 100}%` }} onPointerDown={startHandleDrag('to')} aria-label="window end" role="slider" aria-valuenow={window.to} />
         {showStartLabel && <span className="tl-lab" style={{ left: `${a * 100}%`, transform: a === 0 ? 'none' : 'translateX(-50%)' }}>{fmtEdge(window.from)}</span>}
-        <span className="tl-lab" style={{ left: `${b * 100}%`, transform: b >= 1 ? 'translateX(-100%)' : 'translateX(-50%)' }}>{fmtEdge(window.to)}</span>
+        <span className="tl-lab" style={{ left: `${b * 100}%`, transform: b >= 1 ? 'translateX(-100%)' : 'translateX(-50%)' }}>{fmtEdgeEnd(window.to)}</span>
       </div>
     </section>
   );

@@ -3,8 +3,15 @@ import type { RunSource } from '../runSource';
 import { generateRuns } from './generateRuns';
 
 const DEFAULT_TZ_OFFSET_MIN = new Date(2026, 8, 22).getTimezoneOffset();
+const MINUTE = 60000;
 
-export function createMockRunSource(): RunSource {
+/** Moves a generated data set so its "now" is the current minute: the timeline then always ends today. */
+function shiftTo(data: RunsResponse, nowMs: number): RunsResponse {
+  const delta = Math.floor(nowMs / MINUTE) * MINUTE - data.asOf;
+  return { ...data, asOf: data.asOf + delta, runs: data.runs.map((r) => ({ ...r, startTime: r.startTime + delta })) };
+}
+
+export function createMockRunSource(clock: () => number = Date.now): RunSource {
   const cache = new Map<number, RunsResponse>();
   const dataFor = (tzOffsetMin: number): RunsResponse => {
     let data = cache.get(tzOffsetMin);
@@ -17,7 +24,7 @@ export function createMockRunSource(): RunSource {
   return {
     kind: 'mock',
     listRuns(since, tzOffsetMin) {
-      const data = dataFor(tzOffsetMin ?? DEFAULT_TZ_OFFSET_MIN);
+      const data = shiftTo(dataFor(tzOffsetMin ?? DEFAULT_TZ_OFFSET_MIN), clock());
       return Promise.resolve({ ...data, runs: since === undefined ? data.runs : data.runs.filter((r) => r.startTime >= since) });
     },
   };

@@ -23,7 +23,7 @@ describe('Timeline', () => {
   it('collapses to one line showing only the date range', () => {
     const { container } = render(<Timeline runs={runs} end={end} scale="30d" window={presetWindow('last2', '30d', end)} cube={null} collapsed dispatch={vi.fn()} />);
     expect(container.querySelector('.tl.tl-min')).not.toBeNull();
-    expect(container.querySelector('.tl-span')!.textContent).toBe('21 Sep to 23 Sep, 2 days');
+    expect(container.querySelector('.tl-span')!.textContent).toBe('21 Sep to 22 Sep, 2 days');
     expect(container.querySelectorAll('.tl-col, .tl-line, .tl-scale, .tl-presets, button')).toHaveLength(0);
   });
 
@@ -31,9 +31,9 @@ describe('Timeline', () => {
     const { container } = setup();
     expect(container.querySelectorAll('.tl-col')).toHaveLength(30);
     expect(screen.getByText('Runs by day')).toBeTruthy();
-    expect(screen.getByText('21 Sep to 23 Sep, 2 days')).toBeTruthy();
+    expect(screen.getByText('21 Sep to 22 Sep, 2 days')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'last 2 days' }).className).toContain('on');
-    expect([...container.querySelectorAll('.tl-lab')].map((l) => l.textContent)).toEqual(['21 Sep', '23 Sep']);
+    expect([...container.querySelectorAll('.tl-lab')].map((l) => l.textContent)).toEqual(['21 Sep', '22 Sep']);
   });
 
   it('draws hour columns at 24h and week columns at 90d', () => {

@@ -42,3 +42,9 @@ export function fmtEdge(ms: number): string {
   const d = new Date(ms);
   return d.getHours() || d.getMinutes() ? fmtStart(ms) : dayLabel(ms).full;
 }
+
+/** A window's end edge read inclusively: midnight names the day that just ended, so a window ending tonight reads as today. */
+export function fmtEdgeEnd(ms: number): string {
+  const d = new Date(ms);
+  return d.getHours() || d.getMinutes() ? fmtStart(ms) : dayLabel(ms - 1).full;
+}

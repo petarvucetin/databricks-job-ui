@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { dur, durLive, fmtStart, fmtEdge, dayLabel, pad } from './format';
+import { dur, durLive, fmtStart, fmtEdge, fmtEdgeEnd, dayLabel, pad } from './format';
 
 describe('format', () => {
   it('pads to two digits', () => {
@@ -25,6 +25,11 @@ describe('format', () => {
     expect(fmtStart(new Date(2026, 8, 22, 2, 41).getTime())).toBe('22 Sep 02:41');
     expect(fmtEdge(new Date(2026, 8, 23).getTime())).toBe('23 Sep');
     expect(fmtEdge(new Date(2026, 8, 22, 14, 0).getTime())).toBe('22 Sep 14:00');
+  });
+
+  it('reads a window end inclusively: midnight names the day before', () => {
+    expect(fmtEdgeEnd(new Date(2026, 8, 27).getTime())).toBe('26 Sep');
+    expect(fmtEdgeEnd(new Date(2026, 8, 26, 14, 0).getTime())).toBe('26 Sep 14:00');
   });
 
   it('labels days', () => {
