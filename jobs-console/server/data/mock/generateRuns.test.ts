@@ -45,6 +45,13 @@ describe('generateRuns', () => {
     }
   });
 
+  it('has both jobs and pipelines among the slow runs still going at now', () => {
+    const slowLive = data.runs.filter((r) => r.kind === 'slow' && r.live);
+    expect(slowLive.filter((r) => r.type === 'job').length).toBeGreaterThanOrEqual(3);
+    expect(slowLive.filter((r) => r.type === 'pipeline').length).toBeGreaterThanOrEqual(3);
+    for (const r of slowLive) expect(r.durationSec).toBeGreaterThan(r.usualSec);
+  });
+
   it('gives pipelines update ids and full names', () => {
     const pipes = data.runs.filter((r) => r.type === 'pipeline');
     expect(pipes.length).toBeGreaterThan(0);

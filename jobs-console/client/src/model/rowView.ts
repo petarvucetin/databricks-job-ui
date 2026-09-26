@@ -53,6 +53,7 @@ export function taskStates(r: Run, elapsed: number = r.durationSec): TaskState[]
     else if (i > firstFail && i % 5 !== 0) out.push('s');
     else if (r.kind === 'retrying' && i === Math.floor(n / 2)) out.push('r');
     else if (r.kind === 'running' && i === k) out.push('r');
+    else if (r.kind === 'slow' && r.live && !r.continuous && i === n - 1) out.push('r'); // over its average and still on the last task
     else if ((r.kind === 'running' && i > k) || r.kind === 'queued') out.push('p');
     else out.push('ok');
   }
@@ -81,6 +82,7 @@ export function chainSummary(r: Run, elapsed: number = r.durationSec): string {
     return `${k} ok, 1 running, ${r.ntasks - k - 1} to go`;
   }
   if (r.kind === 'succeeded') return 'all ok';
+  if (r.kind === 'slow' && r.live && !r.continuous) return `${r.ntasks - 1} ok, last task running`;
   if (r.kind === 'queued') return 'waiting to start';
   if (r.failed.length) return `${okc} ok, ${r.failed.length} failed${sk ? `, ${sk} skipped` : ''}`;
   if (r.kind === 'retrying') return r.type === 'pipeline' ? 'whole update retrying' : 'one task retrying';

@@ -167,6 +167,11 @@ export function generateRuns(tzOffsetMin: number = DEFAULT_TZ_OFFSET_MIN): RunsR
     d.runId = 'upd ' + ((d.id * 2654435761) % 4294967296).toString(16).slice(0, 8);
   }
 
+  // A few slow jobs are still going at now, well past their average, so Slow is not only continuous pipelines.
+  for (const d of drafts) {
+    if (d.type === 'job' && d.kind === 'slow' && !d.old && d.id % 4 === 1) d.startMin = NOW_MIN - Math.floor(d.total / 60);
+  }
+
   // Quiet days: 10-15 Sep and 21 Sep, every run completed with no errors.
   for (const d of drafts) {
     const wall = new Date(minuteToMs(d.startMin, tzOffsetMin) - tzOffsetMin * 60000);

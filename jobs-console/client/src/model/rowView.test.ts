@@ -40,6 +40,13 @@ describe('rowView', () => {
     expect(chainSummary(running, 1200)).toBe('9 ok, 1 running, 0 to go');
   });
 
+  it('keeps the last task running for a slow job still going, and all ok for a finished slow one', () => {
+    const slowLive = makeRun({ kind: 'slow', live: true, result: null, failed: [], ntasks: 5 });
+    expect(taskStates(slowLive)).toEqual(['ok', 'ok', 'ok', 'ok', 'r']);
+    expect(chainSummary(slowLive)).toBe('4 ok, last task running');
+    expect(taskStates(makeRun({ kind: 'slow', failed: [], ntasks: 3 }))).toEqual(['ok', 'ok', 'ok']);
+  });
+
   it('names every task in chain order, failed ones by the name the run reported', () => {
     expect(taskNames(running)).toEqual(['setup', 'extract_bkpf', 'extract_bseg', 'extract_gl', 'transform', 'dq_checks', 'load_gl', 'load_gl_history', 'load_cost_centers', 'load_profit_centers']);
     const long = taskNames(makeRun({ ntasks: 15, failed: [] }));
