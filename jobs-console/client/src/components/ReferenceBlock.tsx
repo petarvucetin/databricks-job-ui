@@ -9,9 +9,9 @@ const LEGEND: [string, string, string][] = [
   ['6', 'Task chain', 'Running only: one square per task, green ok, red failed, dashed skipped, blue running.'],
   ['13', 'Run as', 'Pill next to the type tag, above the name: the identity the run executes as.'],
   ['7', 'Chain summary', 'Running only: the chain counted.'],
-  ['11', 'Now pill', 'Running or queued only: pill on the top line holding the elapsed or waiting time.'],
+  ['11', 'Waiting pill', 'Queued only: pill on the top line with the time spent waiting.'],
   ['8', 'Live message', 'Running only: what the run is doing or waiting on right now.'],
-  ['9', 'Now / waiting', 'Elapsed time while running, or time spent waiting in the queue.'],
+  ['9', 'Progress bar', 'Running only: band along the bottom, gold for jobs, blue for pipelines, filling toward the average with the current runtime at its end; striped past the average.'],
   ['14', 'Average', 'Average duration for this job, next to the Run history title.'],
 ];
 

@@ -27,7 +27,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   const { prefix, rest } = splitName(run.name);
   const msg = run.live ? liveMessage(run, elapsed) : null;
   const hist = visibleHistory(history ?? (run.result ? [run] : []));
-  const cls = ['rr', tone && `b-${tone}`, run.live && 'live', run.live && over && 'over', selected && 'on'].filter(Boolean).join(' ');
+  const cls = ['rr', tone && `b-${tone}`, run.live && 'live', run.live && `bar-${run.type}`, run.live && over && 'over', selected && 'on'].filter(Boolean).join(' ');
   const style = run.live ? ({ '--p': String(p) } as CSSProperties) : undefined;
 
   return (
@@ -36,8 +36,8 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
         <div className="rr-l1">
           <span className={`rr-tag ${run.type}`} data-c="2">{run.type === 'pipeline' ? 'Pipeline' : 'Job'}</span>
           <span className="rr-ra" data-c="13">run as <b>{run.runAs}</b></span>
-          {stat.label !== 'took' && (
-            <span className={`rr-st${stat.big ? ' rr-now' : ''}`} data-c="11">
+          {stat.label === 'waiting' && (
+            <span className="rr-st" data-c="11">
               <span>{stat.label}</span>
               <b data-c="9">{stat.value}</b>
             </span>
@@ -77,7 +77,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
       {run.live && (
         <>
           <span className="rr-trk" />
-          <span className="rr-bar" />
+          <span className="rr-bar"><b data-c="9">{stat.value}</b></span>
           {over && <span className="rr-avg" />}
         </>
       )}

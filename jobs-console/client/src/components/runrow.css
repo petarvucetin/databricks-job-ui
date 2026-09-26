@@ -47,20 +47,17 @@
 .rr-st { flex: none; display: inline-flex; align-items: baseline; gap: 5px; padding: 1px 10px; border-radius: 999px; background: #fdfaf5; border: 1px solid var(--rule); font-size: 11.5px; line-height: 1.5; font-variant-numeric: tabular-nums; white-space: nowrap; position: relative; top: -1px; }
 .rr-st span { color: var(--ink-3); }
 .rr-st b, .rr-st em { font-style: normal; font-weight: 500; color: var(--ink); }
-.rr-st.rr-now { background: var(--wash-amber); border-color: #f0d9a6; }
-.rr-st.rr-now b { font-weight: 600; color: var(--amber-ink); }
-.rr.b-blue .rr-st.rr-now { background: var(--wash-blue); border-color: #b9cfea; }
-.rr.b-blue .rr-st.rr-now b { color: var(--blue); }
 
-/* Running indicator, option C: bottom edge fills toward the average; past it, moving amber stripes and a tick at the average. */
-.rr.live { overflow: hidden; padding-bottom: 14px; --c: var(--amber); --c2: #f0d9a6; }
-.rr.live.b-blue { --c: var(--blue); --c2: #b9cfea; }
-.rr-trk { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--c2); opacity: .5; }
-.rr-bar { position: absolute; left: 0; bottom: 0; height: 4px; width: calc(min(var(--p), 1) * 100%); background: var(--c); }
+/* Running indicator: bottom band fills toward the average, gold for jobs, blue for pipelines, current runtime printed at the fill's end; past the average, moving stripes and a tick at the average. */
+.rr.live { overflow: hidden; padding-bottom: 32px; --c: #d9a21b; --c-b: #e8bb4a; --c2: #f6e7bf; --ct: #3b2a05; }
+.rr.live.bar-pipeline { --c: var(--blue); --c-b: #4d88c7; --c2: #d3e1f2; --ct: #fff; }
+.rr-trk { position: absolute; left: 0; right: 0; bottom: 0; height: 22px; background: var(--c2); }
+.rr-bar { position: absolute; left: 0; bottom: 0; height: 22px; min-width: 78px; width: calc(min(var(--p), 1) * 100%); background: var(--c); display: flex; align-items: center; justify-content: flex-end; }
+.rr-bar b { position: relative; z-index: 1; padding: 0 10px; font-size: 13px; font-weight: 600; color: var(--ct); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .rr-bar::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: 40px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.9), transparent); animation: rr-shimmer 1.6s ease-in-out infinite; }
-.rr.over .rr-bar { width: 100%; background: repeating-linear-gradient(135deg, var(--amber) 0 8px, #e9a93f 8px 16px); background-size: 22.6px 22.6px; animation: rr-slide 1s linear infinite; }
+.rr.over .rr-bar { width: 100%; background: repeating-linear-gradient(135deg, var(--c) 0 8px, var(--c-b) 8px 16px); background-size: 22.6px 22.6px; animation: rr-slide 1s linear infinite; }
 .rr.over .rr-bar::after { display: none; }
-.rr-avg { position: absolute; bottom: 0; width: 2px; height: 10px; background: var(--ink); left: calc(100% / var(--p)); }
+.rr-avg { position: absolute; bottom: 0; width: 2px; height: 22px; z-index: 1; background: var(--ink); left: calc(100% / var(--p)); }
 @keyframes rr-shimmer { 0% { transform: translateX(-60px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateX(0); opacity: 0; } }
 @keyframes rr-slide { to { background-position: 22.6px 0; } }
 @media (prefers-reduced-motion: reduce) { .rr-bar, .rr-bar::after { animation: none; } }

@@ -72,8 +72,9 @@ describe('RunRow', () => {
     expect(row.className).toContain('live');
     expect(row.style.getPropertyValue('--p')).toBe('0.504');
     expect(container.querySelector('[data-c="9"]')!.textContent).toBe('10m 05s');
-    expect(container.querySelector('.rr-l1 [data-c="11"].rr-now')).not.toBeNull();
-    expect(container.querySelector('[data-c="11"]')!.textContent).not.toContain('average');
+    expect(container.querySelector('[data-c="11"]')).toBeNull();
+    expect(container.querySelector('.rr-bar [data-c="9"]')).not.toBeNull();
+    expect(row.className).toContain('bar-job');
     expect(container.querySelector('.rr-hist-t [data-c="14"]')).not.toBeNull();
     expect(container.querySelectorAll('[data-c="6"] i')).toHaveLength(10);
     expect(container.querySelector('[data-c="7"]')!.textContent).toBe('5 ok, 1 running, 4 to go');
