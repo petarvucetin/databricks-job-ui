@@ -1,4 +1,4 @@
-.rr { position: relative; display: grid; grid-template-columns: 200px 520px minmax(0, 1fr); gap: 0 24px; align-items: start; padding: 10px 16px; margin-bottom: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; }
+.rr { position: relative; display: grid; grid-template-columns: 520px 260px minmax(0, 1fr); gap: 0 24px; align-items: start; padding: 10px 16px; margin-bottom: 8px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; cursor: pointer; }
 .rr:hover { background: #fffcf6; }
 .rr.b-red { border-color: var(--red); }
 .rr.b-amber { border-color: var(--amber); }
@@ -40,10 +40,9 @@
 .rr-msg .dim { color: var(--ink-3); }
 
 .rr-side { font-variant-numeric: tabular-nums; }
-.rr-when { font-size: 12.5px; color: var(--ink-3); white-space: nowrap; display: block; }
 .rr-main { min-width: 0; }
 .rr-main .rr-chain { margin-top: 8px; }
-.rr-st { margin-top: 6px; display: inline-grid; grid-auto-flow: column; border: 1px solid var(--rule); border-radius: 6px; background: #fdfaf5; text-align: left; }
+.rr-st { margin-top: 0; display: inline-grid; grid-auto-flow: column; border: 1px solid var(--rule); border-radius: 6px; background: #fdfaf5; text-align: left; }
 .rr-st > div { padding: 4px 12px 5px 12px; }
 .rr-st > div + div { border-left: 1px solid var(--rule); }
 .rr-st span { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }

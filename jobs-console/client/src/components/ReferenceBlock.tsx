@@ -4,15 +4,14 @@ import './reference.css';
 
 const LEGEND: [string, string, string][] = [
   ['2', 'Type tag', 'Job or Pipeline, as a word.'],
-  ['8', 'Live message', 'Running only: what the run is doing or waiting on right now.'],
-  ['3', 'Name', 'Full job or pipeline name; bundle target prefix dimmed.'],
-  ['9', 'Now / took', 'Big elapsed time while running; plain duration once finished.'],
-  ['13', 'Run as', 'Pill before the name: the identity the run executes as.'],
-  ['10', 'When', 'Failed, started, finished or queued since, with the timestamp.'],
   ['12', 'Run history', "This job's finished runs in the timeline window, oldest to newest: runtime on top, start day/time (e.g. 18/06:00) under it; green succeeded, red failed, grey struck cancelled, split partially succeeded; outlined box is this run."],
-  ['11', 'Stats block', 'Now (running) or took, against the average duration.'],
+  ['3', 'Name', 'Full job or pipeline name; bundle target prefix dimmed.'],
   ['6', 'Task chain', 'Running only: one square per task, green ok, red failed, dashed skipped, blue running.'],
+  ['13', 'Run as', 'Pill before the name: the identity the run executes as.'],
   ['7', 'Chain summary', 'Running only: the chain counted.'],
+  ['11', 'Stats block', 'Now (running) or took, against the average duration.'],
+  ['8', 'Live message', 'Running only: what the run is doing or waiting on right now.'],
+  ['9', 'Now / took', 'Big elapsed time while running; plain duration once finished.'],
 ];
 
 export function ReferenceBlock({ rows, history, nowMs, loadedAt, asOf }: { rows: Run[]; history: Map<string, Run[]>; nowMs: number; loadedAt: number; asOf: number }) {

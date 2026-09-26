@@ -27,7 +27,9 @@ describe('RunRow', () => {
     expect(container.querySelector('[data-c="5"]')).toBeNull();
     expect(container.querySelector('.rr-park')).toBeNull();
     const cols = [...container.querySelector('.rr')!.children].map((c) => c.className);
-    expect(cols).toEqual(['rr-side', 'rr-main', 'rr-hist']);
+    expect(cols).toEqual(['rr-main', 'rr-side', 'rr-hist']);
+    expect(container.querySelector('[data-c="10"]')).toBeNull();
+    expect(container.textContent).not.toContain('failed 22 Sep');
     expect(container.querySelector('.rr-hist')!.textContent).toContain('Run history');
     expect(container.querySelectorAll('.rr-hist .rh')).toHaveLength(1);
   });
