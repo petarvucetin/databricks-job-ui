@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { makeRun } from '../test/fixtures';
 import {
-  problemText, taskText, historyMarks, taskStates, runningIndex, chainSummary, liveMessage,
+  problemText, taskText, taskStates, runningIndex, chainSummary, liveMessage,
   whenText, borderTone, elapsedSec, progress, statBlock, splitName,
 } from './rowView';
 
@@ -21,14 +21,6 @@ describe('rowView', () => {
     expect(taskText(makeRun())).toBe('load_gl');
     expect(taskText(makeRun({ kind: 'retrying', failed: [] }))).toBe('extract_bseg');
     expect(taskText(makeRun({ kind: 'succeeded', failed: [] }))).toBe('');
-  });
-
-  it('draws a 12-run history ending with the current state', () => {
-    const h = historyMarks(makeRun());
-    expect(h).toHaveLength(12);
-    expect(h[11]).toBe('f');
-    expect(historyMarks(makeRun({ kind: 'slow', failed: [] }))[11]).toBe('a');
-    expect(historyMarks(makeRun({ id: 7 }))).toEqual(historyMarks(makeRun({ id: 7 })));
   });
 
   it('builds the task chain for failed, retrying and running runs', () => {

@@ -2,7 +2,6 @@ import type { Run } from '../../../shared/domain/types';
 import { dur, durLive, fmtStart } from '../../../shared/domain/format';
 
 export type TaskState = 'ok' | 'f' | 's' | 'r' | 'p';
-export type HistMark = '' | 'f' | 'a' | 'n';
 
 export const TASK_NAMES = ['setup', 'extract_bkpf', 'extract_bseg', 'extract_gl', 'transform', 'dq_checks', 'load_gl', 'load_gl_history', 'load_cost_centers', 'load_profit_centers', 'load_vendors', 'publish', 'notify'] as const;
 
@@ -35,18 +34,6 @@ export function taskText(r: Run): string {
   if (r.type === 'pipeline' && !r.failed.length) return r.continuous ? 'bronze_bkpf' : '';
   if (r.failed.length) return r.failed.length > 1 ? `${r.failed[0].name} +${r.failed.length - 1}` : r.failed[0].name;
   return r.kind === 'retrying' ? 'extract_bseg' : '';
-}
-
-export function historyMarks(r: Run): HistMark[] {
-  const out: HistMark[] = [];
-  let x = r.id * 7919;
-  for (let i = 0; i < 12; i++) {
-    x = (x * 1103515245 + 12345) % 2147483648;
-    const v = x / 2147483648;
-    if (i === 11) out.push(r.kind === 'failed' ? 'f' : r.kind === 'slow' || r.kind === 'retrying' ? 'a' : '');
-    else out.push(v < 0.08 ? 'f' : v < 0.14 ? 'a' : r.kind === 'queued' && v < 0.4 ? 'n' : '');
-  }
-  return out;
 }
 
 /** Index of the task running now, estimated from elapsed vs average. */

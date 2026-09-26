@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import type { RunsResponse } from '../../../shared/domain/types';
 import { liveCount, menuCounts, passes, scopeCounts, sortRuns, tileCounts } from '../model/filters';
 import { timelineEnd } from '../model/timeline';
+import { historyByJob } from '../model/history';
 import { applyAction, initialState, type Action, type MenuKey, type ViewCtx } from '../model/viewState';
 import { useNow } from '../hooks/useNow';
 import { useReferenceLabels } from '../hooks/useReferenceLabels';
@@ -25,6 +26,7 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
 
   const rows = useMemo(() => sortRuns(data.runs.filter((r) => passes(r, f))), [data.runs, f]);
   const tiles = useMemo(() => tileCounts(data.runs, f), [data.runs, f]);
+  const history = useMemo(() => historyByJob(data.runs, f.window), [data.runs, f.window]);
   const menus = useMemo(() => {
     const t = menuCounts(data.runs, 'types');
     const ra = menuCounts(data.runs, 'runAs');
@@ -51,8 +53,8 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
       />
       <Timeline runs={data.runs} end={ctx.end} scale={state.scale} window={f.window} cube={state.cube} dispatch={dispatch} />
       <StatusTiles tiles={tiles} statuses={f.statuses} asOf={data.asOf} dispatch={dispatch} />
-      {labels && rows.length > 0 && <ReferenceBlock rows={rows} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} />}
-      <RunList rows={rows} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} dispatch={dispatch} />
+      {labels && rows.length > 0 && <ReferenceBlock rows={rows} history={history} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} />}
+      <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} dispatch={dispatch} />
     </div>
   );
 }
