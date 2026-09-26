@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { makeRun } from '../test/fixtures';
 import {
   buckets, domainStart, fitScale, clampWindow, presetWindow, sameWindow, countByBucket, columnLabel,
-  spanText, edgeIndex, edgeAt, dragHandle, shiftWindow, timelineEnd, addDays,
+  spanText, edgeIndex, edgeAt, dragHandle, shiftWindow, moveWindowTo, timelineEnd, addDays,
 } from './timeline';
 
 const asOf = new Date(2026, 8, 22, 8, 0).getTime();
@@ -80,6 +80,13 @@ describe('timeline', () => {
     expect(dragHandle(bks, w, 'to', 10)).toEqual({ from: w.from, to: edgeAt(bks, 29) });
     expect(shiftWindow(bks, w, -5)).toEqual({ from: edgeAt(bks, 23), to: edgeAt(bks, 25) });
     expect(shiftWindow(bks, w, 5)).toEqual(w);
+  });
+
+  it('moves a window to start at a column, keeping its length and staying in the domain', () => {
+    const bks = buckets('30d', end);
+    const w = presetWindow('last2', '30d', end);
+    expect(moveWindowTo(bks, w, 10)).toEqual({ from: edgeAt(bks, 10), to: edgeAt(bks, 12) });
+    expect(moveWindowTo(bks, w, 29)).toEqual(w);
   });
 
   it('snaps an unaligned window onto week edges when dragged in the 90d view', () => {

@@ -54,6 +54,15 @@ describe('Timeline', () => {
     expect(dispatch).toHaveBeenCalledWith({ type: 'cube', col: 29, kind: 'failed' });
   });
 
+  it('a double-click on a day moves the window from before the first click', () => {
+    const { dispatch, container } = setup();
+    const head = container.querySelectorAll('.tl-head')[10];
+    fireEvent.click(head, { detail: 1 });
+    fireEvent.click(head, { detail: 2 });
+    expect(dispatch).toHaveBeenNthCalledWith(1, { type: 'column', col: 10 });
+    expect(dispatch).toHaveBeenNthCalledWith(2, { type: 'moveWindow', col: 10, window: presetWindow('last2', '30d', end) });
+  });
+
   it('drags the end handle to a new window and stops updating once the drag ends', () => {
     // jsdom has no setPointerCapture; stub it for this test only.
     // eslint-disable-next-line @typescript-eslint/unbound-method -- storing the original for restoration, never calling it unbound.

@@ -88,6 +88,17 @@ export function Timeline({ runs, end, scale, window, cube, collapsed, dispatch }
     trackDrag(e, (ev) => shiftWindow(bks, start, Math.round((ev.clientX - x0) / colWidth)));
   };
 
+  // A double-click arrives as click (detail 1) then click (detail 2); the first has already selected the
+  // single day, so the move uses the window from before it.
+  const beforeClick = useRef(window);
+  const clickHead = (i: number, detail: number) => {
+    if (detail === 2) dispatch({ type: 'moveWindow', col: i, window: beforeClick.current });
+    else if (detail < 2) {
+      beforeClick.current = window;
+      dispatch({ type: 'column', col: i });
+    }
+  };
+
   const fromText = fmtEdge(window.from);
   const toText = fmtEdgeEnd(window.to);
   const rangeText = `${fromText === toText ? fromText : `${fromText} to ${toText}`}, ${spanText(window.to - window.from)}`;
@@ -129,7 +140,7 @@ export function Timeline({ runs, end, scale, window, cube, collapsed, dispatch }
           const on = sameWindow(window, { from: bk.start, to: bk.end });
           return (
             <div key={bk.start} className={`tl-col${on ? ' on' : ''}${inside[i] ? '' : ' dim'}`} style={{ gridColumn: i + 1, gridRow: 1 }} title={`${L.title}, ${c.n} runs`}>
-              <button type="button" className="tl-head" onClick={() => dispatch({ type: 'column', col: i })}>
+              <button type="button" className="tl-head" onClick={(e) => clickHead(i, e.detail)} title={`${L.title}, ${c.n} runs. Double-click to move the window here`}>
                 {L.num}
                 <small className={L.month ? 'mon' : undefined}>{L.small || ' '}</small>
               </button>

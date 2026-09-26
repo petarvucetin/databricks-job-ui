@@ -1,6 +1,6 @@
 import type { Run, RunKind } from '../../../shared/domain/types';
 import { autoStatuses, type Filters, type Scope, type TimeWindow } from './filters';
-import { buckets, clampWindow, domainStart, fitScale, presetWindow, sameWindow, type Preset, type ScaleId } from './timeline';
+import { buckets, clampWindow, domainStart, fitScale, moveWindowTo, presetWindow, sameWindow, type Preset, type ScaleId } from './timeline';
 
 export const PAGE = 120;
 
@@ -28,6 +28,8 @@ export type Action =
   | { type: 'scale'; scale: ScaleId }
   | { type: 'preset'; preset: Preset }
   | { type: 'column'; col: number }
+  /** Double-click on a column: move `window` (the one before the clicks) to start there, same length. */
+  | { type: 'moveWindow'; col: number; window: TimeWindow }
   | { type: 'cube'; col: number; kind: RunKind }
   | { type: 'window'; window: TimeWindow }
   | { type: 'clear' }
@@ -81,6 +83,11 @@ export function applyAction(s: ViewState, a: Action, ctx: ViewCtx): ViewState {
       const one = { from: b.start, to: b.end };
       const all = { from: domainStart(s.scale, ctx.end), to: ctx.end };
       return setWindow(s, sameWindow(f.window, one) && !s.cube ? all : one, ctx);
+    }
+    case 'moveWindow': {
+      const bks = buckets(s.scale, ctx.end);
+      if (!bks[a.col]) return s;
+      return setWindow(s, moveWindowTo(bks, a.window, a.col), ctx);
     }
     case 'cube': {
       const b = buckets(s.scale, ctx.end)[a.col];
