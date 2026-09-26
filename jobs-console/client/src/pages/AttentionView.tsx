@@ -65,7 +65,7 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
       <StatusTiles tiles={tiles} statuses={f.statuses} asOf={data.asOf} dispatch={dispatch} />
       {labels && rows.length > 0 && <ReferenceBlock rows={rows} history={history} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} openRun={drawerRun ? openRun : null} onOpenRun={onOpenRun} />}
       <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} openRun={drawerRun ? openRun : null} onOpenRun={onOpenRun} dispatch={dispatch} compact={compactRows} />
-      {drawerRun && <RunDrawer run={drawerRun} nowMs={nowMs} loadedAt={loadedAt} onClose={closeDrawer} />}
+      {drawerRun && <RunDrawer key={drawerRun.id} run={drawerRun} history={history.get(drawerRun.name)} nowMs={nowMs} loadedAt={loadedAt} onClose={closeDrawer} />}
     </div>
   );
 }

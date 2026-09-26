@@ -1,4 +1,4 @@
-import type { FailedTask, Run } from '../../../shared/domain/types';
+import type { Run } from '../../../shared/domain/types';
 import { dur, durLive, fmtStart } from '../../../shared/domain/format';
 
 export type TaskState = 'ok' | 'f' | 's' | 'r' | 'p';
@@ -69,15 +69,6 @@ export function taskNames(r: Run): string[] {
     if (step * (i + 1) < r.ntasks) names[step * (i + 1)] = f.name;
   });
   return names;
-}
-
-/** One entry per task in chain order, for the run drawer; failed tasks carry what the run reported for them. */
-export function taskRows(r: Run, elapsed: number = r.durationSec): { name: string; state: TaskState; failure?: FailedTask }[] {
-  const states = taskStates(r, elapsed);
-  const names = taskNames(r);
-  const step = Math.floor(r.ntasks / (r.failed.length + 1));
-  const failAt = new Map(r.failed.map((f, i) => [step * (i + 1), f] as const));
-  return states.map((state, i) => ({ name: names[i] ?? '', state, failure: state === 'f' ? failAt.get(i) : undefined }));
 }
 
 export function chainSummary(r: Run, elapsed: number = r.durationSec): string {

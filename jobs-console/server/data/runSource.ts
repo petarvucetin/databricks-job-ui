@@ -10,6 +10,11 @@ export interface RunSource {
    * generated "now" and quiet days by that zone instead of the server's.
    */
   listRuns(since?: number, tzOffsetMin?: number): Promise<RunsResponse>;
+  /**
+   * Log text of one task in a run. `hint` is what the client already knows about how the task ended
+   * (its failure cause label, or "retrying"); the mock source uses it to write a matching ending, a live one ignores it.
+   */
+  taskLog(runId: number, task: string, hint?: string): Promise<string>;
 }
 
 export function selectRunSource(env: Record<string, string | undefined>): RunSource {

@@ -1,6 +1,7 @@
 import type { RunsResponse } from '../../../shared/domain/types';
 import type { RunSource } from '../runSource';
 import { generateRuns } from './generateRuns';
+import { mockTaskLog } from './taskLog';
 
 const DEFAULT_TZ_OFFSET_MIN = new Date(2026, 8, 22).getTimezoneOffset();
 const MINUTE = 60000;
@@ -26,6 +27,9 @@ export function createMockRunSource(clock: () => number = Date.now): RunSource {
     listRuns(since, tzOffsetMin) {
       const data = shiftTo(dataFor(tzOffsetMin ?? DEFAULT_TZ_OFFSET_MIN), clock());
       return Promise.resolve({ ...data, runs: since === undefined ? data.runs : data.runs.filter((r) => r.startTime >= since) });
+    },
+    taskLog(runId, task, hint) {
+      return Promise.resolve(mockTaskLog(runId, task, hint));
     },
   };
 }
