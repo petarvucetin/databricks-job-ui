@@ -7,22 +7,22 @@ const LEGEND: [string, string, string][] = [
   ['12', 'Run history', "This job's finished runs in the timeline window, oldest to newest: runtime on top, start day/time (e.g. 18/06:00) under it; green succeeded, red failed, grey struck cancelled, split partially succeeded; the outlined box is the one whose popup is open."],
   ['3', 'Name', 'Full job or pipeline name; bundle target prefix dimmed.'],
   ['13', 'Run as', 'Pill next to the type tag, above the name: the identity the run executes as.'],
-  ['17', 'Run popup', "Click any history box: a popup under it with that run's task boxes (green ok, red failed, dashed skipped, blue running) and a count unless all ok; hover a box for its task name above the chain. Escape, a click outside, or the box again closes it."],
+  ['17', 'Run drawer', "Click any history box: a drawer slides in from the right for that run, with its result, start, duration, average, run as, and every task on its own line (failed tasks show their cause and code). Escape, the dimmed page, or × closes it."],
   ['16', 'Current run', "Last box in a running row's history: tasks done of total, and when it started."],
   ['11', 'Waiting pill', 'Queued only: pill on the top line with the time spent waiting.'],
   ['9', 'Progress bar', 'Running only: band along the bottom, gold for jobs, blue for pipelines, solid, filling toward the average with the current runtime at its end; past the average it stays full with a tick where the average falls.'],
   ['14', 'Average', 'Average duration for this job, next to the Run history title.'],
 ];
 
-export function ReferenceBlock({ rows, history, nowMs, loadedAt, asOf }: { rows: Run[]; history: Map<string, Run[]>; nowMs: number; loadedAt: number; asOf: number }) {
+export function ReferenceBlock({ rows, history, nowMs, loadedAt, asOf, openRun, onOpenRun }: { rows: Run[]; history: Map<string, Run[]>; nowMs: number; loadedAt: number; asOf: number; openRun?: number | null; onOpenRun?: (runId: number, rowId: number) => void }) {
   const finished = rows.find((r) => !r.live);
   const running = rows.find((r) => r.live);
   if (!finished && !running) return null;
   return (
     <section className="ref" aria-label="Reference rows">
       <div className="ref-t">Reference rows</div>
-      {finished && <RunRow run={finished} history={history.get(finished.name)} nowMs={nowMs} loadedAt={loadedAt} asOf={asOf} />}
-      {running && <RunRow run={running} history={history.get(running.name)} nowMs={nowMs} loadedAt={loadedAt} asOf={asOf} />}
+      {finished && <RunRow run={finished} history={history.get(finished.name)} nowMs={nowMs} loadedAt={loadedAt} asOf={asOf} openRun={openRun} onOpenRun={onOpenRun} />}
+      {running && <RunRow run={running} history={history.get(running.name)} nowMs={nowMs} loadedAt={loadedAt} asOf={asOf} openRun={openRun} onOpenRun={onOpenRun} />}
       <div className="ref-lgd">
         {LEGEND.map(([n, name, text]) => (
           <div key={n}>

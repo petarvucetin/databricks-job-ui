@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { makeRun } from '../test/fixtures';
 import {
-  problemText, taskText, taskStates, runningIndex, chainSummary, taskNames,
+  problemText, taskText, taskStates, runningIndex, chainSummary, taskNames, taskRows,
   whenText, elapsedSec, progress, statBlock, splitName,
 } from './rowView';
 
@@ -83,5 +83,13 @@ describe('rowView', () => {
   it('splits the bundle target prefix off the name', () => {
     expect(splitName('[prod] finance_gl_x')).toEqual({ prefix: '[prod] ', rest: 'finance_gl_x' });
     expect(splitName('plain_name')).toEqual({ prefix: '', rest: 'plain_name' });
+  });
+
+  it('lists each task with its state, and the reported failure on failed ones', () => {
+    const rows = taskRows(makeRun());
+    expect(rows).toHaveLength(10);
+    expect(rows[5]).toEqual({ name: 'load_gl', state: 'f', failure: makeRun().failed[0] });
+    expect(rows.filter((r) => r.failure)).toHaveLength(1);
+    expect(rows[0]).toEqual({ name: 'setup', state: 'ok', failure: undefined });
   });
 });

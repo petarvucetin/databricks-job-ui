@@ -10,6 +10,7 @@ import { FilterBar } from '../components/FilterBar';
 import { Timeline } from '../components/Timeline';
 import { StatusTiles } from '../components/StatusTiles';
 import { RunList } from '../components/RunList';
+import { RunDrawer } from '../components/RunDrawer';
 import { ReferenceBlock } from '../components/ReferenceBlock';
 import './attention.css';
 
@@ -20,6 +21,13 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
   const [state, setState] = useState(() => initialState(ctx));
   const dispatch = useCallback((a: Action) => setState((s) => applyAction(s, a, ctx)), [ctx]);
   const [selected, setSelected] = useState<number | null>(null);
+  const [openRun, setOpenRun] = useState<number | null>(null);
+  const onOpenRun = useCallback((runId: number, rowId: number) => {
+    setOpenRun(runId);
+    setSelected(rowId);
+  }, []);
+  const closeDrawer = useCallback(() => setOpenRun(null), []);
+  const drawerRun = openRun === null ? undefined : data.runs.find((r) => r.id === openRun);
   const nowMs = useNow(1000);
   const labels = useReferenceLabels();
   const timelineCollapsed = useTimelineCollapsed();
@@ -55,8 +63,9 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
       />
       <Timeline runs={data.runs} end={ctx.end} scale={state.scale} window={f.window} cube={state.cube} collapsed={timelineCollapsed} dispatch={dispatch} />
       <StatusTiles tiles={tiles} statuses={f.statuses} asOf={data.asOf} dispatch={dispatch} />
-      {labels && rows.length > 0 && <ReferenceBlock rows={rows} history={history} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} />}
-      <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} dispatch={dispatch} compact={compactRows} />
+      {labels && rows.length > 0 && <ReferenceBlock rows={rows} history={history} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} openRun={drawerRun ? openRun : null} onOpenRun={onOpenRun} />}
+      <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} openRun={drawerRun ? openRun : null} onOpenRun={onOpenRun} dispatch={dispatch} compact={compactRows} />
+      {drawerRun && <RunDrawer run={drawerRun} nowMs={nowMs} loadedAt={loadedAt} onClose={closeDrawer} />}
     </div>
   );
 }

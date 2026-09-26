@@ -3,7 +3,7 @@ import type { Action } from '../model/viewState';
 import { PAGE } from '../model/viewState';
 import { RunRow } from './RunRow';
 
-export function RunList({ rows, history, cap, nowMs, loadedAt, asOf, selected, onSelect, dispatch, compact }: {
+export function RunList({ rows, history, cap, nowMs, loadedAt, asOf, selected, onSelect, openRun, onOpenRun, dispatch, compact }: {
   rows: Run[];
   history: Map<string, Run[]>;
   cap: number;
@@ -12,6 +12,8 @@ export function RunList({ rows, history, cap, nowMs, loadedAt, asOf, selected, o
   asOf: number;
   selected: number | null;
   onSelect: (id: number) => void;
+  openRun: number | null;
+  onOpenRun: (runId: number, rowId: number) => void;
   dispatch: (a: Action) => void;
   compact?: boolean;
 }) {
@@ -19,7 +21,7 @@ export function RunList({ rows, history, cap, nowMs, loadedAt, asOf, selected, o
   return (
     <div className="rl">
       {rows.slice(0, cap).map((r) => (
-        <RunRow key={r.id} run={r} history={history.get(r.name)} nowMs={nowMs} loadedAt={loadedAt} asOf={asOf} selected={selected === r.id} onSelect={onSelect} compact={compact} />
+        <RunRow key={r.id} run={r} history={history.get(r.name)} nowMs={nowMs} loadedAt={loadedAt} asOf={asOf} selected={selected === r.id} onSelect={onSelect} openRun={openRun} onOpenRun={onOpenRun} compact={compact} />
       ))}
       {rows.length > cap && (
         <button type="button" className="rl-more" onClick={() => dispatch({ type: 'more' })}>

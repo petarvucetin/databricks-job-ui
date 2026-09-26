@@ -91,51 +91,23 @@ describe('RunRow', () => {
     expect(container.querySelector('.rr-avg')).not.toBeNull();
   });
 
-  it("opens a popup with that run's task boxes under the clicked history box, without selecting the row", () => {
+  it('asks to open the drawer for the clicked history box, including the current run, and marks the open one', () => {
     const d = (day: number) => new Date(2026, 8, day, 5).getTime();
     const past = makeRun({ id: 7, kind: 'succeeded', failed: [], result: 'succeeded', startTime: d(21), ntasks: 4 });
     const onSelect = vi.fn();
-    const { container } = render(<RunRow run={live} history={[past]} nowMs={5000} loadedAt={0} asOf={0} onSelect={onSelect} />);
+    const onOpenRun = vi.fn();
+    const { container, rerender } = render(<RunRow run={live} history={[past]} nowMs={5000} loadedAt={0} asOf={0} onSelect={onSelect} onOpenRun={onOpenRun} />);
     const boxes = container.querySelectorAll<HTMLButtonElement>('.rr-hist .rh');
     expect(boxes).toHaveLength(2);
-    expect(container.querySelector('.rh-pop')).toBeNull();
     fireEvent.click(boxes[0]);
+    expect(onOpenRun).toHaveBeenLastCalledWith(7, 40);
     expect(onSelect).not.toHaveBeenCalled();
-    const pop = boxes[0].parentElement!.querySelector('.rh-pop')!;
-    expect(pop.querySelectorAll('.rr-chain i')).toHaveLength(4);
-    expect(pop.textContent).not.toContain('all ok');
-    expect(pop.textContent).toContain('succeeded');
-    expect(boxes[0].className).toContain('pick');
-    fireEvent.mouseEnter(pop.querySelectorAll('.rr-chain i')[2]);
-    expect(pop.querySelector('.rr-task')!.textContent).toBe('extract_bseg');
-    expect(pop.querySelector('.rr-task')!.nextElementSibling!.className).toBe('rr-chain');
-    fireEvent.click(boxes[0]);
-    expect(container.querySelector('.rh-pop')).toBeNull();
-  });
-
-  it('closes the popup on Escape and on a click outside, and opens one for the current run too', () => {
-    const { container } = render(<RunRow run={live} nowMs={5000} loadedAt={0} asOf={0} />);
-    const now = container.querySelector<HTMLButtonElement>('.rh.now')!;
-    fireEvent.click(now);
-    expect(container.querySelector('.rh-pop')!.textContent).toContain('running now');
-    fireEvent.keyDown(document, { key: 'Escape' });
-    expect(container.querySelector('.rh-pop')).toBeNull();
-    fireEvent.click(now);
-    fireEvent.pointerDown(document.body);
-    expect(container.querySelector('.rh-pop')).toBeNull();
-  });
-
-  it("shows the current run's chain and count in its popup, with only the hovered task name above the chain", () => {
-    const { container } = render(<RunRow run={live} nowMs={5000} loadedAt={0} asOf={0} />);
     fireEvent.click(container.querySelector('.rh.now')!);
-    const pop = container.querySelector('.rh-pop')!;
-    expect(pop.querySelectorAll('.rr-chain i')).toHaveLength(10);
-    expect(pop.querySelector('.rr-chain em')!.textContent).toBe('5 ok, 1 running, 4 to go');
-    expect(pop.querySelector('.rr-task')!.textContent.trim()).toBe('');
-    fireEvent.mouseEnter(pop.querySelectorAll('.rr-chain i')[3]);
-    expect(pop.querySelector('.rr-task')!.textContent).toBe('extract_gl');
-    fireEvent.mouseLeave(pop.querySelector('.rr-chain')!);
-    expect(pop.querySelector('.rr-task')!.textContent.trim()).toBe('');
+    expect(onOpenRun).toHaveBeenLastCalledWith(40, 40);
+    expect(container.querySelector('.pick')).toBeNull();
+    rerender(<RunRow run={live} history={[past]} nowMs={5000} loadedAt={0} asOf={0} openRun={7} onOpenRun={onOpenRun} />);
+    expect(boxes[0].className).toContain('pick');
+    expect(container.querySelector('.rh-pop')).toBeNull();
   });
 
   it('collapses to just the name in compact mode', () => {
