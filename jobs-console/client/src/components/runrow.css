@@ -70,3 +70,6 @@
 .rr.over .rr-bar b { z-index: 2; background: var(--c); } /* runtime sits over the average tick instead of being cut by it */
 .rr-avg { position: absolute; top: 0; bottom: 0; width: 2px; z-index: 1; background: var(--ink); left: calc(100% / var(--p)); }
 
+/* compact rows (C): just the name, one line */
+.rr.compact { display: block; padding: 5px 16px; margin-bottom: 4px; }
+.rr.compact .rr-name { margin: 0; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

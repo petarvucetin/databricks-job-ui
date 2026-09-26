@@ -31,7 +31,7 @@ export function ReferenceBlock({ rows, history, nowMs, loadedAt, asOf }: { rows:
             <span>{text}</span>
           </div>
         ))}
-        <span className="ref-k">Press L to hide.</span>
+        <span className="ref-k">Keys: L hides these labels, T collapses the timeline, C collapses rows to names.</span>
       </div>
     </section>
   );

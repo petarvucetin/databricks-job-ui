@@ -26,5 +26,8 @@ export function useKeyToggle(letter: string, storageKey: string, initial: boolea
 /** Reference labels (numbered badges + legend) for design reviews. Shown by default; L toggles. */
 export const useReferenceLabels = () => useKeyToggle('l', 'jobs-console:labels', true);
 
+/** Run rows collapsed to just the name. Expanded by default; C toggles. */
+export const useCompactRows = () => useKeyToggle('c', 'jobs-console:compact-rows', false);
+
 /** Timeline collapsed to a single line with just the date range. Expanded by default; T toggles. */
 export const useTimelineCollapsed = () => useKeyToggle('t', 'jobs-console:timeline-collapsed', false);

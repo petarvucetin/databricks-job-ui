@@ -5,7 +5,7 @@ import { timelineEnd } from '../model/timeline';
 import { historyByJob } from '../model/history';
 import { applyAction, initialState, type Action, type MenuKey, type ViewCtx } from '../model/viewState';
 import { useNow } from '../hooks/useNow';
-import { useReferenceLabels, useTimelineCollapsed } from '../hooks/useKeyToggle';
+import { useCompactRows, useReferenceLabels, useTimelineCollapsed } from '../hooks/useKeyToggle';
 import { FilterBar } from '../components/FilterBar';
 import { Timeline } from '../components/Timeline';
 import { StatusTiles } from '../components/StatusTiles';
@@ -23,6 +23,7 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
   const nowMs = useNow(1000);
   const labels = useReferenceLabels();
   const timelineCollapsed = useTimelineCollapsed();
+  const compactRows = useCompactRows();
   const f = state.filters;
 
   const rows = useMemo(() => sortRuns(data.runs.filter((r) => passes(r, f))), [data.runs, f]);
@@ -55,7 +56,7 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
       <Timeline runs={data.runs} end={ctx.end} scale={state.scale} window={f.window} cube={state.cube} collapsed={timelineCollapsed} dispatch={dispatch} />
       <StatusTiles tiles={tiles} statuses={f.statuses} asOf={data.asOf} dispatch={dispatch} />
       {labels && rows.length > 0 && <ReferenceBlock rows={rows} history={history} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} />}
-      <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} dispatch={dispatch} />
+      <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} dispatch={dispatch} compact={compactRows} />
     </div>
   );
 }

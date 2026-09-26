@@ -63,7 +63,7 @@ function RunPopup({ run, elapsed, live, onClose }: { run: Run; elapsed: number; 
   );
 }
 
-export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect }: {
+export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect, compact }: {
   run: Run;
   /** This job's finished runs inside the timeline window, oldest first (defaults to this run if finished). */
   history?: Run[];
@@ -72,6 +72,8 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   asOf: number;
   selected?: boolean;
   onSelect?: (id: number) => void;
+  /** Name only, one line (C toggles), for scanning a long list quickly. */
+  compact?: boolean;
 }) {
   const elapsed = elapsedSec(run, nowMs, loadedAt);
   const { p, over } = progress(run, elapsed);
@@ -87,6 +89,14 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   const nowDone = run.live ? taskStates(run, elapsed).filter((s) => s === 'ok').length : 0;
   const cls = ['rr', run.live && 'live', run.live && `bar-${run.type}`, run.live && over && 'over', selected && 'on'].filter(Boolean).join(' ');
   const style = run.live ? ({ '--p': String(p) } as CSSProperties) : undefined;
+
+  if (compact) {
+    return (
+      <div className={`rr compact${selected ? ' on' : ''}`} data-id={run.id} onClick={onSelect ? () => onSelect(run.id) : undefined}>
+        <span className="rr-name"><i>{prefix}</i>{rest}</span>
+      </div>
+    );
+  }
 
   return (
     <div className={cls} style={style} data-id={run.id} onClick={onSelect ? () => onSelect(run.id) : undefined}>

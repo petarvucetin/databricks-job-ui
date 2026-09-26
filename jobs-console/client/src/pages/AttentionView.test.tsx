@@ -60,6 +60,19 @@ describe('AttentionView', () => {
     expect(localStorage.getItem('jobs-console:labels')).toBe('1');
   });
 
+  it('collapses list rows to just the name with the C key, leaving the reference rows full', () => {
+    const { container } = render(<AttentionView data={data} loadedAt={Date.now()} />);
+    expect(container.querySelectorAll('.rl .rr.compact')).toHaveLength(0);
+    fireEvent.keyDown(document, { key: 'c' });
+    const rows = container.querySelectorAll('.rl .rr');
+    expect(rows.length).toBeGreaterThan(0);
+    for (const r of rows) expect(r.className).toContain('compact');
+    expect(container.querySelectorAll('.ref .rr.compact')).toHaveLength(0);
+    expect(localStorage.getItem('jobs-console:compact-rows')).toBe('1');
+    fireEvent.keyDown(document, { key: 'c' });
+    expect(container.querySelectorAll('.rl .rr.compact')).toHaveLength(0);
+  });
+
   it('remembers hidden labels', () => {
     localStorage.setItem('jobs-console:labels', '0');
     const { container } = render(<AttentionView data={data} loadedAt={Date.now()} />);

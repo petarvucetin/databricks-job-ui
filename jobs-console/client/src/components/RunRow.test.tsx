@@ -137,4 +137,15 @@ describe('RunRow', () => {
     fireEvent.mouseLeave(pop.querySelector('.rr-chain')!);
     expect(pop.querySelector('.rr-task')!.textContent.trim()).toBe('');
   });
+
+  it('collapses to just the name in compact mode', () => {
+    const onSelect = vi.fn();
+    const { container } = render(<RunRow run={live} nowMs={5000} loadedAt={0} asOf={0} onSelect={onSelect} compact />);
+    const row = container.querySelector('.rr')!;
+    expect(row.className).toBe('rr compact');
+    expect(row.children).toHaveLength(1);
+    expect(row.textContent).toBe(live.name);
+    fireEvent.click(row);
+    expect(onSelect).toHaveBeenCalledWith(live.id);
+  });
 });
