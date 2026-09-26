@@ -37,9 +37,13 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
           <span className={`rr-tag ${run.type}`} data-c="2">{run.type === 'pipeline' ? 'Pipeline' : 'Job'}</span>
           <span className="rr-ra" data-c="13">run as <b>{run.runAs}</b></span>
           <span className={`rr-st${stat.big ? ' rr-now' : ''}`} data-c="11">
-            <span>{stat.label}</span>
-            <b data-c="9">{stat.value}</b>
-            <i />
+            {stat.label !== 'took' && (
+              <>
+                <span>{stat.label}</span>
+                <b data-c="9">{stat.value}</b>
+                <i />
+              </>
+            )}
             <span>average</span>
             <em>{stat.average}</em>
           </span>

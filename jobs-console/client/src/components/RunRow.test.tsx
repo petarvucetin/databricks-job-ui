@@ -9,7 +9,7 @@ afterEach(cleanup);
 const live = makeRun({ id: 40, kind: 'running', failed: [], live: true, result: null, ntasks: 10, durationSec: 600, usualSec: 1200, cause: { label: 'Running', code: '', detail: '' } });
 
 describe('RunRow', () => {
-  it('renders a finished failed run: full name, run as, took + average, red border, no running parts', () => {
+  it('renders a finished failed run: full name, run as, average only, red border, no running parts', () => {
     const { container } = render(<RunRow run={makeRun()} nowMs={0} loadedAt={0} asOf={0} />);
     const row = container.querySelector('.rr')!;
     expect(row.className).toContain('b-red');
@@ -21,8 +21,9 @@ describe('RunRow', () => {
     expect(main).toEqual(['rr-l1', '3']);
     expect(container.querySelector('[data-c="13"]')!.className).toContain('rr-ra');
     expect(container.querySelector('[data-c="13"]')!.textContent).toBe('run as sp-finance');
-    expect(container.querySelector('[data-c="9"]')!.textContent).toBe('23m 24s');
-    expect(container.textContent).toContain('took');
+    expect(container.querySelector('[data-c="9"]')).toBeNull();
+    expect(container.textContent).not.toContain('took');
+    expect(container.querySelector('[data-c="11"]')!.textContent).toBe('average25m 52s');
     expect(container.textContent).toContain('25m 52s');
     expect(container.querySelector('[data-c="6"]')).toBeNull();
     expect(container.querySelector('[data-c="4"]')).toBeNull();

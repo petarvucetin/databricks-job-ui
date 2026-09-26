@@ -9,9 +9,9 @@ const LEGEND: [string, string, string][] = [
   ['6', 'Task chain', 'Running only: one square per task, green ok, red failed, dashed skipped, blue running.'],
   ['13', 'Run as', 'Pill next to the type tag, above the name: the identity the run executes as.'],
   ['7', 'Chain summary', 'Running only: the chain counted.'],
-  ['11', 'Stats block', 'Now (running) or took, against the average duration.'],
+  ['11', 'Stats block', 'Now (running) or waiting, against the average duration; finished rows show the average only.'],
   ['8', 'Live message', 'Running only: what the run is doing or waiting on right now.'],
-  ['9', 'Now / took', 'Big elapsed time while running; plain duration once finished.'],
+  ['9', 'Now / waiting', 'Elapsed time while running, or time spent waiting in the queue.'],
 ];
 
 export function ReferenceBlock({ rows, history, nowMs, loadedAt, asOf }: { rows: Run[]; history: Map<string, Run[]>; nowMs: number; loadedAt: number; asOf: number }) {
