@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Compare runs: Ctrl+click adds a run to the drawer</title>
+<!-- Real app styles, so the drawer matches the app. Serve the repo root. -->
+<link rel="stylesheet" href="/jobs-console/client/src/styles/tokens.css">
+<link rel="stylesheet" href="/jobs-console/client/src/components/drawer.css">
+<style>
+  @font-face { font-family: "IBM Plex Sans"; font-weight: 400; src: url("/jobs-console/client/public/fonts/IBMPlexSans-400.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Sans"; font-weight: 500; src: url("/jobs-console/client/public/fonts/IBMPlexSans-500.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Sans"; font-weight: 600; src: url("/jobs-console/client/public/fonts/IBMPlexSans-600.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 400; src: url("/jobs-console/client/public/fonts/IBMPlexMono-400.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 500; src: url("/jobs-console/client/public/fonts/IBMPlexMono-500.woff2") format("woff2"); }
+  body { margin: 0; background: var(--paper); font-family: var(--sans); font-size: 13px; color: var(--ink); }
+
+  /* option switcher, outside the mock */
+  .sw { position: fixed; left: 16px; top: 12px; z-index: 60; width: 300px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12.5px; color: var(--ink-2); }
+  .sw button { font: inherit; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); cursor: pointer; }
+  .sw button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .sw .hint { flex-basis: 100%; color: var(--ink-3); }
+
+  /* stand-in for the list behind the drawer */
+  .page { padding: 76px 24px; width: 260px; }
+  .ghost { height: 86px; margin-bottom: 8px; border-radius: 8px; background: var(--sheet); border: 1px solid var(--rule); }
+
+  /* annotation labels, same purple as the app's reference labels */
+  .lb { display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--label); color: #fff; font: 600 11px/1 var(--sans); vertical-align: 1px; margin-right: 6px; }
+  .notes { position: fixed; left: 16px; bottom: 14px; z-index: 60; width: 300px; padding: 10px 12px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 6px 20px rgba(60,40,10,.12); font-size: 12px; color: var(--ink-2); line-height: 1.45; }
+  .notes div { margin: 3px 0; }
+  .notes h3 { margin: 0 0 6px; font-size: 12.5px; color: var(--ink); }
+
+  .dr.wide { width: calc(100vw - 340px); }
+
+  /* ---------- A: separate drawers side by side ---------- */
+  .cols { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); height: 100%; }
+  .col { min-width: 0; overflow: auto; border-left: 1px solid var(--rule); }
+  .col:first-child { border-left: 0; }
+  .col .dh { padding: 14px 16px 10px; }
+  .col .dh .title { font-size: 12px; }
+  .col .trace { padding: 14px 16px 20px; }
+  .col .route { padding-left: 26px; }
+  .col .route::before { left: 5px; }
+  .col .panel::before { left: -26px; }
+  .col .bd { padding-left: 14px; }
+  .col .gantt .axis, .col .gantt .grow { min-width: 0; grid-template-columns: 116px 1fr; }
+  .col .gantt .trk, .col .gantt .axis .ticks { margin-right: 44px; }
+  .col .pin { border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 12px; padding: 0; }
+
+  /* ---------- B: aligned on one task list ---------- */
+  .cmp-h { position: sticky; top: 0; z-index: 3; background: var(--paper); border-bottom: 1px solid var(--rule); padding: 16px 24px 12px; }
+  .cmp-h .top { display: flex; align-items: baseline; gap: 12px; }
+  .cmp-h .title { flex: 1; font-family: var(--mono); font-size: 13px; }
+  .cmp-h .title i { font-style: normal; color: var(--ink-3); }
+  .cmp-h .x { border: 0; background: none; color: var(--ink-3); font-size: 18px; cursor: pointer; }
+  .grid { display: grid; grid-template-columns: 190px repeat(var(--n), minmax(0, 1fr)) 150px; column-gap: 14px; align-items: center; }
+  .runs { margin-top: 12px; }
+  .chip { display: flex; align-items: baseline; gap: 8px; padding: 6px 10px; border-radius: 6px; background: var(--sheet); border: 1px solid var(--rule); border-top: 3px solid; font-size: 12px; white-space: nowrap; }
+  .chip.failed { border-top-color: var(--red); }
+  .chip.succeeded { border-top-color: #7fc9a9; }
+  .chip b { font-weight: 600; }
+  .chip.failed b { color: var(--red); }
+  .chip.succeeded b { color: var(--green); }
+  .chip .d { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 500; }
+  .chip .cx { border: 0; background: none; color: var(--ink-3); cursor: pointer; padding: 0 0 0 4px; }
+  .chip.base { box-shadow: inset 0 0 0 1px var(--ink); }
+  .add { font-size: 12px; color: var(--ink-3); border: 1px dashed #d6ccbf; border-radius: 6px; padding: 7px 10px; }
+  .sec { padding: 14px 24px 4px; }
+  .sec h4 { margin: 0 0 8px; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 500; }
+  .sec h4 em { font-style: normal; text-transform: none; letter-spacing: 0; margin-left: 8px; }
+  .row { min-height: 26px; border-bottom: 1px solid #f1ebe3; }
+  .row > .n { font-family: var(--mono); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row > .dlt { font-size: 11.5px; color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
+  .row > .dlt.up { color: #9a5f05; font-weight: 500; }
+  .row > .dlt.bad { color: var(--red); font-weight: 500; }
+  .row.hot { background: #fffaf0; }
+  .tk { position: relative; height: 26px; background: repeating-linear-gradient(90deg, transparent 0 24.9%, #f1eadf 24.9% 25%); }
+  .tk .b { position: absolute; top: 7px; height: 12px; border-radius: 3px; background: #bfe0cf; border: 1px solid #7fc9a9; }
+  .tk .b.f { background: var(--wash-red); border-color: var(--red); }
+  .tk .b.s { background: none; border: 1px dashed #d6ccbf; }
+  .tk .b.slow { background: var(--wash-amber); border-color: #d9a21b; }
+  .tk .t { position: absolute; top: 5px; font-size: 10.5px; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .axisrow .tk { background: none; height: 16px; }
+  .axisrow .tk span { position: absolute; white-space: nowrap; font-size: 10.5px; color: var(--ink-3); transform: translateX(-50%); }
+  .axisrow .tk span:first-child { transform: none; }
+  .axisrow .tk span:last-child { transform: translateX(-100%); }
+  .bars .bx { height: 8px; border-radius: 2px; background: #eee6da; position: relative; }
+  .bars .bx i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 2px; }
+  .bars .bx i.failed { background: var(--red); } .bars .bx i.succeeded { background: #7fc9a9; }
+  .bars .bx u { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); }
+  .bars .v { font-size: 12px; font-variant-numeric: tabular-nums; margin-top: 3px; }
+  .diff .cell { font-family: var(--mono); font-size: 12px; color: var(--ink-2); padding: 5px 0; }
+  .diff .cell.ch { color: var(--ink); background: var(--wash-amber); border-radius: 3px; padding: 5px 6px; }
+  .root .cell { font-family: var(--mono); font-size: 12px; padding: 6px 0; }
+  .root .cell.err { background: var(--wash-red); border-left: 3px solid var(--red); padding: 6px 8px; }
+  .root .cell.ok { color: var(--ink-3); font-family: var(--sans); }
+</style>
+</head>
+<body>
+<div class="sw">
+  <button type="button" data-o="A">A · separate drawers</button>
+  <button type="button" data-o="B" class="on">B · aligned comparison</button>
+  <span class="hint">Ctrl+click on a history box adds that run. 1 / 2 switch.</span>
+</div>
+
+<div class="page">
+  <div class="ghost"></div><div class="ghost"></div><div class="ghost"></div><div class="ghost"></div><div class="ghost"></div><div class="ghost"></div>
+</div>
+<div class="dr-scrim" style="animation:none"></div>
+
+<aside class="dr wide" id="drawer" style="animation:none"></aside>
+<div class="notes" id="notes"></div>
+
+<script>
+const JOB = { prefix: '[prod] ', name: 'finance_gl_co_core_tables_ca0' };
+const TASKS = ['setup', 'extract_bkpf', 'extract_bseg', 'extract_gl', 'transform', 'dq_checks', 'load_gl', 'publish', 'load_cost_centers', 'notify'];
+// start and length in seconds per task; 'f' failed, 's' skipped
+const RUNS = [
+  { when: 'Sat 26 Sep 07:30', res: 'failed', total: 1153, params: 'mode=incremental', cluster: 'spot, 2 to 10 workers', commit: 'a41c9e2',
+    root: 'Cluster error · spot instances reclaimed',
+    t: [[0, 92, ''], [92, 138, ''], [100, 184, ''], [284, 92, ''], [284, 138, ''], [376, 184, ''], [560, 262, 'slow'], [822, 3, 'f'], [825, 0, 's'], [825, 0, 's']] },
+  { when: 'Sat 26 Sep 08:12', res: 'succeeded', total: 960, params: 'mode=incremental', cluster: 'spot, 2 to 10 workers', commit: 'a41c9e2', root: '',
+    t: [[0, 88, ''], [88, 130, ''], [95, 170, ''], [265, 90, ''], [265, 130, ''], [355, 170, ''], [525, 120, ''], [645, 150, ''], [645, 120, ''], [795, 40, '']] },
+  { when: 'Sat 26 Sep 08:51', res: 'succeeded', total: 780, params: 'mode=incremental', cluster: 'on-demand, 4 workers', commit: 'b07d1f4', root: '',
+    t: [[0, 80, ''], [80, 110, ''], [85, 150, ''], [235, 80, ''], [235, 110, ''], [315, 150, ''], [465, 95, ''], [560, 120, ''], [560, 100, ''], [680, 35, '']] },
+];
+const USUAL = 1078;
+const pad = (n) => (n < 10 ? '0' : '') + n;
+const dur = (s) => { s = Math.round(s); const m = Math.floor(s / 60), x = s % 60; return m ? `${m}m ${pad(x)}s` : `${x}s`; };
+const short = (s) => (s < 60 ? `${Math.round(s)}s` : `${Math.round(s / 60)}m`);
+const GLYPH = '<span class="ty"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="2" width="5" height="4" rx="1"/><rect x="9.5" y="10" width="5" height="4" rx="1"/><path d="M4 6v3.5a2 2 0 0 0 2 2h3.5"/></svg></span>';
+const L = (n) => `<span class="lb">${n}</span>`;
+
+/* ---------- A: each run is its own full drawer, side by side ---------- */
+function colA(r, i) {
+  const max = Math.max(r.total, USUAL);
+  const rows = TASKS.map((name, k) => {
+    const [st, d, c] = r.t[k];
+    const cls = c === 'f' ? ' f' : c === 's' ? ' s' : '';
+    const txt = c === 's' ? 'skipped' : dur(d) + (c === 'f' ? ', failed' : '');
+    return `<div class="grow${c === 'f' ? ' sel' : ''}"><div class="lbl">${name}</div><div class="trk"><span class="sq${cls}" style="left:${100 * st / r.total}%">${txt}</span></div></div>`;
+  }).join('');
+  const ticks = [0, 1, 2, 3, 4].map((k) => `<span style="left:${k * 25}%">${k ? dur(r.total * k / 4) : '0'}</span>`).join('');
+  const root = r.root ? `<div class="panel fail open"><div class="hd"><span class="k pill red">Root</span><span class="v">Cluster error</span><span class="chev">▾</span></div><div class="bd"><div class="err">spot instances reclaimed<br><span class="dim">publish, line 41.</span></div></div></div>`
+    : `<div class="panel last"><div class="hd"><span class="k pill">Root</span><span class="v">Succeeded</span><span class="chev">▸</span></div></div>`;
+  return `<div class="col">
+    <div class="dh">${i === 0 ? L(1) : ''}<span class="title">${GLYPH}<i>${JOB.prefix}</i>${JOB.name}</span>
+      <span class="when pill">${r.res === 'failed' ? 'failed' : 'started'} ${r.when.slice(4)}, ${r.res === 'failed' ? 'after ' : ''}${dur(r.total)}</span>
+      <button class="x" title="Remove this run">×</button></div>
+    <div class="trace"><div class="route">
+      <div class="panel open"><div class="hd"><span class="k pill">Run</span><span class="v">${dur(r.total)}</span><span class="r pill">usual ${dur(USUAL)}</span><span class="chev">▾</span></div>
+        <div class="bd"><div class="cmp"><span>this run</span><div class="barx"><i class="now${r.res === 'failed' ? '' : ' green'}" style="width:${100 * r.total / max}%"></i></div><span class="num">${dur(r.total)}</span>
+        <span>usual</span><div class="barx"><i style="width:${100 * USUAL / max}%"></i></div><span class="num">${dur(USUAL)}</span></div></div></div>
+      <div class="panel open"><div class="hd"><span class="k pill">Tasks</span><span class="v">${i === 0 ? L(2) : ''}10 tasks</span><span class="chev">▾</span></div>
+        <div class="bd"><div class="gantt"><div class="axis"><div></div><div class="ticks">${ticks}</div></div>${rows}</div></div></div>
+      ${root}
+    </div></div></div>`;
+}
+function renderA() {
+  document.getElementById('drawer').innerHTML = `<div class="cols">${RUNS.map(colA).join('')}</div>`;
+  document.getElementById('notes').innerHTML = `<h3>A · separate drawers</h3>
+    <div>${L(1)}Each Ctrl+click opens that run's own drawer as another column. Same drawer as today, just narrower. × removes one column.</div>
+    <div>${L(2)}Each timeline has its own scale (0 to that run's length), so bars can't be compared by eye. Rows line up only because the job's tasks are the same.</div>
+    <div>Simple and works for runs of different jobs. Weak for spotting what changed.</div>`;
+}
+
+/* ---------- B: runs aligned on one task list, one shared scale ---------- */
+function renderB() {
+  const n = RUNS.length, max = Math.max(...RUNS.map((r) => r.total));
+  const base = RUNS[0];
+  const chips = RUNS.map((r, i) => `<div class="chip ${r.res}${i === 0 ? ' base' : ''}"><b>${r.res}</b><span>${r.when}</span><span class="d">${dur(r.total)}</span><button class="cx">×</button></div>`).join('');
+  const axis = `<div class="grid axisrow" style="--n:${n}"><div></div>${RUNS.map(() => `<div class="tk">${[0, 1, 2, 3, 4].map((k) => `<span style="left:${k * 25}%">${k ? dur(max * k / 4) : '0'}</span>`).join('')}</div>`).join('')}<div class="dlt" style="font-size:10.5px;color:var(--ink-3);text-align:right">difference</div></div>`;
+  const rows = TASKS.map((name, k) => {
+    const cells = RUNS.map((r) => {
+      const [st, d, c] = r.t[k];
+      const cls = c === 'f' ? ' f' : c === 's' ? ' s' : c === 'slow' ? ' slow' : '';
+      const w = c === 's' ? 2.5 : Math.max(0.8, 100 * d / max);
+      const lab = c === 's' ? 'skipped' : c === 'f' ? `${dur(d)}, failed` : short(d);
+      return `<div class="tk"><span class="b${cls}" style="left:${100 * st / max}%;width:${w}%"></span><span class="t" style="left:calc(${100 * (st + (c === 's' ? max * 0.025 : d)) / max}% + 5px)">${lab}</span></div>`;
+    }).join('');
+    const ds = RUNS.map((r) => r.t[k]);
+    const fast = Math.min(...ds.filter((x) => x[2] !== 's' && x[2] !== 'f').map((x) => x[1]));
+    const f = ds.find((x) => x[2] === 'f');
+    const worst = Math.max(...ds.filter((x) => x[2] !== 'f').map((x) => x[1]));
+    const at = (pred) => RUNS[ds.findIndex(pred)].when.slice(-5);
+    const delta = f ? `<div class="dlt bad">failed at ${at((x) => x[2] === 'f')}</div>`
+      : worst > fast * 1.5 ? `<div class="dlt up">+${dur(worst - fast)} at ${at((x) => x[1] === worst)}</div>`
+      : ds.some((x) => x[2] === 's') ? `<div class="dlt">skipped at ${at((x) => x[2] === 's')}</div>` : '<div class="dlt">same</div>';
+    const hot = f || worst > fast * 1.5;
+    return `<div class="grid row${hot ? ' hot' : ''}" style="--n:${n}"><div class="n">${name}</div>${cells}${delta}</div>`;
+  }).join('');
+  const bars = `<div class="grid bars" style="--n:${n}"><div class="n" style="font-size:12px;color:var(--ink-3)">total, | = usual</div>${RUNS.map((r) => `<div><div class="bx"><i class="${r.res}" style="width:${100 * r.total / max}%"></i><u style="left:${100 * USUAL / max}%"></u></div><div class="v">${dur(r.total)}</div></div>`).join('')}<div class="dlt"></div></div>`;
+  const diffRow = (label, key) => {
+    const same = RUNS.every((r) => r[key] === base[key]);
+    return `<div class="grid row diff" style="--n:${n}"><div class="n">${label}</div>${RUNS.map((r) => `<div class="cell${!same && r[key] !== base[key] ? ' ch' : ''}">${r[key]}</div>`).join('')}<div class="dlt${same ? '' : ' up'}">${same ? 'same' : 'changed'}</div></div>`;
+  };
+  document.getElementById('drawer').innerHTML = `
+    <div class="cmp-h">
+      <div class="top">${L(1)}<span class="title">${GLYPH}<i>${JOB.prefix}</i>${JOB.name}</span><span class="pill">3 runs</span><button class="x">×</button></div>
+      <div class="grid runs" style="--n:${n}"><div>${L(2)}<span class="add">Ctrl+click adds a run</span></div>${chips}<div></div></div>
+    </div>
+    <div class="sec"><h4>${L(3)}Run</h4>${bars}</div>
+    <div class="sec"><h4>${L(4)}Tasks<em>one time scale for every run; rows that differ are tinted</em></h4>${axis}${rows}</div>
+    <div class="sec"><h4>${L(5)}What's different</h4>${diffRow('parameters', 'params')}${diffRow('compute', 'cluster')}${diffRow('code', 'commit')}</div>
+    <div class="sec root"><h4>${L(6)}Root</h4><div class="grid" style="--n:${n}"><div></div>${RUNS.map((r) => `<div class="cell ${r.root ? 'err' : 'ok'}">${r.root || 'no error'}</div>`).join('')}<div></div></div></div>
+    <div style="height:30px"></div>`;
+  document.getElementById('notes').innerHTML = `<h3>B · aligned comparison</h3>
+    <div>${L(1)}One header for the job. Esc or × closes the whole comparison.</div>
+    <div>${L(2)}One chip per run, oldest first. The first run you opened is the baseline (outlined). × on a chip drops that run; Ctrl+click on another history box adds one.</div>
+    <div>${L(3)}Totals on one scale, with a tick for the usual time.</div>
+    <div>${L(4)}One task list, one timeline per run, all on the same scale. The last column says what differs and in which run; those rows are tinted.</div>
+    <div>${L(5)}Only parameters, compute and code, with changed values highlighted.</div>
+    <div>${L(6)}Each run's cause, side by side. Clicking a failed task still opens its log, like today.</div>`;
+}
+
+const opts = { A: renderA, B: renderB };
+function show(o) {
+  document.querySelectorAll('.sw button').forEach((b) => b.classList.toggle('on', b.dataset.o === o));
+  opts[o]();
+}
+document.querySelectorAll('.sw button').forEach((b) => b.addEventListener('click', () => show(b.dataset.o)));
+document.addEventListener('keydown', (e) => { if (e.key === '1') show('A'); if (e.key === '2') show('B'); });
+show(new URLSearchParams(location.search).get('o') || 'B');
+</script>
+</body>
+</html>
