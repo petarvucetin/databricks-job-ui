@@ -66,7 +66,12 @@ export function taskNames(r: Run): string[] {
   const names = Array.from({ length: r.ntasks }, (_, i) => (i < base.length ? base[i] : `${base[i % base.length]}_${Math.floor(i / base.length) + 1}`));
   const step = Math.floor(r.ntasks / (r.failed.length + 1));
   r.failed.forEach((f, i) => {
-    if (step * (i + 1) < r.ntasks) names[step * (i + 1)] = f.name;
+    const at = step * (i + 1);
+    if (at >= r.ntasks) return;
+    // Swap rather than overwrite when the name is already in the list, so every run of a job keeps the same tasks.
+    const other = names.indexOf(f.name);
+    if (other >= 0) names[other] = names[at] ?? f.name;
+    names[at] = f.name;
   });
   return names;
 }

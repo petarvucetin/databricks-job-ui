@@ -79,12 +79,17 @@ describe('RunDrawer', () => {
     expect(container.querySelectorAll('.gantt .sq.r')).toHaveLength(1);
   });
 
-  it('closes on Escape, the scrim and the close button', () => {
+  it('closes on Escape, a click outside and the close button, but not on a history box click', () => {
     const onClose = vi.fn();
     const { container } = render(<RunDrawer run={makeRun()} nowMs={0} loadedAt={0} onClose={onClose} />);
     expect(document.activeElement).toBe(container.querySelector('.dh .x'));
     fireEvent.keyDown(document, { key: 'Escape' });
-    fireEvent.click(container.querySelector('.dr-scrim')!);
+    fireEvent.click(document.body);
+    const box = document.createElement('button');
+    box.className = 'rh';
+    document.body.appendChild(box);
+    fireEvent.click(box);
+    box.remove();
     fireEvent.click(container.querySelector('.dh .x')!);
     expect(onClose).toHaveBeenCalledTimes(3);
   });

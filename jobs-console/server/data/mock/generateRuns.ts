@@ -74,6 +74,34 @@ interface Draft {
  * Final outcome of a finished run; null while it is still going or waiting.
  * Failed runs failed; a sprinkling of otherwise-successful runs were cancelled or only partially succeeded.
  */
+/**
+ * A job's failed tasks must be tasks the job has: the prototype picked names from all 13, even for a 4-task job.
+ * Rename those to unused names among the job's own tasks (no random draws, so the data set stays as it was).
+ */
+function ownTasks<F extends { name: string }>(d: { type: string; ntasks: number; failed: F[] }): F[] {
+  if (d.type !== 'job') return d.failed;
+  const own = TASK_NAMES.slice(1, Math.min(d.ntasks, TASK_NAMES.length));
+  const used = new Set(d.failed.map((f) => f.name).filter((n) => own.includes(n)));
+  return d.failed.map((f, i) => {
+    if (own.includes(f.name)) return f;
+    const free = own.filter((n) => !used.has(n));
+    const name = free.length ? free[(TASK_NAMES.indexOf(f.name) + i) % free.length] ?? f.name : f.name;
+    used.add(name);
+    return { ...f, name };
+  });
+}
+
+/** Parameters derived from the run itself (no random draws, so the data set stays as it was): a few runs use full mode, bigger jobs set a batch size. */
+function paramsOf(d: { id: number; name: string; ntasks: number }, wall: Date): Record<string, string> {
+  const p: Record<string, string> = {
+    date: `${wall.getUTCFullYear()}-${String(wall.getUTCMonth() + 1).padStart(2, '0')}-${String(wall.getUTCDate()).padStart(2, '0')}`,
+    catalog: d.name.includes('finance') ? 'finance' : 'sap_raw',
+    mode: d.id % 9 === 0 ? 'full' : 'incremental',
+  };
+  if (d.ntasks >= 12) p.batch_size = '50000';
+  return p;
+}
+
 function resultOf(d: { id: number; kind: RunKind }, live: boolean): RunResult | null {
   if (live || d.kind === 'queued' || d.kind === 'running' || d.kind === 'retrying') return null;
   if (d.kind === 'failed') return 'failed';
@@ -214,8 +242,9 @@ export function generateRuns(tzOffsetMin: number = DEFAULT_TZ_OFFSET_MIN): RunsR
   }
 
   const runs: Run[] = drafts.map((d) => {
-    const failed: FailedTask[] = d.failed.map((f) => ({ name: f.name, cause: toCause(f.cause), secs: f.secs }));
+    const failed: FailedTask[] = ownTasks(d).map((f) => ({ name: f.name, cause: toCause(f.cause), secs: f.secs }));
     const live = isLive(d);
+    const wall = new Date(minuteToMs(d.startMin, tzOffsetMin) - tzOffsetMin * 60000);
     return {
       result: resultOf(d, live),
       id: d.id,
@@ -233,6 +262,7 @@ export function generateRuns(tzOffsetMin: number = DEFAULT_TZ_OFFSET_MIN): RunsR
       mine: d.mine,
       live,
       continuous: d.continuous,
+      params: paramsOf(d, wall),
     };
   });
   runs.sort((a, b) => b.startTime - a.startTime || b.id - a.id);

@@ -1,5 +1,6 @@
-/* Run drawer, ported from prototype/drawer.html; everything is scoped under .dr. */
-.dr-scrim { position: fixed; inset: 0; z-index: 40; background: rgba(60, 40, 20, .22); animation: dr-fade .18s ease; }
+/* Run drawer, ported from prototype/drawer.html; everything is scoped under .dr.
+   The scrim only dims: clicks reach the list, so Ctrl+click on a history box can add runs; any other click outside closes. */
+.dr-scrim { position: fixed; inset: 0; z-index: 40; pointer-events: none; background: rgba(60, 40, 20, .22); animation: dr-fade .18s ease; }
 .dr { position: fixed; top: 0; right: 0; bottom: 0; z-index: 41; width: min(780px, 100vw); overflow: auto; background: var(--sheet); border-left: 1px solid var(--rule); box-shadow: -16px 0 40px rgba(60, 40, 20, .16); animation: dr-in .22s ease; }
 @keyframes dr-fade { from { opacity: 0; } }
 @keyframes dr-in { from { transform: translateX(102%); } }

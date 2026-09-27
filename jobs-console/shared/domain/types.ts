@@ -40,6 +40,8 @@ export interface Run {
   continuous: boolean;
   /** Final outcome once the run has finished; null while queued or running. */
   result: RunResult | null;
+  /** Job parameters this run used, resolved (name -> value). */
+  params: Record<string, string>;
 }
 
 export interface RunsResponse {

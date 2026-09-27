@@ -53,6 +53,11 @@ describe('rowView', () => {
     expect(long[13]).toBe('setup_2');
     const failed = makeRun({ ntasks: 6, failed: [{ name: 'boom_task', cause: ok, secs: 3 }] });
     expect(taskNames(failed)[3]).toBe('boom_task');
+    // load_gl is task 6 already; failing at slot 5 swaps it with dq_checks instead of listing it twice
+    const plain = taskNames(makeRun({ ntasks: 10, failed: [] }));
+    const swapped = taskNames(makeRun({ ntasks: 10, failed: [{ name: 'load_gl', cause: makeRun().cause, secs: 3 }] }));
+    expect(swapped.slice(5, 7)).toEqual(['load_gl', 'dq_checks']);
+    expect([...swapped].sort()).toEqual([...plain].sort());
     expect(taskStates(failed)[3]).toBe('f');
     expect(taskNames(makeRun({ type: 'pipeline', ntasks: 2, failed: [] }))).toEqual(['bronze_bkpf', 'bronze_bseg']);
   });

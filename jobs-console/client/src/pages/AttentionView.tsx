@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import type { RunsResponse } from '../../../shared/domain/types';
 import { liveCount, menuCounts, passes, scopeCounts, sortRuns, tileCounts } from '../model/filters';
 import { timelineEnd } from '../model/timeline';
@@ -11,6 +11,9 @@ import { Timeline } from '../components/Timeline';
 import { StatusTiles } from '../components/StatusTiles';
 import { RunList } from '../components/RunList';
 import { RunDrawer } from '../components/RunDrawer';
+import { CompareDrawer } from '../components/CompareView';
+import type { OpenHow } from '../components/RunRow';
+import { addToStack, idsFromSearch, stackRuns } from '../model/compare';
 import { ReferenceBlock } from '../components/ReferenceBlock';
 import './attention.css';
 
@@ -21,13 +24,33 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
   const [state, setState] = useState(() => initialState(ctx));
   const dispatch = useCallback((a: Action) => setState((s) => applyAction(s, a, ctx)), [ctx]);
   const [selected, setSelected] = useState<number | null>(null);
-  const [openRun, setOpenRun] = useState<number | null>(null);
-  const onOpenRun = useCallback((runId: number, rowId: number) => {
-    setOpenRun(runId);
+  const byId = useMemo(() => new Map(data.runs.map((r) => [r.id, r])), [data.runs]);
+  // Runs open here: one shows the run drawer, two or more the comparison. Ctrl+click adds, a plain click starts over.
+  const [stack, setStack] = useState<number[]>([]);
+  const compareTab = useRef<Window | null>(null);
+  const onOpenRun = useCallback((runId: number, rowId: number, how: OpenHow) => {
+    if (how === 'tab') {
+      // The comparison tab keeps its runs in its URL; read it back so its own × removals stick.
+      const w = compareTab.current;
+      let current: number[] = [];
+      try {
+        if (w && !w.closed) current = idsFromSearch(w.location.search);
+      } catch {
+        current = [];
+      }
+      const next = addToStack(current, runId, byId);
+      compareTab.current = window.open(`/?compare=${next.join(',')}`, 'jobs-console-compare');
+      return;
+    }
     setSelected(rowId);
-  }, []);
-  const closeDrawer = useCallback(() => setOpenRun(null), []);
-  const drawerRun = openRun === null ? undefined : data.runs.find((r) => r.id === openRun);
+    setStack((s) => (how === 'stack' ? addToStack(s, runId, byId) : [runId]));
+  }, [byId]);
+  const closeDrawer = useCallback(() => setStack([]), []);
+  const removeRun = useCallback((id: number) => setStack((s) => s.filter((x) => x !== id)), []);
+  const toggleRun = useCallback((id: number) => setStack((s) => (s.includes(id) ? s.filter((x) => x !== id) : addToStack(s, id, byId))), [byId]);
+  const open = stackRuns(stack, byId);
+  const openIds = open.map((r) => r.id);
+  const drawerRun = open.length === 1 ? open[0] : undefined;
   const nowMs = useNow(1000);
   const labels = useReferenceLabels();
   const timelineCollapsed = useTimelineCollapsed();
@@ -37,6 +60,9 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
   const rows = useMemo(() => sortRuns(data.runs.filter((r) => passes(r, f))), [data.runs, f]);
   const tiles = useMemo(() => tileCounts(data.runs, f), [data.runs, f]);
   const history = useMemo(() => historyByJob(data.runs, f.window), [data.runs, f.window]);
+  const jobName = open[0]?.name;
+  // The job's runs the comparison can pick from: finished ones in the window, plus any still going.
+  const pool = jobName === undefined ? [] : [...(history.get(jobName) ?? []), ...data.runs.filter((r) => r.live && r.name === jobName)].sort((a, b) => a.startTime - b.startTime);
   const menus = useMemo(() => {
     const t = menuCounts(data.runs, 'types');
     const ra = menuCounts(data.runs, 'runAs');
@@ -63,9 +89,10 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
       />
       <Timeline runs={data.runs} end={ctx.end} scale={state.scale} window={f.window} cube={state.cube} collapsed={timelineCollapsed} dispatch={dispatch} />
       <StatusTiles tiles={tiles} statuses={f.statuses} asOf={data.asOf} dispatch={dispatch} />
-      {labels && rows.length > 0 && <ReferenceBlock rows={rows} history={history} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} openRun={drawerRun ? openRun : null} onOpenRun={onOpenRun} />}
-      <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} openRun={drawerRun ? openRun : null} onOpenRun={onOpenRun} dispatch={dispatch} compact={compactRows} />
+      {labels && rows.length > 0 && <ReferenceBlock rows={rows} history={history} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} openRuns={openIds} onOpenRun={onOpenRun} />}
+      <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} openRuns={openIds} onOpenRun={onOpenRun} dispatch={dispatch} compact={compactRows} />
       {drawerRun && <RunDrawer key={drawerRun.id} run={drawerRun} history={history.get(drawerRun.name)} nowMs={nowMs} loadedAt={loadedAt} onClose={closeDrawer} />}
+      {open.length > 1 && <CompareDrawer runs={open} nowMs={nowMs} loadedAt={loadedAt} pool={pool} onToggle={toggleRun} addHint="click to add or remove; Ctrl+click in the list works too" onRemove={removeRun} onClose={closeDrawer} />}
     </div>
   );
 }

@@ -9,7 +9,9 @@ import './runrow.css';
 
 const RESULT_LABEL = { succeeded: 'succeeded', failed: 'failed', cancelled: 'cancelled', partial: 'partially succeeded' } as const;
 
-export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect, openRun, onOpenRun, compact }: {
+export type OpenHow = 'open' | 'stack' | 'tab';
+
+export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect, openRuns, onOpenRun, compact }: {
   run: Run;
   /** This job's finished runs inside the timeline window, oldest first (defaults to this run if finished). */
   history?: Run[];
@@ -18,10 +20,10 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   asOf: number;
   selected?: boolean;
   onSelect?: (id: number) => void;
-  /** Id of the run whose drawer is open, marked on its history box. */
-  openRun?: number | null;
-  /** A history box was clicked: open that run's drawer (row id passed so the row can be selected too). */
-  onOpenRun?: (runId: number, rowId: number) => void;
+  /** Runs open in the drawer or comparison, marked on their history boxes. */
+  openRuns?: readonly number[];
+  /** A history box was clicked: open that run, or with Ctrl add it to the comparison here, or with Ctrl+Shift to the comparison tab. */
+  onOpenRun?: (runId: number, rowId: number, how: OpenHow) => void;
   /** Name only, one line (C toggles), for scanning a long list quickly. */
   compact?: boolean;
 }) {
@@ -32,8 +34,10 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   const hist = visibleHistory(history ?? (run.result ? [run] : []));
   const openDrawer = (id: number) => (e: MouseEvent) => {
     e.stopPropagation();
-    onOpenRun?.(id, run.id);
+    const how: OpenHow = e.ctrlKey || e.metaKey ? (e.shiftKey ? 'tab' : 'stack') : 'open';
+    onOpenRun?.(id, run.id, how);
   };
+  const isOpen = (id: number) => openRuns?.includes(id) ?? false;
   const nowDone = run.live ? taskStates(run, elapsed).filter((s) => s === 'ok').length : 0;
   const cls = ['rr', run.live && 'live', run.live && `bar-${run.type}`, run.live && over && 'over', selected && 'on'].filter(Boolean).join(' ');
   const style = run.live ? ({ '--p': String(p) } as CSSProperties) : undefined;
@@ -78,7 +82,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
             <span key={h.id} className="rh-wrap">
               <button
                 type="button"
-                className={`rh ${h.result ?? ''}${h.id === openRun ? ' pick' : ''}`}
+                className={`rh ${h.result ?? ''}${isOpen(h.id) ? ' pick' : ''}`}
                 aria-label={`${fmtStart(h.startTime)}, ${RESULT_LABEL[h.result ?? 'failed']}, ${dur(h.durationSec)}`}
                 aria-haspopup="dialog"
                 onClick={openDrawer(h.id)}
@@ -92,7 +96,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
             <span className="rh-wrap">
               <button
                 type="button"
-                className={`rh now ${run.type}${openRun === run.id ? ' pick' : ''}`}
+                className={`rh now ${run.type}${isOpen(run.id) ? ' pick' : ''}`}
                 aria-label={`${fmtStart(run.startTime)}, running now`}
                 aria-haspopup="dialog"
                 onClick={openDrawer(run.id)}

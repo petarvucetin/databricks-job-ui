@@ -20,6 +20,7 @@ export function makeRun(over: Partial<Run> = {}): Run {
     live: false,
     continuous: false,
     result: 'failed',
+    params: { date: '2026-09-22', catalog: 'finance', mode: 'incremental' },
     ...over,
   };
 }

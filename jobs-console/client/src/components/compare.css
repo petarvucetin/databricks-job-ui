@@ -1,0 +1,78 @@
+/* Run comparison (mockup docs/design/mockups/compare-runs.html, option B); scoped under .cmpv. */
+.dr.wide { width: min(1500px, calc(100vw - 80px)); outline: none; }
+/* The comparison only ever replaces an open run drawer, so it widens in place instead of sliding in again. */
+.dr.wide, .dr-scrim.still { animation: none; }
+.cmpv { font-size: 13px; color: var(--ink); padding-bottom: 30px; }
+.cmpv .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; background: var(--wash-sand); border: 1px solid #eadfcf; color: var(--ink-2); font-size: 12px; line-height: 1.4; white-space: nowrap; }
+
+.cmpv .cmp-h { position: sticky; top: 0; z-index: 3; background: var(--paper); border-bottom: 1px solid var(--rule); padding: 16px 24px 12px; }
+.cmpv .cmp-h .top { display: flex; align-items: baseline; gap: 12px; }
+.cmpv .cmp-h .title { flex: 1; min-width: 0; font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; }
+.cmpv .cmp-h .title i { font-style: normal; color: var(--ink-3); }
+.cmpv .cmp-h .x { border: 0; background: none; color: var(--ink-3); font-size: 18px; line-height: 1; cursor: pointer; }
+.cmpv .cmp-h .x:hover { color: var(--ink); }
+
+.cmpv .grid { display: grid; grid-template-columns: 190px repeat(var(--n), minmax(0, 1fr)) 150px; column-gap: 14px; align-items: center; }
+.cmpv .runs { margin-top: 12px; }
+.cmpv .chip { display: flex; align-items: baseline; gap: 8px; min-width: 0; padding: 6px 10px; border-radius: 6px; background: var(--sheet); border: 1px solid var(--rule); border-top: 3px solid #c9bfb2; font-size: 12px; white-space: nowrap; overflow: hidden; }
+.cmpv .chip.failed { border-top-color: var(--red); }
+.cmpv .chip.succeeded { border-top-color: #7fc9a9; }
+.cmpv .chip.partial, .cmpv .chip.now { border-top-color: var(--amber); }
+.cmpv .chip b { font-weight: 600; }
+.cmpv .chip.failed b { color: var(--red); }
+.cmpv .chip.succeeded b { color: var(--green); }
+.cmpv .chip.partial b, .cmpv .chip.now b { color: var(--amber-ink); }
+.cmpv .chip.cancelled b { color: var(--ink-3); }
+.cmpv .chip .d { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 500; }
+.cmpv .chip .cx { border: 0; background: none; color: var(--ink-3); cursor: pointer; padding: 0 0 0 4px; font-size: 14px; line-height: 1; }
+.cmpv .chip .cx:hover { color: var(--ink); }
+.cmpv .pool { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; margin-top: 10px; }
+.cmpv .pool-t { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); margin-right: 8px; }
+.cmpv .add { margin-left: 10px; font-size: 12px; color: var(--ink-3); }
+
+.cmpv .sec { padding: 14px 24px 4px; }
+.cmpv .sec h4 { margin: 0 0 8px; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); font-weight: 500; }
+.cmpv .sec h4 em { font-style: normal; text-transform: none; letter-spacing: 0; margin-left: 8px; }
+.cmpv .row { min-height: 26px; border-bottom: 1px solid #f1ebe3; }
+.cmpv .n { font-family: var(--mono); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmpv .n.dim { font-family: var(--sans); color: var(--ink-3); }
+.cmpv .dlt { font-size: 11.5px; color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
+.cmpv .axisrow .dlt { font-size: 10.5px; }
+.cmpv .dlt.slow { color: #9a5f05; font-weight: 500; }
+.cmpv .dlt.bad { color: var(--red); font-weight: 500; }
+.cmpv .dlt.chg { color: var(--blue); font-weight: 500; }
+.cmpv .row.slow, .cmpv .row.bad { background: #fffaf0; }
+.cmpv .row.chg { background: #f3f7fc; }
+
+.cmpv .tk { position: relative; height: 26px; background: repeating-linear-gradient(90deg, transparent 0 24.9%, #f1eadf 24.9% 25%); }
+.cmpv .tk .b { position: absolute; top: 7px; height: 12px; border-radius: 3px; background: #bfe0cf; border: 1px solid #7fc9a9; }
+.cmpv .tk .b.f { background: var(--wash-red); border-color: var(--red); }
+.cmpv .tk .b.s { background: none; border: 1px dashed #d6ccbf; }
+.cmpv .tk .b.r { background: var(--wash-blue); border-color: var(--blue); }
+.cmpv .tk .b.slow { background: var(--wash-amber); border-color: #d9a21b; }
+.cmpv .tk .t { position: absolute; top: 5px; font-size: 10.5px; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cmpv .tk.none { background: none; }
+.cmpv .tk.none .t { left: 4px; font-style: italic; color: #b3a894; }
+.cmpv .axisrow .tk { background: none; height: 16px; }
+.cmpv .axisrow .tk span { position: absolute; font-size: 10.5px; color: var(--ink-3); transform: translateX(-50%); white-space: nowrap; }
+.cmpv .axisrow .tk span:first-child { transform: none; }
+.cmpv .axisrow .tk span:last-child { transform: translateX(-100%); }
+
+.cmpv .bars .bx { height: 8px; border-radius: 2px; background: #eee6da; position: relative; }
+.cmpv .bars .bx i { position: absolute; left: 0; top: 0; bottom: 0; max-width: 100%; border-radius: 2px; background: #a99c8b; }
+.cmpv .bars .bx i.failed { background: var(--red); }
+.cmpv .bars .bx i.succeeded { background: #7fc9a9; }
+.cmpv .bars .bx i.partial, .cmpv .bars .bx i.now { background: var(--amber); }
+.cmpv .bars .bx u { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); }
+.cmpv .bars .v { font-size: 12px; font-variant-numeric: tabular-nums; margin-top: 3px; }
+
+.cmpv .prm .cell { font-family: var(--mono); font-size: 12px; color: var(--ink-2); padding: 5px 0; overflow-wrap: anywhere; }
+.cmpv .prm .cell.unset { color: #b3a894; font-style: italic; font-family: var(--sans); }
+.cmpv .root .cell { font-family: var(--mono); font-size: 12px; padding: 6px 0; }
+.cmpv .root .cell.err { background: var(--wash-red); border-left: 3px solid var(--red); padding: 6px 8px; }
+.cmpv .root .cell.ok { color: var(--ink-3); font-family: var(--sans); }
+
+/* The comparison tab: same view as a page. */
+.cmp-page { max-width: 1600px; margin: 0 auto; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; margin-top: 16px; overflow: hidden; }
+.cmp-page .cmp-h { position: static; }
+.cmp-status { padding: 24px; color: var(--ink-2); }

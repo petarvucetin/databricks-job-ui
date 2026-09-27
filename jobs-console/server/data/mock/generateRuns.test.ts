@@ -100,3 +100,14 @@ describe('generateRuns with an explicit time zone offset (UTC+2)', () => {
     }
   });
 });
+
+describe('generateRuns task names', () => {
+  it("names a job's failed tasks only from the tasks that job has", () => {
+    const pool = ['setup', 'extract_bkpf', 'extract_bseg', 'extract_gl', 'transform', 'dq_checks', 'load_gl', 'load_gl_history', 'load_cost_centers', 'load_profit_centers', 'load_vendors', 'publish', 'notify'];
+    for (const r of data.runs.filter((x) => x.type === 'job' && x.failed.length && x.failed.length < x.ntasks - 1)) {
+      const own = pool.slice(1, Math.min(r.ntasks, pool.length));
+      for (const f of r.failed) expect(own).toContain(f.name);
+      expect(new Set(r.failed.map((f) => f.name)).size).toBe(r.failed.length);
+    }
+  });
+});

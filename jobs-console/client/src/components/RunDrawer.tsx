@@ -157,9 +157,10 @@ function TaskLog({ runId, task, hint, failed }: { runId: number; task: string; h
   );
 }
 
-function TaskBody({ run, task, kind, hint, failed, params = 'date=2026-09-18  catalog=finance  mode=incremental', compute = 'ingest_cluster, 15.4 LTS, i4i.2xlarge, 2 to 10 workers, spot', ext = '.py' }: {
-  run: Run; task: string; kind: string; hint?: string; failed: boolean; params?: string; compute?: string; ext?: string;
+function TaskBody({ run, task, kind, hint, failed, compute = 'ingest_cluster, 15.4 LTS, i4i.2xlarge, 2 to 10 workers, spot', ext = '.py' }: {
+  run: Run; task: string; kind: string; hint?: string; failed: boolean; compute?: string; ext?: string;
 }) {
+  const params = Object.entries(run.params).map(([k, v]) => `${k}=${v}`).join('  ');
   return (
     <>
       <div className="kv">
@@ -184,8 +185,17 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose }: {
   useEffect(() => {
     closeRef.current?.focus();
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    // Clicks outside close it, except on run history boxes, which open or stack runs.
+    const onClick = (e: MouseEvent) => {
+      const t = e.target;
+      if (t instanceof Element && !t.closest('.dr, .rh')) onClose();
+    };
     document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
+    document.addEventListener('click', onClick);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('click', onClick);
+    };
   }, [onClose]);
 
   const elapsed = elapsedSec(run, nowMs, loadedAt);
@@ -250,7 +260,7 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose }: {
           <div className="err">transform<br /><span className="dim">{run.live ? `${dur(elapsed)} so far` : `took ${dur(elapsed)}`}, usually {dur(run.usualSec)}. Same parameters, code and cluster as the last run.</span></div>
         </Panel>
       );
-      task ??= taskPanel('transform', rows.find((t) => t.name === 'transform'), 'Notebook', { params: 'date=2026-09-18  catalog=finance', compute: 'serverless', ext: '' });
+      task ??= taskPanel('transform', rows.find((t) => t.name === 'transform'), 'Notebook', { compute: 'serverless', ext: '' });
     } else if (run.kind === 'running') {
       root = (
         <Panel cls="last" k="Root" v="Running, on track" open>
@@ -270,7 +280,7 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose }: {
 
   return (
     <>
-      <div className="dr-scrim" onClick={onClose} />
+      <div className="dr-scrim" />
       <aside className="dr" role="dialog" aria-modal="true" aria-label={`Run of ${run.name}`} data-c="17">
         <div className="dh">
           <span className="title"><Glyph type={run.type} /><i>{prefix}</i>{rest}</span>

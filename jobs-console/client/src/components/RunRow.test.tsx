@@ -91,7 +91,7 @@ describe('RunRow', () => {
     expect(container.querySelector('.rr-avg')).not.toBeNull();
   });
 
-  it('asks to open the drawer for the clicked history box, including the current run, and marks the open one', () => {
+  it('asks to open, stack (Ctrl or Cmd) or send to the comparison tab (Ctrl+Shift) the clicked run, and marks open runs', () => {
     const d = (day: number) => new Date(2026, 8, day, 5).getTime();
     const past = makeRun({ id: 7, kind: 'succeeded', failed: [], result: 'succeeded', startTime: d(21), ntasks: 4 });
     const onSelect = vi.fn();
@@ -100,13 +100,20 @@ describe('RunRow', () => {
     const boxes = container.querySelectorAll<HTMLButtonElement>('.rr-hist .rh');
     expect(boxes).toHaveLength(2);
     fireEvent.click(boxes[0]);
-    expect(onOpenRun).toHaveBeenLastCalledWith(7, 40);
+    expect(onOpenRun).toHaveBeenLastCalledWith(7, 40, 'open');
+    fireEvent.click(boxes[0], { ctrlKey: true });
+    expect(onOpenRun).toHaveBeenLastCalledWith(7, 40, 'stack');
+    fireEvent.click(boxes[0], { metaKey: true });
+    expect(onOpenRun).toHaveBeenLastCalledWith(7, 40, 'stack');
+    fireEvent.click(boxes[0], { ctrlKey: true, shiftKey: true });
+    expect(onOpenRun).toHaveBeenLastCalledWith(7, 40, 'tab');
     expect(onSelect).not.toHaveBeenCalled();
     fireEvent.click(container.querySelector('.rh.now')!);
-    expect(onOpenRun).toHaveBeenLastCalledWith(40, 40);
+    expect(onOpenRun).toHaveBeenLastCalledWith(40, 40, 'open');
     expect(container.querySelector('.pick')).toBeNull();
-    rerender(<RunRow run={live} history={[past]} nowMs={5000} loadedAt={0} asOf={0} openRun={7} onOpenRun={onOpenRun} />);
+    rerender(<RunRow run={live} history={[past]} nowMs={5000} loadedAt={0} asOf={0} openRuns={[7, 40]} onOpenRun={onOpenRun} />);
     expect(boxes[0].className).toContain('pick');
+    expect(container.querySelector('.rh.now')!.className).toContain('pick');
     expect(container.querySelector('.rh-pop')).toBeNull();
   });
 
