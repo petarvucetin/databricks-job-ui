@@ -74,6 +74,14 @@
   .row > .dlt.up { color: #9a5f05; font-weight: 500; }
   .row > .dlt.bad { color: var(--red); font-weight: 500; }
   .row.hot { background: #fffaf0; }
+  .row.chg { background: #f3f7fc; }
+  .row > .dlt.chg { color: var(--blue); font-weight: 500; }
+  .tk.none { background: none; }
+  .tk.none .t { font-style: italic; color: #b3a894; }
+  .diff .n small { font-family: var(--sans); font-size: 10.5px; color: var(--ink-3); }
+  .diff .cell.unset { color: #b3a894; font-style: italic; font-family: var(--sans); }
+  .diff .unch { color: var(--ink-3); font-family: var(--sans); font-size: 12px; }
+  .diff .show { color: var(--blue); margin-left: 6px; cursor: pointer; }
   .tk { position: relative; height: 26px; background: repeating-linear-gradient(90deg, transparent 0 24.9%, #f1eadf 24.9% 25%); }
   .tk .b { position: absolute; top: 7px; height: 12px; border-radius: 3px; background: #bfe0cf; border: 1px solid #7fc9a9; }
   .tk .b.f { background: var(--wash-red); border-color: var(--red); }
@@ -113,16 +121,22 @@
 
 <script>
 const JOB = { prefix: '[prod] ', name: 'finance_gl_co_core_tables_ca0' };
-const TASKS = ['setup', 'extract_bkpf', 'extract_bseg', 'extract_gl', 'transform', 'dq_checks', 'load_gl', 'publish', 'load_cost_centers', 'notify'];
-// start and length in seconds per task; 'f' failed, 's' skipped
+// Every task seen in any of the runs, in DAG order; a run lacks the tasks its job version did not have.
+const ORDER = ['setup', 'extract_bkpf', 'extract_bseg', 'extract_gl', 'transform', 'dq_checks', 'validate_balances', 'load_gl', 'publish', 'load_cost_centers', 'notify'];
+// [start s, length s, '' | 'f' failed | 's' skipped | 'slow']
 const RUNS = [
-  { when: 'Sat 26 Sep 07:30', res: 'failed', total: 1153, params: 'mode=incremental', cluster: 'spot, 2 to 10 workers', commit: 'a41c9e2',
-    root: 'Cluster error · spot instances reclaimed',
-    t: [[0, 92, ''], [92, 138, ''], [100, 184, ''], [284, 92, ''], [284, 138, ''], [376, 184, ''], [560, 262, 'slow'], [822, 3, 'f'], [825, 0, 's'], [825, 0, 's']] },
-  { when: 'Sat 26 Sep 08:12', res: 'succeeded', total: 960, params: 'mode=incremental', cluster: 'spot, 2 to 10 workers', commit: 'a41c9e2', root: '',
-    t: [[0, 88, ''], [88, 130, ''], [95, 170, ''], [265, 90, ''], [265, 130, ''], [355, 170, ''], [525, 120, ''], [645, 150, ''], [645, 120, ''], [795, 40, '']] },
-  { when: 'Sat 26 Sep 08:51', res: 'succeeded', total: 780, params: 'mode=incremental', cluster: 'on-demand, 4 workers', commit: 'b07d1f4', root: '',
-    t: [[0, 80, ''], [80, 110, ''], [85, 150, ''], [235, 80, ''], [235, 110, ''], [315, 150, ''], [465, 95, ''], [560, 120, ''], [560, 100, ''], [680, 35, '']] },
+  { when: 'Sat 26 Sep 07:30', res: 'failed', total: 1153, root: 'Cluster error · spot instances reclaimed',
+    tasks: { setup: [0, 92, ''], extract_bkpf: [92, 138, ''], extract_bseg: [100, 184, ''], extract_gl: [284, 92, ''], transform: [284, 138, ''], dq_checks: [376, 184, ''], load_gl: [560, 262, 'slow'], publish: [822, 3, 'f'], load_cost_centers: [825, 0, 's'], notify: [825, 0, 's'] },
+    params: { date: '{{job.start_time.iso_date}}', catalog: 'finance', mode: 'incremental' },
+    settings: { compute: 'spot, 2 to 10 workers', code: 'a41c9e2' } },
+  { when: 'Sat 26 Sep 08:12', res: 'succeeded', total: 960, root: '',
+    tasks: { setup: [0, 88, ''], extract_bkpf: [88, 130, ''], extract_bseg: [95, 170, ''], extract_gl: [265, 90, ''], transform: [265, 130, ''], dq_checks: [355, 170, ''], load_gl: [525, 120, ''], publish: [645, 150, ''], load_cost_centers: [645, 120, ''], notify: [795, 40, ''] },
+    params: { date: '{{job.start_time.iso_date}}', catalog: 'finance', mode: 'incremental', batch_size: '50000' },
+    settings: { compute: 'spot, 2 to 10 workers', code: 'a41c9e2' } },
+  { when: 'Sat 26 Sep 08:51', res: 'succeeded', total: 800, root: '',
+    tasks: { setup: [0, 80, ''], extract_bkpf: [80, 110, ''], extract_bseg: [85, 150, ''], extract_gl: [235, 80, ''], transform: [235, 110, ''], dq_checks: [315, 150, ''], validate_balances: [465, 60, ''], load_gl: [525, 95, ''], publish: [620, 120, ''], notify: [740, 35, ''] },
+    params: { date: '{{job.start_time.iso_date}}', catalog: 'finance', mode: 'full', batch_size: '50000' },
+    settings: { compute: 'on-demand, 4 workers', code: 'b07d1f4' } },
 ];
 const USUAL = 1078;
 const pad = (n) => (n < 10 ? '0' : '') + n;
@@ -134,8 +148,9 @@ const L = (n) => `<span class="lb">${n}</span>`;
 /* ---------- A: each run is its own full drawer, side by side ---------- */
 function colA(r, i) {
   const max = Math.max(r.total, USUAL);
-  const rows = TASKS.map((name, k) => {
-    const [st, d, c] = r.t[k];
+  const own = ORDER.filter((name) => r.tasks[name]);
+  const rows = own.map((name) => {
+    const [st, d, c] = r.tasks[name];
     const cls = c === 'f' ? ' f' : c === 's' ? ' s' : '';
     const txt = c === 's' ? 'skipped' : dur(d) + (c === 'f' ? ', failed' : '');
     return `<div class="grow${c === 'f' ? ' sel' : ''}"><div class="lbl">${name}</div><div class="trk"><span class="sq${cls}" style="left:${100 * st / r.total}%">${txt}</span></div></div>`;
@@ -151,7 +166,7 @@ function colA(r, i) {
       <div class="panel open"><div class="hd"><span class="k pill">Run</span><span class="v">${dur(r.total)}</span><span class="r pill">usual ${dur(USUAL)}</span><span class="chev">▾</span></div>
         <div class="bd"><div class="cmp"><span>this run</span><div class="barx"><i class="now${r.res === 'failed' ? '' : ' green'}" style="width:${100 * r.total / max}%"></i></div><span class="num">${dur(r.total)}</span>
         <span>usual</span><div class="barx"><i style="width:${100 * USUAL / max}%"></i></div><span class="num">${dur(USUAL)}</span></div></div></div>
-      <div class="panel open"><div class="hd"><span class="k pill">Tasks</span><span class="v">${i === 0 ? L(2) : ''}10 tasks</span><span class="chev">▾</span></div>
+      <div class="panel open"><div class="hd"><span class="k pill">Tasks</span><span class="v">${i === 0 ? L(2) : ''}${own.length} tasks</span><span class="chev">▾</span></div>
         <div class="bd"><div class="gantt"><div class="axis"><div></div><div class="ticks">${ticks}</div></div>${rows}</div></div></div>
       ${root}
     </div></div></div>`;
@@ -160,7 +175,7 @@ function renderA() {
   document.getElementById('drawer').innerHTML = `<div class="cols">${RUNS.map(colA).join('')}</div>`;
   document.getElementById('notes').innerHTML = `<h3>A · separate drawers</h3>
     <div>${L(1)}Each Ctrl+click opens that run's own drawer as another column. Same drawer as today, just narrower. × removes one column.</div>
-    <div>${L(2)}Each timeline has its own scale (0 to that run's length), so bars can't be compared by eye. Rows line up only because the job's tasks are the same.</div>
+    <div>${L(2)}Each timeline has its own scale (0 to that run's length), so bars can't be compared by eye. When the job gained or lost a task between runs, the rows stop lining up (08:51 has validate_balances and no load_cost_centers).</div>
     <div>Simple and works for runs of different jobs. Weak for spotting what changed.</div>`;
 }
 
@@ -170,46 +185,67 @@ function renderB() {
   const base = RUNS[0];
   const chips = RUNS.map((r, i) => `<div class="chip ${r.res}${i === 0 ? ' base' : ''}"><b>${r.res}</b><span>${r.when}</span><span class="d">${dur(r.total)}</span><button class="cx">×</button></div>`).join('');
   const axis = `<div class="grid axisrow" style="--n:${n}"><div></div>${RUNS.map(() => `<div class="tk">${[0, 1, 2, 3, 4].map((k) => `<span style="left:${k * 25}%">${k ? dur(max * k / 4) : '0'}</span>`).join('')}</div>`).join('')}<div class="dlt" style="font-size:10.5px;color:var(--ink-3);text-align:right">difference</div></div>`;
-  const rows = TASKS.map((name, k) => {
-    const cells = RUNS.map((r) => {
-      const [st, d, c] = r.t[k];
+  const at = (i) => RUNS[i].when.slice(-5);
+  // first run where presence or value differs from the run before it
+  const firstChange = (vals) => vals.findIndex((v, i) => i > 0 && v !== vals[i - 1]);
+  const rows = ORDER.map((name) => {
+    const ds = RUNS.map((r) => r.tasks[name] || null);
+    const cells = ds.map((x) => {
+      if (!x) return '<div class="tk none"><span class="t" style="left:4px">not in this run</span></div>';
+      const [st, d, c] = x;
       const cls = c === 'f' ? ' f' : c === 's' ? ' s' : c === 'slow' ? ' slow' : '';
       const w = c === 's' ? 2.5 : Math.max(0.8, 100 * d / max);
       const lab = c === 's' ? 'skipped' : c === 'f' ? `${dur(d)}, failed` : short(d);
       return `<div class="tk"><span class="b${cls}" style="left:${100 * st / max}%;width:${w}%"></span><span class="t" style="left:calc(${100 * (st + (c === 's' ? max * 0.025 : d)) / max}% + 5px)">${lab}</span></div>`;
     }).join('');
-    const ds = RUNS.map((r) => r.t[k]);
-    const fast = Math.min(...ds.filter((x) => x[2] !== 's' && x[2] !== 'f').map((x) => x[1]));
-    const f = ds.find((x) => x[2] === 'f');
-    const worst = Math.max(...ds.filter((x) => x[2] !== 'f').map((x) => x[1]));
-    const at = (pred) => RUNS[ds.findIndex(pred)].when.slice(-5);
-    const delta = f ? `<div class="dlt bad">failed at ${at((x) => x[2] === 'f')}</div>`
-      : worst > fast * 1.5 ? `<div class="dlt up">+${dur(worst - fast)} at ${at((x) => x[1] === worst)}</div>`
-      : ds.some((x) => x[2] === 's') ? `<div class="dlt">skipped at ${at((x) => x[2] === 's')}</div>` : '<div class="dlt">same</div>';
-    const hot = f || worst > fast * 1.5;
-    return `<div class="grid row${hot ? ' hot' : ''}" style="--n:${n}"><div class="n">${name}</div>${cells}${delta}</div>`;
+    const k = firstChange(ds.map(Boolean));
+    let delta, cls = '';
+    if (k > 0) {
+      delta = `<div class="dlt chg">${ds[k] ? 'added' : 'removed'} at ${at(k)}</div>`;
+      cls = ' chg';
+    } else {
+      const ran = ds.map((x, i) => [x, i]).filter(([x]) => x[2] !== 's' && x[2] !== 'f');
+      const fast = Math.min(...ran.map(([x]) => x[1]));
+      const worst = ran.reduce((m, y) => (y[0][1] > m[0][1] ? y : m), ran[0]);
+      const f = ds.findIndex((x) => x[2] === 'f');
+      const sk = ds.findIndex((x) => x[2] === 's');
+      if (f >= 0) { delta = `<div class="dlt bad">failed at ${at(f)}</div>`; cls = ' hot'; }
+      else if (worst[0][1] > fast * 1.5) { delta = `<div class="dlt up">+${dur(worst[0][1] - fast)} at ${at(worst[1])}</div>`; cls = ' hot'; }
+      else if (sk >= 0) delta = `<div class="dlt">skipped at ${at(sk)}</div>`;
+      else delta = '<div class="dlt">same</div>';
+    }
+    return `<div class="grid row${cls}" style="--n:${n}"><div class="n">${name}</div>${cells}${delta}</div>`;
   }).join('');
   const bars = `<div class="grid bars" style="--n:${n}"><div class="n" style="font-size:12px;color:var(--ink-3)">total, | = usual</div>${RUNS.map((r) => `<div><div class="bx"><i class="${r.res}" style="width:${100 * r.total / max}%"></i><u style="left:${100 * USUAL / max}%"></u></div><div class="v">${dur(r.total)}</div></div>`).join('')}<div class="dlt"></div></div>`;
-  const diffRow = (label, key) => {
-    const same = RUNS.every((r) => r[key] === base[key]);
-    return `<div class="grid row diff" style="--n:${n}"><div class="n">${label}</div>${RUNS.map((r) => `<div class="cell${!same && r[key] !== base[key] ? ' ch' : ''}">${r[key]}</div>`).join('')}<div class="dlt${same ? '' : ' up'}">${same ? 'same' : 'changed'}</div></div>`;
-  };
+  const keys = (f) => [...new Set(RUNS.flatMap((r) => Object.keys(r[f])))];
+  const same = [];
+  const changeRows = [];
+  for (const [group, label] of [['params', 'parameter'], ['settings', '']]) {
+    for (const key of keys(group)) {
+      const vals = RUNS.map((r) => (key in r[group] ? r[group][key] : null));
+      const k = firstChange(vals);
+      if (k < 0) { same.push(key); continue; }
+      const what = vals[k] === null ? 'removed' : vals[k - 1] === null ? 'added' : 'changed';
+      changeRows.push(`<div class="grid row diff" style="--n:${n}"><div class="n">${key}${label ? ` <small>${label}</small>` : ''}</div>${vals.map((v, i) => `<div class="cell${i >= k && v !== vals[k - 1] ? ' ch' : ''}${v === null ? ' unset' : ''}">${v === null ? 'not set' : v}</div>`).join('')}<div class="dlt up">${what} at ${at(k)}</div></div>`);
+    }
+  }
+  const sameRow = same.length ? `<div class="grid row diff" style="--n:${n}"><div class="n unch">${same.length} unchanged</div><div class="cell unch" style="grid-column: span ${n}">${same.join(', ')} <span class="show">show</span></div><div></div></div>` : '';
   document.getElementById('drawer').innerHTML = `
     <div class="cmp-h">
-      <div class="top">${L(1)}<span class="title">${GLYPH}<i>${JOB.prefix}</i>${JOB.name}</span><span class="pill">3 runs</span><button class="x">×</button></div>
+      <div class="top">${L(1)}<span class="title">${GLYPH}<i>${JOB.prefix}</i>${JOB.name}</span><span class="pill amber">job changed between these runs</span><span class="pill">3 runs</span><button class="x">×</button></div>
       <div class="grid runs" style="--n:${n}"><div>${L(2)}<span class="add">Ctrl+click adds a run</span></div>${chips}<div></div></div>
     </div>
     <div class="sec"><h4>${L(3)}Run</h4>${bars}</div>
-    <div class="sec"><h4>${L(4)}Tasks<em>one time scale for every run; rows that differ are tinted</em></h4>${axis}${rows}</div>
-    <div class="sec"><h4>${L(5)}What's different</h4>${diffRow('parameters', 'params')}${diffRow('compute', 'cluster')}${diffRow('code', 'commit')}</div>
+    <div class="sec"><h4>${L(4)}What changed in the job<em>parameters compare definitions, not resolved values</em></h4>${changeRows.join('')}${sameRow}</div>
+    <div class="sec"><h4>${L(5)}Tasks<em>every task from any run, one time scale</em></h4>${axis}${rows}</div>
     <div class="sec root"><h4>${L(6)}Root</h4><div class="grid" style="--n:${n}"><div></div>${RUNS.map((r) => `<div class="cell ${r.root ? 'err' : 'ok'}">${r.root || 'no error'}</div>`).join('')}<div></div></div></div>
     <div style="height:30px"></div>`;
   document.getElementById('notes').innerHTML = `<h3>B · aligned comparison</h3>
     <div>${L(1)}One header for the job. Esc or × closes the whole comparison.</div>
     <div>${L(2)}One chip per run, oldest first. The first run you opened is the baseline (outlined). × on a chip drops that run; Ctrl+click on another history box adds one.</div>
     <div>${L(3)}Totals on one scale, with a tick for the usual time.</div>
-    <div>${L(4)}One task list, one timeline per run, all on the same scale. The last column says what differs and in which run; those rows are tinted.</div>
-    <div>${L(5)}Only parameters, compute and code, with changed values highlighted.</div>
+    <div>${L(4)}Only what changed between runs: one row per parameter, plus compute and code, with the run it changed at. Parameters compare the job's definition, so {{job.start_time}} doesn't count as a change. Unchanged ones fold into one line.</div>
+    <div>${L(5)}Every task from any run, in DAG order. A run without that task says "not in this run"; blue rows were added or removed. A rename shows as one removed and one added (the API can't tell).</div>
     <div>${L(6)}Each run's cause, side by side. Clicking a failed task still opens its log, like today.</div>`;
 }
 
