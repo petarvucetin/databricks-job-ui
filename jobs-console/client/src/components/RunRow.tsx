@@ -44,6 +44,9 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   const { over } = progress(run, elapsed);
   const stat = statBlock(run, elapsed, asOf);
   const { prefix, rest } = splitName(run.name);
+  // "[dev john smith] " → kind "dev", who "john smith"
+  const inner = prefix.trim().slice(1, -1);
+  const target = inner ? { kind: inner.split(' ')[0], who: inner.split(' ').slice(1).join(' ') } : null;
   const hist = visibleHistory(history ?? (run.result ? [run] : []));
   const openDrawer = (id: number) => (e: MouseEvent) => {
     e.stopPropagation();
@@ -74,9 +77,10 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
             <b data-c="9">{stat.value}</b>
           </span>
         )}
-        <span className="rr-name" data-c="3"><i>{prefix}</i>{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</span>
+        <span className="rr-name" data-c="3">{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</span>
       </div>
       <div className="rr-main">
+        {target && <span className="rr-tgt" data-c="19">{target.kind} <b>{target.who}</b></span>}
         {run.live && (
           <div className="rr-run" data-c="9">
             <Spinner />

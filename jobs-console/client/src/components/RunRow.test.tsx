@@ -20,7 +20,9 @@ describe('RunRow', () => {
     fireEvent.click(toggle);
     expect(toggle.getAttribute('aria-expanded')).toBe('true');
     expect(row.className).not.toContain('live');
-    expect(container.querySelector('[data-c="3"]')!.textContent).toBe('[prod] finance_gl_co_gl_journals_v3');
+    expect(container.querySelector('[data-c="3"]')!.textContent).toBe('finance_gl_co_gl_journals_v3');
+    expect(container.querySelector('[data-c="19"]')!.textContent).toBe('prod ');
+    container.querySelector('[data-c="19"]')!.remove(); // the rest checks the left column is otherwise empty
     const l1 = [...container.querySelector('.rr-l1')!.children].map((c) => c.getAttribute('data-c'));
     expect(l1).toEqual(['2', '13', '3']);
     const main = [...container.querySelector('.rr-main')!.children].map((c) => c.getAttribute('data-c') ?? c.className);
@@ -65,6 +67,17 @@ describe('RunRow', () => {
     expect(container.querySelectorAll('.rr-hist .rh')).toHaveLength(1);
     expect(container.querySelector('.rr-hist .rh.now')).not.toBeNull();
     expect(container.querySelector('.rr-hist')!.textContent).not.toContain('no finished runs in this window');
+  });
+
+  it('shows a dev target as a pill under the name, and none for an unprefixed prod job', () => {
+    const { container } = render(<RunRow run={makeRun({ name: '[dev john smith] finance_gl_x' })} nowMs={0} loadedAt={0} asOf={0} />);
+    expect(container.querySelector('.rr-name')!.textContent).toBe('finance_gl_x');
+    const pill = container.querySelector('.rr-main .rr-tgt')!;
+    expect(pill.textContent).toBe('dev john smith');
+    expect(pill.querySelector('b')!.textContent).toBe('john smith');
+    cleanup();
+    const prod = render(<RunRow run={makeRun({ name: 'finance_gl_x' })} nowMs={0} loadedAt={0} asOf={0} />);
+    expect(prod.container.querySelector('.rr-tgt')).toBeNull();
   });
 
   it('collapses runs beyond the box limit into an "earlier" chip', () => {
