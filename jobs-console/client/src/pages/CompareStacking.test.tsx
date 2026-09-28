@@ -25,7 +25,12 @@ const data: RunsResponse = {
     makeRun({ id: 5, name: '[prod] other_job', startTime: at(22, 6) }),
   ],
 };
-const boxes = (c: HTMLElement, row: number) => [...c.querySelectorAll<HTMLButtonElement>(`.rl .rr[data-id="${row}"] .rh`)];
+/** The row's history boxes, opening its Run history first if it is hidden. */
+const boxes = (c: HTMLElement, row: number) => {
+  const t = c.querySelector(`.rl .rr[data-id="${row}"] .rr-hist-t`);
+  if (t?.getAttribute('aria-expanded') === 'false') fireEvent.click(t);
+  return [...c.querySelectorAll<HTMLButtonElement>(`.rl .rr[data-id="${row}"] .rh`)];
+};
 const chips = (c: HTMLElement) => [...c.querySelectorAll('.cmpv .chip b')].map((b) => b.textContent);
 
 describe('comparing runs', () => {

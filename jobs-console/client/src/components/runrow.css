@@ -11,8 +11,13 @@
 .rr-ra { flex: none; display: inline-block; padding: 1px 9px; border-radius: 999px; background: var(--wash-sand); border: 1px solid #e3d7c6; font-size: 11.5px; color: var(--ink-3); line-height: 1.5; position: relative; top: -1px; white-space: nowrap; }
 .rr-ra b { color: var(--ink-2); font-weight: 500; }
 .rr-hist { min-width: 0; }
-.rr-hist-t { display: flex; align-items: baseline; gap: 12px; margin-bottom: 3px; }
-.rr-hist-t > span:first-child { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.rr-hist-t { display: flex; align-items: baseline; gap: 8px; margin: 0; padding: 1px 6px 1px 2px; border: 0; border-radius: 4px; background: none; font: inherit; cursor: pointer; }
+.rr-hist-t:hover { background: var(--wash-sand); }
+.rr.hist-open .rr-hist-t { margin-bottom: 3px; }
+.rr-chev { width: 11px; font-size: 13px; color: var(--ink-3); }
+.rr-hist-t > span:nth-child(2) { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.rr-n { min-width: 16px; padding: 0 5px; border-radius: 999px; background: var(--wash-sand); font-size: 10.5px; color: var(--ink-2); text-align: center; font-variant-numeric: tabular-nums; }
+.rr-n + .rr-avg-t { margin-left: 4px; }
 .rr-avg-t { font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .rr-avg-t em { font-style: normal; font-weight: 500; color: var(--ink); }
 .rr-hist-boxes { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
@@ -48,8 +53,9 @@
 .rr-st b, .rr-st em { font-style: normal; font-weight: 500; color: var(--ink); }
 
 /* Running: a turning spinner, the current runtime and the average, level with the history boxes. Green while under the average, amber past it. */
-.rr-run { --c: var(--green); display: flex; align-items: center; gap: 8px; height: 28px; margin-top: 19px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rr-run { --c: var(--green); display: flex; align-items: center; gap: 8px; height: 20px; margin-top: 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .rr.over .rr-run { --c: var(--amber-ink); }
+.rr.hist-open .rr-run { height: 28px; margin-top: 19px; }
 .rr-spin { flex: none; width: 17px; height: 17px; fill: none; stroke: var(--c); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; animation: rr-spin 1.6s linear infinite; }
 @keyframes rr-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .rr-spin { animation: none; } }

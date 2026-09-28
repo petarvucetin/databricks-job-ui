@@ -13,6 +13,12 @@ describe('RunRow', () => {
     const { container } = render(<RunRow run={makeRun()} nowMs={0} loadedAt={0} asOf={0} />);
     const row = container.querySelector('.rr')!;
     expect(row.className).toBe('rr');
+    expect(container.querySelector('.rr-hist-boxes')).toBeNull();
+    const toggle = container.querySelector('.rr-hist-t')!;
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(toggle.querySelector('.rr-n')!.textContent).toBe('1');
+    fireEvent.click(toggle);
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
     expect(row.className).not.toContain('live');
     expect(container.querySelector('[data-c="3"]')!.textContent).toBe('[prod] finance_gl_co_gl_journals_v3');
     const l1 = [...container.querySelector('.rr-l1')!.children].map((c) => c.getAttribute('data-c'));
@@ -36,6 +42,8 @@ describe('RunRow', () => {
     expect(container.textContent).not.toContain('failed 22 Sep');
     expect(container.querySelector('.rr-hist')!.textContent).toContain('Run history');
     expect(container.querySelectorAll('.rr-hist .rh')).toHaveLength(1);
+    fireEvent.click(toggle);
+    expect(container.querySelector('.rr-hist-boxes')).toBeNull();
   });
 
   it('draws one runtime box per finished run in the window, coloured by result, with runtime over start day/time', () => {
@@ -44,7 +52,7 @@ describe('RunRow', () => {
     const cancelled = makeRun({ id: 4, kind: 'succeeded', failed: [], result: 'cancelled', durationSec: 42, startTime: d(20) });
     const partial = makeRun({ id: 5, kind: 'succeeded', failed: [], result: 'partial', durationSec: 600, startTime: d(21) });
     const cur = makeRun({ id: 3, startTime: d(22) });
-    const { container } = render(<RunRow run={cur} history={[ok, cancelled, partial, cur]} nowMs={0} loadedAt={0} asOf={0} />);
+    const { container } = render(<RunRow historyOpen run={cur} history={[ok, cancelled, partial, cur]} nowMs={0} loadedAt={0} asOf={0} />);
     const boxes = [...container.querySelectorAll('.rr-hist .rh')];
     expect(boxes.map((b) => b.querySelector('.rh-t')!.textContent)).toEqual(['1h05', '42s', '10m', '23m']);
     expect(boxes.map((b) => b.querySelector('.rh-w')!.textContent)).toEqual(['19/05:00', '20/05:00', '21/05:00', '22/05:00']);
@@ -53,7 +61,7 @@ describe('RunRow', () => {
   });
 
   it('shows only the current-run box for a run still going when the job has no finished runs in the window', () => {
-    const { container } = render(<RunRow run={live} nowMs={0} loadedAt={0} asOf={0} />);
+    const { container } = render(<RunRow historyOpen run={live} nowMs={0} loadedAt={0} asOf={0} />);
     expect(container.querySelectorAll('.rr-hist .rh')).toHaveLength(1);
     expect(container.querySelector('.rr-hist .rh.now')).not.toBeNull();
     expect(container.querySelector('.rr-hist')!.textContent).not.toContain('no finished runs in this window');
@@ -61,13 +69,13 @@ describe('RunRow', () => {
 
   it('collapses runs beyond the box limit into an "earlier" chip', () => {
     const many = Array.from({ length: 30 }, (_, i) => makeRun({ id: 100 + i, kind: 'succeeded', failed: [], result: 'succeeded', startTime: i }));
-    const { container } = render(<RunRow run={many[29]} history={many} nowMs={0} loadedAt={0} asOf={0} />);
+    const { container } = render(<RunRow historyOpen run={many[29]} history={many} nowMs={0} loadedAt={0} asOf={0} />);
     expect(container.querySelectorAll('.rr-hist .rh')).toHaveLength(24);
     expect(container.querySelector('.rr-hist .rh-more')!.textContent).toBe('+6 earlier');
   });
 
   it('renders a running run: ticking big NOW, chain, live message, progress edge', () => {
-    const { container } = render(<RunRow run={live} nowMs={5000} loadedAt={0} asOf={0} />);
+    const { container } = render(<RunRow historyOpen run={live} nowMs={5000} loadedAt={0} asOf={0} />);
     const row = container.querySelector<HTMLElement>('.rr')!;
     expect(row.className).toContain('live');
     expect(container.querySelector('[data-c="9"]')!.textContent).toBe('10m 05saverage 20m 00s');
@@ -83,7 +91,7 @@ describe('RunRow', () => {
   });
 
   it('marks an over-average live run and says how far past the average it is', () => {
-    const { container } = render(<RunRow run={live} nowMs={700_000} loadedAt={0} asOf={0} />);
+    const { container } = render(<RunRow historyOpen run={live} nowMs={700_000} loadedAt={0} asOf={0} />);
     expect(container.querySelector('.rr')!.className).toContain('over');
     expect(container.querySelector('.rr-run-avg')!.textContent).toMatch(/^\+.+ over the 20m 00s average$/);
   });
@@ -93,7 +101,7 @@ describe('RunRow', () => {
     const past = makeRun({ id: 7, kind: 'succeeded', failed: [], result: 'succeeded', startTime: d(21), ntasks: 4 });
     const onSelect = vi.fn();
     const onOpenRun = vi.fn();
-    const { container, rerender } = render(<RunRow run={live} history={[past]} nowMs={5000} loadedAt={0} asOf={0} onSelect={onSelect} onOpenRun={onOpenRun} />);
+    const { container, rerender } = render(<RunRow historyOpen run={live} history={[past]} nowMs={5000} loadedAt={0} asOf={0} onSelect={onSelect} onOpenRun={onOpenRun} />);
     const boxes = container.querySelectorAll<HTMLButtonElement>('.rr-hist .rh');
     expect(boxes).toHaveLength(2);
     fireEvent.click(boxes[0]);
@@ -108,7 +116,7 @@ describe('RunRow', () => {
     fireEvent.click(container.querySelector('.rh.now')!);
     expect(onOpenRun).toHaveBeenLastCalledWith(40, 40, 'open');
     expect(container.querySelector('.pick')).toBeNull();
-    rerender(<RunRow run={live} history={[past]} nowMs={5000} loadedAt={0} asOf={0} openRuns={[7, 40]} onOpenRun={onOpenRun} />);
+    rerender(<RunRow historyOpen run={live} history={[past]} nowMs={5000} loadedAt={0} asOf={0} openRuns={[7, 40]} onOpenRun={onOpenRun} />);
     expect(boxes[0].className).toContain('pick');
     expect(container.querySelector('.rh.now')!.className).toContain('pick');
     expect(container.querySelector('.rh-pop')).toBeNull();
@@ -116,7 +124,7 @@ describe('RunRow', () => {
 
   it('collapses to just the name in compact mode', () => {
     const onSelect = vi.fn();
-    const { container } = render(<RunRow run={live} nowMs={5000} loadedAt={0} asOf={0} onSelect={onSelect} compact />);
+    const { container } = render(<RunRow historyOpen run={live} nowMs={5000} loadedAt={0} asOf={0} onSelect={onSelect} compact />);
     const row = container.querySelector('.rr')!;
     expect(row.className).toBe('rr compact');
     expect(row.children).toHaveLength(1);

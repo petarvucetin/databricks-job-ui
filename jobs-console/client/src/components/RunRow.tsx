@@ -1,4 +1,4 @@
-import { Fragment, type MouseEvent } from 'react';
+import { Fragment, useState, type MouseEvent } from 'react';
 import type { Run } from '../../../shared/domain/types';
 import { dur, fmtStart } from '../../../shared/domain/format';
 import {
@@ -21,7 +21,7 @@ function Spinner() {
 
 export type OpenHow = 'open' | 'stack' | 'tab';
 
-export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect, openRuns, onOpenRun, compact }: {
+export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect, openRuns, onOpenRun, compact, historyOpen = false }: {
   run: Run;
   /** This job's finished runs inside the timeline window, oldest first (defaults to this run if finished). */
   history?: Run[];
@@ -36,7 +36,10 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   onOpenRun?: (runId: number, rowId: number, how: OpenHow) => void;
   /** Name only, one line (C toggles), for scanning a long list quickly. */
   compact?: boolean;
+  /** Run history boxes start hidden; the Run history title shows and hides them. */
+  historyOpen?: boolean;
 }) {
+  const [showHist, setShowHist] = useState(historyOpen);
   const elapsed = elapsedSec(run, nowMs, loadedAt);
   const { over } = progress(run, elapsed);
   const stat = statBlock(run, elapsed, asOf);
@@ -49,7 +52,8 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   };
   const isOpen = (id: number) => openRuns?.includes(id) ?? false;
   const nowDone = run.live ? taskStates(run, elapsed).filter((s) => s === 'ok').length : 0;
-  const cls = ['rr', run.live && 'live', run.live && over && 'over', selected && 'on'].filter(Boolean).join(' ');
+  const cls = ['rr', run.live && 'live', run.live && over && 'over', showHist && 'hist-open', selected && 'on'].filter(Boolean).join(' ');
+  const nRuns = hist.shown.length + hist.earlier + (run.live ? 1 : 0);
 
   if (compact) {
     return (
@@ -84,11 +88,21 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
         )}
       </div>
       <div className="rr-hist" data-c="12">
-        <div className="rr-hist-t">
+        <button
+          type="button"
+          className="rr-hist-t"
+          aria-expanded={showHist}
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowHist((v) => !v);
+          }}
+        >
+          <span className="rr-chev" aria-hidden="true">{showHist ? '▾' : '▸'}</span>
           <span>Run history</span>
+          <span className="rr-n">{nRuns}</span>
           <span className="rr-avg-t" data-c="14">average <em>{stat.average}</em></span>
-        </div>
-        <div className="rr-hist-boxes">
+        </button>
+        {showHist && <div className="rr-hist-boxes">
           {hist.earlier > 0 && <span className="rh-more">+{hist.earlier} earlier</span>}
           {hist.shown.map((h) => (
             <span key={h.id} className="rh-wrap">
@@ -120,7 +134,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
             </span>
           )}
           {hist.shown.length === 0 && !run.live && <span className="rh-none">no finished runs in this window</span>}
-        </div>
+        </div>}
       </div>
     </div>
   );
