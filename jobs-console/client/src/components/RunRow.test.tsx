@@ -18,7 +18,7 @@ describe('RunRow', () => {
     const l1 = [...container.querySelector('.rr-l1')!.children].map((c) => c.getAttribute('data-c'));
     expect(l1).toEqual(['2', '13', '3']);
     const main = [...container.querySelector('.rr-main')!.children].map((c) => c.getAttribute('data-c') ?? c.className);
-    expect(main).toEqual(['rr-l1', '3']);
+    expect(main).toEqual([]);
     expect(container.querySelector('[data-c="13"]')!.className).toContain('rr-ra');
     expect(container.querySelector('[data-c="13"]')!.textContent).toBe('run as sp-finance');
     expect(container.querySelector('[data-c="9"]')).toBeNull();
@@ -31,7 +31,7 @@ describe('RunRow', () => {
     expect(container.querySelector('[data-c="5"]')).toBeNull();
     expect(container.querySelector('.rr-park')).toBeNull();
     const cols = [...container.querySelector('.rr')!.children].map((c) => c.className);
-    expect(cols).toEqual(['rr-main', 'rr-hist']);
+    expect(cols).toEqual(['rr-l1', 'rr-main', 'rr-hist']);
     expect(container.querySelector('[data-c="10"]')).toBeNull();
     expect(container.textContent).not.toContain('failed 22 Sep');
     expect(container.querySelector('.rr-hist')!.textContent).toContain('Run history');
