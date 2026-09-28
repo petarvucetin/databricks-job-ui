@@ -70,25 +70,22 @@ describe('RunRow', () => {
     const { container } = render(<RunRow run={live} nowMs={5000} loadedAt={0} asOf={0} />);
     const row = container.querySelector<HTMLElement>('.rr')!;
     expect(row.className).toContain('live');
-    expect(row.style.getPropertyValue('--p')).toBe('0.504');
-    expect(container.querySelector('[data-c="9"]')!.textContent).toBe('10m 05s');
+    expect(container.querySelector('[data-c="9"]')!.textContent).toBe('10m 05saverage 20m 00s');
     expect(container.querySelector('[data-c="11"]')).toBeNull();
-    expect(container.querySelector('.rr-bar [data-c="9"]')).not.toBeNull();
-    expect(row.className).toContain('bar-job');
+    expect(container.querySelector('.rr-run .rr-spin')).not.toBeNull();
     expect(container.querySelector('.rr-hist-t [data-c="14"]')).not.toBeNull();
     expect(container.querySelector('.rr-chain')).toBeNull();
     expect(container.querySelector('[data-c="8"]')).toBeNull();
     const now = container.querySelector('.rh.now')!;
     expect(now.textContent).toContain('5 of 10');
     expect(now.className).not.toContain('pick');
-    expect(container.querySelector('.rr-bar')).not.toBeNull();
-    expect(container.querySelector('.rr-avg')).toBeNull();
+    expect(row.className).not.toContain('over');
   });
 
-  it('marks an over-average live run with a full solid bar and the average tick', () => {
+  it('marks an over-average live run and says how far past the average it is', () => {
     const { container } = render(<RunRow run={live} nowMs={700_000} loadedAt={0} asOf={0} />);
     expect(container.querySelector('.rr')!.className).toContain('over');
-    expect(container.querySelector('.rr-avg')).not.toBeNull();
+    expect(container.querySelector('.rr-run-avg')!.textContent).toMatch(/^\+.+ over the 20m 00s average$/);
   });
 
   it('asks to open, stack (Ctrl or Cmd) or send to the comparison tab (Ctrl+Shift) the clicked run, and marks open runs', () => {

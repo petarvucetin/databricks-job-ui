@@ -1,4 +1,4 @@
-import { Fragment, type CSSProperties, type MouseEvent } from 'react';
+import { Fragment, type MouseEvent } from 'react';
 import type { Run } from '../../../shared/domain/types';
 import { dur, fmtStart } from '../../../shared/domain/format';
 import {
@@ -8,6 +8,16 @@ import { dayTime, durShort, visibleHistory } from '../model/history';
 import './runrow.css';
 
 const RESULT_LABEL = { succeeded: 'succeeded', failed: 'failed', cancelled: 'cancelled', partial: 'partially succeeded' } as const;
+
+/** Two chasing arrows, turning while the run is going. */
+function Spinner() {
+  return (
+    <svg className="rr-spin" viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M13.5 8A5.5 5.5 0 0 1 4.1 11.9M4.1 14.1V11.9H6.3" />
+      <path d="M2.5 8A5.5 5.5 0 0 1 11.9 4.1M9.7 4.1H11.9V1.9" />
+    </svg>
+  );
+}
 
 export type OpenHow = 'open' | 'stack' | 'tab';
 
@@ -28,7 +38,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   compact?: boolean;
 }) {
   const elapsed = elapsedSec(run, nowMs, loadedAt);
-  const { p, over } = progress(run, elapsed);
+  const { over } = progress(run, elapsed);
   const stat = statBlock(run, elapsed, asOf);
   const { prefix, rest } = splitName(run.name);
   const hist = visibleHistory(history ?? (run.result ? [run] : []));
@@ -39,8 +49,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   };
   const isOpen = (id: number) => openRuns?.includes(id) ?? false;
   const nowDone = run.live ? taskStates(run, elapsed).filter((s) => s === 'ok').length : 0;
-  const cls = ['rr', run.live && 'live', run.live && `bar-${run.type}`, run.live && over && 'over', selected && 'on'].filter(Boolean).join(' ');
-  const style = run.live ? ({ '--p': String(p) } as CSSProperties) : undefined;
+  const cls = ['rr', run.live && 'live', run.live && over && 'over', selected && 'on'].filter(Boolean).join(' ');
 
   if (compact) {
     return (
@@ -51,7 +60,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   }
 
   return (
-    <div className={cls} style={style} data-id={run.id} onClick={onSelect ? () => onSelect(run.id) : undefined}>
+    <div className={cls} data-id={run.id} onClick={onSelect ? () => onSelect(run.id) : undefined}>
       <div className="rr-l1">
         <span className={`rr-tag ${run.type}`} data-c="2">{run.type === 'pipeline' ? 'Pipeline' : 'Job'}</span>
         <span className="rr-ra" data-c="13">run as <b>{run.runAs}</b></span>
@@ -65,9 +74,12 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
       </div>
       <div className="rr-main">
         {run.live && (
-          <div className="rr-prog">
-            <span className="rr-bar"><b data-c="9">{stat.value}</b></span>
-            {over && <span className="rr-avg" />}
+          <div className="rr-run" data-c="9">
+            <Spinner />
+            <b>{stat.value}</b>
+            {over
+              ? <span className="rr-run-avg"><em>+{dur(elapsed - run.usualSec)}</em> over the {stat.average} average</span>
+              : <span className="rr-run-avg">average {stat.average}</span>}
           </div>
         )}
       </div>
