@@ -79,15 +79,15 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
         )}
         <span className="rr-name" data-c="3">{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</span>
       </div>
+      {run.live && (
+        <div className="rr-run" data-c="9">
+          <Spinner />
+          <b>{stat.value}</b>
+        </div>
+      )}
+      {run.live && over && <span className="rr-run-avg"><em>+{dur(elapsed - run.usualSec)}</em> over</span>}
       <div className="rr-main">
         {target && <span className="rr-tgt" data-c="19">{target.kind} <b>{target.who}</b></span>}
-        {run.live && (
-          <div className="rr-run" data-c="9">
-            <Spinner />
-            <b>{stat.value}</b>
-            {over && <span className="rr-run-avg"><em>+{dur(elapsed - run.usualSec)}</em> over</span>}
-          </div>
-        )}
       </div>
       <div className="rr-hist" data-c="12">
         <button
