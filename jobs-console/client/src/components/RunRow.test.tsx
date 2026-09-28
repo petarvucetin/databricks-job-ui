@@ -78,7 +78,7 @@ describe('RunRow', () => {
     const { container } = render(<RunRow historyOpen run={live} nowMs={5000} loadedAt={0} asOf={0} />);
     const row = container.querySelector<HTMLElement>('.rr')!;
     expect(row.className).toContain('live');
-    expect(container.querySelector('[data-c="9"]')!.textContent).toBe('10m 05saverage 20m 00s');
+    expect(container.querySelector('[data-c="9"]')!.textContent).toBe('10m 05s');
     expect(container.querySelector('[data-c="11"]')).toBeNull();
     expect(container.querySelector('.rr-run .rr-spin')).not.toBeNull();
     expect(container.querySelector('.rr-hist-t [data-c="14"]')).not.toBeNull();
@@ -93,7 +93,7 @@ describe('RunRow', () => {
   it('marks an over-average live run and says how far past the average it is', () => {
     const { container } = render(<RunRow historyOpen run={live} nowMs={700_000} loadedAt={0} asOf={0} />);
     expect(container.querySelector('.rr')!.className).toContain('over');
-    expect(container.querySelector('.rr-run-avg')!.textContent).toMatch(/^\+.+ over the 20m 00s average$/);
+    expect(container.querySelector('.rr-run-avg')!.textContent).toMatch(/^\+.+ over$/);
   });
 
   it('asks to open, stack (Ctrl or Cmd) or send to the comparison tab (Ctrl+Shift) the clicked run, and marks open runs', () => {

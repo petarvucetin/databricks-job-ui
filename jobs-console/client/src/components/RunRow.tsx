@@ -81,9 +81,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
           <div className="rr-run" data-c="9">
             <Spinner />
             <b>{stat.value}</b>
-            {over
-              ? <span className="rr-run-avg"><em>+{dur(elapsed - run.usualSec)}</em> over the {stat.average} average</span>
-              : <span className="rr-run-avg">average {stat.average}</span>}
+            {over && <span className="rr-run-avg"><em>+{dur(elapsed - run.usualSec)}</em> over</span>}
           </div>
         )}
       </div>
