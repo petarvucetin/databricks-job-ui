@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Runtime container options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f6f0e7; --sheet: #fffdf9; --ink: #27211c; --ink-2: #5b524a; --ink-3: #948a80; --rule: #e6ddd2;
+    --red: #d6452f; --amber: #d98a12; --green: #2c8c6a; --blue: #2f6fb3; --purple: #6a4fb0; --label: #6b3fd6;
+    --wash-red: #fbe7e1; --wash-amber: #fdf0d8; --wash-green: #e3f2ea; --wash-sand: #f4ece1; --wash-blue: #e3ecf7; --wash-purple: #eee8f8;
+    --amber-ink: #9a5f05;
+    --sans: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 28px 32px; background: var(--paper); font-family: var(--sans); color: var(--ink); }
+  h1 { font-size: 17px; font-weight: 600; margin: 0 0 4px; }
+  .sub { font-size: 13px; color: var(--ink-3); margin: 0 0 22px; }
+  .opt { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 18px 6px; margin-bottom: 18px; }
+  .opt-h { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .opt-h b { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--label); color: #fff; font-size: 12px; }
+  .opt-h span { font-weight: 600; font-size: 14px; }
+  .opt-h em { font-style: normal; color: var(--ink-3); font-size: 12.5px; }
+
+  /* row skeleton, same as the app */
+  .rr { display: grid; grid-template-columns: 124px 504px 1fr; gap: 0 16px; padding: 12px 0; border-bottom: 1px solid var(--rule); align-items: start; }
+  .rr:last-child { border-bottom: 0; }
+  .l1 { grid-column: 2 / -1; display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+  .tag { padding: 1px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; background: var(--wash-sand); color: var(--ink-2); border: 1px solid #e3d7c6; position: relative; top: -1px; }
+  .tag.pipe { background: var(--wash-purple); color: var(--purple); border-color: #d6cbee; }
+  .ra { padding: 1px 9px; border-radius: 999px; background: var(--wash-sand); border: 1px solid #e3d7c6; font-size: 11.5px; color: var(--ink-3); position: relative; top: -1px; }
+  .ra b { color: var(--ink-2); font-weight: 500; }
+  .name { font-family: var(--mono); font-size: 15px; font-weight: 500; margin-left: 4px; }
+  .l2 { grid-column: 2; grid-row: 2; min-height: 20px; }
+  .hist { grid-column: 3; grid-row: 2; font-size: 10.5px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; }
+  .hist i { font-style: normal; text-transform: none; letter-spacing: 0; font-size: 11.5px; margin-left: 10px; }
+  .hist i em { font-style: normal; color: var(--ink); font-weight: 500; }
+  .cell { grid-column: 1; grid-row: 1 / span 2; }
+
+  .spin { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; animation: spin 1.6s linear infinite; flex: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .t { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 13.5px; white-space: nowrap; }
+  .ov { font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* A: soft capsule */
+  .a { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 124px; padding: 3px 11px 3px 9px; border-radius: 999px; background: var(--wash-green); color: var(--green); }
+  .a.over { background: var(--wash-amber); color: var(--amber-ink); }
+  .a-ov { display: block; text-align: right; margin: 4px 11px 0 0; color: var(--amber-ink); }
+
+  /* B: card with an accent edge, like the status tiles */
+  .b { width: 124px; padding: 5px 10px 5px 11px; border-radius: 6px; background: var(--sheet); border: 1px solid var(--rule); border-left: 3px solid var(--green); color: var(--green); box-shadow: 0 1px 2px rgba(60,40,10,.06); }
+  .b.over { border-left-color: var(--amber); color: var(--amber-ink); background: #fffaf0; }
+  .b-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .b .ov { display: block; text-align: right; margin-top: 2px; color: var(--amber-ink); }
+
+  /* C: progress ring toward the average, in an outlined capsule */
+  .c { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 124px; padding: 3px 11px 3px 5px; border-radius: 999px; border: 1px solid #b9dcc9; background: var(--sheet); color: var(--green); }
+  .c.over { border-color: #e7c27a; color: var(--amber-ink); }
+  .ring { width: 20px; height: 20px; flex: none; transform: rotate(-90deg); }
+  .ring circle { fill: none; stroke-width: 3; }
+  .ring .bg { stroke: #e3eee8; }
+  .c.over .ring .bg { stroke: #f4e6c8; }
+  .ring .fg { stroke: currentColor; stroke-linecap: round; }
+  .c-ov { display: block; text-align: right; margin: 4px 11px 0 0; color: var(--amber-ink); }
+
+  /* D: split badge, state on the left, time on the right */
+  .d { display: flex; width: 124px; border-radius: 6px; overflow: hidden; border: 1px solid #9fd1b8; }
+  .d .s { display: grid; place-items: center; width: 28px; background: var(--green); color: #fff; }
+  .d .v { flex: 1; text-align: right; padding: 3px 9px; background: var(--wash-green); color: var(--green); }
+  .d.over { border-color: #e7c27a; }
+  .d.over .s { background: var(--amber); }
+  .d.over .v { background: var(--wash-amber); color: var(--amber-ink); }
+  .d-ov { display: block; text-align: right; margin: 4px 9px 0 0; color: var(--amber-ink); }
+</style>
+</head>
+<body>
+<h1>Where the spinner and runtime live</h1>
+<p class="sub">Each option shown on an on-track run, an over-average run, and a finished run (empty column). Same row layout as the app.</p>
+
+<template id="spin"><svg class="spin" viewBox="0 0 16 16"><path d="M13.5 8A5.5 5.5 0 0 1 4.1 11.9M4.1 14.1V11.9H6.3"/><path d="M2.5 8A5.5 5.5 0 0 1 11.9 4.1M9.7 4.1H11.9V1.9"/></svg></template>
+
+<div id="opts"></div>
+
+<script>
+const SPIN = document.getElementById('spin').innerHTML;
+const ring = (p) => { const r = 7.5, c = 2 * Math.PI * r; return `<svg class="ring" viewBox="0 0 20 20"><circle class="bg" cx="10" cy="10" r="${r}"/><circle class="fg" cx="10" cy="10" r="${r}" stroke-dasharray="${c * Math.min(p, 1)} ${c}"/></svg>`; };
+const rows = [
+  { t: '8m 22s', p: 0.54, over: false, type: 'JOB', ra: 'sp-ingest', name: 'aiges_ingest_sap_backfill_sys_bic_ngc_dwh_project_databricks_wm_core_tables_md0', avg: '15m 33s', n: 6 },
+  { t: '1h 19m 36s', p: 1.9, over: '+38m 19s over', type: 'PIPELINE', ra: 'sp-finance', name: 'raw_bronze_sap_sap_erp1_edw_core_tables_fin0_dev', avg: '41m 03s', n: 14 },
+  { t: null, type: 'JOB', ra: 'sp-analytics', name: 'finance_gl_co_core_tables_ca0', avg: '17m 58s', n: 3 },
+];
+const cells = {
+  A: (r) => `<span class="a ${r.over ? 'over' : ''}">${SPIN}<span class="t">${r.t}</span></span>${r.over ? `<span class="ov a-ov">${r.over}</span>` : ''}`,
+  B: (r) => `<div class="b ${r.over ? 'over' : ''}"><div class="b-top">${SPIN}<span class="t">${r.t}</span></div>${r.over ? `<span class="ov">${r.over}</span>` : ''}</div>`,
+  C: (r) => `<span class="c ${r.over ? 'over' : ''}">${ring(r.p)}<span class="t">${r.t}</span></span>${r.over ? `<span class="ov c-ov">${r.over}</span>` : ''}`,
+  D: (r) => `<span class="d ${r.over ? 'over' : ''}"><span class="s">${SPIN}</span><span class="v t">${r.t}</span></span>${r.over ? `<span class="ov d-ov">${r.over}</span>` : ''}`,
+};
+const OPTS = [
+  ['A', 'Soft capsule', 'tinted pill, no border; green wash on track, amber wash when over'],
+  ['B', 'Accent card', 'small white card with a coloured left edge, same language as the status tiles above the list'],
+  ['C', 'Progress ring', 'the spinner becomes a ring filling toward the average; full amber ring once over'],
+  ['D', 'Split badge', 'solid state block with the spinner, runtime beside it on a wash'],
+];
+document.getElementById('opts').innerHTML = OPTS.map(([k, title, note]) => `
+  <section class="opt">
+    <div class="opt-h"><b>${k}</b><span>${title}</span><em>${note}</em></div>
+    ${rows.map((r) => `
+      <div class="rr">
+        <div class="cell">${r.t ? cells[k](r) : ''}</div>
+        <div class="l1"><span class="tag ${r.type === 'PIPELINE' ? 'pipe' : ''}">${r.type}</span><span class="ra">run as <b>${r.ra}</b></span><span class="name">${r.name}</span></div>
+        <div class="l2"></div>
+        <div class="hist">▸ Run history <i>${r.n}</i><i>average <em>${r.avg}</em></i></div>
+      </div>`).join('')}
+  </section>`).join('');
+</script>
+</body>
+</html>
