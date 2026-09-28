@@ -54,6 +54,15 @@ describe('filters', () => {
     expect(sortRuns([ok, queued, live, a, retrying, b, slow]).map((r) => r.id)).toEqual([3, 12, 13, 14, 11, 10, 2]);
   });
 
+  it('sorts by job name ignoring the [dev …] prefix, either way, status order breaking ties', () => {
+    const beta = makeRun({ id: 20, name: '[dev mchen] beta_job' });
+    const alpha = makeRun({ id: 21, name: 'Alpha_job' });
+    const gamma = makeRun({ id: 22, name: '[dev john smith] gamma_job' });
+    const betaLive = makeRun({ id: 23, name: 'beta_job', kind: 'running', live: true });
+    expect(sortRuns([gamma, beta, alpha, betaLive], 'name-asc').map((r) => r.id)).toEqual([21, 23, 20, 22]);
+    expect(sortRuns([gamma, beta, alpha, betaLive], 'name-desc').map((r) => r.id)).toEqual([22, 23, 20, 21]);
+  });
+
   it('counts scope, menus, live and tiles', () => {
     expect(scopeCounts([failed, ok, live, old], end)).toEqual({ mine: 1, all: 2 });
     expect(menuCounts([failed, ok, live], 'codes')).toEqual({ CLOUD_FAILURE: 1, none: 2 });

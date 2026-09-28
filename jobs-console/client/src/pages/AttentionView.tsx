@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import type { RunsResponse } from '../../../shared/domain/types';
-import { liveCount, menuCounts, passes, scopeCounts, sortRuns, tileCounts } from '../model/filters';
+import { liveCount, menuCounts, passes, scopeCounts, sortRuns, tileCounts, type RowSort } from '../model/filters';
 import { timelineEnd } from '../model/timeline';
 import { historyByJob } from '../model/history';
 import { applyAction, initialState, type Action, type MenuKey, type ViewCtx } from '../model/viewState';
@@ -57,7 +57,15 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
   const compactRows = useCompactRows();
   const f = state.filters;
 
-  const rows = useMemo(() => sortRuns(data.runs.filter((r) => passes(r, f))), [data.runs, f]);
+  const [sort, setSortState] = useState<RowSort>(() => {
+    const saved = localStorage.getItem('jobs-console:sort');
+    return saved === 'name-asc' || saved === 'name-desc' ? saved : 'status';
+  });
+  const setSort = useCallback((s: RowSort) => {
+    localStorage.setItem('jobs-console:sort', s);
+    setSortState(s);
+  }, []);
+  const rows = useMemo(() => sortRuns(data.runs.filter((r) => passes(r, f)), sort), [data.runs, f, sort]);
   const tiles = useMemo(() => tileCounts(data.runs, f), [data.runs, f]);
   const history = useMemo(() => historyByJob(data.runs, f.window), [data.runs, f.window]);
   const jobName = open[0]?.name;
@@ -90,7 +98,7 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
       <Timeline runs={data.runs} end={ctx.end} scale={state.scale} window={f.window} cube={state.cube} collapsed={timelineCollapsed} dispatch={dispatch} />
       <StatusTiles tiles={tiles} statuses={f.statuses} asOf={data.asOf} dispatch={dispatch} />
       {labels && rows.length > 0 && <ReferenceBlock rows={rows} history={history} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} openRuns={openIds} onOpenRun={onOpenRun} />}
-      <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} openRuns={openIds} onOpenRun={onOpenRun} dispatch={dispatch} compact={compactRows} />
+      <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} openRuns={openIds} onOpenRun={onOpenRun} dispatch={dispatch} compact={compactRows} sort={sort} onSort={setSort} />
       {drawerRun && <RunDrawer key={drawerRun.id} run={drawerRun} history={history.get(drawerRun.name)} nowMs={nowMs} loadedAt={loadedAt} onClose={closeDrawer} />}
       {open.length > 1 && <CompareDrawer runs={open} nowMs={nowMs} loadedAt={loadedAt} pool={pool} onToggle={toggleRun} addHint="click to add or remove; Ctrl+click in the list works too" onRemove={removeRun} onClose={closeDrawer} />}
     </div>

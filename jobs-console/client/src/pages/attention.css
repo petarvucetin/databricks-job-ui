@@ -1,4 +1,11 @@
 .rl { padding: 6px 24px 24px 24px; }
+.rl-head { display: flex; align-items: center; gap: 10px; padding: 6px 16px 8px; border-bottom: 1px solid var(--rule); }
+.rl-n { flex: 1; font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.rl-sort-t { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.rl-sort { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; }
+.rl-sort button { padding: 2px 10px; font-size: 12px; border: 0; background: var(--sheet); color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+.rl-sort button + button { border-left: 1px solid var(--rule); }
+.rl-sort button.on { background: var(--wash-amber); color: var(--ink); font-weight: 500; }
 .rl-empty { color: var(--ink-3); padding: 24px 2px; margin: 0; }
 .rl-more { display: block; width: 100%; text-align: center; padding: 12px; color: var(--ink-2); background: none; border: 0; cursor: pointer; }
 .att-status { padding: 24px; color: var(--ink-2); }

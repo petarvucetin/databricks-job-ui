@@ -93,9 +93,18 @@ export function autoStatuses(runs: Run[], f: Filters): RunKind[] {
   return RUN_KINDS.filter((k) => present.has(k));
 }
 
-export function sortRuns(runs: Run[]): Run[] {
+/** Row order: by status (needs attention first), or by job name A–Z / Z–A. */
+export type RowSort = 'status' | 'name-asc' | 'name-desc';
+
+/** The job name without its bundle target prefix, e.g. "[dev mchen] finance_gl_x" → "finance_gl_x". */
+export const bareName = (name: string): string => name.replace(/^\[[^\]]+\] /, '');
+
+export function sortRuns(runs: Run[], sort: RowSort = 'status'): Run[] {
   const order = (k: RunKind) => ROW_ORDER.indexOf(k);
-  return [...runs].sort((a, b) => order(a.kind) - order(b.kind) || b.startTime - a.startTime);
+  const byStatus = (a: Run, b: Run) => order(a.kind) - order(b.kind) || b.startTime - a.startTime;
+  if (sort === 'status') return [...runs].sort(byStatus);
+  const dir = sort === 'name-asc' ? 1 : -1;
+  return [...runs].sort((a, b) => dir * bareName(a.name).localeCompare(bareName(b.name), undefined, { sensitivity: 'base', numeric: true }) || byStatus(a, b));
 }
 
 /** Runs needing attention over the last 30 days (not succeeded). */
