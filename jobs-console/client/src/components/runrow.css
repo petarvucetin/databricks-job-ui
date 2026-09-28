@@ -1,5 +1,5 @@
 /* Columns: runtime (running rows only, empty otherwise so every runtime lines up), name side, Run history. */
-.rr { position: relative; display: grid; grid-template-columns: 104px 504px minmax(0, 1fr); gap: 0 16px; align-items: start; padding: 12px 16px; background: transparent; border: 0; border-bottom: 1px solid var(--rule); cursor: pointer; }
+.rr { position: relative; display: grid; grid-template-columns: 116px 504px minmax(0, 1fr); gap: 0 16px; align-items: start; padding: 12px 16px; background: transparent; border: 0; border-bottom: 1px solid var(--rule); cursor: pointer; }
 .rr:hover { background: #f6efe3; }
 .rr.on { background: #f8ebd0; }
 
@@ -56,15 +56,15 @@
 .rr-st span { color: var(--ink-3); }
 .rr-st b, .rr-st em { font-style: normal; font-weight: 500; color: var(--ink); }
 
-/* Running: a turning spinner and the current runtime in the first column, level with the name; runtimes right-aligned so they compare at a glance. Green while under the average, amber past it, with how far over underneath. */
-.rr-run { grid-column: 1; grid-row: 1; --c: var(--green); display: flex; align-items: center; gap: 8px; height: 21px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.rr-run b { margin-left: auto; }
-.rr.over .rr-run { --c: var(--amber-ink); }
-.rr-spin { flex: none; width: 17px; height: 17px; fill: none; stroke: var(--c); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; animation: rr-spin 1.6s linear infinite; }
+/* Running: a split badge in the first column, level with the name. Solid block with the turning spinner, runtime right-aligned on a wash so runtimes compare at a glance. Green while under the average, amber past it, with how far over underneath. */
+.rr-run { grid-column: 1; grid-row: 1; --c: var(--green); --c-edge: #9fd1b8; --c-wash: var(--wash-green); --c-ink: var(--green); display: flex; height: 23px; border: 1px solid var(--c-edge); border-radius: 6px; overflow: hidden; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rr.over .rr-run { --c: var(--amber); --c-edge: #e7c27a; --c-wash: var(--wash-amber); --c-ink: var(--amber-ink); }
+.rr-run-s { flex: none; display: grid; place-items: center; width: 26px; background: var(--c); color: #fff; }
+.rr-spin { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; animation: rr-spin 1.6s linear infinite; }
 @keyframes rr-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .rr-spin { animation: none; } }
-.rr-run b { font-size: 14px; font-weight: 600; color: var(--c); }
-.rr-run-avg { grid-column: 1; grid-row: 2; align-self: center; text-align: right; font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rr-run b { flex: 1; display: flex; align-items: center; justify-content: flex-end; padding: 0 8px; background: var(--c-wash); font-size: 13.5px; font-weight: 600; color: var(--c-ink); }
+.rr-run-avg { grid-column: 1; grid-row: 2; align-self: center; text-align: right; padding-right: 9px; font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .rr-run-avg em { font-style: normal; font-weight: 500; color: var(--amber-ink); }
 
 /* compact rows (C): just the name, one line */

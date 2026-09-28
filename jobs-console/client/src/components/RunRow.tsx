@@ -81,7 +81,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
       </div>
       {run.live && (
         <div className="rr-run" data-c="9">
-          <Spinner />
+          <span className="rr-run-s"><Spinner /></span>
           <b>{stat.value}</b>
         </div>
       )}
