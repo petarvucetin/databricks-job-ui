@@ -52,18 +52,18 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
 
   return (
     <div className={cls} style={style} data-id={run.id} onClick={onSelect ? () => onSelect(run.id) : undefined}>
-      <div className="rr-main">
-        <div className="rr-l1">
-          <span className={`rr-tag ${run.type}`} data-c="2">{run.type === 'pipeline' ? 'Pipeline' : 'Job'}</span>
-          <span className="rr-ra" data-c="13">run as <b>{run.runAs}</b></span>
-          {stat.label === 'waiting' && (
-            <span className="rr-st" data-c="11">
-              <span>{stat.label}</span>
-              <b data-c="9">{stat.value}</b>
-            </span>
-          )}
-        </div>
+      <div className="rr-l1">
+        <span className={`rr-tag ${run.type}`} data-c="2">{run.type === 'pipeline' ? 'Pipeline' : 'Job'}</span>
+        <span className="rr-ra" data-c="13">run as <b>{run.runAs}</b></span>
+        {stat.label === 'waiting' && (
+          <span className="rr-st" data-c="11">
+            <span>{stat.label}</span>
+            <b data-c="9">{stat.value}</b>
+          </span>
+        )}
         <span className="rr-name" data-c="3"><i>{prefix}</i>{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</span>
+      </div>
+      <div className="rr-main">
         {run.live && (
           <div className="rr-prog">
             <span className="rr-bar"><b data-c="9">{stat.value}</b></span>

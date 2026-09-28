@@ -16,7 +16,7 @@ describe('RunRow', () => {
     expect(row.className).not.toContain('live');
     expect(container.querySelector('[data-c="3"]')!.textContent).toBe('[prod] finance_gl_co_gl_journals_v3');
     const l1 = [...container.querySelector('.rr-l1')!.children].map((c) => c.getAttribute('data-c'));
-    expect(l1).toEqual(['2', '13']);
+    expect(l1).toEqual(['2', '13', '3']);
     const main = [...container.querySelector('.rr-main')!.children].map((c) => c.getAttribute('data-c') ?? c.className);
     expect(main).toEqual(['rr-l1', '3']);
     expect(container.querySelector('[data-c="13"]')!.className).toContain('rr-ra');

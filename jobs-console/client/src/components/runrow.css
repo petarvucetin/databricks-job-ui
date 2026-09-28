@@ -2,11 +2,11 @@
 .rr:hover { background: #fffcf6; }
 .rr.on { box-shadow: inset 0 0 0 1px var(--amber), 0 1px 3px rgba(60, 40, 10, .07); background: #fffaf0; }
 
-.rr-l1 { display: flex; align-items: baseline; gap: 10px; }
+.rr-l1 { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; min-width: 0; }
 .rr-tag { flex: none; display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; line-height: 1.5; position: relative; top: -1px; }
 .rr-tag.job { background: var(--wash-sand); color: var(--ink-2); border: 1px solid #e3d7c6; }
 .rr-tag.pipeline { background: var(--wash-purple); color: var(--purple); border: 1px solid #d6cbee; }
-.rr-name { display: block; margin-top: 6px; font-family: var(--mono); font-size: 15px; font-weight: 500; color: var(--ink); letter-spacing: -.01em; overflow-wrap: break-word; line-height: 1.4; }
+.rr-name { display: block; flex: 1; min-width: 0; margin-left: 4px; font-family: var(--mono); font-size: 15px; font-weight: 500; color: var(--ink); letter-spacing: -.01em; overflow-wrap: break-word; line-height: 1.4; }
 .rr-name i { font-style: normal; font-weight: 400; color: var(--ink-3); }
 .rr-ra { flex: none; display: inline-block; padding: 1px 9px; border-radius: 999px; background: var(--wash-sand); border: 1px solid #e3d7c6; font-size: 11.5px; color: var(--ink-3); line-height: 1.5; position: relative; top: -1px; white-space: nowrap; }
 .rr-ra b { color: var(--ink-2); font-weight: 500; }
@@ -50,7 +50,7 @@
 /* Running indicator: solid band under the name, inside the name column (never past the Run history column), gold for jobs, blue for pipelines, filling toward the average with the current runtime at the fill's end; past the average it stays full with a tick at the average. */
 .rr.live { --c: #d9a21b; --c-b: #e8bb4a; --c2: #f6e7bf; --ct: #3b2a05; }
 .rr.live.bar-pipeline { --c: var(--blue); --c-b: #4d88c7; --c2: #d3e1f2; --ct: #fff; }
-.rr-prog { position: relative; height: 22px; margin-top: 10px; border-radius: 5px; background: var(--c2); overflow: hidden; }
+.rr-prog { position: relative; height: 22px; margin-top: 17px; border-radius: 5px; background: var(--c2); overflow: hidden; }
 .rr-bar { position: absolute; left: 0; top: 0; bottom: 0; min-width: 78px; width: calc(min(var(--p), 1) * 100%); background: var(--c); display: flex; align-items: center; justify-content: flex-end; }
 .rr-bar b { position: relative; z-index: 1; padding: 0 10px; font-size: 13px; font-weight: 600; color: var(--ct); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .rr.over .rr-bar { width: 100%; }
