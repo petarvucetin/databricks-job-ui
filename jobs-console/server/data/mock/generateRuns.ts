@@ -23,10 +23,10 @@ const SUCCEEDED = CAUSES[8];
 const RUNNING_CAUSE: CauseSpec = { kind: 'running', label: 'Running', code: '', detail: '', w: 0 };
 
 const PREFIXES = [
-  '[prod] aiges_ingest_sap_backfill_sys_bic_ngc_dwh_edw_',
-  '[prod] aiges_ingest_sap_sap_erp1_edw_core_tables_',
-  '[prod] aiges_ingest_sap_backfill_sys_bic_ngc_dwh_project_databricks_',
-  '[prod] finance_gl_',
+  'aiges_ingest_sap_backfill_sys_bic_ngc_dwh_edw_',
+  'aiges_ingest_sap_sap_erp1_edw_core_tables_',
+  'aiges_ingest_sap_backfill_sys_bic_ngc_dwh_project_databricks_',
+  'finance_gl_',
 ];
 const SUFFIX_A = ['ca', 'mfg', 'sc', 'hr', 'fin', 'md', 'pp', 'sd', 'mm', 'co', 'fi', 'wm'];
 const SUFFIX_B = [
@@ -37,8 +37,10 @@ const SUFFIX_B = [
 ];
 const TASK_NAMES = ['setup', 'extract_bkpf', 'extract_bseg', 'extract_gl', 'transform', 'dq_checks', 'load_gl', 'load_gl_history', 'load_cost_centers', 'load_profit_centers', 'load_vendors', 'publish', 'notify'];
 const RUN_AS = ['sp-finance', 'sp-ingest', 'sp-analytics'];
-const PIPE_PREFIX = '[prod] raw_bronze_sap_sap_erp1_edw_core_tables_';
+const PIPE_PREFIX = 'raw_bronze_sap_sap_erp1_edw_core_tables_';
 const PIPE_SUFFIX = ['mfg_op', 'md0', 'ca0', 'sc0', 'fin0', 'hr0', 'jsto', 'mfg1', 'pp0', 'sd0', 'mm0', 'co0'];
+/** Bundle "development" target prefixes, one per developer; prod deployments carry no prefix. */
+const DEV_PREFIXES = ['[dev john smith] ', '[dev priya_patel] ', '[dev mchen] ', '[dev ana.souza] '];
 const FLOWS = ['bronze_bkpf', 'bronze_bseg', 'silver_bkpf', 'silver_bseg', 'silver_gl_accounts', 'gold_gl_balances', 'gold_cost_centers', 'gold_vendors'];
 
 /** Minute 0 is 24 Aug 2026 00:00 local; the data set's "now" is minute 42240, 22 Sep 08:00. */
@@ -196,6 +198,13 @@ export function generateRuns(tzOffsetMin: number = DEFAULT_TZ_OFFSET_MIN): RunsR
       f.name = FLOWS[(d.id + i * 3) % FLOWS.length];
     });
     d.runId = 'upd ' + ((d.id * 2654435761) % 4294967296).toString(16).slice(0, 8);
+  }
+
+  // About a quarter of jobs and pipelines are developers' own deployments. Keyed off the name (no random draws), so a job keeps one owner across all its runs.
+  for (const d of drafts) {
+    let h = 0;
+    for (const ch of d.name + d.suffix) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    if (h % 4 === 0) d.name = DEV_PREFIXES[(h >>> 2) % DEV_PREFIXES.length] + d.name;
   }
 
   // A few slow jobs are still going at now, well past their average, so Slow is not only continuous pipelines.

@@ -57,9 +57,19 @@ describe('generateRuns', () => {
     expect(pipes.length).toBeGreaterThan(0);
     for (const r of pipes) {
       expect(r.runId).toMatch(/^upd [0-9a-f]{1,8}$/);
-      expect(r.name.startsWith('[prod] raw_bronze_sap_sap_erp1_edw_core_tables_')).toBe(true);
+      expect(r.name).toMatch(/^(\[dev [^\]]+\] )?raw_bronze_sap_sap_erp1_edw_core_tables_/);
       expect(r.name.endsWith('_dev')).toBe(true);
     }
+  });
+
+  it('prefixes only dev deployments, each job keeping one prefix across its runs', () => {
+    expect(data.runs.some((r) => r.name.startsWith('[prod]'))).toBe(false);
+    const dev = data.runs.filter((r) => r.name.startsWith('[dev '));
+    expect(dev.length).toBeGreaterThan(data.runs.length * 0.1);
+    expect(dev.length).toBeLessThan(data.runs.length * 0.5);
+    expect(new Set(dev.map((r) => /^\[[^\]]+\]/.exec(r.name)![0])).size).toBeGreaterThanOrEqual(3);
+    const bare = new Set(data.runs.filter((r) => !r.name.startsWith('[')).map((r) => r.name));
+    for (const r of dev) expect(bare.has(r.name.replace(/^\[[^\]]+\] /, ''))).toBe(false);
   });
 
   it('sorts newest first with unique ids', () => {

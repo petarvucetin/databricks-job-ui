@@ -20,7 +20,7 @@ export interface Run {
   id: number;
   runId: string;
   type: RunType;
-  /** Full job or pipeline name, including the bundle target prefix such as "[prod] ". */
+  /** Full job or pipeline name, including the bundle target prefix such as "[dev john_smith] " (prod has none). */
   name: string;
   kind: RunKind;
   cause: Cause;
