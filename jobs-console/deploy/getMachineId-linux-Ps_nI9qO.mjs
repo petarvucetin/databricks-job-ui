@@ -1,6 +1,6 @@
 import { c as init_esm, d as __require, f as __toCommonJS, l as __commonJSMin, s as esm_exports } from "./server.mjs";
 
-//#region node_modules/@opentelemetry/resources/build/src/detectors/platform/node/machine-id/getMachineId-linux.js
+//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/detectors/platform/node/machine-id/getMachineId-linux.js
 var require_getMachineId_linux = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getMachineId = void 0;
