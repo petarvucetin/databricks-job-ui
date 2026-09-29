@@ -65,7 +65,36 @@ databricks bundle deploy --profile production
 
 **Note:** Personal Access Tokens (PATs) are legacy authentication. OAuth is strongly recommended for better security.
 
-## Getting started
+## Run locally
+
+### Without npm install (any machine, e.g. GovCloud)
+
+You need Node.js 22 or later and the Databricks CLI. This runs the prebuilt app in `deploy/`, which comes with `git pull`.
+
+```powershell
+databricks auth login --host https://<workspace-url> --profile gov   # once per machine
+cd jobs-console
+.\run-local.ps1 -Profile gov                                        # http://127.0.0.1:8000, Ctrl+C to stop
+```
+
+- It reads Databricks as you (the CLI profile), so you see every job and pipeline you can see in the workspace UI.
+- Options: `-Port 8001` and `-Data mock`.
+- The Capture menu (download, and the 90-day sweep) works locally too.
+
+If you'd rather not use the script, this does the same by hand:
+
+```powershell
+cd jobs-console\deploy
+$env:NODE_ENV='production'; $env:JOBS_CONSOLE_DATA='live'; $env:JOBS_CONSOLE_AUTH='app'
+$env:DATABRICKS_CONFIG_PROFILE='gov'; $env:DATABRICKS_APP_PORT='8000'
+node server.mjs
+```
+
+Run it from inside `deploy\`, because the server serves the page from `public\` under the current folder.
+
+If PowerShell refuses to run the script ("running scripts is disabled"), use `powershell -ExecutionPolicy Bypass -File .\run-local.ps1 -Profile gov`.
+
+### Dev mode (changing code; needs npm registry access)
 
 ```powershell
 cd jobs-console
@@ -74,7 +103,7 @@ npm run dev        # http://localhost:8000, mock data
 npm test           # unit + component tests
 ```
 
-- Data source: `JOBS_CONSOLE_DATA=mock` (default) or `live`. Live mode reads the Jobs and Pipelines APIs as the signed-in user (deployed: the forwarded user token, scopes `jobs` + `pipelines`; local dev: the `DATABRICKS_CONFIG_PROFILE` from `.env`). Run it locally with `$env:JOBS_CONSOLE_DATA='live'; npm run dev` (PowerShell) or `JOBS_CONSOLE_DATA=live npm run dev` (Git Bash); on Databricks Apps add `env: [{ name: JOBS_CONSOLE_DATA, value: live }]` to `app.yaml`. Limits, with defaults: `JOBS_CONSOLE_WINDOW_DAYS` (30), `JOBS_CONSOLE_MAX_RUNS` (2000), `JOBS_CONSOLE_TIMEOUT_MS` (12000), `JOBS_CONSOLE_CONCURRENCY` (8). Hitting the cap or the timeout returns what was collected and logs a warning.
+- Data source: `JOBS_CONSOLE_DATA=mock` (default) or `live`. Live mode reads the Jobs and Pipelines APIs: in local dev as the `DATABRICKS_CONFIG_PROFILE` from `.env`, and when deployed as the app's service principal (`JOBS_CONSOLE_AUTH=app`; see Deployment). Run it locally with `$env:JOBS_CONSOLE_DATA='live'; npm run dev` (PowerShell) or `JOBS_CONSOLE_DATA=live npm run dev` (Git Bash); on Databricks Apps add `env: [{ name: JOBS_CONSOLE_DATA, value: live }]` to `app.yaml`. Limits, with defaults: `JOBS_CONSOLE_WINDOW_DAYS` (30), `JOBS_CONSOLE_MAX_RUNS` (2000), `JOBS_CONSOLE_TIMEOUT_MS` (12000), `JOBS_CONSOLE_CONCURRENCY` (8). Hitting the cap or the timeout returns what was collected and logs a warning.
 - Replay: `JOBS_CONSOLE_DATA=replay` with `JOBS_CONSOLE_REPLAY=<capture .json.gz>` serves a capture from a live workspace back, frozen at the moment it was taken (badge: "replay"). Shortcut: `npm run replay -- <file> [session id]`. `JOBS_CONSOLE_REPLAY_SESSION=<id>` picks a session; default is the newest sweep, else the newest `/api/runs` session. `npm run capture:summary -- <file>` prints sessions, top diagnostics, errors and client errors: run it first when a file comes back.
 - Press `L` in the app to show the numbered reference rows used in design reviews.
 - The npm scripts are POSIX-style. On Windows, run them through Git Bash with a per-user setting (once per machine): `npm config set script-shell "C:\Program Files\Git\bin\bash.exe" --location=user`. Do not put this in a project `.npmrc`: the bundle uploads it, and `npm install` on the Linux Databricks Apps runtime then fails ("Error installing packages", `spawn C:\Program Files\Git\bin\bash.exe ENOENT`).
