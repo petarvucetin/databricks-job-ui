@@ -90,18 +90,71 @@ $env:DATABRICKS_CONFIG_PROFILE='gov'; $env:DATABRICKS_APP_PORT='8000'
 node server.mjs
 ```
 
+The same in Command Prompt:
+
+```bat
+cd jobs-console\deploy
+set NODE_ENV=production
+set JOBS_CONSOLE_DATA=live
+set JOBS_CONSOLE_AUTH=app
+set DATABRICKS_CONFIG_PROFILE=gov
+set DATABRICKS_APP_PORT=8000
+node server.mjs
+```
+
 Run it from inside `deploy\`, because the server serves the page from `public\` under the current folder.
 
-If PowerShell refuses to run the script ("running scripts is disabled"), use `powershell -ExecutionPolicy Bypass -File .\run-local.ps1 -Profile gov`.
+From a Command Prompt tab, or if PowerShell refuses to run the script ("running scripts is disabled"), use `powershell -ExecutionPolicy Bypass -File .\run-local.ps1 -Profile gov`.
 
-### Dev mode (changing code; needs npm registry access)
+### Dev mode from Windows Terminal (changing code; needs npm registry access)
+
+A Windows Terminal tab runs either **Command Prompt** or **PowerShell**. The prompt tells you which: `C:\...>` is Command Prompt, and `PS C:\...>` is PowerShell. The steps are the same in both; only the syntax for setting variables differs.
+
+**1. One-time setup per machine**
+
+The npm scripts use Unix shell syntax (`NODE_ENV=development tsx ...`), so npm has to run them through Git Bash. Adjust the path if Git is installed elsewhere:
+
+```
+npm config set script-shell "C:\Program Files\Git\bin\bash.exe" --location=user
+databricks auth login --host https://<workspace-url> --profile gov
+```
+
+**2. Create `.env`** in the folder that has `package.json`, with the profile you logged in with:
+
+```
+DATABRICKS_CONFIG_PROFILE=gov
+DATABRICKS_APP_PORT=8000
+DATABRICKS_APP_NAME=jobs-console
+FLASK_RUN_HOST=127.0.0.1
+```
+
+`FLASK_RUN_HOST=127.0.0.1` makes the server listen on the address your browser uses. `.env` is gitignored, so each machine needs its own.
+
+**3. Install and run.** Open http://127.0.0.1:8000, and press Ctrl+C to stop.
+
+Command Prompt:
+
+```bat
+cd C:\path\to\jobs-console
+npm install
+rem mock data:
+npm run dev
+rem live data from the workspace in .env:
+set JOBS_CONSOLE_DATA=live
+npm run dev
+```
+
+PowerShell:
 
 ```powershell
-cd jobs-console
+cd C:\path\to\jobs-console
 npm install
-npm run dev        # http://localhost:8000, mock data
-npm test           # unit + component tests
+npm run dev                                  # mock data
+$env:JOBS_CONSOLE_DATA='live'; npm run dev   # live data from the workspace in .env
 ```
+
+- `set` and `$env:` last only for that tab. Open a new tab, or run `set JOBS_CONSOLE_DATA=` or `Remove-Item Env:JOBS_CONSOLE_DATA`, to go back to mock data.
+- `npm test` runs the unit and component tests.
 
 - Data source: `JOBS_CONSOLE_DATA=mock` (default) or `live`. Live mode reads the Jobs and Pipelines APIs: in local dev as the `DATABRICKS_CONFIG_PROFILE` from `.env`, and when deployed as the app's service principal (`JOBS_CONSOLE_AUTH=app`; see Deployment). Run it locally with `$env:JOBS_CONSOLE_DATA='live'; npm run dev` (PowerShell) or `JOBS_CONSOLE_DATA=live npm run dev` (Git Bash); on Databricks Apps add `env: [{ name: JOBS_CONSOLE_DATA, value: live }]` to `app.yaml`. Limits, with defaults: `JOBS_CONSOLE_WINDOW_DAYS` (30), `JOBS_CONSOLE_MAX_RUNS` (2000), `JOBS_CONSOLE_TIMEOUT_MS` (12000), `JOBS_CONSOLE_CONCURRENCY` (8). Hitting the cap or the timeout returns what was collected and logs a warning.
 - Replay: `JOBS_CONSOLE_DATA=replay` with `JOBS_CONSOLE_REPLAY=<capture .json.gz>` serves a capture from a live workspace back, frozen at the moment it was taken (badge: "replay"). Shortcut: `npm run replay -- <file> [session id]`. `JOBS_CONSOLE_REPLAY_SESSION=<id>` picks a session; default is the newest sweep, else the newest `/api/runs` session. `npm run capture:summary -- <file>` prints sessions, top diagnostics, errors and client errors: run it first when a file comes back.
