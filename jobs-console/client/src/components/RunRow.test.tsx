@@ -17,6 +17,7 @@ describe('RunRow', () => {
     const toggle = container.querySelector('.rr-hist-t')!;
     expect(toggle.getAttribute('aria-expanded')).toBe('false');
     expect(toggle.querySelector('.rr-n')!.textContent).toBe('1');
+    expect(toggle.querySelector('[data-c="20"]')!.textContent).toBe('1 failed');
     fireEvent.click(toggle);
     expect(toggle.getAttribute('aria-expanded')).toBe('true');
     expect(row.className).not.toContain('live');

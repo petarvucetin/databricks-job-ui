@@ -4,7 +4,7 @@ import { dur, fmtStart } from '../../../shared/domain/format';
 import {
   elapsedSec, progress, splitName, statBlock, taskStates,
 } from '../model/rowView';
-import { dayTime, durShort, visibleHistory } from '../model/history';
+import { dayTime, durShort, historyStats, visibleHistory } from '../model/history';
 import { TitleLink } from './TitleLink';
 import './runrow.css';
 
@@ -48,7 +48,9 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   // "[dev john smith] " → kind "dev", who "john smith"
   const inner = prefix.trim().slice(1, -1);
   const target = inner ? { kind: inner.split(' ')[0], who: inner.split(' ').slice(1).join(' ') } : null;
-  const hist = visibleHistory(history ?? (run.result ? [run] : []));
+  const allHist = history ?? (run.result ? [run] : []);
+  const hist = visibleHistory(allHist);
+  const stats = historyStats(allHist, run.live);
   const openDrawer = (id: number) => (e: MouseEvent) => {
     e.stopPropagation();
     const how: OpenHow = e.ctrlKey || e.metaKey ? (e.shiftKey ? 'tab' : 'stack') : 'open';
@@ -103,6 +105,11 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
           <span className="rr-chev" aria-hidden="true">{showHist ? '▾' : '▸'}</span>
           <span>Run history</span>
           <span className="rr-n">{nRuns}</span>
+          {stats.length > 0 && (
+            <span className="rr-stats" data-c="20">
+              {stats.map((s) => <span key={s.key} className={`rs ${s.key}`}><b>{s.n}</b> {s.key}</span>)}
+            </span>
+          )}
           <span className="rr-avg-t" data-c="14">average <em>{stat.average}</em></span>
         </button>
         {showHist && <div className="rr-hist-boxes">

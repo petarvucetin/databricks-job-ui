@@ -18,7 +18,14 @@
 .rr-chev { width: 11px; font-size: 13px; color: var(--ink-3); }
 .rr-hist-t > span:nth-child(2) { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
 .rr-n { min-width: 16px; padding: 0 5px; border-radius: 999px; background: var(--wash-sand); font-size: 10.5px; color: var(--ink-2); text-align: center; font-variant-numeric: tabular-nums; }
-.rr-n + .rr-avg-t { margin-left: 4px; }
+.rr-n + .rr-avg-t, .rr-stats + .rr-avg-t { margin-left: 4px; }
+.rr-stats { display: flex; gap: 8px; font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rs b { font-weight: 600; }
+.rs.failed b { color: var(--red); }
+.rs.slow b, .rs.partial b { color: var(--amber-ink); }
+.rs.ok b { color: var(--green); }
+.rs.cancelled b { color: var(--ink-2); }
+.rs.running b { color: var(--blue); }
 .rr-avg-t { font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .rr-avg-t em { font-style: normal; font-weight: 500; color: var(--ink); }
 .rr-hist-boxes { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }

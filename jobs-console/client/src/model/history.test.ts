@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { makeRun } from '../test/fixtures';
-import { historyByJob, visibleHistory, durShort, dayTime, HISTORY_MAX } from './history';
+import { historyByJob, visibleHistory, durShort, dayTime, historyStats, HISTORY_MAX } from './history';
 
 const day = 86400000;
 const end = new Date(2026, 8, 23).getTime();
@@ -46,5 +46,27 @@ describe('history', () => {
   it('labels when a run started as day/HH:MM', () => {
     expect(dayTime(new Date(2026, 8, 18, 6, 0).getTime())).toBe('18/06:00');
     expect(dayTime(new Date(2026, 8, 3, 9, 30).getTime())).toBe('3/09:30');
+  });
+});
+
+describe('historyStats', () => {
+  it('counts finished runs by outcome, slow ones apart from ok, plus the live run; zero counts are left out', () => {
+    const runs = [
+      makeRun({ id: 1, kind: 'failed', result: 'failed' }),
+      makeRun({ id: 2, kind: 'failed', result: 'failed' }),
+      makeRun({ id: 3, kind: 'slow', result: 'succeeded' }),
+      makeRun({ id: 4, kind: 'succeeded', result: 'succeeded' }),
+      makeRun({ id: 5, kind: 'succeeded', result: 'succeeded' }),
+      makeRun({ id: 6, kind: 'succeeded', result: 'cancelled' }),
+    ];
+    expect(historyStats(runs, true)).toEqual([
+      { key: 'failed', n: 2 },
+      { key: 'slow', n: 1 },
+      { key: 'ok', n: 2 },
+      { key: 'cancelled', n: 1 },
+      { key: 'running', n: 1 },
+    ]);
+    expect(historyStats([makeRun({ id: 7, kind: 'succeeded', result: 'partial' })], false)).toEqual([{ key: 'partial', n: 1 }]);
+    expect(historyStats([], false)).toEqual([]);
   });
 });

@@ -37,3 +37,17 @@ export function dayTime(ms: number): string {
   const d = new Date(ms);
   return `${d.getDate()}/${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
+
+export type HistoryStat = { key: 'failed' | 'slow' | 'ok' | 'cancelled' | 'partial' | 'running'; n: number };
+
+/** How a job's runs in the window went, for the Run history title: failed, slow (finished over its average), ok, cancelled, partial, running; zero counts left out. */
+export function historyStats(runs: Run[], live: boolean): HistoryStat[] {
+  const n = { failed: 0, slow: 0, ok: 0, cancelled: 0, partial: 0, running: live ? 1 : 0 };
+  for (const r of runs) {
+    if (r.result === 'failed') n.failed++;
+    else if (r.result === 'cancelled') n.cancelled++;
+    else if (r.result === 'partial') n.partial++;
+    else if (r.result === 'succeeded') n[r.kind === 'slow' ? 'slow' : 'ok']++;
+  }
+  return (Object.keys(n) as HistoryStat['key'][]).filter((k) => n[k] > 0).map((key) => ({ key, n: n[key] }));
+}
