@@ -1,7 +1,23 @@
 /* Run drawer, ported from prototype/drawer.html; everything is scoped under .dr.
    The scrim only dims: clicks reach the list, so Ctrl+click on a history box can add runs; any other click outside closes. */
 .dr-scrim { position: fixed; inset: 0; z-index: 40; pointer-events: none; background: rgba(60, 40, 20, .22); animation: dr-fade .18s ease; }
-.dr { position: fixed; top: 0; right: 0; bottom: 0; z-index: 41; width: min(780px, 100vw); overflow: auto; background: var(--sheet); border-left: 1px solid var(--rule); box-shadow: -16px 0 40px rgba(60, 40, 20, .16); animation: dr-in .22s ease; }
+.dr { position: fixed; top: 0; right: 0; bottom: 0; z-index: 41; width: min(780px, 100vw); display: flex; flex-direction: column; overflow: hidden; background: var(--sheet); border-left: 1px solid var(--rule); box-shadow: -16px 0 40px rgba(60, 40, 20, .16); animation: dr-in .22s ease; transition: width .2s ease; }
+/* With a task log open the drawer widens: the route on the left, the log full height on the right, each scrolling on its own. */
+.dr.wide { width: min(1560px, 100vw); }
+.dr .dbody { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
+.dr.wide .dbody { grid-template-columns: minmax(0, 780px) minmax(0, 1fr); }
+.dr .dbody > .trace { overflow: auto; min-height: 0; }
+.dr .side { min-height: 0; display: flex; flex-direction: column; padding: 20px 24px 20px 0; }
+.dr .side .logh { margin-top: 0; }
+.dr .side .log { flex: 1 1 auto; max-height: none; min-height: 0; }
+/* Too narrow for two columns: the log goes back under the route, and the whole body scrolls. */
+@media (max-width: 1200px) {
+  .dr.wide .dbody { grid-template-columns: minmax(0, 1fr); overflow: auto; }
+  .dr.wide .dbody > .trace { overflow: visible; }
+  .dr .side { padding: 0 24px 24px 58px; }
+  .dr .side .log { max-height: 60vh; }
+}
+@media (prefers-reduced-motion: reduce) { .dr { transition: none; } }
 @keyframes dr-fade { from { opacity: 0; } }
 @keyframes dr-in { from { transform: translateX(102%); } }
 @media (prefers-reduced-motion: reduce) { .dr, .dr-scrim { animation: none; } }
@@ -10,7 +26,7 @@
 .dr .pill.red { background: var(--wash-red); border-color: #f1c4b8; color: var(--red); }
 .dr .pill.amber { background: var(--wash-amber); border-color: #f0d9a6; color: #9a5f05; }
 
-.dr .dh { display: flex; align-items: flex-start; gap: 14px; padding: 18px 24px 14px 24px; position: sticky; top: 0; z-index: 2; background: var(--paper); border-bottom: 1px solid var(--rule); }
+.dr .dh { flex: none; display: flex; align-items: flex-start; gap: 14px; padding: 18px 24px 14px 24px; position: sticky; top: 0; z-index: 2; background: var(--paper); border-bottom: 1px solid var(--rule); }
 .dr .dh .title { flex: 1 1 auto; min-width: 0; font-family: var(--mono); font-size: 13px; word-break: break-all; }
 .dr .dh .title i { font-style: normal; color: var(--ink-3); }
 .dr .ty { display: inline-flex; width: 16px; height: 16px; color: var(--ink-3); vertical-align: -2px; margin-right: 8px; }
@@ -65,13 +81,13 @@
 .dr .vsw span { cursor: pointer; padding-bottom: 2px; }
 .dr .vsw span.on { color: var(--ink); box-shadow: inset 0 -2px 0 var(--amber); }
 
-.dr .gantt { position: relative; overflow-x: auto; overflow-y: hidden; padding-bottom: 8px; font-size: 12px; max-width: 660px; }
-.dr .gantt .axis { display: grid; grid-template-columns: 170px 1fr; margin-bottom: 4px; min-width: 720px; }
+.dr .gantt { position: relative; overflow-x: auto; overflow-y: hidden; padding-bottom: 8px; font-size: 12px; }
+.dr .gantt .axis { display: grid; grid-template-columns: 170px 1fr; margin-bottom: 4px; min-width: 480px; }
 .dr .gantt .axis .ticks { position: relative; height: 14px; color: var(--ink-3); font-size: 11px; margin-right: 96px; }
 .dr .gantt .axis .ticks span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
 .dr .gantt .axis .ticks span:last-child { transform: translateX(-100%); }
 .dr .gantt .axis .ticks span:first-child { transform: none; }
-.dr .gantt .grow { display: grid; grid-template-columns: 170px 1fr; align-items: center; min-height: 26px; min-width: 720px; cursor: pointer; }
+.dr .gantt .grow { display: grid; grid-template-columns: 170px 1fr; align-items: center; min-height: 26px; min-width: 480px; cursor: pointer; }
 .dr .gantt .grow.sel { background: var(--wash-amber); }
 .dr .gantt .lbl { position: relative; font-family: var(--mono); font-size: 12px; white-space: nowrap; padding: 0 10px 0 4px; min-width: 0; }
 .dr .gantt .lbl > span { display: block; overflow: hidden; text-overflow: ellipsis; }

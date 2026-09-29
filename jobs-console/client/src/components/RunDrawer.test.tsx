@@ -135,6 +135,26 @@ describe('RunDrawer with real tasks', () => {
     expect(container.textContent).not.toMatch(/48m 22s|38m 29s/);
   });
 
+  it('shows the task log in a full-height column on the right, and widens the drawer for it', async () => {
+    const { container } = render(<RunDrawer run={makeRealRun()} nowMs={0} loadedAt={0} onClose={() => {}} />);
+    expect(container.querySelector('.dr')?.classList.contains('wide')).toBe(true);
+    const side = container.querySelector('.dbody > .side');
+    expect(side?.getAttribute('aria-label')).toBe('Log of transform');
+    await waitFor(() => expect(side?.querySelector('.log')?.textContent).toContain('log for'));
+    expect(container.querySelector('.trace .log')).toBeNull();
+  });
+
+  it('stays narrow with no log until a task is picked', () => {
+    const ok = makeRealRun({ kind: 'succeeded', result: 'succeeded', failed: [], tasks: makeRealRun().tasks?.map((t) => ({ ...t, state: 'ok' as const, failIndex: undefined })) });
+    const { container } = render(<RunDrawer run={ok} nowMs={0} loadedAt={0} onClose={() => {}} />);
+    expect(container.querySelector('.dr')?.classList.contains('wide')).toBe(false);
+    expect(container.querySelector('.side')).toBeNull();
+    const row = container.querySelectorAll('.gantt .grow')[1];
+    if (row) fireEvent.click(row);
+    expect(container.querySelector('.dr')?.classList.contains('wide')).toBe(true);
+    expect(container.querySelector('.side')?.getAttribute('aria-label')).toBe('Log of extract_a');
+  });
+
   it('gives every task label its full name for the hover tooltip', () => {
     const long = 'aiges_ingest_sap_backfill_sys_bic_ngc_dwh_edw_coretables_pe_md_cvg_ct_ecc_md_pa0000_dev';
     const base = makeRealRun();

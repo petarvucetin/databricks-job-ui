@@ -206,15 +206,14 @@ function TaskLog({ runId, task, hint, failed, nonce, url }: { runId: number; tas
   );
 }
 
-function TaskBody({ run, task, kind, hint, failed, nonce, compute = 'ingest_cluster, 15.4 LTS, i4i.2xlarge, 2 to 10 workers, spot', ext = '.py' }: {
-  run: Run; task: string; kind: string; hint?: string; failed: boolean; nonce: number; compute?: string; ext?: string;
+function TaskBody({ run, task, kind, compute = 'ingest_cluster, 15.4 LTS, i4i.2xlarge, 2 to 10 workers, spot', ext = '.py' }: {
+  run: Run; task: string; kind: string; compute?: string; ext?: string;
 }) {
   const params = Object.entries(run.params).map(([k, v]) => `${k}=${v}`).join('  ');
   if (run.tasks) {
     return (
       <>
-        {params && <div className="kv"><span>parameters</span><span className="mono">{params}</span></div>}
-        <TaskLog runId={run.id} task={task} hint={hint} failed={failed} nonce={nonce} url={run.url} />
+        {params ? <div className="kv"><span>parameters</span><span className="mono">{params}</span></div> : null}
       </>
     );
   }
@@ -226,7 +225,6 @@ function TaskBody({ run, task, kind, hint, failed, nonce, compute = 'ingest_clus
         <span>compute</span><span>{compute}</span>
         {kind === 'Python script' && <><span>cluster</span><span className="mono">0918-0600-gl4x</span></>}
       </div>
-      <TaskLog runId={run.id} task={task} hint={hint} failed={failed} nonce={nonce} url={run.url} />
     </>
   );
 }
@@ -311,11 +309,16 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose, refresh }: {
   const picked = selIdx !== null ? rows[selIdx] : undefined;
   const hintFor = (t: ScheduledTask | undefined) =>
     t?.state === 'f' ? run.failed[t.fail ?? 0]?.cause.label : t?.state === 'r' && run.kind === 'retrying' ? 'retrying' : undefined;
-  const taskPanel = (name: string, t: ScheduledTask | undefined, kind = 'Python script', extra: Partial<Parameters<typeof TaskBody>[0]> = {}) => (
-    <Panel key={`task-${name}`} cls="last" k="Task" v={<span className="mono-v">{name}</span>} r={real ? undefined : kind} open>
-      <TaskBody run={run} task={name} kind={kind} hint={hintFor(t)} failed={t?.state === 'f'} nonce={logNonce} {...extra} />
-    </Panel>
-  );
+  // The task whose log shows in the right-hand column (set by whichever Task stop the route ends on).
+  let logFor: { task: string; hint?: string; failed: boolean } | undefined;
+  const taskPanel = (name: string, t: ScheduledTask | undefined, kind = 'Python script', extra: Partial<Parameters<typeof TaskBody>[0]> = {}) => {
+    logFor = { task: name, hint: hintFor(t), failed: t?.state === 'f' };
+    return (
+      <Panel key={`task-${name}`} cls="last" k="Task" v={<span className="mono-v">{name}</span>} r={real ? undefined : kind} open>
+        {real && !Object.keys(run.params).length ? undefined : <TaskBody run={run} task={name} kind={kind} {...extra} />}
+      </Panel>
+    );
+  };
 
   let tail: ReactNode;
   const failure = run.failed[selTask];
@@ -380,7 +383,7 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose, refresh }: {
   return (
     <>
       <div className="dr-scrim" />
-      <aside className="dr" role="dialog" aria-modal="true" aria-label={`Run of ${run.name}`} data-c="17">
+      <aside className={`dr${logFor ? ' wide' : ''}`} role="dialog" aria-modal="true" aria-label={`Run of ${run.name}`} data-c="17">
         <div className="dh">
           <span className="title"><Glyph type={run.type} /><TitleLink url={run.url}><i>{prefix}</i>{rest}</TitleLink></span>
           <span className="when pill">{when}</span>
@@ -393,6 +396,7 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose, refresh }: {
           </span>
           <button ref={closeRef} type="button" className="x" aria-label="Close" onClick={onClose}>×</button>
         </div>
+        <div className="dbody">
         <div className="trace">
           <div className="route">
             <Panel k={run.type === 'pipeline' ? 'Pipeline' : 'Job'} v={`${run.ntasks} tasks`} r={real ? `runs as ${run.runAs}` : `daily 06:00, runs as ${run.runAs}`} />
@@ -441,6 +445,12 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose, refresh }: {
             </Panel>
             {tail}
           </div>
+        </div>
+        {logFor && (
+          <section className="side" aria-label={`Log of ${logFor.task}`}>
+            <TaskLog runId={run.id} task={logFor.task} hint={logFor.hint} failed={logFor.failed} nonce={logNonce} url={run.url} />
+          </section>
+        )}
         </div>
       </aside>
     </>
