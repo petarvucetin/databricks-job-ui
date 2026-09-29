@@ -15,6 +15,8 @@ export interface ScheduledTask {
   deps: number[];
   /** Index into run.failed when the task failed. */
   fail?: number;
+  /** Real runs: the task's attempt number (0 = first try). */
+  attempt?: number;
 }
 
 /** Length the drawer's timeline spans: the run so far, or its average while it has not started. */
@@ -39,7 +41,7 @@ function realSchedule(r: Run, tasks: RunTask[], elapsed: number): ScheduledTask[
       }));
       d = 0;
     }
-    out.push({ i, name: t.key, start, dur: d, state: t.state, dep: t.deps[0] ?? -1, deps: t.deps, fail: t.failIndex });
+    out.push({ i, name: t.key, start, dur: d, state: t.state, dep: t.deps[0] ?? -1, deps: t.deps, fail: t.failIndex, attempt: t.attempt });
   });
   return out;
 }

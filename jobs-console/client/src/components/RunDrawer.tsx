@@ -42,10 +42,17 @@ function Panel({ k, v, r, cls = '', mono, open: initial = false, children }: {
   );
 }
 
+/** Below this share of the axis the duration label goes after the bar instead of inside it. */
+const LABEL_INSIDE_PCT = 14;
+
+/** A task bar as long as the task ran on the time axis (to now while running); the label sits inside when it fits. */
 function Bar({ t, run, total, sel }: { t: ScheduledTask; run: Run; total: number; sel: boolean }) {
-  const left = `${(100 * t.start) / total}%`;
+  const startPct = (100 * t.start) / total;
+  const left = `${startPct}%`;
   if (t.state === 'p') return <span className="sq s" style={{ left }}>not started</span>;
-  if (t.state === 'r' && run.kind === 'retrying') {
+  if (t.state === 's') return <span className={`sq s${sel ? ' sel' : ''}`} style={{ left }}>skipped</span>;
+  // Mock data only: the prototype's picture of a retried task (earlier attempts as hatched boxes).
+  if (!run.tasks && t.state === 'r' && run.kind === 'retrying') {
     return (
       <>
         <span className="sq fa" style={{ left }}>48m 22s</span>
@@ -54,12 +61,20 @@ function Bar({ t, run, total, sel }: { t: ScheduledTask; run: Run; total: number
       </>
     );
   }
-  if (t.state === 'r') return <span className="sq r" style={{ left }}>running</span>;
-  const cls = t.state === 's' ? ' s' : t.state === 'f' ? ' f' : '';
+  const running = t.state === 'r';
+  const secs = running ? Math.max(t.dur, total - t.start) : t.dur;
+  const widthPct = Math.min(100 - startPct, (100 * secs) / total);
+  const retry = t.attempt ? `attempt ${t.attempt + 1}` : '';
+  const label = [running ? (retry ? `retrying, ${retry}` : 'running') : dur(t.dur), t.state === 'f' ? 'failed' : '', !running ? retry : ''].filter(Boolean).join(', ');
+  const cls = running ? ' r' : t.state === 'f' ? ' f' : '';
+  const inside = widthPct >= LABEL_INSIDE_PCT;
   return (
-    <span className={`sq${cls}${sel ? ' sel' : ''}`} style={{ left }}>
-      {t.state === 's' ? 'skipped' : dur(t.dur)}{t.state === 'f' ? ', failed' : ''}
-    </span>
+    <>
+      <span className={`sq bar${cls}${sel ? ' sel' : ''}`} style={{ left, width: `${widthPct}%` }} title={`${t.name}: ${label}`}>
+        {inside ? label : ''}
+      </span>
+      {!inside && <span className={`sq-after${cls}`} style={{ left: `calc(${startPct + widthPct}% + 6px)` }}>{label}</span>}
+    </>
   );
 }
 
