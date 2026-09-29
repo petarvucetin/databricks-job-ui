@@ -54,13 +54,24 @@ describe('filters', () => {
     expect(sortRuns([ok, queued, live, a, retrying, b, slow]).map((r) => r.id)).toEqual([3, 12, 13, 14, 11, 10, 2]);
   });
 
-  it('sorts by job name ignoring the [dev …] prefix, either way, status order breaking ties', () => {
+  it('sorts by job name ignoring the [dev …] prefix, either way, running runs on top', () => {
     const beta = makeRun({ id: 20, name: '[dev mchen] beta_job' });
     const alpha = makeRun({ id: 21, name: 'Alpha_job' });
     const gamma = makeRun({ id: 22, name: '[dev john smith] gamma_job' });
     const betaLive = makeRun({ id: 23, name: 'beta_job', kind: 'running', live: true });
-    expect(sortRuns([gamma, beta, alpha, betaLive], 'name-asc').map((r) => r.id)).toEqual([21, 23, 20, 22]);
-    expect(sortRuns([gamma, beta, alpha, betaLive], 'name-desc').map((r) => r.id)).toEqual([22, 23, 20, 21]);
+    expect(sortRuns([gamma, beta, alpha, betaLive], 'name-asc').map((r) => r.id)).toEqual([23, 21, 20, 22]);
+    expect(sortRuns([gamma, beta, alpha, betaLive], 'name-desc').map((r) => r.id)).toEqual([23, 22, 20, 21]);
+  });
+
+  it('keeps every running run above every finished one in each sort, the chosen order within each group', () => {
+    const zLive = makeRun({ id: 30, name: 'zeta', kind: 'running', live: true, startTime: 1 });
+    const aLive = makeRun({ id: 31, name: 'alpha', kind: 'slow', live: true, startTime: 2 });
+    const slowDone = makeRun({ id: 32, name: 'beta', kind: 'slow', live: false, startTime: 3 });
+    const failedRun = makeRun({ id: 33, name: 'aaa', startTime: 4 });
+    const runs = [failedRun, slowDone, zLive, aLive];
+    expect(sortRuns(runs, 'status').map((r) => r.id)).toEqual([30, 31, 32, 33]);
+    expect(sortRuns(runs, 'name-asc').map((r) => r.id)).toEqual([31, 30, 33, 32]);
+    expect(sortRuns(runs, 'name-desc').map((r) => r.id)).toEqual([30, 31, 32, 33]);
   });
 
   it('counts scope, menus, live and tiles', () => {

@@ -110,12 +110,14 @@ export type RowSort = 'status' | 'name-asc' | 'name-desc';
 /** The job name without its bundle target prefix, e.g. "[dev mchen] finance_gl_x" → "finance_gl_x". */
 export const bareName = (name: string): string => name.replace(/^\[[^\]]+\] /, '');
 
+/** Runs still going are always on top, whatever the sort; the chosen order applies within the running group and the rest. */
 export function sortRuns(runs: Run[], sort: RowSort = 'status'): Run[] {
   const order = (k: RunKind) => ROW_ORDER.indexOf(k);
+  const liveFirst = (a: Run, b: Run) => Number(b.live) - Number(a.live);
   const byStatus = (a: Run, b: Run) => order(a.kind) - order(b.kind) || b.startTime - a.startTime;
-  if (sort === 'status') return [...runs].sort(byStatus);
+  if (sort === 'status') return [...runs].sort((a, b) => liveFirst(a, b) || byStatus(a, b));
   const dir = sort === 'name-asc' ? 1 : -1;
-  return [...runs].sort((a, b) => dir * bareName(a.name).localeCompare(bareName(b.name), undefined, { sensitivity: 'base', numeric: true }) || byStatus(a, b));
+  return [...runs].sort((a, b) => liveFirst(a, b) || dir * bareName(a.name).localeCompare(bareName(b.name), undefined, { sensitivity: 'base', numeric: true }) || byStatus(a, b));
 }
 
 /** Runs needing attention over the last 30 days (not succeeded). */
