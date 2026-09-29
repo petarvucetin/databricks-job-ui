@@ -124,7 +124,7 @@ describe('RunDrawer with real tasks', () => {
   it('draws each task bar as long as the task ran on the time axis', () => {
     // Run of 400s: setup 0-60, extract_a 60-180, extract_b 100-300 (second attempt), transform 300-400 failed.
     const { container } = render(<RunDrawer run={makeRealRun()} nowMs={0} loadedAt={0} onClose={() => {}} />);
-    const bar = (i: number) => container.querySelectorAll<HTMLElement>('.gantt .grow')[i]!.querySelector<HTMLElement>('.sq');
+    const bar = (i: number) => container.querySelectorAll<HTMLElement>('.gantt .grow')[i]?.querySelector<HTMLElement>('.sq') ?? null;
     const pct = (el: HTMLElement | null) => ({ left: parseFloat(el?.style.left ?? ''), width: parseFloat(el?.style.width ?? '') });
     expect(pct(bar(0))).toEqual({ left: 0, width: 15 });
     expect(pct(bar(1))).toEqual({ left: 15, width: 30 });
@@ -138,9 +138,9 @@ describe('RunDrawer with real tasks', () => {
   it('puts the label after a bar too short to hold it', () => {
     const run = makeRealRun({ durationSec: 4000 }); // the 60s setup is 1.5% of the axis
     const { container } = render(<RunDrawer run={run} nowMs={0} loadedAt={0} onClose={() => {}} />);
-    const row = container.querySelectorAll<HTMLElement>('.gantt .grow')[0]!;
-    expect(row.querySelector('.sq')?.textContent).toBe('');
-    expect(row.querySelector('.sq-after')?.textContent).toBe('1m 00s');
+    const row = container.querySelectorAll<HTMLElement>('.gantt .grow')[0];
+    expect(row?.querySelector('.sq')?.textContent).toBe('');
+    expect(row?.querySelector('.sq-after')?.textContent).toBe('1m 00s');
   });
 
   it('"open full log" opens the run in Databricks, and is hidden when the run has no url', () => {
