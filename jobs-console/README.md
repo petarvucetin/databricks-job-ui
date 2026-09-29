@@ -74,7 +74,7 @@ npm run dev        # http://localhost:8000, mock data
 npm test           # unit + component tests
 ```
 
-- Data source: `JOBS_CONSOLE_DATA=mock` (default). Live data is not implemented yet.
+- Data source: `JOBS_CONSOLE_DATA=mock` (default) or `live`. Live mode reads the Jobs and Pipelines APIs as the signed-in user (deployed: the forwarded user token, scopes `jobs` + `pipelines`; local dev: the `DATABRICKS_CONFIG_PROFILE` from `.env`). Run it locally with `$env:JOBS_CONSOLE_DATA='live'; npm run dev` (PowerShell) or `JOBS_CONSOLE_DATA=live npm run dev` (Git Bash); on Databricks Apps add `env: [{ name: JOBS_CONSOLE_DATA, value: live }]` to `app.yaml`. Limits, with defaults: `JOBS_CONSOLE_WINDOW_DAYS` (30), `JOBS_CONSOLE_MAX_RUNS` (2000), `JOBS_CONSOLE_TIMEOUT_MS` (12000), `JOBS_CONSOLE_CONCURRENCY` (8). Hitting the cap or the timeout returns what was collected and logs a warning.
 - Press `L` in the app to show the numbered reference rows used in design reviews.
 - npm scripts run through Git Bash (`.npmrc` `script-shell`), so the POSIX-style scripts work on Windows.
 

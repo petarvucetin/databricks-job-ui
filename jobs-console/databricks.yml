@@ -11,9 +11,12 @@ resources:
       # Start the app automatically on deploy.
       lifecycle:
         started: true
-      # Uncomment to enable on behalf of user API scopes. Available scopes: sql, dashboards.genie, files.files, serving.serving-endpoints
-      # user_api_scopes:
-      #   - sql
+      # Live mode (JOBS_CONSOLE_DATA=live) calls the Jobs and Pipelines APIs as the signed-in user.
+      # Scope names: https://docs.databricks.com/api/workspace/api/scopes (jobs, pipelines); Apps user authorization:
+      # https://learn.microsoft.com/en-us/azure/databricks/dev-tools/databricks-apps/auth
+      user_api_scopes:
+        - jobs
+        - pipelines
 
 targets:
   default:

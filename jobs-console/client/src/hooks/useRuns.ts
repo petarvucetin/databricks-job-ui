@@ -13,7 +13,7 @@ export function useRuns(): RunsState {
 
   useEffect(() => {
     let alive = true;
-    fetch(`/api/runs?tzOffset=${new Date().getTimezoneOffset()}`, { signal: AbortSignal.timeout(15000) })
+    fetch(`/api/runs?tzOffset=${new Date().getTimezoneOffset()}`, { signal: AbortSignal.timeout(60000) })
       .then(async (res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = (await res.json()) as RunsResponse;

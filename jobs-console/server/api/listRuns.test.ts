@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { listRuns } from './listRuns';
 import { createMockRunSource } from '../data/mock/mockRunSource';
-import { selectRunSource } from '../data/runSource';
+import { selectRunSource, type RunSource } from '../data/runSource';
+import { SourceError } from '../data/sourceError';
 import type { RunsResponse } from '../../shared/domain/types';
 
 const source = createMockRunSource();
@@ -60,14 +61,30 @@ describe('GET /api/runs handler', () => {
   });
 });
 
-describe('selectRunSource', () => {
-  it('defaults to mock', () => {
-    expect(selectRunSource({}).kind).toBe('mock');
-    expect(selectRunSource({ JOBS_CONSOLE_DATA: 'mock' }).kind).toBe('mock');
+describe('listRuns errors', () => {
+  it('passes a SourceError on as its status and { error }', async () => {
+    const failing: RunSource = { kind: 'live', listRuns: () => Promise.reject(new SourceError(502, 'upstream down')), taskLog: () => Promise.resolve('') };
+    expect(await listRuns(failing, {})).toEqual({ status: 502, body: { error: 'upstream down' } });
   });
 
-  it('refuses live until the live source exists', () => {
-    expect(() => selectRunSource({ JOBS_CONSOLE_DATA: 'live' })).toThrow('JOBS_CONSOLE_DATA=live is not available yet');
+  it('lets other errors propagate', async () => {
+    const buggy: RunSource = { kind: 'live', listRuns: () => Promise.reject(new TypeError('bug')), taskLog: () => Promise.resolve('') };
+    await expect(listRuns(buggy, {})).rejects.toThrow('bug');
+  });
+});
+
+describe('selectRunSource', () => {
+  it('defaults to mock, one source for every request', () => {
+    const provider = selectRunSource({});
+    expect(provider.kind).toBe('mock');
+    expect(selectRunSource({ JOBS_CONSOLE_DATA: 'mock' }).kind).toBe('mock');
+    expect(provider.forRequest({ headers: {} })).toBe(provider.forRequest({ headers: { 'x-forwarded-email': 'a@b.c' } }));
+  });
+
+  it('selects live, and refuses unknown modes', () => {
+    const live = selectRunSource({ JOBS_CONSOLE_DATA: 'live', NODE_ENV: 'production' });
+    expect(live.kind).toBe('live');
+    expect(live.forRequest({ headers: {} })).toMatchObject({ status: 401 });
     expect(() => selectRunSource({ JOBS_CONSOLE_DATA: 'banana' })).toThrow('Unknown JOBS_CONSOLE_DATA "banana"');
   });
 });
