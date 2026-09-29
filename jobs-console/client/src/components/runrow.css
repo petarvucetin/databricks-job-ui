@@ -1,5 +1,6 @@
-/* Columns: runtime (running rows only, empty otherwise so every runtime lines up), name side, Run history. */
+/* Columns: runtime (running rows only; collapsed otherwise so the row starts at the left edge), name side, Run history. */
 .rr { position: relative; display: grid; grid-template-columns: 116px 504px minmax(0, 1fr); gap: 0 16px; align-items: start; padding: 12px 16px; background: transparent; border: 0; border-bottom: 1px solid var(--rule); cursor: pointer; }
+.rr:not(.live) { grid-template-columns: 0 504px minmax(0, 1fr); padding-left: 0; }
 .rr:hover { background: #f6efe3; }
 .rr.on { background: #f8ebd0; }
 
