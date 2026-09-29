@@ -216,6 +216,19 @@ describe('RunDrawer refresh', () => {
     expect(container.querySelector('.dh .rf')!.nextElementSibling!.className).toBe('x');
   });
 
+  it("refreshes once on open when a failed task only says to see the pipeline's logs, so the pipeline's cause replaces it", () => {
+    const generic = { label: 'Run execution error', code: 'RUN_EXECUTION_ERROR', detail: 'Please refer to the logs for this pipeline in the pipelines page.' };
+    const pipeRun = makeRealRun({ cause: generic, failed: [{ name: 'transform', cause: generic, secs: 60 }] });
+    const r = refresh();
+    const { rerender } = render(<RunDrawer run={pipeRun} nowMs={0} loadedAt={0} onClose={() => {}} refresh={r} />);
+    expect(r.onRefresh).toHaveBeenCalledOnce();
+    rerender(<RunDrawer run={pipeRun} nowMs={0} loadedAt={1} onClose={() => {}} refresh={r} />); // still generic after it: no second try
+    expect(r.onRefresh).toHaveBeenCalledOnce();
+    const other = refresh();
+    render(<RunDrawer run={makeRealRun()} nowMs={0} loadedAt={0} onClose={() => {}} refresh={other} />);
+    expect(other.onRefresh).not.toHaveBeenCalled();
+  });
+
   it('↻ refreshes the run, then refetches the open task log, keeping the old text meanwhile', async () => {
     const r = refresh();
     const { container } = render(<RunDrawer run={makeRealRun()} nowMs={0} loadedAt={0} onClose={() => {}} refresh={r} />);

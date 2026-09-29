@@ -11,6 +11,7 @@ import { finalize, runKey, usualByKey, type Draft } from './kinds';
 import { DEFAULT_REFRESH, type LiveLimits, type RefreshSettings } from './limits';
 import { indexEvents, updateDraft, type PipelineInfo } from './pipelines';
 import { findTask, jobLogText, pipelineLogText } from './taskLog';
+import { attemptChain, pipelineOutputOf, pipelineTaskCause, pipelineTaskLogText } from './pipelineTask';
 import { noDiag, type Trace } from './trace';
 
 const DAY = 86400000;
@@ -250,20 +251,38 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
     return { asOf: now, source: o.source ?? 'live', runs, refresh: info };
   }
 
-  async function pipelineLog(ref: PipelineRef): Promise<string> {
+  /** A pipeline's WARN and ERROR events since `from`, oldest first, up to 8 pages. */
+  async function warnErrorEvents(pipelineId: string, from: number): Promise<pipelines.PipelineEvent[]> {
     const events = [];
     let token: string | undefined;
     for (let pages = 0; pages < 8; pages++) {
       const page = await api.listPipelineEvents(
         token
-          ? { pipeline_id: ref.pipelineId, page_token: token, max_results: EVENTS_PAGE_SIZE }
-          : { pipeline_id: ref.pipelineId, max_results: EVENTS_PAGE_SIZE, order_by: ['timestamp asc'], filter: `level in ('WARN', 'ERROR') AND timestamp >= '${new Date(ref.startTime).toISOString()}'` }
+          ? { pipeline_id: pipelineId, page_token: token, max_results: EVENTS_PAGE_SIZE }
+          : { pipeline_id: pipelineId, max_results: EVENTS_PAGE_SIZE, order_by: ['timestamp asc'], filter: `level in ('WARN', 'ERROR') AND timestamp >= '${new Date(from).toISOString()}'` }
       );
       events.push(...(page.events ?? []));
       token = page.next_page_token;
       if (!token) break;
     }
-    return pipelineLogText(events, ref.updateId);
+    return events;
+  }
+
+  async function pipelineLog(ref: PipelineRef): Promise<string> {
+    return pipelineLogText(await warnErrorEvents(ref.pipelineId, ref.startTime), ref.updateId);
+  }
+
+  /**
+   * The updates a job's pipeline task ran (the one it started and the pipeline's retries) and their WARN/ERROR events;
+   * undefined for other tasks. A failing update list only costs the retries in between.
+   */
+  async function pipelineTaskRead(task: jobs.RunTask, output: jobs.RunOutput | undefined): Promise<{ chain: string[]; events: pipelines.PipelineEvent[] } | undefined> {
+    const pipelineId = task.pipeline_task?.pipeline_id;
+    const po = pipelineOutputOf(output);
+    if (!pipelineId || !po) return undefined;
+    const updates = await api.listUpdates({ pipeline_id: pipelineId, max_results: 25 }).then((r) => r.updates ?? [], (): pipelines.UpdateInfo[] => []);
+    const events = await warnErrorEvents(pipelineId, task.start_time ?? 0);
+    return { chain: attemptChain(updates, po.requestId, po.updateId), events };
   }
 
   async function jobLog(runId: number, taskKey: string): Promise<string> {
@@ -273,7 +292,28 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
     const state = task.status?.state ?? task.state?.life_cycle_state;
     const started = state === 'RUNNING' || state === 'TERMINATING' || state === 'TERMINATED';
     const output = started && task.run_id ? await api.getRunOutput({ run_id: task.run_id }) : undefined;
-    return jobLogText(task, output);
+    const pipe = await pipelineTaskRead(task, output);
+    return pipe ? pipelineTaskLogText(pipe.events, pipe.chain, output?.error) : jobLogText(task, output);
+  }
+
+  /**
+   * A failed pipeline task says only "refer to the logs for this pipeline": its cause comes from the pipeline's events
+   * instead (the run's too when it was taken from that task). Best effort: a failed read keeps the task's cause.
+   */
+  async function withPipelineCauses(run: jobs.Run, draft: Draft, dl: Deadline): Promise<void> {
+    for (const [i, f] of draft.failed.entries()) {
+      const task = findTask(run, f.name);
+      if (!task?.pipeline_task || !task.run_id) continue;
+      const got = await dl
+        .call(async () => {
+          const pipe = await pipelineTaskRead(task, await api.getRunOutput({ run_id: task.run_id! }));
+          return pipe && pipelineTaskCause(pipe.events, pipe.chain);
+        })
+        .catch(() => undefined);
+      if (!got || got === TIMEOUT) continue;
+      if (draft.cause === f.cause) draft.cause = got.cause;
+      draft.failed[i] = { ...f, cause: got.cause };
+    }
   }
 
   const mineKey = `${o.userKey}|`;
@@ -341,6 +381,7 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
         else {
           const got = await api.getRun({ run_id: runId });
           draft = jobDraft(got, now, diag, host);
+          await withPipelineCauses(got, draft, dl);
           commit = () => commitJobRun(got, now);
         }
         // A replayed call answered by a nearby recording can be another run: that is not this one.

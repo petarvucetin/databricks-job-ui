@@ -1,10 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
-import type { jobs } from '@databricks/sdk-experimental';
+import type { jobs, pipelines } from '@databricks/sdk-experimental';
 import { apiErrorParts, createLiveRunSource, createLiveState, toSourceError } from './liveRunSource';
 import { DEFAULT_LIMITS, type LiveLimits } from './limits';
 import { fakeApi, type FakeData } from './fakeApi';
 import { pipelineNumber } from './pipelines';
 import { SourceError } from '../sourceError';
+import probe from './fixtures/pipelineTaskProbe.json';
 
 const NOW = 1_800_000_000_000;
 const MIN = 60000;
@@ -13,6 +14,16 @@ const jobRun = (i: number, over: Partial<jobs.BaseRun> = {}): jobs.BaseRun => ({
   run_id: 1000 + i, job_id: 1, run_name: 'job', creator_user_name: 'me@x.com', start_time: NOW - (i + 1) * MIN, run_duration: 30000,
   status: { state: 'TERMINATED', termination_details: { code: 'SUCCESS' } }, state: { result_state: 'SUCCESS' }, tasks: [{ task_key: 'a' }], ...over,
 });
+
+/** A failed job run with one pipeline task, as the probe in fixtures/pipelineTaskProbe.json ran it (task run 70). */
+const PID = probe.task.pipeline_task.pipeline_id;
+const failedTask = { code: 'RUN_EXECUTION_ERROR' as const, message: probe.output.error };
+const pipeRun: jobs.Run = {
+  run_id: 7, job_id: 3, run_name: 'job with pipeline', creator_user_name: 'me@x.com', start_time: probe.task.start_time, end_time: probe.task.end_time, run_duration: probe.task.end_time - probe.task.start_time,
+  status: { state: 'TERMINATED', termination_details: failedTask }, state: { life_cycle_state: 'TERMINATED', result_state: 'FAILED' },
+  tasks: [{ task_key: 'run_etl_pipeline', run_id: 70, attempt_number: 0, start_time: probe.task.start_time, end_time: probe.task.end_time, pipeline_task: { pipeline_id: PID },
+    status: { state: 'TERMINATED', termination_details: failedTask }, state: { life_cycle_state: 'TERMINATED', result_state: 'FAILED' } }],
+};
 
 function source(data: FakeData, limits: Partial<LiveLimits> = {}, clock = () => NOW) {
   const api = fakeApi(data);
@@ -253,6 +264,22 @@ describe('incremental refresh', () => {
   });
 });
 
+describe('live getRun', () => {
+  it("a failed pipeline task takes its cause from the pipeline's events, not the task's 'refer to the logs'", async () => {
+    const { src, api } = source({ runsById: { 7: pipeRun }, outputs: { 70: probe.output as jobs.RunOutput }, updates: { [PID]: probe.updates as pipelines.UpdateInfo[] }, events: { [PID]: probe.events as pipelines.PipelineEvent[] } });
+    const run = await src.getRun(7);
+    expect(run.failed[0]).toMatchObject({ name: 'run_etl_pipeline', cause: { label: 'Table not found', code: 'TABLE_OR_VIEW_NOT_FOUND' } });
+    expect(run.cause).toEqual(run.failed[0].cause);
+    expect(api.calls).toEqual(['getRun', 'getRunOutput', 'listUpdates', 'listPipelineEvents', 'me']);
+  });
+
+  it('keeps the task cause when the pipeline cannot be read', async () => {
+    const { src } = source({ runsById: { 7: pipeRun }, outputs: { 70: probe.output as jobs.RunOutput }, fail: { listPipelineEvents: new Error('nope') } });
+    const run = await src.getRun(7);
+    expect(run.failed[0].cause.detail).toBe(probe.output.error);
+  });
+});
+
 describe('live taskLog', () => {
   const run: jobs.Run = { run_id: 7, tasks: [{ task_key: 'load', run_id: 70, attempt_number: 0, status: { state: 'TERMINATED' } }, { task_key: 'load', run_id: 71, attempt_number: 1, status: { state: 'TERMINATED' } }] };
 
@@ -266,6 +293,21 @@ describe('live taskLog', () => {
     const { src } = source({ runsById: { 7: run } });
     await expect(src.taskLog(8, 'load')).rejects.toMatchObject({ status: 404 });
     await expect(src.taskLog(7, 'nope')).rejects.toMatchObject({ status: 404 });
+  });
+
+  it("a job's pipeline task reads the pipeline's events for every attempt the task ran", async () => {
+    const { src, api } = source({ runsById: { 7: pipeRun }, outputs: { 70: probe.output as jobs.RunOutput }, updates: { [PID]: probe.updates as pipelines.UpdateInfo[] }, events: { [PID]: probe.events as pipelines.PipelineEvent[] } });
+    const text = await src.taskLog(7, 'run_etl_pipeline');
+    expect(text.split('\n')[0]).toBe('Pipeline update f8406928, attempt 1 of 6 (started by this task)');
+    expect(text).toContain('[TABLE_OR_VIEW_NOT_FOUND]');
+    expect(api.calls).toEqual(['getRun', 'getRunOutput', 'listUpdates', 'listPipelineEvents']);
+  });
+
+  it('a pipeline task whose update list fails still shows the first and last attempt', async () => {
+    const { src } = source({ runsById: { 7: pipeRun }, outputs: { 70: probe.output as jobs.RunOutput }, events: { [PID]: probe.events as pipelines.PipelineEvent[] }, fail: { listUpdates: new Error('nope') } });
+    const text = await src.taskLog(7, 'run_etl_pipeline');
+    expect(text).toContain('attempt 1 of 2 (started by this task)');
+    expect(text).toContain('Pipeline update 865bd04b, attempt 2 of 2');
   });
 
   it('pipeline update ids read the update events', async () => {

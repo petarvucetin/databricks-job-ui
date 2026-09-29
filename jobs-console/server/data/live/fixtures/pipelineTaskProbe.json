@@ -1,0 +1,539 @@
+{
+  "_note": "Real responses from a probe on 2026-09-29: a job (one pipeline_task) whose pipeline fails with TABLE_OR_VIEW_NOT_FOUND, retried 5 times by the pipeline, then cancelled by the user. Trimmed to the fields the app reads.",
+  "task": {
+    "task_key": "run_etl_pipeline",
+    "run_id": 863367428718287,
+    "start_time": 1790724886949,
+    "end_time": 1790725311720,
+    "pipeline_task": {
+      "pipeline_id": "87835b91-b0fc-4988-be06-8b7d1f2ee9c4"
+    },
+    "state": {
+      "life_cycle_state": "TERMINATED",
+      "result_state": "CANCELED",
+      "state_message": "Run cancelled by user",
+      "user_cancelled_or_timedout": true
+    },
+    "status": {
+      "state": "TERMINATED",
+      "termination_details": {
+        "code": "USER_CANCELED",
+        "message": "Run cancelled by user",
+        "type": "SUCCESS"
+      }
+    }
+  },
+  "output": {
+    "error": "Please refer to the logs for this pipeline in the pipelines page.",
+    "pipeline_output": {
+      "pipeline_request_id": "f8406928-e3e5-4786-9652-afc68b8ed0f2",
+      "pipeline_update_id": "865bd04b-abd2-4707-9142-c28657ebe97d"
+    }
+  },
+  "updates": [
+    {
+      "update_id": "865bd04b-abd2-4707-9142-c28657ebe97d",
+      "state": "CANCELED",
+      "cause": "RETRY_ON_FAILURE",
+      "creation_time": 1790725229896
+    },
+    {
+      "update_id": "587aa538-71d9-4c45-9ac1-4bb76a254bad",
+      "state": "FAILED",
+      "cause": "RETRY_ON_FAILURE",
+      "creation_time": 1790725064284
+    },
+    {
+      "update_id": "1c5e723c-9986-40b4-84fe-c5a6bc8f44dc",
+      "state": "FAILED",
+      "cause": "RETRY_ON_FAILURE",
+      "creation_time": 1790724978599
+    },
+    {
+      "update_id": "66467198-eb0b-454d-88d6-01f001218440",
+      "state": "FAILED",
+      "cause": "RETRY_ON_FAILURE",
+      "creation_time": 1790724934726
+    },
+    {
+      "update_id": "fbccc01b-22ce-499a-a195-327e55648a56",
+      "state": "FAILED",
+      "cause": "RETRY_ON_FAILURE",
+      "creation_time": 1790724910690
+    },
+    {
+      "update_id": "f8406928-e3e5-4786-9652-afc68b8ed0f2",
+      "state": "FAILED",
+      "cause": "JOB_TASK",
+      "creation_time": 1790724888431
+    }
+  ],
+  "events": [
+    {
+      "event_type": "update_progress",
+      "level": "INFO",
+      "message": "Update 865bd0 is CANCELED.",
+      "timestamp": "2026-09-29T23:41:45.561Z",
+      "origin": {
+        "update_id": "865bd04b-abd2-4707-9142-c28657ebe97d"
+      }
+    },
+    {
+      "event_type": "user_action",
+      "level": "INFO",
+      "message": "Principal 'unknown' stopped update 865bd0.",
+      "timestamp": "2026-09-29T23:41:45.055Z",
+      "origin": {
+        "update_id": "865bd04b-abd2-4707-9142-c28657ebe97d"
+      }
+    },
+    {
+      "event_type": "user_action",
+      "level": "INFO",
+      "message": "Principal 'me@x.com' stopped update 865bd0.",
+      "timestamp": "2026-09-29T23:41:44.013Z",
+      "origin": {
+        "update_id": "865bd04b-abd2-4707-9142-c28657ebe97d"
+      }
+    },
+    {
+      "event_type": "create_update",
+      "level": "INFO",
+      "message": "Update 865bd0 started by RETRY_ON_FAILURE.",
+      "timestamp": "2026-09-29T23:40:29.896Z",
+      "origin": {
+        "update_id": "865bd04b-abd2-4707-9142-c28657ebe97d"
+      }
+    },
+    {
+      "event_type": "update_progress",
+      "level": "ERROR",
+      "message": "Update 587aa5 has failed. Failed to analyze flow 'better_ui.default.probe_fail'.",
+      "timestamp": "2026-09-29T23:40:27.847Z",
+      "origin": {
+        "update_id": "587aa538-71d9-4c45-9ac1-4bb76a254bad"
+      },
+      "error": {
+        "exceptions": [
+          {
+            "class_name": "org.apache.spark.sql.catalyst.ExtendedAnalysisException",
+            "message": "[TABLE_OR_VIEW_NOT_FOUND] The table or view `better_ui`.`default`.`table_that_does_not_exist` cannot be found. Verify the spelling and correctness of the schema and catalog.\nSearch path: [`system`.`session`, `system`.`builtin`, `system`.`ai`, `better_ui`.`default`].\nIf you did not qualify the name with a schema, verify the current_schema() output, or qualify the name with the correct schema and catalog.\nTo tolerate the error on drop use DROP VIEW IF EXISTS or DROP TABLE IF EXISTS. SQLSTATE: 42P01"
+          }
+        ]
+      }
+    },
+    {
+      "event_type": "dataset_definition",
+      "level": "INFO",
+      "message": "Dataset `better_ui`.`default`.`probe_ok` defined as MATERIALIZED_VIEW.",
+      "timestamp": "2026-09-29T23:40:27.844Z",
+      "origin": {
+        "update_id": "587aa538-71d9-4c45-9ac1-4bb76a254bad"
+      }
+    },
+    {
+      "event_type": "flow_definition",
+      "level": "INFO",
+      "message": "Flow `better_ui`.`default`.`probe_ok` defined as MATERIALIZED_VIEW.",
+      "timestamp": "2026-09-29T23:40:27.509Z",
+      "origin": {
+        "update_id": "587aa538-71d9-4c45-9ac1-4bb76a254bad",
+        "flow_name": "better_ui.default.probe_ok"
+      }
+    },
+    {
+      "event_type": "flow_progress",
+      "level": "ERROR",
+      "message": "Failed to resolve flow: 'better_ui.default.probe_fail'.",
+      "timestamp": "2026-09-29T23:40:27.371Z",
+      "origin": {
+        "update_id": "587aa538-71d9-4c45-9ac1-4bb76a254bad",
+        "flow_name": "better_ui.default.probe_fail"
+      },
+      "error": {
+        "exceptions": [
+          {
+            "class_name": "org.apache.spark.sql.catalyst.ExtendedAnalysisException",
+            "message": "[TABLE_OR_VIEW_NOT_FOUND] The table or view `better_ui`.`default`.`table_that_does_not_exist` cannot be found. Verify the spelling and correctness of the schema and catalog.\nSearch path: [`system`.`session`, `system`.`builtin`, `system`.`ai`, `better_ui`.`default`].\nIf you did not qualify the name with a schema, verify the current_schema() output, or qualify the name with the correct schema and catalog.\nTo tolerate the error on drop use DROP VIEW IF EXISTS or DROP TABLE IF EXISTS. SQLSTATE: 42P01"
+          }
+        ]
+      }
+    },
+    {
+      "event_type": "update_progress",
+      "level": "INFO",
+      "message": "Update 587aa5 is INITIALIZING.",
+      "timestamp": "2026-09-29T23:40:25.908Z",
+      "origin": {
+        "update_id": "587aa538-71d9-4c45-9ac1-4bb76a254bad"
+      }
+    },
+    {
+      "event_type": "runtime_details",
+      "level": "INFO",
+      "message": "Resolved runtime environment details for update 587aa5.",
+      "timestamp": "2026-09-29T23:40:25.145Z",
+      "origin": {
+        "update_id": "587aa538-71d9-4c45-9ac1-4bb76a254bad"
+      }
+    },
+    {
+      "event_type": "create_update",
+      "level": "INFO",
+      "message": "Update 587aa5 started by RETRY_ON_FAILURE.",
+      "timestamp": "2026-09-29T23:37:44.284Z",
+      "origin": {
+        "update_id": "587aa538-71d9-4c45-9ac1-4bb76a254bad"
+      }
+    },
+    {
+      "event_type": "update_progress",
+      "level": "ERROR",
+      "message": "Update 1c5e72 has failed. Failed to analyze flow 'better_ui.default.probe_fail'.",
+      "timestamp": "2026-09-29T23:37:42.085Z",
+      "origin": {
+        "update_id": "1c5e723c-9986-40b4-84fe-c5a6bc8f44dc"
+      },
+      "error": {
+        "exceptions": [
+          {
+            "class_name": "org.apache.spark.sql.catalyst.ExtendedAnalysisException",
+            "message": "[TABLE_OR_VIEW_NOT_FOUND] The table or view `better_ui`.`default`.`table_that_does_not_exist` cannot be found. Verify the spelling and correctness of the schema and catalog.\nSearch path: [`system`.`session`, `system`.`builtin`, `system`.`ai`, `better_ui`.`default`].\nIf you did not qualify the name with a schema, verify the current_schema() output, or qualify the name with the correct schema and catalog.\nTo tolerate the error on drop use DROP VIEW IF EXISTS or DROP TABLE IF EXISTS. SQLSTATE: 42P01"
+          }
+        ]
+      }
+    },
+    {
+      "event_type": "dataset_definition",
+      "level": "INFO",
+      "message": "Dataset `better_ui`.`default`.`probe_ok` defined as MATERIALIZED_VIEW.",
+      "timestamp": "2026-09-29T23:37:42.082Z",
+      "origin": {
+        "update_id": "1c5e723c-9986-40b4-84fe-c5a6bc8f44dc"
+      }
+    },
+    {
+      "event_type": "flow_definition",
+      "level": "INFO",
+      "message": "Flow `better_ui`.`default`.`probe_ok` defined as MATERIALIZED_VIEW.",
+      "timestamp": "2026-09-29T23:37:41.777Z",
+      "origin": {
+        "update_id": "1c5e723c-9986-40b4-84fe-c5a6bc8f44dc",
+        "flow_name": "better_ui.default.probe_ok"
+      }
+    },
+    {
+      "event_type": "flow_progress",
+      "level": "ERROR",
+      "message": "Failed to resolve flow: 'better_ui.default.probe_fail'.",
+      "timestamp": "2026-09-29T23:37:41.641Z",
+      "origin": {
+        "update_id": "1c5e723c-9986-40b4-84fe-c5a6bc8f44dc",
+        "flow_name": "better_ui.default.probe_fail"
+      },
+      "error": {
+        "exceptions": [
+          {
+            "class_name": "org.apache.spark.sql.catalyst.ExtendedAnalysisException",
+            "message": "[TABLE_OR_VIEW_NOT_FOUND] The table or view `better_ui`.`default`.`table_that_does_not_exist` cannot be found. Verify the spelling and correctness of the schema and catalog.\nSearch path: [`system`.`session`, `system`.`builtin`, `system`.`ai`, `better_ui`.`default`].\nIf you did not qualify the name with a schema, verify the current_schema() output, or qualify the name with the correct schema and catalog.\nTo tolerate the error on drop use DROP VIEW IF EXISTS or DROP TABLE IF EXISTS. SQLSTATE: 42P01"
+          }
+        ]
+      }
+    },
+    {
+      "event_type": "update_progress",
+      "level": "INFO",
+      "message": "Update 1c5e72 is INITIALIZING.",
+      "timestamp": "2026-09-29T23:37:40.198Z",
+      "origin": {
+        "update_id": "1c5e723c-9986-40b4-84fe-c5a6bc8f44dc"
+      }
+    },
+    {
+      "event_type": "runtime_details",
+      "level": "INFO",
+      "message": "Resolved runtime environment details for update 1c5e72.",
+      "timestamp": "2026-09-29T23:37:39.456Z",
+      "origin": {
+        "update_id": "1c5e723c-9986-40b4-84fe-c5a6bc8f44dc"
+      }
+    },
+    {
+      "event_type": "create_update",
+      "level": "INFO",
+      "message": "Update 1c5e72 started by RETRY_ON_FAILURE.",
+      "timestamp": "2026-09-29T23:36:18.599Z",
+      "origin": {
+        "update_id": "1c5e723c-9986-40b4-84fe-c5a6bc8f44dc"
+      }
+    },
+    {
+      "event_type": "update_progress",
+      "level": "ERROR",
+      "message": "Update 664671 has failed. Failed to analyze flow 'better_ui.default.probe_fail'.",
+      "timestamp": "2026-09-29T23:36:17.691Z",
+      "origin": {
+        "update_id": "66467198-eb0b-454d-88d6-01f001218440"
+      },
+      "error": {
+        "exceptions": [
+          {
+            "class_name": "org.apache.spark.sql.catalyst.ExtendedAnalysisException",
+            "message": "[TABLE_OR_VIEW_NOT_FOUND] The table or view `better_ui`.`default`.`table_that_does_not_exist` cannot be found. Verify the spelling and correctness of the schema and catalog.\nSearch path: [`system`.`session`, `system`.`builtin`, `system`.`ai`, `better_ui`.`default`].\nIf you did not qualify the name with a schema, verify the current_schema() output, or qualify the name with the correct schema and catalog.\nTo tolerate the error on drop use DROP VIEW IF EXISTS or DROP TABLE IF EXISTS. SQLSTATE: 42P01"
+          }
+        ]
+      }
+    },
+    {
+      "event_type": "dataset_definition",
+      "level": "INFO",
+      "message": "Dataset `better_ui`.`default`.`probe_ok` defined as MATERIALIZED_VIEW.",
+      "timestamp": "2026-09-29T23:36:17.687Z",
+      "origin": {
+        "update_id": "66467198-eb0b-454d-88d6-01f001218440"
+      }
+    },
+    {
+      "event_type": "flow_definition",
+      "level": "INFO",
+      "message": "Flow `better_ui`.`default`.`probe_ok` defined as MATERIALIZED_VIEW.",
+      "timestamp": "2026-09-29T23:36:17.373Z",
+      "origin": {
+        "update_id": "66467198-eb0b-454d-88d6-01f001218440",
+        "flow_name": "better_ui.default.probe_ok"
+      }
+    },
+    {
+      "event_type": "flow_progress",
+      "level": "ERROR",
+      "message": "Failed to resolve flow: 'better_ui.default.probe_fail'.",
+      "timestamp": "2026-09-29T23:36:17.248Z",
+      "origin": {
+        "update_id": "66467198-eb0b-454d-88d6-01f001218440",
+        "flow_name": "better_ui.default.probe_fail"
+      },
+      "error": {
+        "exceptions": [
+          {
+            "class_name": "org.apache.spark.sql.catalyst.ExtendedAnalysisException",
+            "message": "[TABLE_OR_VIEW_NOT_FOUND] The table or view `better_ui`.`default`.`table_that_does_not_exist` cannot be found. Verify the spelling and correctness of the schema and catalog.\nSearch path: [`system`.`session`, `system`.`builtin`, `system`.`ai`, `better_ui`.`default`].\nIf you did not qualify the name with a schema, verify the current_schema() output, or qualify the name with the correct schema and catalog.\nTo tolerate the error on drop use DROP VIEW IF EXISTS or DROP TABLE IF EXISTS. SQLSTATE: 42P01"
+          }
+        ]
+      }
+    },
+    {
+      "event_type": "update_progress",
+      "level": "INFO",
+      "message": "Update 664671 is INITIALIZING.",
+      "timestamp": "2026-09-29T23:36:15.935Z",
+      "origin": {
+        "update_id": "66467198-eb0b-454d-88d6-01f001218440"
+      }
+    },
+    {
+      "event_type": "runtime_details",
+      "level": "INFO",
+      "message": "Resolved runtime environment details for update 664671.",
+      "timestamp": "2026-09-29T23:36:15.303Z",
+      "origin": {
+        "update_id": "66467198-eb0b-454d-88d6-01f001218440"
+      }
+    },
+    {
+      "event_type": "create_update",
+      "level": "INFO",
+      "message": "Update 664671 started by RETRY_ON_FAILURE.",
+      "timestamp": "2026-09-29T23:35:34.726Z",
+      "origin": {
+        "update_id": "66467198-eb0b-454d-88d6-01f001218440"
+      }
+    },
+    {
+      "event_type": "update_progress",
+      "level": "ERROR",
+      "message": "Update fbccc0 has failed. Failed to analyze flow 'better_ui.default.probe_fail'.",
+      "timestamp": "2026-09-29T23:35:33.988Z",
+      "origin": {
+        "update_id": "fbccc01b-22ce-499a-a195-327e55648a56"
+      },
+      "error": {
+        "exceptions": [
+          {
+            "class_name": "org.apache.spark.sql.catalyst.ExtendedAnalysisException",
+            "message": "[TABLE_OR_VIEW_NOT_FOUND] The table or view `better_ui`.`default`.`table_that_does_not_exist` cannot be found. Verify the spelling and correctness of the schema and catalog.\nSearch path: [`system`.`session`, `system`.`builtin`, `system`.`ai`, `better_ui`.`default`].\nIf you did not qualify the name with a schema, verify the current_schema() output, or qualify the name with the correct schema and catalog.\nTo tolerate the error on drop use DROP VIEW IF EXISTS or DROP TABLE IF EXISTS. SQLSTATE: 42P01"
+          }
+        ]
+      }
+    },
+    {
+      "event_type": "dataset_definition",
+      "level": "INFO",
+      "message": "Dataset `better_ui`.`default`.`probe_ok` defined as MATERIALIZED_VIEW.",
+      "timestamp": "2026-09-29T23:35:33.985Z",
+      "origin": {
+        "update_id": "fbccc01b-22ce-499a-a195-327e55648a56"
+      }
+    },
+    {
+      "event_type": "flow_definition",
+      "level": "INFO",
+      "message": "Flow `better_ui`.`default`.`probe_ok` defined as MATERIALIZED_VIEW.",
+      "timestamp": "2026-09-29T23:35:33.680Z",
+      "origin": {
+        "update_id": "fbccc01b-22ce-499a-a195-327e55648a56",
+        "flow_name": "better_ui.default.probe_ok"
+      }
+    },
+    {
+      "event_type": "flow_progress",
+      "level": "ERROR",
+      "message": "Failed to resolve flow: 'better_ui.default.probe_fail'.",
+      "timestamp": "2026-09-29T23:35:33.558Z",
+      "origin": {
+        "update_id": "fbccc01b-22ce-499a-a195-327e55648a56",
+        "flow_name": "better_ui.default.probe_fail"
+      },
+      "error": {
+        "exceptions": [
+          {
+            "class_name": "org.apache.spark.sql.catalyst.ExtendedAnalysisException",
+            "message": "[TABLE_OR_VIEW_NOT_FOUND] The table or view `better_ui`.`default`.`table_that_does_not_exist` cannot be found. Verify the spelling and correctness of the schema and catalog.\nSearch path: [`system`.`session`, `system`.`builtin`, `system`.`ai`, `better_ui`.`default`].\nIf you did not qualify the name with a schema, verify the current_schema() output, or qualify the name with the correct schema and catalog.\nTo tolerate the error on drop use DROP VIEW IF EXISTS or DROP TABLE IF EXISTS. SQLSTATE: 42P01"
+          }
+        ]
+      }
+    },
+    {
+      "event_type": "update_progress",
+      "level": "INFO",
+      "message": "Update fbccc0 is INITIALIZING.",
+      "timestamp": "2026-09-29T23:35:32.131Z",
+      "origin": {
+        "update_id": "fbccc01b-22ce-499a-a195-327e55648a56"
+      }
+    },
+    {
+      "event_type": "runtime_details",
+      "level": "INFO",
+      "message": "Resolved runtime environment details for update fbccc0.",
+      "timestamp": "2026-09-29T23:35:31.548Z",
+      "origin": {
+        "update_id": "fbccc01b-22ce-499a-a195-327e55648a56"
+      }
+    },
+    {
+      "event_type": "create_update",
+      "level": "INFO",
+      "message": "Update fbccc0 started by RETRY_ON_FAILURE.",
+      "timestamp": "2026-09-29T23:35:10.690Z",
+      "origin": {
+        "update_id": "fbccc01b-22ce-499a-a195-327e55648a56"
+      }
+    },
+    {
+      "event_type": "update_progress",
+      "level": "ERROR",
+      "message": "Update f84069 has failed. Failed to analyze flow 'better_ui.default.probe_fail'.",
+      "timestamp": "2026-09-29T23:35:09.378Z",
+      "origin": {
+        "update_id": "f8406928-e3e5-4786-9652-afc68b8ed0f2"
+      },
+      "error": {
+        "exceptions": [
+          {
+            "class_name": "org.apache.spark.sql.catalyst.ExtendedAnalysisException",
+            "message": "[TABLE_OR_VIEW_NOT_FOUND] The table or view `better_ui`.`default`.`table_that_does_not_exist` cannot be found. Verify the spelling and correctness of the schema and catalog.\nSearch path: [`system`.`session`, `system`.`builtin`, `system`.`ai`, `better_ui`.`default`].\nIf you did not qualify the name with a schema, verify the current_schema() output, or qualify the name with the correct schema and catalog.\nTo tolerate the error on drop use DROP VIEW IF EXISTS or DROP TABLE IF EXISTS. SQLSTATE: 42P01"
+          }
+        ]
+      }
+    },
+    {
+      "event_type": "dataset_definition",
+      "level": "INFO",
+      "message": "Dataset `better_ui`.`default`.`probe_ok` defined as MATERIALIZED_VIEW.",
+      "timestamp": "2026-09-29T23:35:09.001Z",
+      "origin": {
+        "update_id": "f8406928-e3e5-4786-9652-afc68b8ed0f2"
+      }
+    },
+    {
+      "event_type": "flow_definition",
+      "level": "INFO",
+      "message": "Flow `better_ui`.`default`.`probe_ok` defined as MATERIALIZED_VIEW.",
+      "timestamp": "2026-09-29T23:35:08.539Z",
+      "origin": {
+        "update_id": "f8406928-e3e5-4786-9652-afc68b8ed0f2",
+        "flow_name": "better_ui.default.probe_ok"
+      }
+    },
+    {
+      "event_type": "flow_progress",
+      "level": "ERROR",
+      "message": "Failed to resolve flow: 'better_ui.default.probe_fail'.",
+      "timestamp": "2026-09-29T23:35:05.633Z",
+      "origin": {
+        "update_id": "f8406928-e3e5-4786-9652-afc68b8ed0f2",
+        "flow_name": "better_ui.default.probe_fail"
+      },
+      "error": {
+        "exceptions": [
+          {
+            "class_name": "org.apache.spark.sql.catalyst.ExtendedAnalysisException",
+            "message": "[TABLE_OR_VIEW_NOT_FOUND] The table or view `better_ui`.`default`.`table_that_does_not_exist` cannot be found. Verify the spelling and correctness of the schema and catalog.\nSearch path: [`system`.`session`, `system`.`builtin`, `system`.`ai`, `better_ui`.`default`].\nIf you did not qualify the name with a schema, verify the current_schema() output, or qualify the name with the correct schema and catalog.\nTo tolerate the error on drop use DROP VIEW IF EXISTS or DROP TABLE IF EXISTS. SQLSTATE: 42P01"
+          }
+        ]
+      }
+    },
+    {
+      "event_type": "update_progress",
+      "level": "INFO",
+      "message": "Update f84069 is INITIALIZING.",
+      "timestamp": "2026-09-29T23:35:02.481Z",
+      "origin": {
+        "update_id": "f8406928-e3e5-4786-9652-afc68b8ed0f2"
+      }
+    },
+    {
+      "event_type": "runtime_details",
+      "level": "INFO",
+      "message": "Resolved runtime environment details for update f84069.",
+      "timestamp": "2026-09-29T23:34:54.601Z",
+      "origin": {
+        "update_id": "f8406928-e3e5-4786-9652-afc68b8ed0f2"
+      }
+    },
+    {
+      "event_type": "update_progress",
+      "level": "INFO",
+      "message": "Update f84069 is WAITING_FOR_RESOURCES.",
+      "timestamp": "2026-09-29T23:34:49.422Z",
+      "origin": {
+        "update_id": "f8406928-e3e5-4786-9652-afc68b8ed0f2"
+      }
+    },
+    {
+      "event_type": "create_update",
+      "level": "INFO",
+      "message": "Update f84069 started by JOB_TASK.",
+      "timestamp": "2026-09-29T23:34:48.431Z",
+      "origin": {
+        "update_id": "f8406928-e3e5-4786-9652-afc68b8ed0f2"
+      }
+    },
+    {
+      "event_type": "user_action",
+      "level": "INFO",
+      "message": "Principal 'me@x.com' started an update.",
+      "timestamp": "2026-09-29T23:34:48.349Z",
+      "origin": {
+        "update_id": "f8406928-e3e5-4786-9652-afc68b8ed0f2"
+      }
+    },
+    {
+      "event_type": "user_action",
+      "level": "INFO",
+      "message": "User me@x.com created pipeline.",
+      "timestamp": "2026-09-29T23:34:28.932Z",
+      "origin": {}
+    }
+  ]
+}

@@ -54,7 +54,7 @@ const LIVE_STATES = new Set<string>(['INITIALIZING', 'RESETTING', 'SETTING_UP_TA
 const RESULTS: Record<string, RunResult> = { COMPLETED: 'succeeded', FAILED: 'failed', CANCELED: 'cancelled' };
 
 /** Cause of a failed update: the first ERROR event that carries an exception (its message, not the top-level "Update is FAILED"). */
-function errorCause(errors: pipelines.PipelineEvent[]): { cause: Cause; flow?: string } {
+export function errorCause(errors: pipelines.PipelineEvent[]): { cause: Cause; flow?: string } {
   const e = errors.find((x) => x.error?.exceptions?.length) ?? errors[0];
   if (!e) return { cause: failureCause('FAILED', '') };
   const ex = e.error?.exceptions?.[0];
