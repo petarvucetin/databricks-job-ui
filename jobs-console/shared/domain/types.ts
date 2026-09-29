@@ -44,10 +44,22 @@ export interface Run {
   params: Record<string, string>;
 }
 
+export type DataSource = 'mock' | 'live' | 'replay';
+
+/** GET /api/mode: what the shell badge and the Capture menu need to know. */
+export interface DataMode {
+  source: DataSource;
+  /** Live and replay: whose authorization the data was read with ('app' = the app's service principal). */
+  auth?: 'user' | 'app';
+  /** The Capture menu (download / sweep) is available. Live mode only. */
+  capture: boolean;
+}
+
 export interface RunsResponse {
   /** Epoch ms the data describes ("now" for the data set). */
   asOf: number;
-  source: 'mock' | 'live';
+  /** 'replay': recorded live data served back from a capture file (JOBS_CONSOLE_DATA=replay). */
+  source: DataSource;
   /** Newest first. */
   runs: Run[];
 }

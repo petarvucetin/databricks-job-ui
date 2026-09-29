@@ -87,4 +87,8 @@ describe('selectRunSource', () => {
     expect(live.forRequest({ headers: {} })).toMatchObject({ status: 401 });
     expect(() => selectRunSource({ JOBS_CONSOLE_DATA: 'banana' })).toThrow('Unknown JOBS_CONSOLE_DATA "banana"');
   });
+
+  it('selects replay, which needs a capture file', () => {
+    expect(() => selectRunSource({ JOBS_CONSOLE_DATA: 'replay' })).toThrow('JOBS_CONSOLE_REPLAY=<path');
+  });
 });

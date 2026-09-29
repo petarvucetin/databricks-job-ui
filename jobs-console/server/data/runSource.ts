@@ -1,10 +1,12 @@
-import type { RunsResponse } from '../../shared/domain/types';
+import type { DataSource, RunsResponse } from '../../shared/domain/types';
 import { createMockRunSource } from './mock/mockRunSource';
 import { createLiveProvider } from './live/liveProvider';
+import type { Trace } from './live/trace';
+import { createReplayProvider } from './capture/replayProvider';
 
-/** Where runs come from: the generated mock data set, or the Jobs + Pipelines APIs as the signed-in user. */
+/** Where runs come from: the generated mock data set, the Jobs + Pipelines APIs as the signed-in user, or a capture of those replayed. */
 export interface RunSource {
-  readonly kind: 'mock' | 'live';
+  readonly kind: DataSource;
   /**
    * Runs with startTime >= since, newest first. When since is undefined the mock returns every run, the live source its default window.
    * tzOffsetMin is the caller's `Date.getTimezoneOffset()`; the mock source buckets its
@@ -25,8 +27,11 @@ export interface RequestLike {
 
 /** Hands each request its RunSource (live sources act as the request's user), or the status to refuse it with. */
 export interface RunSourceProvider {
-  readonly kind: 'mock' | 'live';
-  forRequest(req: RequestLike): RunSource | { status: number; error: string };
+  readonly kind: DataSource;
+  /** Live and replay: whose authorization reads the data ('app' = the app's service principal, JOBS_CONSOLE_AUTH=app). */
+  readonly auth?: 'user' | 'app';
+  /** `trace` (live only) records the request's calls and diagnostics into the capture. */
+  forRequest(req: RequestLike, trace?: Trace): RunSource | { status: number; error: string };
 }
 
 export function selectRunSource(env: Record<string, string | undefined>): RunSourceProvider {
@@ -36,5 +41,6 @@ export function selectRunSource(env: Record<string, string | undefined>): RunSou
     return { kind: 'mock', forRequest: () => source };
   }
   if (mode === 'live') return createLiveProvider(env);
+  if (mode === 'replay') return createReplayProvider(env);
   throw new Error(`Unknown JOBS_CONSOLE_DATA "${mode}"`);
 }

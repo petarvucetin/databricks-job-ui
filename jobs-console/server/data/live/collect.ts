@@ -1,6 +1,8 @@
 import type { jobs, pipelines } from '@databricks/sdk-experimental';
 import type { LiveApi } from './api';
+import { apiErrorParts } from './apiError';
 import type { PipelineInfo } from './pipelines';
+import { noDiag, type Diag } from './trace';
 
 export const TIMEOUT = Symbol('timeout');
 
@@ -77,7 +79,7 @@ const FINISHED = new Set<string>(['COMPLETED', 'FAILED', 'CANCELED']);
  * All pipelines (100 per page), then per pipeline, `concurrency` at a time: getPipeline + listUpdates back to `from`,
  * and at most one events call (INFO/WARN/ERROR since `from`) for end times and failure causes.
  */
-export async function collectPipelines(api: LiveApi, from: number, concurrency: number, dl: Deadline): Promise<PipelinesCollected> {
+export async function collectPipelines(api: LiveApi, from: number, concurrency: number, dl: Deadline, diag: Diag = noDiag): Promise<PipelinesCollected> {
   const listed: pipelines.PipelineStateInfo[] = [];
   let timedOut = false;
   let token: string | undefined;
@@ -93,16 +95,23 @@ export async function collectPipelines(api: LiveApi, from: number, concurrency: 
 
   const out: PipelineCollected[] = [];
   let skipped = 0;
+  let notReached = 0;
   await pool(listed, concurrency, async (p) => {
     const pipelineId = p.pipeline_id;
-    if (!pipelineId || dl.expired) {
-      if (dl.expired) timedOut = true;
+    if (!pipelineId) {
+      diag({ level: 'warn', code: 'missing-field', message: `listed pipeline "${p.name ?? ''}" has no pipeline_id; skipped` });
+      return;
+    }
+    if (dl.expired) {
+      timedOut = true;
+      notReached++;
       return;
     }
     try {
       const [spec, updates] = await Promise.all([dl.call(() => api.getPipeline({ pipeline_id: pipelineId })), updatesSince(api, pipelineId, from, dl)]);
       if (spec === TIMEOUT || updates === TIMEOUT) {
         timedOut = true;
+        diag({ level: 'warn', code: 'updates-skipped', message: 'the time budget ran out while reading this pipeline; its updates are left out', ref: `pipeline ${pipelineId}` });
         return;
       }
       if (!updates.length) return;
@@ -117,16 +126,25 @@ export async function collectPipelines(api: LiveApi, from: number, concurrency: 
         const page = await dl.call(() =>
           api.listPipelineEvents({ pipeline_id: pipelineId, max_results: 1000, filter: `level in ('INFO', 'WARN', 'ERROR') AND timestamp >= '${new Date(from).toISOString()}'` })
         );
-        if (page === TIMEOUT) timedOut = true;
-        else item.events = page.events ?? [];
+        if (page === TIMEOUT) {
+          timedOut = true;
+          diag({ level: 'warn', code: 'events-skipped-budget', message: 'events call skipped: the time budget ran out; finished updates have no end time or cause', ref: `pipeline ${pipelineId}` });
+        } else {
+          item.events = page.events ?? [];
+          if (page.next_page_token) {
+            diag({ level: 'info', code: 'events-truncated', message: `more than one events page (${item.events.length} read); older updates may have no end time`, ref: `pipeline ${pipelineId}` });
+          }
+        }
       }
       out.push(item);
     } catch (e) {
       const s = statusOf(e);
       if (s !== 403 && s !== 404) throw e;
       skipped++;
+      diag({ level: 'warn', code: 'pipeline-skipped', message: `skipped (${s}): ${apiErrorParts(e).message}`, ref: `pipeline ${pipelineId}` });
     }
   });
+  if (notReached) diag({ level: 'warn', code: 'pipelines-not-reached', message: `${notReached} of ${listed.length} pipelines not read: the time budget ran out` });
   return { pipelines: out, listed: listed.length, skipped, timedOut: timedOut || dl.expired };
 }
 

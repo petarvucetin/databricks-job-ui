@@ -1,18 +1,27 @@
-import { WorkspaceClient, type iam, type jobs, type pipelines } from '@databricks/sdk-experimental';
+import { Config, WorkspaceClient, type iam, type jobs, type pipelines } from '@databricks/sdk-experimental';
 
 /**
  * Every Databricks call the live source makes, one page per call, returning the SDK objects unchanged.
  * Mapping lives in pure functions over these objects, so a recorder or replayer can wrap or replace this.
  */
 export interface LiveApi {
-  me(): Promise<iam.User>;
-  listJobRuns(req: jobs.ListRunsRequest): Promise<jobs.ListRunsResponse>;
-  getRun(req: jobs.GetRunRequest): Promise<jobs.Run>;
-  getRunOutput(req: jobs.GetRunOutputRequest): Promise<jobs.RunOutput>;
-  listPipelines(req: pipelines.ListPipelinesRequest): Promise<pipelines.ListPipelinesResponse>;
-  getPipeline(req: pipelines.GetPipelineRequest): Promise<pipelines.GetPipelineResponse>;
-  listUpdates(req: pipelines.ListUpdatesRequest): Promise<pipelines.ListUpdatesResponse>;
-  listPipelineEvents(req: pipelines.ListPipelineEventsRequest): Promise<pipelines.ListPipelineEventsResponse>;
+  me: () => Promise<iam.User>;
+  listJobRuns: (req: jobs.ListRunsRequest) => Promise<jobs.ListRunsResponse>;
+  getRun: (req: jobs.GetRunRequest) => Promise<jobs.Run>;
+  getRunOutput: (req: jobs.GetRunOutputRequest) => Promise<jobs.RunOutput>;
+  listPipelines: (req: pipelines.ListPipelinesRequest) => Promise<pipelines.ListPipelinesResponse>;
+  getPipeline: (req: pipelines.GetPipelineRequest) => Promise<pipelines.GetPipelineResponse>;
+  listUpdates: (req: pipelines.ListUpdatesRequest) => Promise<pipelines.ListUpdatesResponse>;
+  listPipelineEvents: (req: pipelines.ListPipelineEventsRequest) => Promise<pipelines.ListPipelineEventsResponse>;
+}
+
+/** Workspace URL the SDK default auth chain resolves to (local dev: the DATABRICKS_CONFIG_PROFILE host). */
+export async function resolveDefaultHost(): Promise<string | undefined> {
+  try {
+    return (await new Config({}).getHost()).origin;
+  } catch {
+    return undefined;
+  }
 }
 
 /** `token` given: that user's token (Databricks Apps forwards it). Omitted: the SDK default auth chain (local dev profile). */

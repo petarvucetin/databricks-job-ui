@@ -18,8 +18,20 @@ resources:
         - jobs
         - pipelines
 
+variables:
+  # Accepted for the documented deploy command, but informational only: the CLI does not interpolate variables in
+  # workspace.host (it parses "${var.gov_host}" literally; https://github.com/databricks/cli/issues/1786), so the
+  # gov target takes its host from the profile: databricks auth login --host <url> --profile gov.
+  gov_host:
+    description: "Workspace URL of the gov target, e.g. https://dbc-1234abcd-5678.cloud.databricks.us"
+    default: ""
+
 targets:
   default:
     default: true
     workspace:
       host: https://adb-7405612029409959.19.azuredatabricks.net
+
+  # AWS GovCloud (us-gov-west-1). Same app, same user_api_scopes (they sit on the app resource, so every target gets
+  # them). No host here: it comes from --profile gov (see the gov_host note above).
+  gov: {}

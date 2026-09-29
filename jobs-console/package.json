@@ -22,6 +22,8 @@
     "predev": "npm run sync && npm run typegen",
     "sync": "appkit plugin sync --write --silent",
     "typegen": "appkit generate-types",
+    "replay": "tsx scripts/replay.ts",
+    "capture:summary": "tsx --tsconfig ./tsconfig.server.json scripts/capture-summary.ts",
     "setup": "appkit setup --write"
   },
   "keywords": [],

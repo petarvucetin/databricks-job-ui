@@ -2,6 +2,7 @@ import type { pipelines } from '@databricks/sdk-experimental';
 import type { Cause, RunResult } from '../../../shared/domain/types';
 import { failureCause } from './causes';
 import type { Draft } from './kinds';
+import { noDiag, type Diag } from './trace';
 
 export interface PipelineInfo {
   pipelineId: string;
@@ -61,12 +62,20 @@ function errorCause(errors: pipelines.PipelineEvent[]): { cause: Cause; flow?: s
   return { cause: failureCause(code, message), flow: e.origin?.flow_name };
 }
 
-export function updateDraft(u: pipelines.UpdateInfo, p: PipelineInfo, events: UpdateEvents | undefined, now: number): Draft {
+export function updateDraft(u: pipelines.UpdateInfo, p: PipelineInfo, events: UpdateEvents | undefined, now: number, diag: Diag = noDiag): Draft {
   const state = u.state ?? '';
+  const ref = `update ${u.update_id ?? '?'}`;
+  for (const f of ['update_id', 'creation_time'] as const) {
+    if (u[f] === undefined) diag({ level: 'warn', code: 'missing-field', message: `pipeline ${p.pipelineId} update has no ${f}`, ref });
+  }
   const queued = QUEUED_STATES.has(state);
   const live = LIVE_STATES.has(state);
+  if (!queued && !live && !RESULTS[state]) diag({ level: 'warn', code: 'unknown-update-state', message: `update state "${state}" is not a known state (mapped as failed)`, ref });
   const start = u.creation_time ?? 0;
   const result = queued || live ? null : RESULTS[state] ?? 'failed';
+  if (result && !events?.endTime) {
+    diag({ level: 'info', code: 'pipeline-end-missing', message: `no update_progress event for this ${state} update of pipeline ${p.pipelineId}; duration reported as 0`, ref });
+  }
   // UpdateInfo has no end time: the last update_progress event marks it. Without one, a finished update reports 0.
   const durationSec = queued ? 0 : live ? (now - start) / 1000 : events?.endTime ? (events.endTime - start) / 1000 : 0;
   const secs = Math.max(0, Math.round(durationSec));

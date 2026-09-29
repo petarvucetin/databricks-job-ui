@@ -2,17 +2,21 @@ import type { Run, RunsResponse } from '../../../shared/domain/types';
 import type { RunSource } from '../runSource';
 import { SourceError } from '../sourceError';
 import type { LiveApi } from './api';
+import { apiErrorParts } from './apiError';
 import { Deadline, TIMEOUT, collectJobRuns, collectPipelines } from './collect';
 import { jobDraft } from './jobs';
 import { finalize, type Draft } from './kinds';
 import type { LiveLimits } from './limits';
 import { indexEvents, updateDraft } from './pipelines';
 import { findTask, jobLogText, pipelineLogText } from './taskLog';
+import { noDiag, type Trace } from './trace';
 
 const DAY = 86400000;
 const CACHE_TTL_MS = 20000;
 const CACHE_MAX = 50;
 const ID_MAP_MAX = 50000;
+
+export { apiErrorParts };
 
 export interface PipelineRef {
   pipelineId: string;
@@ -39,30 +43,28 @@ export interface LiveSourceOptions {
   state: LiveState;
   limits: LiveLimits;
   clock?: () => number;
+  /** Clock for the time budget only (default: clock). Replay freezes `clock` at the recorded asOf but keeps a real budget. */
+  timer?: () => number;
   warn?: (msg: string) => void;
+  /** Capture hooks: records every call and the diagnostics of this request. */
+  trace?: Trace;
+  /** What the response says it is (default 'live'). */
+  source?: 'live' | 'replay';
 }
 
-/**
- * Status, error code and message of an SDK ApiError. When the SDK can't parse an error body (0.17.0 fails on
- * `details` entries without `metadata`, e.g. RequestInfo) it reports "Response from server (Bad Request) {json}";
- * the code and message are recovered from that JSON.
- */
-export function apiErrorParts(e: unknown): { status?: number; code: string; message: string } {
-  const x = e as { statusCode?: unknown; errorCode?: unknown };
-  const status = typeof x?.statusCode === 'number' ? x.statusCode : undefined;
-  let code = typeof x?.errorCode === 'string' ? x.errorCode : '';
-  let message = e instanceof Error ? e.message : String(e);
-  const raw = /^Response from server \([^)]*\) (\{.*\})$/s.exec(message)?.[1];
-  if (raw) {
-    try {
-      const body = JSON.parse(raw) as { error_code?: unknown; message?: unknown };
-      if (typeof body.error_code === 'string') code = body.error_code;
-      if (typeof body.message === 'string') message = body.message;
-    } catch {
-      // not JSON after all: keep the SDK's message
-    }
+/** Counts calls per LiveApi method, for the `pages` diagnostic. */
+function counting(api: LiveApi): { api: LiveApi; counts: Map<string, number> } {
+  const counts = new Map<string, number>();
+  const out = {} as Record<string, unknown>;
+  for (const name of Object.keys(api) as (keyof LiveApi)[]) {
+    const fn = api[name] as (req: unknown) => Promise<unknown>;
+    if (typeof fn !== 'function') continue;
+    out[name] = (req: unknown) => {
+      counts.set(name, (counts.get(name) ?? 0) + 1);
+      return fn(req);
+    };
   }
-  return { status, code, message };
+  return { api: out as unknown as LiveApi, counts };
 }
 
 /** SDK failures as SourceError: auth stays 401/403, the rest is a bad gateway. With `lookup`, a missing or invalid id is 404. */
@@ -83,23 +85,34 @@ function remember<K, V>(map: Map<K, V>, key: K, value: V, max: number): void {
 
 export function createLiveRunSource(o: LiveSourceOptions): RunSource {
   const clock = o.clock ?? Date.now;
+  const timer = o.timer ?? clock;
   const warn = o.warn ?? ((m: string) => console.warn(m));
-  const { limits, state, api } = o;
+  const diag = o.trace?.diag ?? noDiag;
+  const { limits, state } = o;
+  const api = o.trace ? o.trace.wrap(o.api) : o.api;
 
   async function fetchRuns(since: number | undefined): Promise<RunsResponse> {
     const now = clock();
+    o.trace?.note({ now, limits });
     const from = since ?? now - limits.windowDays * DAY;
-    const dl = new Deadline(now + limits.timeoutMs, clock);
+    const dl = new Deadline(timer() + limits.timeoutMs, timer);
+    const c = counting(api);
+    const user = () =>
+      o.user().then((u) => {
+        o.trace?.note({ user: u });
+        return u;
+      });
     const [me, jobsR, pipesR] = await Promise.all([
-      dl.call(o.user),
-      collectJobRuns(api, from, limits.maxRuns, dl),
-      collectPipelines(api, from, limits.concurrency, dl),
+      dl.call(user),
+      collectJobRuns(c.api, from, limits.maxRuns, dl),
+      collectPipelines(c.api, from, limits.concurrency, dl, diag),
     ]);
-    const drafts: Draft[] = jobsR.runs.map((r) => jobDraft(r, now));
+    diag({ level: 'info', code: 'pages', message: [...c.counts].map(([k, n]) => `${k} ${n}`).join(', ') || 'no calls' });
+    const drafts: Draft[] = jobsR.runs.map((r) => jobDraft(r, now, diag));
     for (const p of pipesR.pipelines) {
       const events = indexEvents(p.events ?? []);
       for (const u of p.updates) {
-        const d = updateDraft(u, p.info, events.get(u.update_id ?? ''), now);
+        const d = updateDraft(u, p.info, events.get(u.update_id ?? ''), now, diag);
         drafts.push(d);
         remember(state.pipelineRefs, d.id, { pipelineId: p.info.pipelineId, updateId: u.update_id ?? '', startTime: d.startTime }, ID_MAP_MAX);
       }
@@ -108,6 +121,9 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
     const runs = all.slice(0, limits.maxRuns);
     const capped = jobsR.capped || all.length > runs.length;
     const timedOut = jobsR.timedOut || pipesR.timedOut || me === TIMEOUT;
+    const counts = `returned ${runs.length} of ${all.length} (job runs ${jobsR.runs.length}, pipeline updates ${all.length - jobsR.runs.length}, pipelines ${pipesR.pipelines.length} with updates / ${pipesR.listed} listed, ${pipesR.skipped} skipped)`;
+    if (capped) diag({ level: 'warn', code: 'cap-hit', message: `cap ${limits.maxRuns} hit; ${counts}` });
+    if (timedOut) diag({ level: 'warn', code: 'timeout-hit', message: `timeout ${limits.timeoutMs}ms hit${me === TIMEOUT ? ' (user name not resolved)' : ''}; ${counts}` });
     if (capped || timedOut || pipesR.skipped) {
       warn(
         `[live] runs list cut short:${capped ? ` cap ${limits.maxRuns} hit;` : ''}${timedOut ? ` timeout ${limits.timeoutMs}ms hit;` : ''} ` +
@@ -115,7 +131,7 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
           `pipelines ${pipesR.pipelines.length} with updates / ${pipesR.listed} listed, ${pipesR.skipped} skipped)`
       );
     }
-    return { asOf: now, source: 'live', runs };
+    return { asOf: now, source: o.source ?? 'live', runs };
   }
 
   async function pipelineLog(ref: PipelineRef): Promise<string> {
@@ -149,7 +165,11 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
     async listRuns(since) {
       const key = `${o.userKey}|${since ?? ''}`;
       const hit = state.cache.get(key);
-      if (hit && clock() - hit.at < CACHE_TTL_MS) return hit.data;
+      if (hit && clock() - hit.at < CACHE_TTL_MS) {
+        o.trace?.note({ now: hit.data.asOf });
+        diag({ level: 'info', code: 'cache-hit', message: `served from the ${CACHE_TTL_MS / 1000}s cache (asOf ${new Date(hit.data.asOf).toISOString()})` });
+        return hit.data;
+      }
       let data: RunsResponse;
       try {
         data = await fetchRuns(since);

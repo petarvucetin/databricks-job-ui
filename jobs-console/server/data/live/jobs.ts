@@ -2,6 +2,7 @@ import type { jobs } from '@databricks/sdk-experimental';
 import type { Cause, FailedTask, RunResult } from '../../../shared/domain/types';
 import { QUEUED, failureCause } from './causes';
 import type { Draft } from './kinds';
+import { noDiag, type Diag } from './trace';
 
 type V2State = jobs.RunLifecycleStateV2State;
 
@@ -80,14 +81,46 @@ function latestAttempts(tasks: jobs.RunTask[]): jobs.RunTask[] {
   return [...byKey.values()];
 }
 
+const V2_STATES = new Set<string>(['BLOCKED', 'PENDING', 'QUEUED', 'RUNNING', 'TERMINATED', 'TERMINATING', 'WAITING']);
+const LIFECYCLE_STATES = new Set<string>(['BLOCKED', 'INTERNAL_ERROR', 'PENDING', 'QUEUED', 'RUNNING', 'SKIPPED', 'TERMINATED', 'TERMINATING', 'WAITING_FOR_RETRY']);
+const RESULT_STATES = new Set<string>(['CANCELED', 'DISABLED', 'EXCLUDED', 'FAILED', 'MAXIMUM_CONCURRENT_RUNS_REACHED', 'SUCCESS', 'SUCCESS_WITH_FAILURES', 'TIMEDOUT', 'UPSTREAM_CANCELED', 'UPSTREAM_FAILED']);
+/** TerminationCodeCode in SDK 0.17.0. The API documents more; anything else is noted so the mapping can learn it. */
+const TERMINATION_CODES = new Set<string>([
+  'BUDGET_POLICY_LIMIT_EXCEEDED', 'CANCELED', 'CLOUD_FAILURE', 'CLUSTER_ERROR', 'CLUSTER_REQUEST_LIMIT_EXCEEDED', 'DISABLED', 'DRIVER_ERROR', 'FEATURE_DISABLED',
+  'INTERNAL_ERROR', 'INVALID_CLUSTER_REQUEST', 'INVALID_RUN_CONFIGURATION', 'LIBRARY_INSTALLATION_ERROR', 'MAX_CONCURRENT_RUNS_EXCEEDED', 'MAX_JOB_QUEUE_SIZE_EXCEEDED',
+  'MAX_SPARK_CONTEXTS_EXCEEDED', 'REPOSITORY_CHECKOUT_FAILED', 'RESOURCE_NOT_FOUND', 'RUN_EXECUTION_ERROR', 'SKIPPED', 'STORAGE_ACCESS_ERROR', 'SUCCESS',
+  'SUCCESS_WITH_FAILURES', 'UNAUTHORIZED_ERROR', 'USER_CANCELED', 'WORKSPACE_RUN_LIMIT_EXCEEDED',
+]);
+
+/** Notes states and codes this mapping does not know (it still maps them, by the fallback rules). */
+function checkStates(r: { status?: jobs.RunStatus; state?: jobs.RunState }, ref: string, diag: Diag): void {
+  const v2 = r.status?.state;
+  const lc = r.state?.life_cycle_state;
+  if (v2 && !V2_STATES.has(v2)) diag({ level: 'warn', code: 'unknown-run-state', message: `status.state ${v2} is not a known state`, ref });
+  if (lc && !LIFECYCLE_STATES.has(lc)) diag({ level: 'warn', code: 'unknown-run-state', message: `state.life_cycle_state ${lc} is not a known state`, ref });
+  const rs = r.state?.result_state;
+  if (rs && !RESULT_STATES.has(rs)) diag({ level: 'warn', code: 'unknown-result-state', message: `state.result_state ${rs} is not a known result (mapped as failed)`, ref });
+  const code = r.status?.termination_details?.code;
+  if (code && !TERMINATION_CODES.has(code)) {
+    const msg = r.status?.termination_details?.message;
+    diag({ level: 'warn', code: 'unknown-termination-code', message: `termination code ${code} is not known${msg ? `: ${msg.slice(0, 200)}` : ''}`, ref });
+  }
+}
+
 const causeOf = (r: { status?: jobs.RunStatus; state?: jobs.RunState }) =>
   failureCause(r.status?.termination_details?.code, r.status?.termination_details?.message || r.state?.state_message, r.state?.result_state === 'TIMEDOUT');
 
 /** Run-level codes that only say "something failed"; the first failed task says more. */
 const GENERIC = new Set(['', 'RUN_EXECUTION_ERROR', 'SUCCESS_WITH_FAILURES']);
 
-export function jobDraft(run: jobs.BaseRun, now: number): Draft {
+export function jobDraft(run: jobs.BaseRun, now: number, diag: Diag = noDiag): Draft {
   const tasks = run.tasks ?? [];
+  const ref = `run ${run.run_id ?? '?'}`;
+  for (const f of ['run_id', 'start_time', 'run_name'] as const) {
+    if (run[f] === undefined) diag({ level: 'warn', code: 'missing-field', message: `job run has no ${f}`, ref });
+  }
+  checkStates(run, ref, diag);
+  for (const t of tasks) checkStates(t, `${ref} task ${t.task_key}`, diag);
   const state = stateOf(run);
   const started = tasks.some((t) => (t.start_time ?? 0) > 0 && !['QUEUED', 'BLOCKED'].includes(stateOf(t) ?? ''));
   const waiting = state === 'PENDING' || state === 'BLOCKED' || state === 'WAITING';

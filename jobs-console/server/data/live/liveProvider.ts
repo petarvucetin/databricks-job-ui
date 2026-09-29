@@ -1,12 +1,31 @@
 import { createHash } from 'node:crypto';
 import type { RequestLike, RunSourceProvider } from '../runSource';
 import { createSdkApi, type LiveApi } from './api';
-import { readLimits } from './limits';
-import { createLiveRunSource, createLiveState } from './liveRunSource';
+import { readLimits, type LiveLimits } from './limits';
+import { createLiveRunSource, createLiveState, type LiveState } from './liveRunSource';
 
 export interface LiveProviderDeps {
   makeApi: (opts: { host?: string; token?: string }) => LiveApi;
   clock?: () => number;
+}
+
+export type AuthMode = 'user' | 'app';
+
+/** Who a request acts as, and the API that reads as them. */
+export interface LiveIdentity {
+  api: LiveApi;
+  /** User name (email) of the requester, compared with runAs for `mine`. */
+  user: () => Promise<string>;
+  /** Identifies the requester in the cache; 'dev' for the local default auth chain. */
+  userKey: string;
+}
+
+export interface LiveProvider extends RunSourceProvider {
+  readonly kind: 'live';
+  readonly auth: AuthMode;
+  readonly limits: LiveLimits;
+  readonly state: LiveState;
+  identify(req: RequestLike): LiveIdentity | { status: number; error: string };
 }
 
 const header = (req: RequestLike, name: string): string | undefined => {
@@ -17,40 +36,73 @@ const header = (req: RequestLike, name: string): string | undefined => {
 
 const userNameOf = (api: LiveApi) => () => api.me().then((u) => u.userName ?? '');
 
+/** me() once per process; a failure is not cached. */
+function cachedUser(api: LiveApi): () => Promise<string> {
+  let user: Promise<string> | undefined;
+  return () => {
+    user ??= userNameOf(api)().catch((e: unknown) => {
+      user = undefined;
+      throw e;
+    });
+    return user;
+  };
+}
+
+export function readAuthMode(env: Record<string, string | undefined>): AuthMode {
+  const raw = env.JOBS_CONSOLE_AUTH || 'user';
+  if (raw !== 'user' && raw !== 'app') throw new Error(`JOBS_CONSOLE_AUTH must be user or app, got "${raw}"`);
+  return raw;
+}
+
 /**
- * Deployed: each request acts as its user, with the token Databricks Apps forwards in x-forwarded-access-token.
- * Local dev without that header: the SDK default auth chain (DATABRICKS_CONFIG_PROFILE), user name from currentUser.me(), cached.
- * Production without a token: 401.
+ * JOBS_CONSOLE_AUTH=user (default). Deployed: each request acts as its user, with the token Databricks Apps forwards in
+ * x-forwarded-access-token. Local dev without that header: the SDK default auth chain (DATABRICKS_CONFIG_PROFILE), user
+ * name from currentUser.me(), cached. Production without a token: 401.
+ * JOBS_CONSOLE_AUTH=app: every request reads as the app's service principal (SDK default chain; on Databricks Apps
+ * DATABRICKS_CLIENT_ID/SECRET), so users see what the SP was granted. x-forwarded-email still names the user for `mine`.
  */
-export function createLiveProvider(env: Record<string, string | undefined>, deps: LiveProviderDeps = { makeApi: createSdkApi }): RunSourceProvider {
+export function createLiveProvider(env: Record<string, string | undefined>, deps: LiveProviderDeps = { makeApi: createSdkApi }): LiveProvider {
   const limits = readLimits(env);
+  const auth = readAuthMode(env);
   const state = createLiveState();
-  const common = { state, limits, clock: deps.clock };
-  let dev: { api: LiveApi; user?: Promise<string> } | undefined;
+  let shared: { api: LiveApi; user: () => Promise<string> } | undefined;
+  const defaultChain = () => {
+    if (!shared) {
+      const api = deps.makeApi({});
+      shared = { api, user: cachedUser(api) };
+    }
+    return shared;
+  };
+
+  function identify(req: RequestLike): LiveIdentity | { status: number; error: string } {
+    const token = header(req, 'x-forwarded-access-token');
+    const email = header(req, 'x-forwarded-email');
+    if (auth === 'app') {
+      const d = defaultChain();
+      return { api: d.api, user: email ? () => Promise.resolve(email) : d.user, userKey: email ?? 'app' };
+    }
+    if (token) {
+      const api = deps.makeApi({ host: env.DATABRICKS_HOST, token });
+      const userKey = email ?? header(req, 'x-forwarded-user') ?? 'token:' + createHash('sha256').update(token).digest('hex').slice(0, 16);
+      return { api, user: email ? () => Promise.resolve(email) : userNameOf(api), userKey };
+    }
+    if (env.NODE_ENV === 'development') {
+      const d = defaultChain();
+      return { api: d.api, user: d.user, userKey: 'dev' };
+    }
+    return { status: 401, error: 'Not signed in: the request has no forwarded user access token' };
+  }
 
   return {
     kind: 'live',
-    forRequest(req) {
-      const token = header(req, 'x-forwarded-access-token');
-      if (token) {
-        const api = deps.makeApi({ host: env.DATABRICKS_HOST, token });
-        const email = header(req, 'x-forwarded-email');
-        const userKey = email ?? header(req, 'x-forwarded-user') ?? 'token:' + createHash('sha256').update(token).digest('hex').slice(0, 16);
-        const user = email ? () => Promise.resolve(email) : userNameOf(api);
-        return createLiveRunSource({ ...common, api, user, userKey });
-      }
-      if (env.NODE_ENV === 'development') {
-        const d = (dev ??= { api: deps.makeApi({}) });
-        const user = () => {
-          d.user ??= userNameOf(d.api)().catch((e: unknown) => {
-            d.user = undefined;
-            throw e;
-          });
-          return d.user;
-        };
-        return createLiveRunSource({ ...common, api: d.api, user, userKey: 'dev' });
-      }
-      return { status: 401, error: 'Not signed in: the request has no forwarded user access token' };
+    auth,
+    limits,
+    state,
+    identify,
+    forRequest(req, trace) {
+      const id = identify(req);
+      if ('error' in id) return id;
+      return createLiveRunSource({ ...id, state, limits, clock: deps.clock, trace });
     },
   };
 }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import type { ReactNode } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@databricks/appkit-ui/react';
+import { reportClientError } from './lib/reportError';
 
 interface Props {
   children: ReactNode;
@@ -29,6 +30,8 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error);
     console.error('Error details:', errorInfo);
+    const stack = `${error.stack ?? ''}\n\nComponent stack:${errorInfo.componentStack ?? ''}`;
+    reportClientError(Object.assign(new Error(error.message), { name: error.name, stack }));
     this.setState({
       error,
       errorInfo,
