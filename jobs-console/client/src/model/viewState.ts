@@ -33,7 +33,9 @@ export type Action =
   | { type: 'cube'; col: number; kind: RunKind }
   | { type: 'window'; window: TimeWindow }
   | { type: 'clear' }
-  | { type: 'more' };
+  | { type: 'more' }
+  /** New data arrived (auto refresh): `prevAsOf` was the data's "now" before, `asOf` is it now. See followNow. */
+  | { type: 'follow'; prevAsOf: number; asOf: number };
 
 function withAuto(s: ViewState, ctx: ViewCtx): ViewState {
   return { ...s, filters: { ...s.filters, statuses: autoStatuses(ctx.runs, s.filters) } };
@@ -103,5 +105,21 @@ export function applyAction(s: ViewState, a: Action, ctx: ViewCtx): ViewState {
     }
     case 'more':
       return { ...s, cap: s.cap + PAGE };
+    case 'follow':
+      return followNow(s, a.prevAsOf, a.asOf, ctx);
   }
+}
+
+/**
+ * Keeps a window that shows the present current across refreshes. If the window held the previous "now" and the new
+ * "now" has moved past its end (the hour turned, or midnight), its end grows to cover the column "now" is in;
+ * the start stays, so nothing already on screen drops out. Windows in the past are left alone, and so are the
+ * status and other filters.
+ */
+function followNow(s: ViewState, prevAsOf: number, asOf: number, ctx: ViewCtx): ViewState {
+  const w = s.filters.window;
+  if (prevAsOf < w.from || prevAsOf >= w.to || asOf < w.to) return s;
+  const col = buckets(s.scale, ctx.end).find((b) => b.start <= asOf && asOf < b.end);
+  const window = { from: w.from, to: Math.max(w.to, col ? col.end : ctx.end) };
+  return { ...s, filters: { ...s.filters, window }, scale: fitScale(s.scale, window, ctx.end), cube: null };
 }

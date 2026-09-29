@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ws/lib/constants.js
+//#region node_modules/ws/lib/constants.js
 var require_constants = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const BINARY_TYPES = [
 		"nodebuffer",
@@ -28,7 +28,7 @@ var require_constants = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ws/lib/buffer-util.js
+//#region node_modules/ws/lib/buffer-util.js
 var require_buffer_util = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { EMPTY_BUFFER } = require_constants();
 	const FastBuffer = Buffer[Symbol.species];
@@ -129,7 +129,7 @@ var require_buffer_util = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ws/lib/limiter.js
+//#region node_modules/ws/lib/limiter.js
 var require_limiter = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const kDone = Symbol("kDone");
 	const kRun = Symbol("kRun");
@@ -181,7 +181,7 @@ var require_limiter = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ws/lib/permessage-deflate.js
+//#region node_modules/ws/lib/permessage-deflate.js
 var require_permessage_deflate = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const zlib = __require("zlib");
 	const bufferUtil = require_buffer_util();
@@ -515,7 +515,7 @@ var require_permessage_deflate = /* @__PURE__ */ __commonJSMin(((exports, module
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ws/lib/validation.js
+//#region node_modules/ws/lib/validation.js
 var require_validation = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { isUtf8 } = __require("buffer");
 	const { hasBlob } = require_constants();
@@ -712,7 +712,7 @@ var require_validation = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ws/lib/receiver.js
+//#region node_modules/ws/lib/receiver.js
 var require_receiver = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { Writable } = __require("stream");
 	const PerMessageDeflate = require_permessage_deflate();
@@ -1178,7 +1178,7 @@ var require_receiver = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ws/lib/sender.js
+//#region node_modules/ws/lib/sender.js
 var require_sender = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { Duplex: Duplex$3 } = __require("stream");
 	const { randomFillSync } = __require("crypto");
@@ -1676,7 +1676,7 @@ var require_sender = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ws/lib/event-target.js
+//#region node_modules/ws/lib/event-target.js
 var require_event_target = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { kForOnEventAttribute, kListener } = require_constants();
 	const kCode = Symbol("kCode");
@@ -1896,7 +1896,7 @@ var require_event_target = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ws/lib/extension.js
+//#region node_modules/ws/lib/extension.js
 var require_extension = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { tokenChars } = require_validation();
 	/**
@@ -2040,7 +2040,7 @@ var require_extension = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ws/lib/websocket.js
+//#region node_modules/ws/lib/websocket.js
 var require_websocket = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const EventEmitter$1 = __require("events");
 	const https = __require("https");
@@ -3030,7 +3030,7 @@ var require_websocket = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ws/lib/stream.js
+//#region node_modules/ws/lib/stream.js
 var require_stream = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	require_websocket();
 	const { Duplex: Duplex$1 } = __require("stream");
@@ -3147,7 +3147,7 @@ var require_stream = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ws/lib/subprotocol.js
+//#region node_modules/ws/lib/subprotocol.js
 var require_subprotocol = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { tokenChars } = require_validation();
 	/**
@@ -3187,7 +3187,7 @@ var require_subprotocol = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ws/lib/websocket-server.js
+//#region node_modules/ws/lib/websocket-server.js
 var require_websocket_server = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const EventEmitter = __require("events");
 	const http = __require("http");
@@ -3574,7 +3574,7 @@ var require_websocket_server = /* @__PURE__ */ __commonJSMin(((exports, module) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ws/wrapper.mjs
+//#region node_modules/ws/wrapper.mjs
 var import_stream = /* @__PURE__ */ __toESM(require_stream(), 1);
 var import_extension = /* @__PURE__ */ __toESM(require_extension(), 1);
 var import_permessage_deflate = /* @__PURE__ */ __toESM(require_permessage_deflate(), 1);
@@ -3585,7 +3585,7 @@ var import_websocket = /* @__PURE__ */ __toESM(require_websocket(), 1);
 var import_websocket_server = /* @__PURE__ */ __toESM(require_websocket_server(), 1);
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/server/remote-tunnel/remote-tunnel-manager.js
+//#region node_modules/@databricks/appkit/dist/plugins/server/remote-tunnel/remote-tunnel-manager.js
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const MAX_ASSET_FETCH_TIMEOUT = 6e4;

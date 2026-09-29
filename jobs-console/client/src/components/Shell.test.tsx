@@ -16,6 +16,40 @@ describe('Shell', () => {
     expect(screen.getByText('body')).toBeTruthy();
   });
 
+  it('names the monitored workspace and links to it', () => {
+    render(<Shell mode={{ source: 'live', auth: 'app', capture: true, workspace: 'https://adb-1.2.azuredatabricks.net', profile: 'gov' }}><p /></Shell>);
+    const link = screen.getByRole('link', { name: /adb-1\.2\.azuredatabricks\.net/ });
+    expect(link.getAttribute('href')).toBe('https://adb-1.2.azuredatabricks.net');
+    expect(link.getAttribute('target')).toBe('_blank');
+    expect(link.getAttribute('title')).toBe('Monitoring https://adb-1.2.azuredatabricks.net (CLI profile gov)');
+    expect(link.textContent).toContain('gov');
+  });
+
+  it('says where a replayed capture came from, and names no workspace for mock data', () => {
+    const { unmount } = render(<Shell mode={{ source: 'replay', capture: false, workspace: 'https://dbc-9.cloud.databricks.us' }}><p /></Shell>);
+    expect(screen.getByRole('link').textContent).toBe('captured from dbc-9.cloud.databricks.us');
+    unmount();
+    render(<Shell mode={{ source: 'mock', capture: false }}><p /></Shell>);
+    expect(screen.queryByRole('link')).toBeNull();
+  });
+
+  it('shows who is looking, and who the data is read as when that is the app', () => {
+    const { unmount } = render(<Shell mode={{ source: 'live', auth: 'app', capture: true, user: 'petar@x.com', readAs: 'jobs-console-sp' }}><p /></Shell>);
+    const who = screen.getByTitle(/Signed in as petar@x.com\. Jobs and pipelines are read as jobs-console-sp/);
+    expect(who.textContent).toBe('petar@x.com · reads as jobs-console-sp');
+    unmount();
+    render(<Shell mode={{ source: 'live', auth: 'user', capture: true, user: 'petar@x.com' }}><p /></Shell>);
+    expect(screen.getByTitle('Signed in as petar@x.com; jobs and pipelines are read as you').textContent).toBe('petar@x.com');
+  });
+
+  it('shows nobody in mock mode, and the capturing user in replay', () => {
+    const { unmount } = render(<Shell mode={{ source: 'mock', capture: false }}><p /></Shell>);
+    expect(screen.queryByTitle(/Signed in|Captured by/)).toBeNull();
+    unmount();
+    render(<Shell mode={{ source: 'replay', capture: false, user: 'petar@x.com' }}><p /></Shell>);
+    expect(screen.getByTitle('Captured by petar@x.com').textContent).toBe('by petar@x.com');
+  });
+
   it('hides the badge until the mode is known', () => {
     render(<Shell><p>body</p></Shell>);
     expect(screen.queryByText(/data$/)).toBeNull();

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { RunsResponse } from '../../../shared/domain/types';
 import { liveCount, menuCounts, passes, scopeCounts, sortRuns, tileCounts, type RowSort } from '../model/filters';
 import { timelineEnd } from '../model/timeline';
@@ -25,6 +25,12 @@ export function AttentionView({ data, loadedAt, refresh, runRefresh }: { data: R
   const ctx: ViewCtx = useMemo(() => ({ runs: data.runs, end: timelineEnd(data.asOf) }), [data]);
   const [state, setState] = useState(() => initialState(ctx));
   const dispatch = useCallback((a: Action) => setState((s) => applyAction(s, a, ctx)), [ctx]);
+  // Auto refresh moved "now": keep a window that was showing the present current (viewState followNow).
+  const prevAsOf = useRef(data.asOf);
+  useEffect(() => {
+    if (data.asOf !== prevAsOf.current) dispatch({ type: 'follow', prevAsOf: prevAsOf.current, asOf: data.asOf });
+    prevAsOf.current = data.asOf;
+  }, [data.asOf, dispatch]);
   const [selected, setSelected] = useState<number | null>(null);
   const byId = useMemo(() => new Map(data.runs.map((r) => [r.id, r])), [data.runs]);
   // Runs open here: one shows the run drawer, two or more the comparison. Ctrl+click adds, a plain click starts over.

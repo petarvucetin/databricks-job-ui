@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import type { Run } from '../../../shared/domain/types';
+import { hasAnsi, parseAnsi, stripAnsi, type AnsiSegment, type AnsiStyle } from '../../../shared/domain/ansi';
 import { dur, durLive, fmtStart } from '../../../shared/domain/format';
 import { elapsedSec, runningIndex, splitName, taskStates } from '../model/rowView';
 import { causeGroups, lastRunSec, schedule, spanSec, tasksHead, ticks, type ScheduledTask } from '../model/runDetail';
@@ -139,10 +140,40 @@ function LogLine({ line }: { line: string }) {
   return cls ? <span className={cls}>{body}</span> : body;
 }
 
+/** One log line written with ANSI colours (e.g. an IPython traceback from Databricks), in the terminal's own colours. */
+function AnsiLine({ segments }: { segments: AnsiSegment[] }) {
+  return (
+    <>
+      {segments.map((s, i) => {
+        const style: CSSProperties = {};
+        if (s.fg) style.color = s.fg;
+        if (s.bg) style.background = s.bg;
+        if (s.bold) style.fontWeight = 600;
+        if (s.italic) style.fontStyle = 'italic';
+        if (s.underline) style.textDecoration = 'underline';
+        return Object.keys(style).length ? <span key={i} style={style}>{s.text}</span> : s.text;
+      })}
+    </>
+  );
+}
+
+/** Log lines, CRs dropped; lines with ANSI escapes parsed into styled segments, carrying style across lines like a terminal. */
+function logLines(text: string): { plain: string; segments?: AnsiSegment[] }[] {
+  let carry: AnsiStyle = {};
+  return text.split('\n').map((raw) => {
+    const line = raw.replace(/\r/g, '');
+    if (!hasAnsi(line) && !Object.keys(carry).length) return { plain: line };
+    const { segments, end } = parseAnsi(line, carry);
+    carry = end;
+    return { plain: stripAnsi(line), segments };
+  });
+}
+
 function TaskLog({ runId, task, hint, failed, nonce }: { runId: number; task: string; hint?: string; failed: boolean; nonce: number }) {
   const log = useTaskLog(runId, task, hint, nonce);
   const ref = useRef<HTMLDivElement>(null);
-  const lines = log.state === 'ready' ? log.text.split('\n') : [];
+  const text = log.state === 'ready' ? log.text : '';
+  const lines = useMemo(() => (text ? logLines(text) : []), [text]);
   useLayoutEffect(() => {
     if (failed && log.state === 'ready' && ref.current) ref.current.scrollTop = ref.current.scrollHeight;
   }, [failed, log.state]);
@@ -154,7 +185,7 @@ function TaskLog({ runId, task, hint, failed, nonce }: { runId: number; task: st
         <span className="r">open full log ↗</span>
       </div>
       <div className="log" ref={ref}>
-        {log.state === 'error' ? 'log not available' : lines.map((l, i) => <div key={i}><LogLine line={l} /></div>)}
+        {log.state === 'error' ? 'log not available' : lines.map((l, i) => <div key={i}>{l.segments ? <AnsiLine segments={l.segments} /> : <LogLine line={l.plain} />}</div>)}
       </div>
     </>
   );

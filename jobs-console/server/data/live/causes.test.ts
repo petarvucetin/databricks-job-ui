@@ -30,4 +30,8 @@ describe('helpers', () => {
     expect(humanise('RUN_EXECUTION_ERROR')).toBe('Run execution error');
     expect(oneLine('  a \r\n b  ')).toBe('a b');
   });
+
+  it('drops ANSI colour codes from Databricks error text', () => {
+    expect(failureCause('RUN_EXECUTION_ERROR', '\x1b[31mPy4JJavaError\x1b[39m: An error occurred\r').detail).toBe('Py4JJavaError: An error occurred');
+  });
 });

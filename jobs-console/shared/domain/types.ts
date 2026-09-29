@@ -90,6 +90,14 @@ export interface DataMode {
   auth?: 'user' | 'app';
   /** The Capture menu (download / sweep) is available. Live mode only. */
   capture: boolean;
+  /** Live: the workspace being monitored; replay: the workspace the capture came from. Origin URL, e.g. https://adb-1.2.azuredatabricks.net. */
+  workspace?: string;
+  /** Live, local runs: the Databricks CLI profile the workspace was resolved from. */
+  profile?: string;
+  /** Who is looking: the signed-in viewer (deployed), the CLI login (local), or the capture's user (replay). */
+  user?: string;
+  /** The identity the Databricks APIs are called as, when it isn't `user` (deployed with JOBS_CONSOLE_AUTH=app: the app's service principal). */
+  readAs?: string;
 }
 
 export interface RunsResponse {

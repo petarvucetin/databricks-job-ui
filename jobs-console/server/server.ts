@@ -8,6 +8,7 @@ import { listRuns, type HandlerResult } from './api/listRuns';
 import { taskLog } from './api/taskLog';
 import { getRun } from './api/getRun';
 import { newSessionId, registerDiag, registerNoDiag } from './api/diag';
+import { createSdkApi, resolveDefaultHost } from './data/live/api';
 
 const provider = selectRunSource(process.env);
 const live = provider.kind === 'live' ? (provider as LiveProvider) : undefined;
@@ -56,12 +57,49 @@ function serve(req: Request, res: Response, next: NextFunction, route: string, h
 
 const mode: DataMode = { source: provider.kind, auth: provider.auth, capture: !!store };
 
+/**
+ * Which workspace the top bar names. Deployed: DATABRICKS_HOST (set by Databricks Apps, sometimes without a scheme).
+ * Local: the CLI profile's host. Replay: the capture's workspace. Mock: none.
+ */
+let workspace: Promise<Pick<DataMode, 'workspace' | 'profile'>> | undefined;
+async function monitoredWorkspace(): Promise<Pick<DataMode, 'workspace' | 'profile'>> {
+  if (provider.kind === 'replay') return { workspace: (provider as { file?: { workspace?: { host?: string } } }).file?.workspace?.host || undefined };
+  if (provider.kind !== 'live') return {};
+  const env = process.env.DATABRICKS_HOST;
+  if (env) return { workspace: (/^https?:\/\//.test(env) ? new URL(env) : new URL(`https://${env}`)).origin };
+  return { workspace: await resolveDefaultHost(), profile: process.env.DATABRICKS_CONFIG_PROFILE || undefined };
+}
+
+/** The SDK default chain's own identity: the CLI login locally, the app's service principal on Databricks Apps. Cached; retried after a failure. */
+let defaultIdentity: Promise<string | undefined> | undefined;
+function selfName(): Promise<string | undefined> {
+  defaultIdentity ??= createSdkApi({})
+    .me()
+    // People by email (matches the deployed viewer header); service principals by display name (their userName is a GUID).
+    .then((u) => (u.userName?.includes('@') ? u.userName : u.displayName || u.userName) || undefined)
+    .catch(() => {
+      defaultIdentity = undefined;
+      return undefined;
+    });
+  return defaultIdentity;
+}
+
+/** Who is looking, and (when different) who the APIs are called as. See DataMode.user / readAs. */
+async function identity(viewer: string | undefined): Promise<Pick<DataMode, 'user' | 'readAs'>> {
+  if (provider.kind === 'replay') return { user: (provider as { file?: { workspace?: { user?: string } } }).file?.workspace?.user || undefined };
+  if (provider.kind !== 'live') return {};
+  if (!viewer) return { user: await selfName() }; // local: the CLI login is both
+  return provider.auth === 'app' ? { user: viewer, readAs: await selfName() } : { user: viewer };
+}
+
 createApp({
   plugins: [server()],
   onPluginsReady(appkit) {
     appkit.server.extend((app) => {
-      app.get('/api/mode', (_req, res) => {
-        res.json(mode);
+      app.get('/api/mode', (req, res, next) => {
+        Promise.all([(workspace ??= monitoredWorkspace()), identity(header(req, 'x-forwarded-email'))])
+          .then(([ws, who]) => res.json({ ...mode, ...ws, ...who }))
+          .catch(next);
       });
       app.get('/api/runs', (req, res, next) => {
         serve(req, res, next, '/api/runs', (source) => listRuns(source, req.query));

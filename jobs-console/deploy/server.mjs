@@ -62,7 +62,7 @@ var __toCommonJS = (mod) => __hasOwnProp.call(mod, "module.exports") ? mod["modu
 var __require = /* @__PURE__ */ createRequire(import.meta.url);
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/shared/src/sql/helpers.js
+//#region node_modules/@databricks/appkit/dist/shared/src/sql/helpers.js
 const NUMERIC_LITERAL_RE = /^-?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
 const INTEGER_LITERAL_RE = /^-?\d+$/;
 const INT_MIN = -(2n ** 31n);
@@ -272,7 +272,7 @@ function isSQLTypeMarker(value) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/utils/path-exclusions.js
+//#region node_modules/@databricks/appkit/dist/utils/path-exclusions.js
 /**
 * Paths and patterns to exclude from tracing and logging.
 * Requests matching these will not create spans or WideEvents.
@@ -336,7 +336,7 @@ function shouldExcludePath(path) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/logging/sampling.js
+//#region node_modules/@databricks/appkit/dist/logging/sampling.js
 /**
 * Get sample rate from environment variable or default to 1.0 (100%)
 */
@@ -388,7 +388,7 @@ function shouldSample(event, config = DEFAULT_SAMPLING_CONFIG) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/logging/wide-event.js
+//#region node_modules/@databricks/appkit/dist/logging/wide-event.js
 /**
 * WideEvent
 * - Represents a single event for a request
@@ -555,7 +555,7 @@ var WideEvent = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api-logs/build/src/types/LogRecord.js
+//#region node_modules/@opentelemetry/api-logs/build/src/types/LogRecord.js
 var require_LogRecord = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SeverityNumber = void 0;
@@ -589,7 +589,7 @@ var require_LogRecord = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api-logs/build/src/NoopLogger.js
+//#region node_modules/@opentelemetry/api-logs/build/src/NoopLogger.js
 var require_NoopLogger = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createNoopLogger = exports.NOOP_LOGGER = exports.NoopLogger = void 0;
@@ -611,7 +611,7 @@ var require_NoopLogger = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api-logs/build/src/internal/global-utils.js
+//#region node_modules/@opentelemetry/api-logs/build/src/internal/global-utils.js
 var require_global_utils = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.API_BACKWARDS_COMPATIBILITY_VERSION = exports.makeGetter = exports._global = exports.GLOBAL_LOGS_API_KEY = void 0;
@@ -640,7 +640,7 @@ var require_global_utils = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api-logs/build/src/NoopLoggerProvider.js
+//#region node_modules/@opentelemetry/api-logs/build/src/NoopLoggerProvider.js
 var require_NoopLoggerProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.NOOP_LOGGER_PROVIDER = exports.NoopLoggerProvider = void 0;
@@ -655,7 +655,7 @@ var require_NoopLoggerProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api-logs/build/src/ProxyLogger.js
+//#region node_modules/@opentelemetry/api-logs/build/src/ProxyLogger.js
 var require_ProxyLogger = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ProxyLogger = void 0;
@@ -694,7 +694,7 @@ var require_ProxyLogger = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api-logs/build/src/ProxyLoggerProvider.js
+//#region node_modules/@opentelemetry/api-logs/build/src/ProxyLoggerProvider.js
 var require_ProxyLoggerProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ProxyLoggerProvider = void 0;
@@ -733,7 +733,7 @@ var require_ProxyLoggerProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api-logs/build/src/api/logs.js
+//#region node_modules/@opentelemetry/api-logs/build/src/api/logs.js
 var require_logs$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LogsAPI = void 0;
@@ -789,7 +789,7 @@ var require_logs$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api-logs/build/src/index.js
+//#region node_modules/@opentelemetry/api-logs/build/src/index.js
 var require_src$88 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.logs = exports.createNoopLogger = exports.SeverityNumber = void 0;
@@ -812,7 +812,7 @@ var require_src$88 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/logging/wide-event-emitter.js
+//#region node_modules/@databricks/appkit/dist/logging/wide-event-emitter.js
 var import_src$15 = require_src$88();
 /**
 * Emits WideEvents to OpenTelemetry as structured logs
@@ -915,33 +915,33 @@ var WideEventEmitter = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/platform/node/globalThis.js
+//#region node_modules/@opentelemetry/api/build/esm/platform/node/globalThis.js
 var _globalThis;
 var init_globalThis = __esmMin((() => {
 	_globalThis = typeof globalThis === "object" ? globalThis : global;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/platform/node/index.js
+//#region node_modules/@opentelemetry/api/build/esm/platform/node/index.js
 var init_node = __esmMin((() => {
 	init_globalThis();
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/platform/index.js
+//#region node_modules/@opentelemetry/api/build/esm/platform/index.js
 var init_platform = __esmMin((() => {
 	init_node();
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/version.js
+//#region node_modules/@opentelemetry/api/build/esm/version.js
 var VERSION$1;
 var init_version$1 = __esmMin((() => {
 	VERSION$1 = "1.9.0";
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/internal/semver.js
+//#region node_modules/@opentelemetry/api/build/esm/internal/semver.js
 /**
 * Create a function to test an API version to see if it is compatible with the provided ownVersion.
 *
@@ -1011,7 +1011,7 @@ var init_semver = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/internal/global-utils.js
+//#region node_modules/@opentelemetry/api/build/esm/internal/global-utils.js
 function registerGlobal(type, instance, diag, allowOverride) {
 	var _a;
 	if (allowOverride === void 0) allowOverride = false;
@@ -1052,7 +1052,7 @@ var init_global_utils = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/diag/ComponentLogger.js
+//#region node_modules/@opentelemetry/api/build/esm/diag/ComponentLogger.js
 function logProxy(funcName, namespace, args) {
 	var logger = getGlobal("diag");
 	if (!logger) return;
@@ -1122,7 +1122,7 @@ var init_ComponentLogger = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/diag/types.js
+//#region node_modules/@opentelemetry/api/build/esm/diag/types.js
 var DiagLogLevel;
 var init_types$1 = __esmMin((() => {
 	;
@@ -1148,7 +1148,7 @@ var init_types$1 = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/diag/internal/logLevelLogger.js
+//#region node_modules/@opentelemetry/api/build/esm/diag/internal/logLevelLogger.js
 function createLogLevelDiagLogger(maxLevel, logger) {
 	if (maxLevel < DiagLogLevel.NONE) maxLevel = DiagLogLevel.NONE;
 	else if (maxLevel > DiagLogLevel.ALL) maxLevel = DiagLogLevel.ALL;
@@ -1171,7 +1171,7 @@ var init_logLevelLogger = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/api/diag.js
+//#region node_modules/@opentelemetry/api/build/esm/api/diag.js
 var __read$3, __spreadArray$2, API_NAME$4, DiagAPI;
 var init_diag = __esmMin((() => {
 	init_ComponentLogger();
@@ -1262,7 +1262,7 @@ var init_diag = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/baggage/internal/baggage-impl.js
+//#region node_modules/@opentelemetry/api/build/esm/baggage/internal/baggage-impl.js
 var __read$2, __values$1, BaggageImpl;
 var init_baggage_impl = __esmMin((() => {
 	__read$2 = void 0 && (void 0).__read || function(o, n) {
@@ -1348,14 +1348,14 @@ var init_baggage_impl = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/baggage/internal/symbol.js
+//#region node_modules/@opentelemetry/api/build/esm/baggage/internal/symbol.js
 var baggageEntryMetadataSymbol;
 var init_symbol = __esmMin((() => {
 	baggageEntryMetadataSymbol = Symbol("BaggageEntryMetadata");
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/baggage/utils.js
+//#region node_modules/@opentelemetry/api/build/esm/baggage/utils.js
 /**
 * Create a new Baggage with optional entries
 *
@@ -1392,7 +1392,7 @@ var init_utils$2 = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/context/context.js
+//#region node_modules/@opentelemetry/api/build/esm/context/context.js
 /** Get a key to uniquely identify a context value */
 function createContextKey(description) {
 	return Symbol.for(description);
@@ -1428,7 +1428,7 @@ var init_context$1 = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/diag/consoleLogger.js
+//#region node_modules/@opentelemetry/api/build/esm/diag/consoleLogger.js
 var consoleMap, DiagConsoleLogger;
 var init_consoleLogger = __esmMin((() => {
 	consoleMap = [
@@ -1473,7 +1473,7 @@ var init_consoleLogger = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/metrics/NoopMeter.js
+//#region node_modules/@opentelemetry/api/build/esm/metrics/NoopMeter.js
 /**
 * Create a no-op Meter
 */
@@ -1628,7 +1628,7 @@ var init_NoopMeter = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/metrics/Metric.js
+//#region node_modules/@opentelemetry/api/build/esm/metrics/Metric.js
 var ValueType;
 var init_Metric = __esmMin((() => {
 	;
@@ -1639,7 +1639,7 @@ var init_Metric = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/propagation/TextMapPropagator.js
+//#region node_modules/@opentelemetry/api/build/esm/propagation/TextMapPropagator.js
 var defaultTextMapGetter, defaultTextMapSetter;
 var init_TextMapPropagator = __esmMin((() => {
 	defaultTextMapGetter = {
@@ -1659,7 +1659,7 @@ var init_TextMapPropagator = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/context/NoopContextManager.js
+//#region node_modules/@opentelemetry/api/build/esm/context/NoopContextManager.js
 var __read$1, __spreadArray$1, NoopContextManager;
 var init_NoopContextManager = __esmMin((() => {
 	init_context$1();
@@ -1713,7 +1713,7 @@ var init_NoopContextManager = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/api/context.js
+//#region node_modules/@opentelemetry/api/build/esm/api/context.js
 var __read, __spreadArray, API_NAME$3, NOOP_CONTEXT_MANAGER, ContextAPI;
 var init_context = __esmMin((() => {
 	init_NoopContextManager();
@@ -1809,7 +1809,7 @@ var init_context = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/trace_flags.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/trace_flags.js
 var TraceFlags;
 var init_trace_flags = __esmMin((() => {
 	;
@@ -1822,7 +1822,7 @@ var init_trace_flags = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/invalid-span-constants.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/invalid-span-constants.js
 var INVALID_SPANID, INVALID_TRACEID, INVALID_SPAN_CONTEXT;
 var init_invalid_span_constants = __esmMin((() => {
 	init_trace_flags();
@@ -1836,7 +1836,7 @@ var init_invalid_span_constants = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/NonRecordingSpan.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/NonRecordingSpan.js
 var NonRecordingSpan$1;
 var init_NonRecordingSpan = __esmMin((() => {
 	init_invalid_span_constants();
@@ -1879,7 +1879,7 @@ var init_NonRecordingSpan = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/context-utils.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/context-utils.js
 /**
 * Return the span if one exists
 *
@@ -1939,7 +1939,7 @@ var init_context_utils = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/spancontext-utils.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/spancontext-utils.js
 function isValidTraceId(traceId) {
 	return VALID_TRACEID_REGEX.test(traceId) && traceId !== INVALID_TRACEID;
 }
@@ -1971,7 +1971,7 @@ var init_spancontext_utils = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/NoopTracer.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/NoopTracer.js
 function isSpanContext(spanContext) {
 	return typeof spanContext === "object" && typeof spanContext["spanId"] === "string" && typeof spanContext["traceId"] === "string" && typeof spanContext["traceFlags"] === "number";
 }
@@ -2015,7 +2015,7 @@ var init_NoopTracer = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracer.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/ProxyTracer.js
 var NOOP_TRACER$1, ProxyTracer;
 var init_ProxyTracer = __esmMin((() => {
 	init_NoopTracer();
@@ -2050,7 +2050,7 @@ var init_ProxyTracer = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/NoopTracerProvider.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/NoopTracerProvider.js
 var NoopTracerProvider;
 var init_NoopTracerProvider = __esmMin((() => {
 	init_NoopTracer();
@@ -2064,7 +2064,7 @@ var init_NoopTracerProvider = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/ProxyTracerProvider.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/ProxyTracerProvider.js
 var NOOP_TRACER_PROVIDER, ProxyTracerProvider;
 var init_ProxyTracerProvider = __esmMin((() => {
 	init_ProxyTracer();
@@ -2098,7 +2098,7 @@ var init_ProxyTracerProvider = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/SamplingResult.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/SamplingResult.js
 var SamplingDecision$1;
 var init_SamplingResult = __esmMin((() => {
 	;
@@ -2122,7 +2122,7 @@ var init_SamplingResult = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/span_kind.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/span_kind.js
 var SpanKind;
 var init_span_kind = __esmMin((() => {
 	;
@@ -2155,7 +2155,7 @@ var init_span_kind = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/status.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/status.js
 var SpanStatusCode;
 var init_status = __esmMin((() => {
 	;
@@ -2177,7 +2177,7 @@ var init_status = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/internal/tracestate-validators.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/internal/tracestate-validators.js
 /**
 * Key is opaque string up to 256 characters printable. It MUST begin with a
 * lowercase letter, and can only contain lowercase letters a-z, digits 0-9,
@@ -2207,7 +2207,7 @@ var init_tracestate_validators = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/internal/tracestate-impl.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/internal/tracestate-impl.js
 var MAX_TRACE_STATE_ITEMS, MAX_TRACE_STATE_LEN, LIST_MEMBERS_SEPARATOR, LIST_MEMBER_KEY_VALUE_SPLITTER, TraceStateImpl;
 var init_tracestate_impl = __esmMin((() => {
 	init_tracestate_validators();
@@ -2268,7 +2268,7 @@ var init_tracestate_impl = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace/internal/utils.js
+//#region node_modules/@opentelemetry/api/build/esm/trace/internal/utils.js
 function createTraceState(rawTraceState) {
 	return new TraceStateImpl(rawTraceState);
 }
@@ -2277,7 +2277,7 @@ var init_utils$1 = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/context-api.js
+//#region node_modules/@opentelemetry/api/build/esm/context-api.js
 var context;
 var init_context_api = __esmMin((() => {
 	init_context();
@@ -2285,7 +2285,7 @@ var init_context_api = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/diag-api.js
+//#region node_modules/@opentelemetry/api/build/esm/diag-api.js
 var diag;
 var init_diag_api = __esmMin((() => {
 	init_diag();
@@ -2293,7 +2293,7 @@ var init_diag_api = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/metrics/NoopMeterProvider.js
+//#region node_modules/@opentelemetry/api/build/esm/metrics/NoopMeterProvider.js
 var NoopMeterProvider, NOOP_METER_PROVIDER;
 var init_NoopMeterProvider = __esmMin((() => {
 	init_NoopMeter();
@@ -2308,7 +2308,7 @@ var init_NoopMeterProvider = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/api/metrics.js
+//#region node_modules/@opentelemetry/api/build/esm/api/metrics.js
 var API_NAME$2, MetricsAPI;
 var init_metrics = __esmMin((() => {
 	init_NoopMeterProvider();
@@ -2351,7 +2351,7 @@ var init_metrics = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/metrics-api.js
+//#region node_modules/@opentelemetry/api/build/esm/metrics-api.js
 var metrics;
 var init_metrics_api = __esmMin((() => {
 	init_metrics();
@@ -2359,7 +2359,7 @@ var init_metrics_api = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/propagation/NoopTextMapPropagator.js
+//#region node_modules/@opentelemetry/api/build/esm/propagation/NoopTextMapPropagator.js
 var NoopTextMapPropagator;
 var init_NoopTextMapPropagator = __esmMin((() => {
 	NoopTextMapPropagator = function() {
@@ -2378,7 +2378,7 @@ var init_NoopTextMapPropagator = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/baggage/context-helpers.js
+//#region node_modules/@opentelemetry/api/build/esm/baggage/context-helpers.js
 /**
 * Retrieve the current baggage from the given context
 *
@@ -2421,7 +2421,7 @@ var init_context_helpers = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/api/propagation.js
+//#region node_modules/@opentelemetry/api/build/esm/api/propagation.js
 var API_NAME$1, NOOP_TEXT_MAP_PROPAGATOR, PropagationAPI;
 var init_propagation = __esmMin((() => {
 	init_global_utils();
@@ -2494,7 +2494,7 @@ var init_propagation = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/propagation-api.js
+//#region node_modules/@opentelemetry/api/build/esm/propagation-api.js
 var propagation;
 var init_propagation_api = __esmMin((() => {
 	init_propagation();
@@ -2502,7 +2502,7 @@ var init_propagation_api = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/api/trace.js
+//#region node_modules/@opentelemetry/api/build/esm/api/trace.js
 var API_NAME, TraceAPI;
 var init_trace$1 = __esmMin((() => {
 	init_global_utils();
@@ -2561,7 +2561,7 @@ var init_trace$1 = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/trace-api.js
+//#region node_modules/@opentelemetry/api/build/esm/trace-api.js
 var trace;
 var init_trace_api = __esmMin((() => {
 	init_trace$1();
@@ -2569,7 +2569,7 @@ var init_trace_api = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/api/build/esm/index.js
+//#region node_modules/@opentelemetry/api/build/esm/index.js
 var esm_exports$2 = /* @__PURE__ */ __exportAll({
 	DiagConsoleLogger: () => DiagConsoleLogger,
 	DiagLogLevel: () => DiagLogLevel,
@@ -2633,7 +2633,7 @@ var init_esm$2 = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/obug/dist/core.js
+//#region node_modules/obug/dist/core.js
 init_esm$2();
 function coerce$1(value) {
 	if (value instanceof Error) return value.stack || value.message;
@@ -2748,7 +2748,7 @@ function enabled(name) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/obug/dist/node.js
+//#region node_modules/obug/dist/node.js
 const colors = process.stderr.getColorDepth && process.stderr.getColorDepth() > 2 ? [
 	20,
 	21,
@@ -2890,7 +2890,7 @@ function createDebug(namespace, options) {
 enable(process.env.DEBUG || "");
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/logging/logger.js
+//#region node_modules/@databricks/appkit/dist/logging/logger.js
 const eventStorage = new AsyncLocalStorage();
 const eventsByRequest = /* @__PURE__ */ new WeakMap();
 const emitter = new WideEventEmitter();
@@ -3059,7 +3059,7 @@ function createLogger(scope) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/errors/base.js
+//#region node_modules/@databricks/appkit/dist/errors/base.js
 /** Fields that should be redacted in logs/serialization for security */
 const SENSITIVE_FIELD_PATTERNS = [
 	/token/i,
@@ -3167,7 +3167,7 @@ var AppKitError = class extends Error {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/picocolors/picocolors.js
+//#region node_modules/picocolors/picocolors.js
 var require_picocolors = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	let p = process || {}, argv = p.argv || [], env = p.env || {};
 	let isColorSupported = !(!!env.NO_COLOR || argv.includes("--no-color")) && (!!env.FORCE_COLOR || argv.includes("--color") || p.platform === "win32" || (p.stdout || {}).isTTY && env.TERM !== "dumb" || !!env.CI);
@@ -3236,7 +3236,7 @@ var require_picocolors = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/errors/configuration.js
+//#region node_modules/@databricks/appkit/dist/errors/configuration.js
 var import_picocolors = /* @__PURE__ */ __toESM(require_picocolors(), 1);
 function authSetupVerbose() {
 	return process.env.APPKIT_VERBOSE_AUTH_ERRORS === "1" || process.env.APPKIT_VERBOSE_AUTH_ERRORS === "true";
@@ -3331,7 +3331,7 @@ var ConfigurationError$1 = class ConfigurationError extends AppKitError {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/errors/authentication.js
+//#region node_modules/@databricks/appkit/dist/errors/authentication.js
 /**
 * Error thrown when authentication fails.
 * Use for missing tokens, invalid credentials, or authorization failures.
@@ -3376,7 +3376,7 @@ var AuthenticationError = class AuthenticationError extends AppKitError {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/errors/connection.js
+//#region node_modules/@databricks/appkit/dist/errors/connection.js
 /**
 * Error thrown when a connection or network operation fails.
 * Use for database pool errors, API failures, timeouts, etc.
@@ -3427,7 +3427,7 @@ var ConnectionError = class ConnectionError extends AppKitError {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/errors/execution.js
+//#region node_modules/@databricks/appkit/dist/errors/execution.js
 /**
 * Error thrown when an operation execution fails.
 * Use for statement failures, canceled operations, or unexpected states.
@@ -3510,7 +3510,7 @@ var ExecutionError = class ExecutionError extends AppKitError {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/errors/initialization.js
+//#region node_modules/@databricks/appkit/dist/errors/initialization.js
 /**
 * Error thrown when a service or component is not properly initialized.
 * Use when accessing services before they are ready.
@@ -3549,7 +3549,7 @@ var InitializationError = class InitializationError extends AppKitError {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/errors/server.js
+//#region node_modules/@databricks/appkit/dist/errors/server.js
 /**
 * Error thrown when server lifecycle operations fail.
 * Use for server start/stop issues, configuration conflicts, etc.
@@ -3584,7 +3584,7 @@ var ServerError = class ServerError extends AppKitError {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/errors/tunnel.js
+//#region node_modules/@databricks/appkit/dist/errors/tunnel.js
 /**
 * Error thrown when remote tunnel operations fail.
 * Use for tunnel connection issues, message parsing failures, etc.
@@ -3632,7 +3632,7 @@ var TunnelError = class TunnelError extends AppKitError {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/errors/validation.js
+//#region node_modules/@databricks/appkit/dist/errors/validation.js
 /**
 * Error thrown when input validation fails.
 * Use for invalid parameters, missing required fields, or type mismatches.
@@ -3674,7 +3674,7 @@ var ValidationError$1 = class ValidationError extends AppKitError {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/reflect-metadata/Reflect.js
+//#region node_modules/reflect-metadata/Reflect.js
 var require_Reflect = /* @__PURE__ */ __commonJSMin((() => {
 	/*! *****************************************************************************
 	Copyright (C) Microsoft. All rights reserved.
@@ -4900,7 +4900,7 @@ var require_Reflect = /* @__PURE__ */ __commonJSMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/Redactor.js
+//#region node_modules/@databricks/sdk-experimental/dist/Redactor.js
 var require_Redactor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.defaultRedactor = exports.Redactor = void 0;
@@ -4938,7 +4938,7 @@ var require_Redactor = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/logging/DefaultLogger.js
+//#region node_modules/@databricks/sdk-experimental/dist/logging/DefaultLogger.js
 var require_DefaultLogger = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DefaultLogger = void 0;
@@ -4963,7 +4963,7 @@ var require_DefaultLogger = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/logging/NamedLogger.js
+//#region node_modules/@databricks/sdk-experimental/dist/logging/NamedLogger.js
 var require_NamedLogger = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.NamedLogger = exports.defaultOpts = exports.LEVELS = void 0;
@@ -5060,7 +5060,7 @@ var require_NamedLogger = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/context/Context.js
+//#region node_modules/@databricks/sdk-experimental/dist/context/Context.js
 var require_Context = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Context = void 0;
@@ -5103,7 +5103,7 @@ var require_Context = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/context/contextDecorator.js
+//#region node_modules/@databricks/sdk-experimental/dist/context/contextDecorator.js
 var require_contextDecorator = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.context = context;
@@ -5123,7 +5123,7 @@ var require_contextDecorator = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/context/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/context/index.js
 var require_context = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -5148,7 +5148,7 @@ var require_context = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/logging/loggingDecorators.js
+//#region node_modules/@databricks/sdk-experimental/dist/logging/loggingDecorators.js
 var require_loggingDecorators = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.withLogContext = withLogContext;
@@ -5182,7 +5182,7 @@ var require_loggingDecorators = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/logging/ExposedLoggers.js
+//#region node_modules/@databricks/sdk-experimental/dist/logging/ExposedLoggers.js
 var require_ExposedLoggers = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ExposedLoggers = void 0;
@@ -5190,13 +5190,13 @@ var require_ExposedLoggers = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/logging/types.js
+//#region node_modules/@databricks/sdk-experimental/dist/logging/types.js
 var require_types$15 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/logging/utils.js
+//#region node_modules/@databricks/sdk-experimental/dist/logging/utils.js
 var require_utils$47 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.liftAllErrorProps = liftAllErrorProps;
@@ -5213,7 +5213,7 @@ var require_utils$47 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/logging/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/logging/index.js
 var require_logging$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -5270,7 +5270,7 @@ var require_logging$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/HostType.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/HostType.js
 var require_HostType = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ConfigType = exports.HostType = void 0;
@@ -5303,7 +5303,7 @@ var require_HostType = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/retries/Time.js
+//#region node_modules/@databricks/sdk-experimental/dist/retries/Time.js
 var require_Time = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TimeUnits = void 0;
@@ -5354,7 +5354,7 @@ var require_Time = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/retries/retries.js
+//#region node_modules/@databricks/sdk-experimental/dist/retries/retries.js
 var require_retries = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -5471,7 +5471,7 @@ var require_retries = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apierr.js
+//#region node_modules/@databricks/sdk-experimental/dist/apierr.js
 var require_apierr = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ApiError = exports.HttpError = void 0;
@@ -5569,7 +5569,7 @@ var require_apierr = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/fetch.js
+//#region node_modules/@databricks/sdk-experimental/dist/fetch.js
 var require_fetch$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __importDefault = exports && exports.__importDefault || function(mod) {
 		return mod && mod.__esModule ? mod : { "default": mod };
@@ -5777,7 +5777,7 @@ var require_fetch$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/package.json
+//#region node_modules/@databricks/sdk-experimental/package.json
 var require_package$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = {
 		"name": "@databricks/sdk-experimental",
@@ -5883,7 +5883,7 @@ var require_package$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/api-client.js
+//#region node_modules/@databricks/sdk-experimental/dist/api-client.js
 var require_api_client = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -6096,7 +6096,7 @@ var require_api_client = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/execUtils.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/execUtils.js
 var require_execUtils = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -6170,7 +6170,7 @@ var require_execUtils = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/ConfigAttributes.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/ConfigAttributes.js
 var require_ConfigAttributes = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ConfigAttributes = exports.EnvironmentLoader = exports.ConfigAttribute = void 0;
@@ -6296,7 +6296,7 @@ var require_ConfigAttributes = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/Token.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/Token.js
 var require_Token = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Token = void 0;
@@ -6331,7 +6331,7 @@ var require_Token = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/BasicCredentials.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/BasicCredentials.js
 var require_BasicCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BasicCredentials = void 0;
@@ -6360,7 +6360,7 @@ var require_BasicCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/oauth/Client.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/oauth/Client.js
 var require_Client = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -6466,7 +6466,7 @@ var require_Client = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/oauth/OidcEndpoints.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/oauth/OidcEndpoints.js
 var require_OidcEndpoints = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OidcEndpoints = void 0;
@@ -6485,7 +6485,7 @@ var require_OidcEndpoints = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/Azure.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/Azure.js
 var require_Azure = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getAzureEnvironment = getAzureEnvironment;
@@ -6579,7 +6579,7 @@ var require_Azure = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/AzureCliCredentials.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/AzureCliCredentials.js
 var require_AzureCliCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AzureCliCredentials = void 0;
@@ -6691,7 +6691,7 @@ var require_AzureCliCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/internal/constants.js
+//#region node_modules/semver/internal/constants.js
 var require_constants$10 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SEMVER_SPEC_VERSION = "2.0.0";
 	const MAX_LENGTH = 256;
@@ -6720,14 +6720,14 @@ var require_constants$10 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/internal/debug.js
+//#region node_modules/semver/internal/debug.js
 var require_debug$5 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const debug = typeof process === "object" && process.env && process.env.NODE_DEBUG && /\bsemver\b/i.test(process.env.NODE_DEBUG) ? (...args) => console.error("SEMVER", ...args) : () => {};
 	module.exports = debug;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/internal/re.js
+//#region node_modules/semver/internal/re.js
 var require_re$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { MAX_SAFE_COMPONENT_LENGTH, MAX_SAFE_BUILD_LENGTH, MAX_LENGTH } = require_constants$10();
 	const debug = require_debug$5();
@@ -6807,7 +6807,7 @@ var require_re$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/internal/parse-options.js
+//#region node_modules/semver/internal/parse-options.js
 var require_parse_options$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const looseOption = Object.freeze({ loose: true });
 	const emptyOpts = Object.freeze({});
@@ -6820,7 +6820,7 @@ var require_parse_options$1 = /* @__PURE__ */ __commonJSMin(((exports, module) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/internal/identifiers.js
+//#region node_modules/semver/internal/identifiers.js
 var require_identifiers$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const numeric = /^[0-9]+$/;
 	const compareIdentifiers = (a, b) => {
@@ -6841,7 +6841,7 @@ var require_identifiers$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/classes/semver.js
+//#region node_modules/semver/classes/semver.js
 var require_semver$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const debug = require_debug$5();
 	const { MAX_LENGTH, MAX_SAFE_INTEGER } = require_constants$10();
@@ -7021,7 +7021,7 @@ var require_semver$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/parse.js
+//#region node_modules/semver/functions/parse.js
 var require_parse$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$4();
 	const parse = (version, options, throwErrors = false) => {
@@ -7037,7 +7037,7 @@ var require_parse$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/valid.js
+//#region node_modules/semver/functions/valid.js
 var require_valid$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const parse = require_parse$4();
 	const valid = (version, options) => {
@@ -7048,7 +7048,7 @@ var require_valid$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/clean.js
+//#region node_modules/semver/functions/clean.js
 var require_clean$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const parse = require_parse$4();
 	const clean = (version, options) => {
@@ -7059,7 +7059,7 @@ var require_clean$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/inc.js
+//#region node_modules/semver/functions/inc.js
 var require_inc$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$4();
 	const inc = (version, release, options, identifier, identifierBase) => {
@@ -7078,7 +7078,7 @@ var require_inc$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/diff.js
+//#region node_modules/semver/functions/diff.js
 var require_diff$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const parse = require_parse$4();
 	const diff = (version1, version2) => {
@@ -7107,7 +7107,7 @@ var require_diff$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/major.js
+//#region node_modules/semver/functions/major.js
 var require_major$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$4();
 	const major = (a, loose) => new SemVer(a, loose).major;
@@ -7115,7 +7115,7 @@ var require_major$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/minor.js
+//#region node_modules/semver/functions/minor.js
 var require_minor$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$4();
 	const minor = (a, loose) => new SemVer(a, loose).minor;
@@ -7123,7 +7123,7 @@ var require_minor$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/patch.js
+//#region node_modules/semver/functions/patch.js
 var require_patch$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$4();
 	const patch = (a, loose) => new SemVer(a, loose).patch;
@@ -7131,7 +7131,7 @@ var require_patch$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/prerelease.js
+//#region node_modules/semver/functions/prerelease.js
 var require_prerelease$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const parse = require_parse$4();
 	const prerelease = (version, options) => {
@@ -7142,7 +7142,7 @@ var require_prerelease$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/compare.js
+//#region node_modules/semver/functions/compare.js
 var require_compare$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$4();
 	const compare = (a, b, loose) => new SemVer(a, loose).compare(new SemVer(b, loose));
@@ -7150,7 +7150,7 @@ var require_compare$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/rcompare.js
+//#region node_modules/semver/functions/rcompare.js
 var require_rcompare$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare$1();
 	const rcompare = (a, b, loose) => compare(b, a, loose);
@@ -7158,7 +7158,7 @@ var require_rcompare$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/compare-loose.js
+//#region node_modules/semver/functions/compare-loose.js
 var require_compare_loose$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare$1();
 	const compareLoose = (a, b) => compare(a, b, true);
@@ -7166,7 +7166,7 @@ var require_compare_loose$1 = /* @__PURE__ */ __commonJSMin(((exports, module) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/compare-build.js
+//#region node_modules/semver/functions/compare-build.js
 var require_compare_build$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$4();
 	const compareBuild = (a, b, loose) => {
@@ -7178,7 +7178,7 @@ var require_compare_build$1 = /* @__PURE__ */ __commonJSMin(((exports, module) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/sort.js
+//#region node_modules/semver/functions/sort.js
 var require_sort$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compareBuild = require_compare_build$1();
 	const sort = (list, loose) => list.sort((a, b) => compareBuild(a, b, loose));
@@ -7186,7 +7186,7 @@ var require_sort$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/rsort.js
+//#region node_modules/semver/functions/rsort.js
 var require_rsort$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compareBuild = require_compare_build$1();
 	const rsort = (list, loose) => list.sort((a, b) => compareBuild(b, a, loose));
@@ -7194,7 +7194,7 @@ var require_rsort$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/gt.js
+//#region node_modules/semver/functions/gt.js
 var require_gt$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare$1();
 	const gt = (a, b, loose) => compare(a, b, loose) > 0;
@@ -7202,7 +7202,7 @@ var require_gt$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/lt.js
+//#region node_modules/semver/functions/lt.js
 var require_lt$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare$1();
 	const lt = (a, b, loose) => compare(a, b, loose) < 0;
@@ -7210,7 +7210,7 @@ var require_lt$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/eq.js
+//#region node_modules/semver/functions/eq.js
 var require_eq$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare$1();
 	const eq = (a, b, loose) => compare(a, b, loose) === 0;
@@ -7218,7 +7218,7 @@ var require_eq$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/neq.js
+//#region node_modules/semver/functions/neq.js
 var require_neq$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare$1();
 	const neq = (a, b, loose) => compare(a, b, loose) !== 0;
@@ -7226,7 +7226,7 @@ var require_neq$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/gte.js
+//#region node_modules/semver/functions/gte.js
 var require_gte$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare$1();
 	const gte = (a, b, loose) => compare(a, b, loose) >= 0;
@@ -7234,7 +7234,7 @@ var require_gte$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/lte.js
+//#region node_modules/semver/functions/lte.js
 var require_lte$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare$1();
 	const lte = (a, b, loose) => compare(a, b, loose) <= 0;
@@ -7242,7 +7242,7 @@ var require_lte$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/cmp.js
+//#region node_modules/semver/functions/cmp.js
 var require_cmp$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const eq = require_eq$1();
 	const neq = require_neq$1();
@@ -7275,7 +7275,7 @@ var require_cmp$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/coerce.js
+//#region node_modules/semver/functions/coerce.js
 var require_coerce$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$4();
 	const parse = require_parse$4();
@@ -7304,7 +7304,7 @@ var require_coerce$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/internal/lrucache.js
+//#region node_modules/semver/internal/lrucache.js
 var require_lrucache$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var LRUCache = class {
 		constructor() {
@@ -7338,7 +7338,7 @@ var require_lrucache$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/classes/range.js
+//#region node_modules/semver/classes/range.js
 var require_range$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SPACE_CHARACTERS = /\s+/g;
 	var Range = class Range {
@@ -7612,7 +7612,7 @@ var require_range$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/classes/comparator.js
+//#region node_modules/semver/classes/comparator.js
 var require_comparator$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const ANY = Symbol("SemVer ANY");
 	var Comparator = class Comparator {
@@ -7684,7 +7684,7 @@ var require_comparator$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/functions/satisfies.js
+//#region node_modules/semver/functions/satisfies.js
 var require_satisfies$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const Range = require_range$2();
 	const satisfies = (version, range, options) => {
@@ -7699,7 +7699,7 @@ var require_satisfies$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/ranges/to-comparators.js
+//#region node_modules/semver/ranges/to-comparators.js
 var require_to_comparators$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const Range = require_range$2();
 	const toComparators = (range, options) => new Range(range, options).set.map((comp) => comp.map((c) => c.value).join(" ").trim().split(" "));
@@ -7707,7 +7707,7 @@ var require_to_comparators$1 = /* @__PURE__ */ __commonJSMin(((exports, module) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/ranges/max-satisfying.js
+//#region node_modules/semver/ranges/max-satisfying.js
 var require_max_satisfying$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$4();
 	const Range = require_range$2();
@@ -7734,7 +7734,7 @@ var require_max_satisfying$1 = /* @__PURE__ */ __commonJSMin(((exports, module) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/ranges/min-satisfying.js
+//#region node_modules/semver/ranges/min-satisfying.js
 var require_min_satisfying$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$4();
 	const Range = require_range$2();
@@ -7761,7 +7761,7 @@ var require_min_satisfying$1 = /* @__PURE__ */ __commonJSMin(((exports, module) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/ranges/min-version.js
+//#region node_modules/semver/ranges/min-version.js
 var require_min_version$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$4();
 	const Range = require_range$2();
@@ -7801,7 +7801,7 @@ var require_min_version$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/ranges/valid.js
+//#region node_modules/semver/ranges/valid.js
 var require_valid$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const Range = require_range$2();
 	const validRange = (range, options) => {
@@ -7815,7 +7815,7 @@ var require_valid$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/ranges/outside.js
+//#region node_modules/semver/ranges/outside.js
 var require_outside$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$4();
 	const Comparator = require_comparator$1();
@@ -7869,7 +7869,7 @@ var require_outside$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/ranges/gtr.js
+//#region node_modules/semver/ranges/gtr.js
 var require_gtr$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const outside = require_outside$1();
 	const gtr = (version, range, options) => outside(version, range, ">", options);
@@ -7877,7 +7877,7 @@ var require_gtr$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/ranges/ltr.js
+//#region node_modules/semver/ranges/ltr.js
 var require_ltr$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const outside = require_outside$1();
 	const ltr = (version, range, options) => outside(version, range, "<", options);
@@ -7885,7 +7885,7 @@ var require_ltr$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/ranges/intersects.js
+//#region node_modules/semver/ranges/intersects.js
 var require_intersects$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const Range = require_range$2();
 	const intersects = (r1, r2, options) => {
@@ -7897,7 +7897,7 @@ var require_intersects$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/ranges/simplify.js
+//#region node_modules/semver/ranges/simplify.js
 var require_simplify$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const satisfies = require_satisfies$1();
 	const compare = require_compare$1();
@@ -7928,7 +7928,7 @@ var require_simplify$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/ranges/subset.js
+//#region node_modules/semver/ranges/subset.js
 var require_subset$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const Range = require_range$2();
 	const Comparator = require_comparator$1();
@@ -8024,7 +8024,7 @@ var require_subset$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/semver/index.js
+//#region node_modules/semver/index.js
 var require_semver$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const internalRe = require_re$1();
 	const constants = require_constants$10();
@@ -8117,7 +8117,7 @@ var require_semver$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/DatabricksCliCredentials.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/DatabricksCliCredentials.js
 var require_DatabricksCliCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __importDefault = exports && exports.__importDefault || function(mod) {
 		return mod && mod.__esModule ? mod : { "default": mod };
@@ -8218,7 +8218,7 @@ var require_DatabricksCliCredentials = /* @__PURE__ */ __commonJSMin(((exports) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/MetadataServiceCredentials.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/MetadataServiceCredentials.js
 var require_MetadataServiceCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MetadataServiceCredentials = exports.MetadataServiceHostHeader = exports.MetadataServiceVersionHeader = exports.MetadataServiceVersion = void 0;
@@ -8299,7 +8299,7 @@ var require_MetadataServiceCredentials = /* @__PURE__ */ __commonJSMin(((exports
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/PatCredentials.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/PatCredentials.js
 var require_PatCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PatCredentials = void 0;
@@ -8321,7 +8321,7 @@ var require_PatCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/M2mCredentials.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/M2mCredentials.js
 var require_M2mCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.M2mCredentials = void 0;
@@ -8358,7 +8358,7 @@ var require_M2mCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/AzureClientSecretCredentials.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/AzureClientSecretCredentials.js
 var require_AzureClientSecretCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AzureClientSecretCredentials = void 0;
@@ -8390,7 +8390,7 @@ var require_AzureClientSecretCredentials = /* @__PURE__ */ __commonJSMin(((expor
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/AzureMsiCredentials.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/AzureMsiCredentials.js
 var require_AzureMsiCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AzureMsiToken = exports.AzureMsiCredentials = void 0;
@@ -8469,7 +8469,7 @@ var require_AzureMsiCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/extend/index.js
+//#region node_modules/extend/index.js
 var require_extend = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var hasOwn = Object.prototype.hasOwnProperty;
 	var toStr = Object.prototype.toString;
@@ -8543,7 +8543,7 @@ var require_extend = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/gaxios/package.json
+//#region node_modules/gaxios/package.json
 var require_package$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = {
 		"name": "gaxios",
@@ -8648,14 +8648,14 @@ var require_package$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/gaxios/build/cjs/src/util.cjs
+//#region node_modules/gaxios/build/cjs/src/util.cjs
 var require_util$6 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const pkg = require_package$3();
 	module.exports = { pkg };
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/gaxios/build/cjs/src/common.js
+//#region node_modules/gaxios/build/cjs/src/common.js
 var require_common$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __importDefault = exports && exports.__importDefault || function(mod) {
 		return mod && mod.__esModule ? mod : { "default": mod };
@@ -8863,7 +8863,7 @@ var require_common$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/gaxios/build/cjs/src/retry.js
+//#region node_modules/gaxios/build/cjs/src/retry.js
 var require_retry = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getRetryConfig = getRetryConfig;
@@ -8954,7 +8954,7 @@ var require_retry = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/gaxios/build/cjs/src/interceptor.js
+//#region node_modules/gaxios/build/cjs/src/interceptor.js
 var require_interceptor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.GaxiosInterceptorManager = void 0;
@@ -8966,7 +8966,7 @@ var require_interceptor = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/gaxios/build/cjs/src/gaxios.js
+//#region node_modules/gaxios/build/cjs/src/gaxios.js
 var require_gaxios = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __importDefault = exports && exports.__importDefault || function(mod) {
 		return mod && mod.__esModule ? mod : { "default": mod };
@@ -9309,12 +9309,12 @@ var require_gaxios = /* @__PURE__ */ __commonJSMin(((exports) => {
 		* @returns A proxy agent
 		*/
 		static async #getProxyAgent() {
-			this.#proxyAgent ||= (await import("./dist-Cfp8yOS4.mjs").then((m) => /* @__PURE__ */ __toESM(m.default))).HttpsProxyAgent;
+			this.#proxyAgent ||= (await import("./dist-C7BuUntA.mjs").then((m) => /* @__PURE__ */ __toESM(m.default))).HttpsProxyAgent;
 			return this.#proxyAgent;
 		}
 		static async #getFetch() {
 			const hasWindow = typeof window !== "undefined" && !!window;
-			this.#fetch ||= hasWindow ? window.fetch : (await import("./src-DLUEddUU.mjs")).default;
+			this.#fetch ||= hasWindow ? window.fetch : (await import("./src-etUwafi8.mjs")).default;
 			return this.#fetch;
 		}
 		/**
@@ -9346,7 +9346,7 @@ var require_gaxios = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/gaxios/build/cjs/src/index.js
+//#region node_modules/gaxios/build/cjs/src/index.js
 var require_src$87 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -9398,7 +9398,7 @@ var require_src$87 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/bignumber.js/bignumber.js
+//#region node_modules/bignumber.js/bignumber.js
 var require_bignumber = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	(function(globalObject) {
 		"use strict";
@@ -10614,7 +10614,7 @@ var require_bignumber = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/json-bigint/lib/stringify.js
+//#region node_modules/json-bigint/lib/stringify.js
 var require_stringify$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var BigNumber = require_bignumber();
 	var JSON = module.exports;
@@ -10688,7 +10688,7 @@ var require_stringify$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/json-bigint/lib/parse.js
+//#region node_modules/json-bigint/lib/parse.js
 var require_parse$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var BigNumber = null;
 	const suspectProtoRx = /(?:_|\\u005[Ff])(?:_|\\u005[Ff])(?:p|\\u0070)(?:r|\\u0072)(?:o|\\u006[Ff])(?:t|\\u0074)(?:o|\\u006[Ff])(?:_|\\u005[Ff])(?:_|\\u005[Ff])/;
@@ -10906,7 +10906,7 @@ var require_parse$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/json-bigint/index.js
+//#region node_modules/json-bigint/index.js
 var require_json_bigint = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var json_stringify = require_stringify$2().stringify;
 	var json_parse = require_parse$3();
@@ -10921,7 +10921,7 @@ var require_json_bigint = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/node_modules/gcp-metadata/build/src/gcp-residency.js
+//#region node_modules/google-auth-library/node_modules/gcp-metadata/build/src/gcp-residency.js
 var require_gcp_residency$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* Copyright 2022 Google LLC
@@ -11015,7 +11015,7 @@ var require_gcp_residency$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-logging-utils/build/src/colours.js
+//#region node_modules/google-logging-utils/build/src/colours.js
 var require_colours = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Colours = void 0;
@@ -11081,7 +11081,7 @@ var require_colours = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-logging-utils/build/src/logging-utils.js
+//#region node_modules/google-logging-utils/build/src/logging-utils.js
 var require_logging_utils = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -11422,7 +11422,7 @@ var require_logging_utils = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-logging-utils/build/src/index.js
+//#region node_modules/google-logging-utils/build/src/index.js
 var require_src$86 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -11446,7 +11446,7 @@ var require_src$86 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/node_modules/gcp-metadata/build/src/index.js
+//#region node_modules/google-auth-library/node_modules/gcp-metadata/build/src/index.js
 var require_src$85 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -11774,7 +11774,7 @@ var require_src$85 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/base64-js/index.js
+//#region node_modules/base64-js/index.js
 var require_base64_js = /* @__PURE__ */ __commonJSMin(((exports) => {
 	exports.byteLength = byteLength;
 	exports.toByteArray = toByteArray;
@@ -11863,7 +11863,7 @@ var require_base64_js = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/crypto/shared.js
+//#region node_modules/google-auth-library/build/src/crypto/shared.js
 var require_shared$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.fromArrayBufferToHex = fromArrayBufferToHex;
@@ -11880,7 +11880,7 @@ var require_shared$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/crypto/browser/crypto.js
+//#region node_modules/google-auth-library/build/src/crypto/browser/crypto.js
 var require_crypto$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BrowserCrypto = void 0;
@@ -11965,7 +11965,7 @@ var require_crypto$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/crypto/node/crypto.js
+//#region node_modules/google-auth-library/build/src/crypto/node/crypto.js
 var require_crypto$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.NodeCrypto = void 0;
@@ -12041,7 +12041,7 @@ var require_crypto$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/crypto/crypto.js
+//#region node_modules/google-auth-library/build/src/crypto/crypto.js
 var require_crypto = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -12076,7 +12076,7 @@ var require_crypto = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/safe-buffer/index.js
+//#region node_modules/safe-buffer/index.js
 var require_safe_buffer = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 	var buffer$1 = __require("buffer");
@@ -12117,7 +12117,7 @@ var require_safe_buffer = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ecdsa-sig-formatter/src/param-bytes-for-alg.js
+//#region node_modules/ecdsa-sig-formatter/src/param-bytes-for-alg.js
 var require_param_bytes_for_alg = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	function getParamSize(keySize) {
 		return (keySize / 8 | 0) + (keySize % 8 === 0 ? 0 : 1);
@@ -12136,7 +12136,7 @@ var require_param_bytes_for_alg = /* @__PURE__ */ __commonJSMin(((exports, modul
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ecdsa-sig-formatter/src/ecdsa-sig-formatter.js
+//#region node_modules/ecdsa-sig-formatter/src/ecdsa-sig-formatter.js
 var require_ecdsa_sig_formatter = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var Buffer = require_safe_buffer().Buffer;
 	var getParamBytesForAlg = require_param_bytes_for_alg();
@@ -12229,7 +12229,7 @@ var require_ecdsa_sig_formatter = /* @__PURE__ */ __commonJSMin(((exports, modul
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/util.js
+//#region node_modules/google-auth-library/build/src/util.js
 var require_util$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LRUCache = void 0;
@@ -12383,7 +12383,7 @@ var require_util$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/package.json
+//#region node_modules/google-auth-library/package.json
 var require_package$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = {
 		"name": "google-auth-library",
@@ -12475,7 +12475,7 @@ var require_package$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/shared.cjs
+//#region node_modules/google-auth-library/build/src/shared.cjs
 var require_shared = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.USER_AGENT = exports.PRODUCT_NAME = exports.pkg = void 0;
@@ -12488,7 +12488,7 @@ var require_shared = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/authclient.js
+//#region node_modules/google-auth-library/build/src/auth/authclient.js
 var require_authclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AuthClient = exports.DEFAULT_EAGER_REFRESH_THRESHOLD_MILLIS = exports.DEFAULT_UNIVERSE = void 0;
@@ -12708,7 +12708,7 @@ var require_authclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/loginticket.js
+//#region node_modules/google-auth-library/build/src/auth/loginticket.js
 var require_loginticket = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LoginTicket = void 0;
@@ -12759,7 +12759,7 @@ var require_loginticket = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/oauth2client.js
+//#region node_modules/google-auth-library/build/src/auth/oauth2client.js
 var require_oauth2client = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OAuth2Client = exports.ClientAuthentication = exports.CertificateFormat = exports.CodeChallengeMethod = void 0;
@@ -13333,7 +13333,7 @@ var require_oauth2client = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/computeclient.js
+//#region node_modules/google-auth-library/build/src/auth/computeclient.js
 var require_computeclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Compute = void 0;
@@ -13416,7 +13416,7 @@ var require_computeclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/idtokenclient.js
+//#region node_modules/google-auth-library/build/src/auth/idtokenclient.js
 var require_idtokenclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.IdTokenClient = void 0;
@@ -13454,7 +13454,7 @@ var require_idtokenclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/envDetect.js
+//#region node_modules/google-auth-library/build/src/auth/envDetect.js
 var require_envDetect = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.GCPEnv = void 0;
@@ -13522,7 +13522,7 @@ var require_envDetect = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/jws/lib/data-stream.js
+//#region node_modules/jws/lib/data-stream.js
 var require_data_stream = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var Buffer = require_safe_buffer().Buffer;
 	var Stream$6 = __require("stream");
@@ -13568,7 +13568,7 @@ var require_data_stream = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/buffer-equal-constant-time/index.js
+//#region node_modules/buffer-equal-constant-time/index.js
 var require_buffer_equal_constant_time = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var Buffer$5 = __require("buffer").Buffer;
 	var SlowBuffer = __require("buffer").SlowBuffer;
@@ -13594,7 +13594,7 @@ var require_buffer_equal_constant_time = /* @__PURE__ */ __commonJSMin(((exports
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/jwa/index.js
+//#region node_modules/jwa/index.js
 var require_jwa = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var Buffer = require_safe_buffer().Buffer;
 	var crypto$5 = __require("crypto");
@@ -13771,7 +13771,7 @@ var require_jwa = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/jws/lib/tostring.js
+//#region node_modules/jws/lib/tostring.js
 var require_tostring = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var Buffer$4 = __require("buffer").Buffer;
 	module.exports = function toString(obj) {
@@ -13782,7 +13782,7 @@ var require_tostring = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/jws/lib/sign-stream.js
+//#region node_modules/jws/lib/sign-stream.js
 var require_sign_stream = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var Buffer = require_safe_buffer().Buffer;
 	var DataStream = require_data_stream();
@@ -13852,7 +13852,7 @@ var require_sign_stream = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/jws/lib/verify-stream.js
+//#region node_modules/jws/lib/verify-stream.js
 var require_verify_stream = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var Buffer = require_safe_buffer().Buffer;
 	var DataStream = require_data_stream();
@@ -13957,7 +13957,7 @@ var require_verify_stream = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/jws/index.js
+//#region node_modules/jws/index.js
 var require_jws = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var SignStream = require_sign_stream();
 	var VerifyStream = require_verify_stream();
@@ -13989,7 +13989,7 @@ var require_jws = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/gtoken/jwsSign.js
+//#region node_modules/google-auth-library/build/src/gtoken/jwsSign.js
 var require_jwsSign = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.buildPayloadForJwsSign = buildPayloadForJwsSign;
@@ -14032,7 +14032,7 @@ var require_jwsSign = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/gtoken/getToken.js
+//#region node_modules/google-auth-library/build/src/gtoken/getToken.js
 var require_getToken = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getToken = getToken;
@@ -14078,7 +14078,7 @@ var require_getToken = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/gtoken/errorWithCode.js
+//#region node_modules/google-auth-library/build/src/gtoken/errorWithCode.js
 var require_errorWithCode = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ErrorWithCode = void 0;
@@ -14093,7 +14093,7 @@ var require_errorWithCode = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/gtoken/getCredentials.js
+//#region node_modules/google-auth-library/build/src/gtoken/getCredentials.js
 var require_getCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getCredentials = getCredentials;
@@ -14203,7 +14203,7 @@ var require_getCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/gtoken/tokenHandler.js
+//#region node_modules/google-auth-library/build/src/gtoken/tokenHandler.js
 var require_tokenHandler = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TokenHandler = void 0;
@@ -14284,7 +14284,7 @@ var require_tokenHandler = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/gtoken/revokeToken.js
+//#region node_modules/google-auth-library/build/src/gtoken/revokeToken.js
 var require_revokeToken = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.revokeToken = revokeToken;
@@ -14308,7 +14308,7 @@ var require_revokeToken = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/gtoken/googleToken.js
+//#region node_modules/google-auth-library/build/src/gtoken/googleToken.js
 var require_googleToken = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.GoogleToken = void 0;
@@ -14401,7 +14401,7 @@ var require_googleToken = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/jwtaccess.js
+//#region node_modules/google-auth-library/build/src/auth/jwtaccess.js
 var require_jwtaccess = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.JWTAccess = void 0;
@@ -14548,7 +14548,7 @@ var require_jwtaccess = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/jwtclient.js
+//#region node_modules/google-auth-library/build/src/auth/jwtclient.js
 var require_jwtclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.JWT = void 0;
@@ -14776,7 +14776,7 @@ var require_jwtclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/refreshclient.js
+//#region node_modules/google-auth-library/build/src/auth/refreshclient.js
 var require_refreshclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.UserRefreshClient = exports.USER_REFRESH_ACCOUNT_TYPE = void 0;
@@ -14883,7 +14883,7 @@ var require_refreshclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/impersonated.js
+//#region node_modules/google-auth-library/build/src/auth/impersonated.js
 var require_impersonated = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* Copyright 2021 Google LLC
@@ -15068,7 +15068,7 @@ var require_impersonated = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/oauth2common.js
+//#region node_modules/google-auth-library/build/src/auth/oauth2common.js
 var require_oauth2common = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OAuthClientAuthHandler = void 0;
@@ -15218,7 +15218,7 @@ var require_oauth2common = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/stscredentials.js
+//#region node_modules/google-auth-library/build/src/auth/stscredentials.js
 var require_stscredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.StsCredentials = void 0;
@@ -15297,7 +15297,7 @@ var require_stscredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/baseexternalclient.js
+//#region node_modules/google-auth-library/build/src/auth/baseexternalclient.js
 var require_baseexternalclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BaseExternalAccountClient = exports.CLOUD_RESOURCE_MANAGER = exports.EXTERNAL_ACCOUNT_TYPE = exports.EXPIRATION_TIME_OFFSET = void 0;
@@ -15674,7 +15674,7 @@ var require_baseexternalclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/filesubjecttokensupplier.js
+//#region node_modules/google-auth-library/build/src/auth/filesubjecttokensupplier.js
 var require_filesubjecttokensupplier = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.FileSubjectTokenSupplier = void 0;
@@ -15728,7 +15728,7 @@ var require_filesubjecttokensupplier = /* @__PURE__ */ __commonJSMin(((exports) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/urlsubjecttokensupplier.js
+//#region node_modules/google-auth-library/build/src/auth/urlsubjecttokensupplier.js
 var require_urlsubjecttokensupplier = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.UrlSubjectTokenSupplier = void 0;
@@ -15781,7 +15781,7 @@ var require_urlsubjecttokensupplier = /* @__PURE__ */ __commonJSMin(((exports) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/certificatesubjecttokensupplier.js
+//#region node_modules/google-auth-library/build/src/auth/certificatesubjecttokensupplier.js
 var require_certificatesubjecttokensupplier = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CertificateSubjectTokenSupplier = exports.InvalidConfigurationError = exports.CertificateSourceUnavailableError = exports.CERTIFICATE_CONFIGURATION_ENV_VARIABLE = void 0;
@@ -15956,7 +15956,7 @@ var require_certificatesubjecttokensupplier = /* @__PURE__ */ __commonJSMin(((ex
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/identitypoolclient.js
+//#region node_modules/google-auth-library/build/src/auth/identitypoolclient.js
 var require_identitypoolclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.IdentityPoolClient = void 0;
@@ -16058,7 +16058,7 @@ var require_identitypoolclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/awsrequestsigner.js
+//#region node_modules/google-auth-library/build/src/auth/awsrequestsigner.js
 var require_awsrequestsigner = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AwsRequestSigner = void 0;
@@ -16206,7 +16206,7 @@ var require_awsrequestsigner = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/defaultawssecuritycredentialssupplier.js
+//#region node_modules/google-auth-library/build/src/auth/defaultawssecuritycredentialssupplier.js
 var require_defaultawssecuritycredentialssupplier = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DefaultAwsSecurityCredentialsSupplier = void 0;
@@ -16361,7 +16361,7 @@ var require_defaultawssecuritycredentialssupplier = /* @__PURE__ */ __commonJSMi
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/awsclient.js
+//#region node_modules/google-auth-library/build/src/auth/awsclient.js
 var require_awsclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AwsClient = void 0;
@@ -16467,7 +16467,7 @@ var require_awsclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/executable-response.js
+//#region node_modules/google-auth-library/build/src/auth/executable-response.js
 var require_executable_response = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InvalidSubjectTokenError = exports.InvalidMessageFieldError = exports.InvalidCodeFieldError = exports.InvalidTokenTypeFieldError = exports.InvalidExpirationTimeFieldError = exports.InvalidSuccessFieldError = exports.InvalidVersionFieldError = exports.ExecutableResponseError = exports.ExecutableResponse = void 0;
@@ -16602,7 +16602,7 @@ var require_executable_response = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/pluggable-auth-handler.js
+//#region node_modules/google-auth-library/build/src/auth/pluggable-auth-handler.js
 var require_pluggable_auth_handler = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PluggableAuthHandler = exports.ExecutableError = void 0;
@@ -16720,7 +16720,7 @@ var require_pluggable_auth_handler = /* @__PURE__ */ __commonJSMin(((exports) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/pluggable-auth-client.js
+//#region node_modules/google-auth-library/build/src/auth/pluggable-auth-client.js
 var require_pluggable_auth_client = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PluggableAuthClient = exports.ExecutableError = void 0;
@@ -16896,7 +16896,7 @@ var require_pluggable_auth_client = /* @__PURE__ */ __commonJSMin(((exports) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/externalclient.js
+//#region node_modules/google-auth-library/build/src/auth/externalclient.js
 var require_externalclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ExternalAccountClient = void 0;
@@ -16939,7 +16939,7 @@ var require_externalclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/externalAccountAuthorizedUserClient.js
+//#region node_modules/google-auth-library/build/src/auth/externalAccountAuthorizedUserClient.js
 var require_externalAccountAuthorizedUserClient = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ExternalAccountAuthorizedUserClient = exports.EXTERNAL_ACCOUNT_AUTHORIZED_USER_TYPE = void 0;
@@ -17116,7 +17116,7 @@ var require_externalAccountAuthorizedUserClient = /* @__PURE__ */ __commonJSMin(
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/googleauth.js
+//#region node_modules/google-auth-library/build/src/auth/googleauth.js
 var require_googleauth = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.GoogleAuth = exports.GoogleAuthExceptionMessages = void 0;
@@ -17783,7 +17783,7 @@ var require_googleauth = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/iam.js
+//#region node_modules/google-auth-library/build/src/auth/iam.js
 var require_iam$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.IAMAuth = void 0;
@@ -17817,7 +17817,7 @@ var require_iam$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/downscopedclient.js
+//#region node_modules/google-auth-library/build/src/auth/downscopedclient.js
 var require_downscopedclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DownscopedClient = exports.EXPIRATION_TIME_OFFSET = exports.MAX_ACCESS_BOUNDARY_RULES_COUNT = void 0;
@@ -18009,7 +18009,7 @@ var require_downscopedclient = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/auth/passthrough.js
+//#region node_modules/google-auth-library/build/src/auth/passthrough.js
 var require_passthrough = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PassThroughClient = void 0;
@@ -18059,7 +18059,7 @@ var require_passthrough = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/google-auth-library/build/src/index.js
+//#region node_modules/google-auth-library/build/src/index.js
 var require_src$84 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -18265,7 +18265,7 @@ var require_src$84 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/GoogleDefaultCredentials.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/GoogleDefaultCredentials.js
 var require_GoogleDefaultCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.GoogleDefaultCredentials = exports.gcpScopes = void 0;
@@ -18318,7 +18318,7 @@ var require_GoogleDefaultCredentials = /* @__PURE__ */ __commonJSMin(((exports) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/GoogleCredentials.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/GoogleCredentials.js
 var require_GoogleCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.GoogleCredentials = void 0;
@@ -18359,7 +18359,7 @@ var require_GoogleCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/DefaultCredentials.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/DefaultCredentials.js
 var require_DefaultCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DefaultCredentials = void 0;
@@ -18410,7 +18410,7 @@ var require_DefaultCredentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ini/lib/ini.js
+//#region node_modules/ini/lib/ini.js
 var require_ini = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { hasOwnProperty } = Object.prototype;
 	const encode = (obj, opt = {}) => {
@@ -18568,7 +18568,7 @@ var require_ini = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/KnownConfigLoader.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/KnownConfigLoader.js
 var require_KnownConfigLoader = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __importDefault = exports && exports.__importDefault || function(mod) {
 		return mod && mod.__esModule ? mod : { "default": mod };
@@ -18655,7 +18655,7 @@ var require_KnownConfigLoader = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/Config.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/Config.js
 var require_Config = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __decorate = exports && exports.__decorate || function(decorators, target, key, desc) {
 		var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -18921,7 +18921,7 @@ var require_Config = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/config/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/config/index.js
 var require_config$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -18980,13 +18980,13 @@ var require_config$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/agentbricks/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/agentbricks/model.js
 var require_model$26 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/apiError.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/apiError.js
 var require_apiError = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ApiRetriableError = exports.ApiError = void 0;
@@ -19006,7 +19006,7 @@ var require_apiError = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/agentbricks/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/agentbricks/api.js
 var require_api$27 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -19305,7 +19305,7 @@ var require_api$27 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/agentbricks/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/agentbricks/index.js
 var require_agentbricks = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -19330,13 +19330,13 @@ var require_agentbricks = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/apps/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/apps/model.js
 var require_model$25 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/wait.js
+//#region node_modules/@databricks/sdk-experimental/dist/wait.js
 var require_wait = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.asWaiter = asWaiter;
@@ -19358,7 +19358,7 @@ var require_wait = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/apps/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/apps/api.js
 var require_api$26 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -20406,7 +20406,7 @@ var require_api$26 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/apps/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/apps/index.js
 var require_apps = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -20431,13 +20431,13 @@ var require_apps = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/catalog/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/catalog/model.js
 var require_model$24 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/catalog/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/catalog/api.js
 var require_api$25 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -27518,7 +27518,7 @@ var require_api$25 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/catalog/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/catalog/index.js
 var require_catalog = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -27543,13 +27543,13 @@ var require_catalog = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/cleanrooms/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/cleanrooms/model.js
 var require_model$23 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/cleanrooms/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/cleanrooms/api.js
 var require_api$24 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -28488,7 +28488,7 @@ var require_api$24 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/cleanrooms/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/cleanrooms/index.js
 var require_cleanrooms = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -28513,13 +28513,13 @@ var require_cleanrooms = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/compute/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/compute/model.js
 var require_model$22 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/compute/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/compute/api.js
 var require_api$23 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -31767,7 +31767,7 @@ var require_api$23 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/compute/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/compute/index.js
 var require_compute$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -31792,13 +31792,13 @@ var require_compute$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/dashboards/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/dashboards/model.js
 var require_model$21 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/dashboards/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/dashboards/api.js
 var require_api$22 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -33260,7 +33260,7 @@ var require_api$22 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/dashboards/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/dashboards/index.js
 var require_dashboards = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -33285,13 +33285,13 @@ var require_dashboards = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/database/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/database/model.js
 var require_model$20 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/database/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/database/api.js
 var require_api$21 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -34293,7 +34293,7 @@ var require_api$21 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/database/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/database/index.js
 var require_database = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -34318,13 +34318,13 @@ var require_database = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/dataquality/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/dataquality/model.js
 var require_model$19 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/dataquality/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/dataquality/api.js
 var require_api$20 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -34915,7 +34915,7 @@ var require_api$20 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/dataquality/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/dataquality/index.js
 var require_dataquality = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -34940,13 +34940,13 @@ var require_dataquality = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/files/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/files/model.js
 var require_model$18 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/files/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/files/api.js
 var require_api$19 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -35829,7 +35829,7 @@ var require_api$19 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/files/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/files/index.js
 var require_files = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -35854,13 +35854,13 @@ var require_files = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/iam/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/iam/model.js
 var require_model$17 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/iam/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/iam/api.js
 var require_api$18 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -38603,7 +38603,7 @@ var require_api$18 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/iam/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/iam/index.js
 var require_iam = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -38628,13 +38628,13 @@ var require_iam = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/iamv2/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/iamv2/model.js
 var require_model$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/iamv2/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/iamv2/api.js
 var require_api$17 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -39058,7 +39058,7 @@ var require_api$17 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/iamv2/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/iamv2/index.js
 var require_iamv2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -39083,13 +39083,13 @@ var require_iamv2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/jobs/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/jobs/model.js
 var require_model$15 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/jobs/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/jobs/api.js
 var require_api$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -40318,7 +40318,7 @@ var require_api$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/jobs/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/jobs/index.js
 var require_jobs = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -40343,13 +40343,13 @@ var require_jobs = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/marketplace/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/marketplace/model.js
 var require_model$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/marketplace/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/marketplace/api.js
 var require_api$15 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -42483,7 +42483,7 @@ var require_api$15 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/marketplace/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/marketplace/index.js
 var require_marketplace = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -42508,13 +42508,13 @@ var require_marketplace = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/ml/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/ml/model.js
 var require_model$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/ml/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/ml/api.js
 var require_api$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -46682,7 +46682,7 @@ var require_api$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/ml/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/ml/index.js
 var require_ml = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -46707,13 +46707,13 @@ var require_ml = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/oauth2/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/oauth2/model.js
 var require_model$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/oauth2/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/oauth2/api.js
 var require_api$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -48184,7 +48184,7 @@ var require_api$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/oauth2/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/oauth2/index.js
 var require_oauth2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -48209,13 +48209,13 @@ var require_oauth2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/pipelines/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/pipelines/model.js
 var require_model$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/pipelines/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/pipelines/api.js
 var require_api$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -48951,7 +48951,7 @@ var require_api$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/pipelines/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/pipelines/index.js
 var require_pipelines = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -48976,13 +48976,13 @@ var require_pipelines = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/qualitymonitorv2/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/qualitymonitorv2/model.js
 var require_model$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/qualitymonitorv2/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/qualitymonitorv2/api.js
 var require_api$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -49241,7 +49241,7 @@ var require_api$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/qualitymonitorv2/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/qualitymonitorv2/index.js
 var require_qualitymonitorv2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -49266,13 +49266,13 @@ var require_qualitymonitorv2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/serving/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/serving/model.js
 var require_model$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/serving/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/serving/api.js
 var require_api$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -50395,7 +50395,7 @@ var require_api$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/serving/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/serving/index.js
 var require_serving = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -50420,13 +50420,13 @@ var require_serving = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/settings/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/settings/model.js
 var require_model$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/settings/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/settings/api.js
 var require_api$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -55512,7 +55512,7 @@ var require_api$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/settings/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/settings/index.js
 var require_settings = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -55537,13 +55537,13 @@ var require_settings = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/settingsv2/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/settingsv2/model.js
 var require_model$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/settingsv2/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/settingsv2/api.js
 var require_api$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -55884,7 +55884,7 @@ var require_api$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/settingsv2/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/settingsv2/index.js
 var require_settingsv2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -55909,13 +55909,13 @@ var require_settingsv2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/sharing/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/sharing/model.js
 var require_model$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/sharing/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/sharing/api.js
 var require_api$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -57258,7 +57258,7 @@ var require_api$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/sharing/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/sharing/index.js
 var require_sharing = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -57283,13 +57283,13 @@ var require_sharing = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/sql/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/sql/model.js
 var require_model$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/sql/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/sql/api.js
 var require_api$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -60598,7 +60598,7 @@ var require_api$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/sql/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/sql/index.js
 var require_sql = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -60623,13 +60623,13 @@ var require_sql = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/tags/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/tags/model.js
 var require_model$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/tags/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/tags/api.js
 var require_api$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -60894,7 +60894,7 @@ var require_api$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/tags/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/tags/index.js
 var require_tags$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -60919,13 +60919,13 @@ var require_tags$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/vectorsearch/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/vectorsearch/model.js
 var require_model$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/vectorsearch/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/vectorsearch/api.js
 var require_api$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -61716,7 +61716,7 @@ var require_api$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/vectorsearch/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/vectorsearch/index.js
 var require_vectorsearch = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -61741,13 +61741,13 @@ var require_vectorsearch = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/workspace/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/workspace/model.js
 var require_model$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/workspace/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/workspace/api.js
 var require_api$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -63447,7 +63447,7 @@ var require_api$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/workspace/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/workspace/index.js
 var require_workspace = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -63472,7 +63472,7 @@ var require_workspace = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/mixins/compute.js
+//#region node_modules/@databricks/sdk-experimental/dist/mixins/compute.js
 var require_compute = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -63749,7 +63749,7 @@ var require_compute = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/WorkspaceClient.js
+//#region node_modules/@databricks/sdk-experimental/dist/WorkspaceClient.js
 var require_WorkspaceClient = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -63952,13 +63952,13 @@ var require_WorkspaceClient = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/billing/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/billing/model.js
 var require_model$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/billing/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/billing/api.js
 var require_api$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -64947,7 +64947,7 @@ var require_api$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/billing/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/billing/index.js
 var require_billing = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -64972,13 +64972,13 @@ var require_billing = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/provisioning/model.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/provisioning/model.js
 var require_model = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/provisioning/api.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/provisioning/api.js
 var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -66618,7 +66618,7 @@ var require_api$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/apis/provisioning/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/apis/provisioning/index.js
 var require_provisioning = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -66643,7 +66643,7 @@ var require_provisioning = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/AccountClient.js
+//#region node_modules/@databricks/sdk-experimental/dist/AccountClient.js
 var require_AccountClient = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -66742,13 +66742,13 @@ var require_AccountClient = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/types.js
+//#region node_modules/@databricks/sdk-experimental/dist/types.js
 var require_types$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/sdk-experimental/dist/index.js
+//#region node_modules/@databricks/sdk-experimental/dist/index.js
 var require_dist$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -66881,7 +66881,7 @@ var require_dist$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/workspace-client/legacy.js
+//#region node_modules/@databricks/appkit/dist/workspace-client/legacy.js
 var import_dist = /* @__PURE__ */ __toESM(require_dist$2(), 1);
 const { WorkspaceClient: SdkWorkspaceClientCtor } = import_dist;
 /**
@@ -66901,7 +66901,7 @@ const { ConfigError, Context, TimeUnits } = import_dist;
 const Time$1 = import_dist.Time ?? import_dist.default.Time;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/workspace-client/client.js
+//#region node_modules/@databricks/appkit/dist/workspace-client/client.js
 /**
 * `AppKitWorkspaceClient` — the facade implementation. Construct via
 * `createWorkspaceClient(...)`; this class is internal.
@@ -66954,7 +66954,7 @@ var AppKitWorkspaceClient = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/workspace-client/factory.js
+//#region node_modules/@databricks/appkit/dist/workspace-client/factory.js
 /**
 * Public factory for constructing a wrapper instance.
 */
@@ -66974,12 +66974,12 @@ function createWorkspaceClient(opts = {}) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/appkit/package.js
+//#region node_modules/@databricks/appkit/dist/appkit/package.js
 var name = "@databricks/appkit";
 var version$1 = "0.57.0";
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/internal/constants.js
+//#region node_modules/@databricks/appkit/node_modules/semver/internal/constants.js
 var require_constants$9 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SEMVER_SPEC_VERSION = "2.0.0";
 	const MAX_LENGTH = 256;
@@ -67008,14 +67008,14 @@ var require_constants$9 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/internal/debug.js
+//#region node_modules/@databricks/appkit/node_modules/semver/internal/debug.js
 var require_debug$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const debug = typeof process === "object" && process.env && process.env.NODE_DEBUG && /\bsemver\b/i.test(process.env.NODE_DEBUG) ? (...args) => console.error("SEMVER", ...args) : () => {};
 	module.exports = debug;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/internal/re.js
+//#region node_modules/@databricks/appkit/node_modules/semver/internal/re.js
 var require_re = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { MAX_SAFE_COMPONENT_LENGTH, MAX_SAFE_BUILD_LENGTH, MAX_LENGTH } = require_constants$9();
 	const debug = require_debug$4();
@@ -67095,7 +67095,7 @@ var require_re = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/internal/parse-options.js
+//#region node_modules/@databricks/appkit/node_modules/semver/internal/parse-options.js
 var require_parse_options = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const looseOption = Object.freeze({ loose: true });
 	const emptyOpts = Object.freeze({});
@@ -67108,7 +67108,7 @@ var require_parse_options = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/internal/identifiers.js
+//#region node_modules/@databricks/appkit/node_modules/semver/internal/identifiers.js
 var require_identifiers = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const numeric = /^[0-9]+$/;
 	const compareIdentifiers = (a, b) => {
@@ -67129,7 +67129,7 @@ var require_identifiers = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/classes/semver.js
+//#region node_modules/@databricks/appkit/node_modules/semver/classes/semver.js
 var require_semver$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const debug = require_debug$4();
 	const { MAX_LENGTH, MAX_SAFE_INTEGER } = require_constants$9();
@@ -67309,7 +67309,7 @@ var require_semver$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/parse.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/parse.js
 var require_parse$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$2();
 	const parse = (version, options, throwErrors = false) => {
@@ -67325,7 +67325,7 @@ var require_parse$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/valid.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/valid.js
 var require_valid$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const parse = require_parse$2();
 	const valid = (version, options) => {
@@ -67336,7 +67336,7 @@ var require_valid$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/clean.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/clean.js
 var require_clean = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const parse = require_parse$2();
 	const clean = (version, options) => {
@@ -67347,7 +67347,7 @@ var require_clean = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/inc.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/inc.js
 var require_inc = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$2();
 	const inc = (version, release, options, identifier, identifierBase) => {
@@ -67366,7 +67366,7 @@ var require_inc = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/diff.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/diff.js
 var require_diff = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const parse = require_parse$2();
 	const diff = (version1, version2) => {
@@ -67395,7 +67395,7 @@ var require_diff = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/major.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/major.js
 var require_major = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$2();
 	const major = (a, loose) => new SemVer(a, loose).major;
@@ -67403,7 +67403,7 @@ var require_major = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/minor.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/minor.js
 var require_minor = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$2();
 	const minor = (a, loose) => new SemVer(a, loose).minor;
@@ -67411,7 +67411,7 @@ var require_minor = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/patch.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/patch.js
 var require_patch = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$2();
 	const patch = (a, loose) => new SemVer(a, loose).patch;
@@ -67419,7 +67419,7 @@ var require_patch = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/prerelease.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/prerelease.js
 var require_prerelease = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const parse = require_parse$2();
 	const prerelease = (version, options) => {
@@ -67430,7 +67430,7 @@ var require_prerelease = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/compare.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/compare.js
 var require_compare = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$2();
 	const compare = (a, b, loose) => new SemVer(a, loose).compare(new SemVer(b, loose));
@@ -67438,7 +67438,7 @@ var require_compare = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/rcompare.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/rcompare.js
 var require_rcompare = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare();
 	const rcompare = (a, b, loose) => compare(b, a, loose);
@@ -67446,7 +67446,7 @@ var require_rcompare = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/compare-loose.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/compare-loose.js
 var require_compare_loose = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare();
 	const compareLoose = (a, b) => compare(a, b, true);
@@ -67454,7 +67454,7 @@ var require_compare_loose = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/compare-build.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/compare-build.js
 var require_compare_build = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$2();
 	const compareBuild = (a, b, loose) => {
@@ -67466,7 +67466,7 @@ var require_compare_build = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/sort.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/sort.js
 var require_sort = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compareBuild = require_compare_build();
 	const sort = (list, loose) => list.sort((a, b) => compareBuild(a, b, loose));
@@ -67474,7 +67474,7 @@ var require_sort = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/rsort.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/rsort.js
 var require_rsort = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compareBuild = require_compare_build();
 	const rsort = (list, loose) => list.sort((a, b) => compareBuild(b, a, loose));
@@ -67482,7 +67482,7 @@ var require_rsort = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/gt.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/gt.js
 var require_gt = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare();
 	const gt = (a, b, loose) => compare(a, b, loose) > 0;
@@ -67490,7 +67490,7 @@ var require_gt = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/lt.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/lt.js
 var require_lt = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare();
 	const lt = (a, b, loose) => compare(a, b, loose) < 0;
@@ -67498,7 +67498,7 @@ var require_lt = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/eq.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/eq.js
 var require_eq = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare();
 	const eq = (a, b, loose) => compare(a, b, loose) === 0;
@@ -67506,7 +67506,7 @@ var require_eq = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/neq.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/neq.js
 var require_neq = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare();
 	const neq = (a, b, loose) => compare(a, b, loose) !== 0;
@@ -67514,7 +67514,7 @@ var require_neq = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/gte.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/gte.js
 var require_gte = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare();
 	const gte = (a, b, loose) => compare(a, b, loose) >= 0;
@@ -67522,7 +67522,7 @@ var require_gte = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/lte.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/lte.js
 var require_lte = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const compare = require_compare();
 	const lte = (a, b, loose) => compare(a, b, loose) <= 0;
@@ -67530,7 +67530,7 @@ var require_lte = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/cmp.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/cmp.js
 var require_cmp = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const eq = require_eq();
 	const neq = require_neq();
@@ -67563,7 +67563,7 @@ var require_cmp = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/coerce.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/coerce.js
 var require_coerce = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$2();
 	const parse = require_parse$2();
@@ -67592,7 +67592,7 @@ var require_coerce = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/internal/lrucache.js
+//#region node_modules/@databricks/appkit/node_modules/semver/internal/lrucache.js
 var require_lrucache = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var LRUCache = class {
 		constructor() {
@@ -67626,7 +67626,7 @@ var require_lrucache = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/classes/range.js
+//#region node_modules/@databricks/appkit/node_modules/semver/classes/range.js
 var require_range$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SPACE_CHARACTERS = /\s+/g;
 	var Range = class Range {
@@ -67900,7 +67900,7 @@ var require_range$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/classes/comparator.js
+//#region node_modules/@databricks/appkit/node_modules/semver/classes/comparator.js
 var require_comparator = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const ANY = Symbol("SemVer ANY");
 	var Comparator = class Comparator {
@@ -67972,7 +67972,7 @@ var require_comparator = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/functions/satisfies.js
+//#region node_modules/@databricks/appkit/node_modules/semver/functions/satisfies.js
 var require_satisfies = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const Range = require_range$1();
 	const satisfies = (version, range, options) => {
@@ -67987,7 +67987,7 @@ var require_satisfies = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/ranges/to-comparators.js
+//#region node_modules/@databricks/appkit/node_modules/semver/ranges/to-comparators.js
 var require_to_comparators = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const Range = require_range$1();
 	const toComparators = (range, options) => new Range(range, options).set.map((comp) => comp.map((c) => c.value).join(" ").trim().split(" "));
@@ -67995,7 +67995,7 @@ var require_to_comparators = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/ranges/max-satisfying.js
+//#region node_modules/@databricks/appkit/node_modules/semver/ranges/max-satisfying.js
 var require_max_satisfying = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$2();
 	const Range = require_range$1();
@@ -68022,7 +68022,7 @@ var require_max_satisfying = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/ranges/min-satisfying.js
+//#region node_modules/@databricks/appkit/node_modules/semver/ranges/min-satisfying.js
 var require_min_satisfying = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$2();
 	const Range = require_range$1();
@@ -68049,7 +68049,7 @@ var require_min_satisfying = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/ranges/min-version.js
+//#region node_modules/@databricks/appkit/node_modules/semver/ranges/min-version.js
 var require_min_version = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$2();
 	const Range = require_range$1();
@@ -68089,7 +68089,7 @@ var require_min_version = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/ranges/valid.js
+//#region node_modules/@databricks/appkit/node_modules/semver/ranges/valid.js
 var require_valid = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const Range = require_range$1();
 	const validRange = (range, options) => {
@@ -68103,7 +68103,7 @@ var require_valid = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/ranges/outside.js
+//#region node_modules/@databricks/appkit/node_modules/semver/ranges/outside.js
 var require_outside = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SemVer = require_semver$2();
 	const Comparator = require_comparator();
@@ -68157,7 +68157,7 @@ var require_outside = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/ranges/gtr.js
+//#region node_modules/@databricks/appkit/node_modules/semver/ranges/gtr.js
 var require_gtr = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const outside = require_outside();
 	const gtr = (version, range, options) => outside(version, range, ">", options);
@@ -68165,7 +68165,7 @@ var require_gtr = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/ranges/ltr.js
+//#region node_modules/@databricks/appkit/node_modules/semver/ranges/ltr.js
 var require_ltr = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const outside = require_outside();
 	const ltr = (version, range, options) => outside(version, range, "<", options);
@@ -68173,7 +68173,7 @@ var require_ltr = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/ranges/intersects.js
+//#region node_modules/@databricks/appkit/node_modules/semver/ranges/intersects.js
 var require_intersects = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const Range = require_range$1();
 	const intersects = (r1, r2, options) => {
@@ -68185,7 +68185,7 @@ var require_intersects = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/ranges/simplify.js
+//#region node_modules/@databricks/appkit/node_modules/semver/ranges/simplify.js
 var require_simplify = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const satisfies = require_satisfies();
 	const compare = require_compare();
@@ -68216,7 +68216,7 @@ var require_simplify = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/ranges/subset.js
+//#region node_modules/@databricks/appkit/node_modules/semver/ranges/subset.js
 var require_subset = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const Range = require_range$1();
 	const Comparator = require_comparator();
@@ -68312,7 +68312,7 @@ var require_subset = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/node_modules/semver/index.js
+//#region node_modules/@databricks/appkit/node_modules/semver/index.js
 var require_semver$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const internalRe = require_re();
 	const constants = require_constants$9();
@@ -68405,7 +68405,7 @@ var require_semver$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/context/client-options.js
+//#region node_modules/@databricks/appkit/dist/context/client-options.js
 var import_semver = require_semver$1();
 const normalizedVersion = (0, import_semver.coerce)(version$1)?.version ?? version$1;
 /**
@@ -68429,7 +68429,7 @@ function getClientOptions() {
 const APPKIT_USER_AGENT = `${name}/${normalizedVersion}`;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/context/service-context.js
+//#region node_modules/@databricks/appkit/dist/context/service-context.js
 /**
 * ServiceContext is a singleton that manages the service principal's
 * WorkspaceClient and shared resources like warehouse/workspace IDs.
@@ -68578,7 +68578,7 @@ var ServiceContext = class ServiceContext {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/context/user-context.js
+//#region node_modules/@databricks/appkit/dist/context/user-context.js
 /**
 * Check if an execution context is a user context.
 */
@@ -68587,7 +68587,7 @@ function isUserContext(ctx) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/context/execution-context.js
+//#region node_modules/@databricks/appkit/dist/context/execution-context.js
 /**
 * AsyncLocalStorage for execution context.
 * Used to pass user context through the call stack without explicit parameters.
@@ -68663,7 +68663,7 @@ function getUserContext() {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/lakebase/routing-pool.js
+//#region node_modules/@databricks/appkit/dist/connectors/lakebase/routing-pool.js
 /**
 * A `pg.Pool`-like wrapper that routes queries to the appropriate pool
 * based on the current execution context.
@@ -68706,7 +68706,7 @@ var RoutingPool = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/dist/errors.js
+//#region node_modules/@databricks/lakebase/dist/errors.js
 /**
 * Base error class for Lakebase driver errors.
 */
@@ -68751,7 +68751,7 @@ var ValidationError = class ValidationError extends LakebaseError {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/dist/config.js
+//#region node_modules/@databricks/lakebase/dist/config.js
 /** Default configuration values for the Lakebase connector */
 const defaults$1 = {
 	port: 5432,
@@ -68841,7 +68841,7 @@ async function getUsernameWithApiLookup(config) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/dist/credentials.js
+//#region node_modules/@databricks/lakebase/dist/credentials.js
 /**
 * Generate OAuth credentials for Postgres database connection using the proper Postgres API.
 *
@@ -68910,7 +68910,7 @@ function validateCredentialResponse(response) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/dist/telemetry.js
+//#region node_modules/@databricks/lakebase/dist/telemetry.js
 init_esm$2();
 /**
 * Initialize telemetry using OpenTelemetry's global registry.
@@ -68960,7 +68960,7 @@ function attachPoolMetrics(pool, telemetry, logger) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/dist/token-refresh.js
+//#region node_modules/@databricks/lakebase/dist/token-refresh.js
 const CACHE_BUFFER_MS = 120 * 1e3;
 /** Fetch a fresh OAuth token from Databricks */
 async function refreshToken(workspaceClient, endpoint) {
@@ -69026,7 +69026,7 @@ function createTokenRefreshCallback(deps) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/dist/pool-config.js
+//#region node_modules/@databricks/lakebase/dist/pool-config.js
 /**
 * Map an SSL mode string to the corresponding `pg` SSL configuration.
 *
@@ -69123,7 +69123,7 @@ function getLakebaseOrmConfig(config) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/dist/logger.js
+//#region node_modules/@databricks/lakebase/dist/logger.js
 const LOGGER_METHODS = [
 	"debug",
 	"info",
@@ -69163,7 +69163,7 @@ function resolveLogger(loggerConfig) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/postgres-array/index.js
+//#region node_modules/postgres-array/index.js
 var require_postgres_array = /* @__PURE__ */ __commonJSMin(((exports) => {
 	exports.parse = function(source, transform) {
 		return new ArrayParser(source, transform).parse();
@@ -69243,7 +69243,7 @@ var require_postgres_array = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-types/lib/arrayParser.js
+//#region node_modules/pg-types/lib/arrayParser.js
 var require_arrayParser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var array = require_postgres_array();
 	module.exports = { create: function(source, transform) {
@@ -69254,7 +69254,7 @@ var require_arrayParser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/postgres-date/index.js
+//#region node_modules/postgres-date/index.js
 var require_postgres_date = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var DATE_TIME = /(\d{1,})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})(\.\d{1,})?.*?( BC)?$/;
 	var DATE = /^(\d{1,})-(\d{2})-(\d{2})( BC)?$/;
@@ -69315,7 +69315,7 @@ var require_postgres_date = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/xtend/mutable.js
+//#region node_modules/xtend/mutable.js
 var require_mutable = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = extend;
 	var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -69329,7 +69329,7 @@ var require_mutable = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/postgres-interval/index.js
+//#region node_modules/postgres-interval/index.js
 var require_postgres_interval = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var extend = require_mutable();
 	module.exports = PostgresInterval;
@@ -69431,7 +69431,7 @@ var require_postgres_interval = /* @__PURE__ */ __commonJSMin(((exports, module)
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/postgres-bytea/index.js
+//#region node_modules/postgres-bytea/index.js
 var require_postgres_bytea = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var bufferFrom = Buffer.from || Buffer;
 	module.exports = function parseBytea(input) {
@@ -69455,7 +69455,7 @@ var require_postgres_bytea = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-types/lib/textParsers.js
+//#region node_modules/pg-types/lib/textParsers.js
 var require_textParsers = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var array = require_postgres_array();
 	var arrayParser = require_arrayParser();
@@ -69613,7 +69613,7 @@ var require_textParsers = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-int8/index.js
+//#region node_modules/pg-int8/index.js
 var require_pg_int8 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var BASE = 1e6;
 	function readInt8(buffer) {
@@ -69671,7 +69671,7 @@ var require_pg_int8 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-types/lib/binaryParsers.js
+//#region node_modules/pg-types/lib/binaryParsers.js
 var require_binaryParsers = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var parseInt64 = require_pg_int8();
 	var parseBits = function(data, bits, offset, invert, callback) {
@@ -69831,7 +69831,7 @@ var require_binaryParsers = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-types/lib/builtins.js
+//#region node_modules/pg-types/lib/builtins.js
 var require_builtins = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Following query was used to generate this file:
@@ -69908,7 +69908,7 @@ var require_builtins = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-types/index.js
+//#region node_modules/pg-types/index.js
 var require_pg_types = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var textParsers = require_textParsers();
 	var binaryParsers = require_binaryParsers();
@@ -69946,7 +69946,7 @@ var require_pg_types = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/defaults.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/defaults.js
 var require_defaults$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	let user;
 	try {
@@ -69987,7 +69987,7 @@ var require_defaults$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/utils.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/utils.js
 var require_utils$46 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const defaults = require_defaults$1();
 	const util$21 = __require("util");
@@ -70100,7 +70100,7 @@ var require_utils$46 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/crypto/utils-legacy.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/crypto/utils-legacy.js
 var require_utils_legacy$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const nodeCrypto$3 = __require("crypto");
 	function md5(string) {
@@ -70135,7 +70135,7 @@ var require_utils_legacy$1 = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/crypto/utils-webcrypto.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/crypto/utils-webcrypto.js
 var require_utils_webcrypto$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const nodeCrypto$2 = __require("crypto");
 	module.exports = {
@@ -70220,14 +70220,14 @@ var require_utils_webcrypto$1 = /* @__PURE__ */ __commonJSMin(((exports, module)
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/crypto/utils.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/crypto/utils.js
 var require_utils$45 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	if (parseInt(process.versions && process.versions.node && process.versions.node.split(".")[0]) < 15) module.exports = require_utils_legacy$1();
 	else module.exports = require_utils_webcrypto$1();
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/crypto/cert-signatures.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/crypto/cert-signatures.js
 var require_cert_signatures$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	function x509Error(msg, cert) {
 		return /* @__PURE__ */ new Error("SASL channel binding: " + msg + " when parsing public certificate " + cert.toString("base64"));
@@ -70320,7 +70320,7 @@ var require_cert_signatures$1 = /* @__PURE__ */ __commonJSMin(((exports, module)
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/crypto/sasl.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/crypto/sasl.js
 var require_sasl$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const crypto = require_utils$45();
 	const { signatureAlgorithmHashFromCertificate } = require_cert_signatures$1();
@@ -70445,7 +70445,7 @@ var require_sasl$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/type-overrides.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/type-overrides.js
 var require_type_overrides$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const types = require_pg_types();
 	function TypeOverrides(userTypes) {
@@ -70475,7 +70475,7 @@ var require_type_overrides$1 = /* @__PURE__ */ __commonJSMin(((exports, module) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-connection-string/index.js
+//#region node_modules/pg-connection-string/index.js
 var require_pg_connection_string = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	function parse$3(str, options = {}) {
 		if (str.charAt(0) === "/") {
@@ -70601,7 +70601,7 @@ See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode de
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/connection-parameters.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/connection-parameters.js
 var require_connection_parameters$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const dns$1 = __require("dns");
 	const defaults = require_defaults$1();
@@ -70699,7 +70699,7 @@ var require_connection_parameters$1 = /* @__PURE__ */ __commonJSMin(((exports, m
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/result.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/result.js
 var require_result$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const types = require_pg_types();
 	const matchRegexp = /^([A-Za-z]+)(?: (\d+))?(?: (\d+))?/;
@@ -70770,7 +70770,7 @@ var require_result$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/query.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/query.js
 var require_query$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { EventEmitter: EventEmitter$12 } = __require("events");
 	const Result = require_result$1();
@@ -70915,7 +70915,7 @@ var require_query$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-protocol/dist/messages.js
+//#region node_modules/pg-protocol/dist/messages.js
 var require_messages = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.NoticeMessage = exports.DataRowMessage = exports.CommandCompleteMessage = exports.ReadyForQueryMessage = exports.NotificationResponseMessage = exports.BackendKeyDataMessage = exports.AuthenticationMD5Password = exports.ParameterStatusMessage = exports.ParameterDescriptionMessage = exports.RowDescriptionMessage = exports.Field = exports.CopyResponse = exports.CopyDataMessage = exports.DatabaseError = exports.copyDone = exports.emptyQuery = exports.replicationStart = exports.portalSuspended = exports.noData = exports.closeComplete = exports.bindComplete = exports.parseComplete = void 0;
@@ -71078,7 +71078,7 @@ var require_messages = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-protocol/dist/buffer-writer.js
+//#region node_modules/pg-protocol/dist/buffer-writer.js
 var require_buffer_writer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Writer = void 0;
@@ -71155,7 +71155,7 @@ var require_buffer_writer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-protocol/dist/serializer.js
+//#region node_modules/pg-protocol/dist/serializer.js
 var require_serializer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.serialize = void 0;
@@ -71328,7 +71328,7 @@ var require_serializer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-protocol/dist/buffer-reader.js
+//#region node_modules/pg-protocol/dist/buffer-reader.js
 var require_buffer_reader = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BufferReader = void 0;
@@ -71384,7 +71384,7 @@ var require_buffer_reader = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-protocol/dist/parser.js
+//#region node_modules/pg-protocol/dist/parser.js
 var require_parser$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Parser = void 0;
@@ -71666,7 +71666,7 @@ var require_parser$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-protocol/dist/index.js
+//#region node_modules/pg-protocol/dist/index.js
 var require_dist$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DatabaseError = exports.serialize = exports.parse = void 0;
@@ -71694,14 +71694,14 @@ var require_dist$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-cloudflare/dist/empty.js
+//#region node_modules/pg-cloudflare/dist/empty.js
 var require_empty = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = {};
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/stream.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/stream.js
 var require_stream$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { getStream, getSecureStream } = getStreamFuncs();
 	module.exports = {
@@ -71760,7 +71760,7 @@ var require_stream$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/connection.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/connection.js
 var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const EventEmitter$11 = __require("events").EventEmitter;
 	const { parse, serialize } = require_dist$1();
@@ -71914,7 +71914,7 @@ var require_connection$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/split2/index.js
+//#region node_modules/split2/index.js
 var require_split2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { Transform: Transform$1 } = __require("stream");
 	const { StringDecoder: StringDecoder$1 } = __require("string_decoder");
@@ -72005,7 +72005,7 @@ var require_split2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pgpass/lib/helper.js
+//#region node_modules/pgpass/lib/helper.js
 var require_helper = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var path$14 = __require("path"), Stream$3 = __require("stream").Stream, split = require_split2(), util$20 = __require("util"), defaultPort = 5432, isWin = process.platform === "win32", warnStream = process.stderr;
 	var S_IRWXG = 56, S_IRWXO = 7, S_IFMT = 61440, S_IFREG = 32768;
@@ -72147,7 +72147,7 @@ var require_helper = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pgpass/lib/index.js
+//#region node_modules/pgpass/lib/index.js
 var require_lib$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	__require("path");
 	var fs$21 = __require("fs"), helper = require_helper();
@@ -72163,7 +72163,7 @@ var require_lib$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/client.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/client.js
 var require_client$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const EventEmitter$10 = __require("events").EventEmitter;
 	const utils = require_utils$46();
@@ -72653,7 +72653,7 @@ var require_client$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/defaults.js
+//#region node_modules/pg/lib/defaults.js
 var require_defaults = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	let user;
 	try {
@@ -72694,7 +72694,7 @@ var require_defaults = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/utils.js
+//#region node_modules/pg/lib/utils.js
 var require_utils$44 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const defaults = require_defaults();
 	const util$19 = __require("util");
@@ -72807,7 +72807,7 @@ var require_utils$44 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/crypto/utils-legacy.js
+//#region node_modules/pg/lib/crypto/utils-legacy.js
 var require_utils_legacy = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const nodeCrypto$1 = __require("crypto");
 	function md5(string) {
@@ -72842,7 +72842,7 @@ var require_utils_legacy = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/crypto/utils-webcrypto.js
+//#region node_modules/pg/lib/crypto/utils-webcrypto.js
 var require_utils_webcrypto = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const nodeCrypto = __require("crypto");
 	module.exports = {
@@ -72927,14 +72927,14 @@ var require_utils_webcrypto = /* @__PURE__ */ __commonJSMin(((exports, module) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/crypto/utils.js
+//#region node_modules/pg/lib/crypto/utils.js
 var require_utils$43 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	if (parseInt(process.versions && process.versions.node && process.versions.node.split(".")[0]) < 15) module.exports = require_utils_legacy();
 	else module.exports = require_utils_webcrypto();
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/crypto/cert-signatures.js
+//#region node_modules/pg/lib/crypto/cert-signatures.js
 var require_cert_signatures = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	function x509Error(msg, cert) {
 		return /* @__PURE__ */ new Error("SASL channel binding: " + msg + " when parsing public certificate " + cert.toString("base64"));
@@ -73027,7 +73027,7 @@ var require_cert_signatures = /* @__PURE__ */ __commonJSMin(((exports, module) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/crypto/sasl.js
+//#region node_modules/pg/lib/crypto/sasl.js
 var require_sasl = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const crypto = require_utils$43();
 	const { signatureAlgorithmHashFromCertificate } = require_cert_signatures();
@@ -73152,7 +73152,7 @@ var require_sasl = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/type-overrides.js
+//#region node_modules/pg/lib/type-overrides.js
 var require_type_overrides = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const types = require_pg_types();
 	function TypeOverrides(userTypes) {
@@ -73182,7 +73182,7 @@ var require_type_overrides = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/connection-parameters.js
+//#region node_modules/pg/lib/connection-parameters.js
 var require_connection_parameters = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const dns = __require("dns");
 	const defaults = require_defaults();
@@ -73280,7 +73280,7 @@ var require_connection_parameters = /* @__PURE__ */ __commonJSMin(((exports, mod
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/result.js
+//#region node_modules/pg/lib/result.js
 var require_result = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const types = require_pg_types();
 	const matchRegexp = /^([A-Za-z]+)(?: (\d+))?(?: (\d+))?/;
@@ -73351,7 +73351,7 @@ var require_result = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/query.js
+//#region node_modules/pg/lib/query.js
 var require_query$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { EventEmitter: EventEmitter$9 } = __require("events");
 	const Result = require_result();
@@ -73496,7 +73496,7 @@ var require_query$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/stream.js
+//#region node_modules/pg/lib/stream.js
 var require_stream = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { getStream, getSecureStream } = getStreamFuncs();
 	module.exports = {
@@ -73555,7 +73555,7 @@ var require_stream = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/connection.js
+//#region node_modules/pg/lib/connection.js
 var require_connection = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const EventEmitter$8 = __require("events").EventEmitter;
 	const { parse, serialize } = require_dist$1();
@@ -73709,7 +73709,7 @@ var require_connection = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/client.js
+//#region node_modules/pg/lib/client.js
 var require_client$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const EventEmitter$7 = __require("events").EventEmitter;
 	const utils = require_utils$44();
@@ -74204,7 +74204,7 @@ var require_client$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/native/query.js
+//#region node_modules/pg/lib/native/query.js
 var require_query$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const EventEmitter$6 = __require("events").EventEmitter;
 	const util$18 = __require("util");
@@ -74316,7 +74316,7 @@ var require_query$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/native/client.js
+//#region node_modules/pg/lib/native/client.js
 var require_client$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const nodeUtils = __require("util");
 	var Native;
@@ -74534,13 +74534,13 @@ var require_client$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/native/index.js
+//#region node_modules/pg/lib/native/index.js
 var require_native$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_client$2();
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg/lib/index.js
+//#region node_modules/pg/lib/index.js
 var require_lib$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const Client = require_client$3();
 	const defaults = require_defaults();
@@ -74597,7 +74597,7 @@ var require_lib$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/pg-pool/index.js
+//#region node_modules/pg-pool/index.js
 var require_pg_pool = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const EventEmitter$4 = __require("events").EventEmitter;
 	const NOOP = function() {};
@@ -74925,7 +74925,7 @@ var require_pg_pool = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/native/query.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/native/query.js
 var require_query$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const EventEmitter$3 = __require("events").EventEmitter;
 	const util$16 = __require("util");
@@ -75037,7 +75037,7 @@ var require_query$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/native/client.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/native/client.js
 var require_client$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var Native;
 	try {
@@ -75248,13 +75248,13 @@ var require_client$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/native/index.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/native/index.js
 var require_native = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_client$1();
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/lib/index.js
+//#region node_modules/@databricks/lakebase/node_modules/pg/lib/index.js
 var require_lib$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const Client = require_client$4();
 	const defaults = require_defaults$1();
@@ -75311,7 +75311,7 @@ var require_lib$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/node_modules/pg/esm/index.mjs
+//#region node_modules/@databricks/lakebase/node_modules/pg/esm/index.mjs
 var import_lib = /* @__PURE__ */ __toESM(require_lib$2(), 1);
 const Client = import_lib.default.Client;
 const Pool = import_lib.default.Pool;
@@ -75327,7 +75327,7 @@ const defaults = import_lib.default.defaults;
 var esm_default = import_lib.default;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/lakebase/dist/pool.js
+//#region node_modules/@databricks/lakebase/dist/pool.js
 /**
 * Create a PostgreSQL connection pool with automatic OAuth token refresh for Lakebase.
 *
@@ -75419,7 +75419,7 @@ function createLakebasePool(config) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/lakebase/index.js
+//#region node_modules/@databricks/appkit/dist/connectors/lakebase/index.js
 /**
 * Create a Lakebase pool with appkit's logger integration.
 * Telemetry automatically uses appkit's OpenTelemetry configuration via global registry.
@@ -75435,7 +75435,7 @@ function createLakebasePool$1(config) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/lakebase/pool-manager.js
+//#region node_modules/@databricks/appkit/dist/connectors/lakebase/pool-manager.js
 /** Interval for removing empty (connectionless) pools from the Map. */
 const CLEANUP_INTERVAL_MS = 300 * 1e3;
 /**
@@ -75508,7 +75508,7 @@ function createLakebasePoolManager(baseConfig) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/telemetry/config.js
+//#region node_modules/@databricks/appkit/dist/telemetry/config.js
 /** Converts a TelemetryOptions value (boolean, object, or undefined) into a fully resolved config with explicit traces/metrics/logs flags. Defaults to all enabled. */
 function normalizeTelemetryOptions(config) {
 	if (typeof config === "undefined" || typeof config === "boolean") {
@@ -75527,7 +75527,7 @@ function normalizeTelemetryOptions(config) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/trace/suppress-tracing.js
+//#region node_modules/@opentelemetry/core/build/src/trace/suppress-tracing.js
 var require_suppress_tracing = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.isTracingSuppressed = exports.unsuppressTracing = exports.suppressTracing = void 0;
@@ -75547,7 +75547,7 @@ var require_suppress_tracing = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/baggage/constants.js
+//#region node_modules/@opentelemetry/core/build/src/baggage/constants.js
 var require_constants$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BAGGAGE_MAX_TOTAL_LENGTH = exports.BAGGAGE_MAX_PER_NAME_VALUE_PAIRS = exports.BAGGAGE_MAX_NAME_VALUE_PAIRS = exports.BAGGAGE_HEADER = exports.BAGGAGE_ITEMS_SEPARATOR = exports.BAGGAGE_PROPERTIES_SEPARATOR = exports.BAGGAGE_KEY_PAIR_SEPARATOR = void 0;
@@ -75561,7 +75561,7 @@ var require_constants$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/baggage/utils.js
+//#region node_modules/@opentelemetry/core/build/src/baggage/utils.js
 var require_utils$42 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.parseKeyPairsIntoRecord = exports.parseBaggageHeaderString = exports.parsePairKeyValue = exports.getKeyPairs = exports.serializeKeyPairs = void 0;
@@ -75657,7 +75657,7 @@ var require_utils$42 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/baggage/propagation/W3CBaggagePropagator.js
+//#region node_modules/@opentelemetry/core/build/src/baggage/propagation/W3CBaggagePropagator.js
 var require_W3CBaggagePropagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.W3CBaggagePropagator = void 0;
@@ -75700,7 +75700,7 @@ var require_W3CBaggagePropagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/common/anchored-clock.js
+//#region node_modules/@opentelemetry/core/build/src/common/anchored-clock.js
 var require_anchored_clock = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AnchoredClock = void 0;
@@ -75749,7 +75749,7 @@ var require_anchored_clock = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/common/attributes.js
+//#region node_modules/@opentelemetry/core/build/src/common/attributes.js
 var require_attributes = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.isAttributeValue = exports.isAttributeKey = exports.sanitizeAttributes = void 0;
@@ -75812,7 +75812,7 @@ var require_attributes = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/common/logging-error-handler.js
+//#region node_modules/@opentelemetry/core/build/src/common/logging-error-handler.js
 var require_logging_error_handler = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.loggingErrorHandler = void 0;
@@ -75856,7 +75856,7 @@ var require_logging_error_handler = /* @__PURE__ */ __commonJSMin(((exports) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/common/global-error-handler.js
+//#region node_modules/@opentelemetry/core/build/src/common/global-error-handler.js
 var require_global_error_handler = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.globalErrorHandler = exports.setGlobalErrorHandler = void 0;
@@ -75883,7 +75883,7 @@ var require_global_error_handler = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/platform/node/environment.js
+//#region node_modules/@opentelemetry/core/build/src/platform/node/environment.js
 var require_environment$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getStringListFromEnv = exports.getBooleanFromEnv = exports.getStringFromEnv = exports.getNumberFromEnv = void 0;
@@ -75959,7 +75959,7 @@ var require_environment$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/common/globalThis.js
+//#region node_modules/@opentelemetry/core/build/src/common/globalThis.js
 var require_globalThis = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports._globalThis = void 0;
@@ -75970,7 +75970,7 @@ var require_globalThis = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/version.js
+//#region node_modules/@opentelemetry/core/build/src/version.js
 var require_version$45 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.VERSION = void 0;
@@ -75978,7 +75978,7 @@ var require_version$45 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/semantic-conventions/build/esm/internal/utils.js
+//#region node_modules/@opentelemetry/semantic-conventions/build/esm/internal/utils.js
 /**
 * Creates a const map from the given values
 * @param values - An array of values to be used as keys and values in the map.
@@ -75997,7 +75997,7 @@ function createConstMap(values) {
 var init_utils = __esmMin((() => {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/semantic-conventions/build/esm/trace/SemanticAttributes.js
+//#region node_modules/@opentelemetry/semantic-conventions/build/esm/trace/SemanticAttributes.js
 var TMP_AWS_LAMBDA_INVOKED_ARN, TMP_DB_SYSTEM, TMP_DB_CONNECTION_STRING, TMP_DB_USER, TMP_DB_JDBC_DRIVER_CLASSNAME, TMP_DB_NAME, TMP_DB_STATEMENT, TMP_DB_OPERATION, TMP_DB_MSSQL_INSTANCE_NAME, TMP_DB_CASSANDRA_KEYSPACE, TMP_DB_CASSANDRA_PAGE_SIZE, TMP_DB_CASSANDRA_CONSISTENCY_LEVEL, TMP_DB_CASSANDRA_TABLE, TMP_DB_CASSANDRA_IDEMPOTENCE, TMP_DB_CASSANDRA_SPECULATIVE_EXECUTION_COUNT, TMP_DB_CASSANDRA_COORDINATOR_ID, TMP_DB_CASSANDRA_COORDINATOR_DC, TMP_DB_HBASE_NAMESPACE, TMP_DB_REDIS_DATABASE_INDEX, TMP_DB_MONGODB_COLLECTION, TMP_DB_SQL_TABLE, TMP_EXCEPTION_TYPE, TMP_EXCEPTION_MESSAGE, TMP_EXCEPTION_STACKTRACE, TMP_EXCEPTION_ESCAPED, TMP_FAAS_TRIGGER, TMP_FAAS_EXECUTION, TMP_FAAS_DOCUMENT_COLLECTION, TMP_FAAS_DOCUMENT_OPERATION, TMP_FAAS_DOCUMENT_TIME, TMP_FAAS_DOCUMENT_NAME, TMP_FAAS_TIME, TMP_FAAS_CRON, TMP_FAAS_COLDSTART, TMP_FAAS_INVOKED_NAME, TMP_FAAS_INVOKED_PROVIDER, TMP_FAAS_INVOKED_REGION, TMP_NET_TRANSPORT, TMP_NET_PEER_IP, TMP_NET_PEER_PORT, TMP_NET_PEER_NAME, TMP_NET_HOST_IP, TMP_NET_HOST_PORT, TMP_NET_HOST_NAME, TMP_NET_HOST_CONNECTION_TYPE, TMP_NET_HOST_CONNECTION_SUBTYPE, TMP_NET_HOST_CARRIER_NAME, TMP_NET_HOST_CARRIER_MCC, TMP_NET_HOST_CARRIER_MNC, TMP_NET_HOST_CARRIER_ICC, TMP_PEER_SERVICE, TMP_ENDUSER_ID, TMP_ENDUSER_ROLE, TMP_ENDUSER_SCOPE, TMP_THREAD_ID, TMP_THREAD_NAME, TMP_CODE_FUNCTION, TMP_CODE_NAMESPACE, TMP_CODE_FILEPATH, TMP_CODE_LINENO, TMP_HTTP_METHOD, TMP_HTTP_URL, TMP_HTTP_TARGET, TMP_HTTP_HOST, TMP_HTTP_SCHEME, TMP_HTTP_STATUS_CODE, TMP_HTTP_FLAVOR, TMP_HTTP_USER_AGENT, TMP_HTTP_REQUEST_CONTENT_LENGTH, TMP_HTTP_REQUEST_CONTENT_LENGTH_UNCOMPRESSED, TMP_HTTP_RESPONSE_CONTENT_LENGTH, TMP_HTTP_RESPONSE_CONTENT_LENGTH_UNCOMPRESSED, TMP_HTTP_SERVER_NAME, TMP_HTTP_ROUTE, TMP_HTTP_CLIENT_IP, TMP_AWS_DYNAMODB_TABLE_NAMES, TMP_AWS_DYNAMODB_CONSUMED_CAPACITY, TMP_AWS_DYNAMODB_ITEM_COLLECTION_METRICS, TMP_AWS_DYNAMODB_PROVISIONED_READ_CAPACITY, TMP_AWS_DYNAMODB_PROVISIONED_WRITE_CAPACITY, TMP_AWS_DYNAMODB_CONSISTENT_READ, TMP_AWS_DYNAMODB_PROJECTION, TMP_AWS_DYNAMODB_LIMIT, TMP_AWS_DYNAMODB_ATTRIBUTES_TO_GET, TMP_AWS_DYNAMODB_INDEX_NAME, TMP_AWS_DYNAMODB_SELECT, TMP_AWS_DYNAMODB_GLOBAL_SECONDARY_INDEXES, TMP_AWS_DYNAMODB_LOCAL_SECONDARY_INDEXES, TMP_AWS_DYNAMODB_EXCLUSIVE_START_TABLE, TMP_AWS_DYNAMODB_TABLE_COUNT, TMP_AWS_DYNAMODB_SCAN_FORWARD, TMP_AWS_DYNAMODB_SEGMENT, TMP_AWS_DYNAMODB_TOTAL_SEGMENTS, TMP_AWS_DYNAMODB_COUNT, TMP_AWS_DYNAMODB_SCANNED_COUNT, TMP_AWS_DYNAMODB_ATTRIBUTE_DEFINITIONS, TMP_AWS_DYNAMODB_GLOBAL_SECONDARY_INDEX_UPDATES, TMP_MESSAGING_SYSTEM, TMP_MESSAGING_DESTINATION, TMP_MESSAGING_DESTINATION_KIND, TMP_MESSAGING_TEMP_DESTINATION, TMP_MESSAGING_PROTOCOL, TMP_MESSAGING_PROTOCOL_VERSION, TMP_MESSAGING_URL, TMP_MESSAGING_MESSAGE_ID, TMP_MESSAGING_CONVERSATION_ID, TMP_MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES, TMP_MESSAGING_MESSAGE_PAYLOAD_COMPRESSED_SIZE_BYTES, TMP_MESSAGING_OPERATION, TMP_MESSAGING_CONSUMER_ID, TMP_MESSAGING_RABBITMQ_ROUTING_KEY, TMP_MESSAGING_KAFKA_MESSAGE_KEY, TMP_MESSAGING_KAFKA_CONSUMER_GROUP, TMP_MESSAGING_KAFKA_CLIENT_ID, TMP_MESSAGING_KAFKA_PARTITION, TMP_MESSAGING_KAFKA_TOMBSTONE, TMP_RPC_SYSTEM, TMP_RPC_SERVICE, TMP_RPC_METHOD, TMP_RPC_GRPC_STATUS_CODE, TMP_RPC_JSONRPC_VERSION, TMP_RPC_JSONRPC_REQUEST_ID, TMP_RPC_JSONRPC_ERROR_CODE, TMP_RPC_JSONRPC_ERROR_MESSAGE, TMP_MESSAGE_TYPE, TMP_MESSAGE_ID, TMP_MESSAGE_COMPRESSED_SIZE, TMP_MESSAGE_UNCOMPRESSED_SIZE, SEMATTRS_AWS_LAMBDA_INVOKED_ARN, SEMATTRS_DB_SYSTEM, SEMATTRS_DB_CONNECTION_STRING, SEMATTRS_DB_USER, SEMATTRS_DB_JDBC_DRIVER_CLASSNAME, SEMATTRS_DB_NAME, SEMATTRS_DB_STATEMENT, SEMATTRS_DB_OPERATION, SEMATTRS_DB_MSSQL_INSTANCE_NAME, SEMATTRS_DB_CASSANDRA_KEYSPACE, SEMATTRS_DB_CASSANDRA_PAGE_SIZE, SEMATTRS_DB_CASSANDRA_CONSISTENCY_LEVEL, SEMATTRS_DB_CASSANDRA_TABLE, SEMATTRS_DB_CASSANDRA_IDEMPOTENCE, SEMATTRS_DB_CASSANDRA_SPECULATIVE_EXECUTION_COUNT, SEMATTRS_DB_CASSANDRA_COORDINATOR_ID, SEMATTRS_DB_CASSANDRA_COORDINATOR_DC, SEMATTRS_DB_HBASE_NAMESPACE, SEMATTRS_DB_REDIS_DATABASE_INDEX, SEMATTRS_DB_MONGODB_COLLECTION, SEMATTRS_DB_SQL_TABLE, SEMATTRS_EXCEPTION_TYPE, SEMATTRS_EXCEPTION_MESSAGE, SEMATTRS_EXCEPTION_STACKTRACE, SEMATTRS_EXCEPTION_ESCAPED, SEMATTRS_FAAS_TRIGGER, SEMATTRS_FAAS_EXECUTION, SEMATTRS_FAAS_DOCUMENT_COLLECTION, SEMATTRS_FAAS_DOCUMENT_OPERATION, SEMATTRS_FAAS_DOCUMENT_TIME, SEMATTRS_FAAS_DOCUMENT_NAME, SEMATTRS_FAAS_TIME, SEMATTRS_FAAS_CRON, SEMATTRS_FAAS_COLDSTART, SEMATTRS_FAAS_INVOKED_NAME, SEMATTRS_FAAS_INVOKED_PROVIDER, SEMATTRS_FAAS_INVOKED_REGION, SEMATTRS_NET_TRANSPORT, SEMATTRS_NET_PEER_IP, SEMATTRS_NET_PEER_PORT, SEMATTRS_NET_PEER_NAME, SEMATTRS_NET_HOST_IP, SEMATTRS_NET_HOST_PORT, SEMATTRS_NET_HOST_NAME, SEMATTRS_NET_HOST_CONNECTION_TYPE, SEMATTRS_NET_HOST_CONNECTION_SUBTYPE, SEMATTRS_NET_HOST_CARRIER_NAME, SEMATTRS_NET_HOST_CARRIER_MCC, SEMATTRS_NET_HOST_CARRIER_MNC, SEMATTRS_NET_HOST_CARRIER_ICC, SEMATTRS_PEER_SERVICE, SEMATTRS_ENDUSER_ID, SEMATTRS_ENDUSER_ROLE, SEMATTRS_ENDUSER_SCOPE, SEMATTRS_THREAD_ID, SEMATTRS_THREAD_NAME, SEMATTRS_CODE_FUNCTION, SEMATTRS_CODE_NAMESPACE, SEMATTRS_CODE_FILEPATH, SEMATTRS_CODE_LINENO, SEMATTRS_HTTP_METHOD, SEMATTRS_HTTP_URL, SEMATTRS_HTTP_TARGET, SEMATTRS_HTTP_HOST, SEMATTRS_HTTP_SCHEME, SEMATTRS_HTTP_STATUS_CODE, SEMATTRS_HTTP_FLAVOR, SEMATTRS_HTTP_USER_AGENT, SEMATTRS_HTTP_REQUEST_CONTENT_LENGTH, SEMATTRS_HTTP_REQUEST_CONTENT_LENGTH_UNCOMPRESSED, SEMATTRS_HTTP_RESPONSE_CONTENT_LENGTH, SEMATTRS_HTTP_RESPONSE_CONTENT_LENGTH_UNCOMPRESSED, SEMATTRS_HTTP_SERVER_NAME, SEMATTRS_HTTP_ROUTE, SEMATTRS_HTTP_CLIENT_IP, SEMATTRS_AWS_DYNAMODB_TABLE_NAMES, SEMATTRS_AWS_DYNAMODB_CONSUMED_CAPACITY, SEMATTRS_AWS_DYNAMODB_ITEM_COLLECTION_METRICS, SEMATTRS_AWS_DYNAMODB_PROVISIONED_READ_CAPACITY, SEMATTRS_AWS_DYNAMODB_PROVISIONED_WRITE_CAPACITY, SEMATTRS_AWS_DYNAMODB_CONSISTENT_READ, SEMATTRS_AWS_DYNAMODB_PROJECTION, SEMATTRS_AWS_DYNAMODB_LIMIT, SEMATTRS_AWS_DYNAMODB_ATTRIBUTES_TO_GET, SEMATTRS_AWS_DYNAMODB_INDEX_NAME, SEMATTRS_AWS_DYNAMODB_SELECT, SEMATTRS_AWS_DYNAMODB_GLOBAL_SECONDARY_INDEXES, SEMATTRS_AWS_DYNAMODB_LOCAL_SECONDARY_INDEXES, SEMATTRS_AWS_DYNAMODB_EXCLUSIVE_START_TABLE, SEMATTRS_AWS_DYNAMODB_TABLE_COUNT, SEMATTRS_AWS_DYNAMODB_SCAN_FORWARD, SEMATTRS_AWS_DYNAMODB_SEGMENT, SEMATTRS_AWS_DYNAMODB_TOTAL_SEGMENTS, SEMATTRS_AWS_DYNAMODB_COUNT, SEMATTRS_AWS_DYNAMODB_SCANNED_COUNT, SEMATTRS_AWS_DYNAMODB_ATTRIBUTE_DEFINITIONS, SEMATTRS_AWS_DYNAMODB_GLOBAL_SECONDARY_INDEX_UPDATES, SEMATTRS_MESSAGING_SYSTEM, SEMATTRS_MESSAGING_DESTINATION, SEMATTRS_MESSAGING_DESTINATION_KIND, SEMATTRS_MESSAGING_TEMP_DESTINATION, SEMATTRS_MESSAGING_PROTOCOL, SEMATTRS_MESSAGING_PROTOCOL_VERSION, SEMATTRS_MESSAGING_URL, SEMATTRS_MESSAGING_MESSAGE_ID, SEMATTRS_MESSAGING_CONVERSATION_ID, SEMATTRS_MESSAGING_MESSAGE_PAYLOAD_SIZE_BYTES, SEMATTRS_MESSAGING_MESSAGE_PAYLOAD_COMPRESSED_SIZE_BYTES, SEMATTRS_MESSAGING_OPERATION, SEMATTRS_MESSAGING_CONSUMER_ID, SEMATTRS_MESSAGING_RABBITMQ_ROUTING_KEY, SEMATTRS_MESSAGING_KAFKA_MESSAGE_KEY, SEMATTRS_MESSAGING_KAFKA_CONSUMER_GROUP, SEMATTRS_MESSAGING_KAFKA_CLIENT_ID, SEMATTRS_MESSAGING_KAFKA_PARTITION, SEMATTRS_MESSAGING_KAFKA_TOMBSTONE, SEMATTRS_RPC_SYSTEM, SEMATTRS_RPC_SERVICE, SEMATTRS_RPC_METHOD, SEMATTRS_RPC_GRPC_STATUS_CODE, SEMATTRS_RPC_JSONRPC_VERSION, SEMATTRS_RPC_JSONRPC_REQUEST_ID, SEMATTRS_RPC_JSONRPC_ERROR_CODE, SEMATTRS_RPC_JSONRPC_ERROR_MESSAGE, SEMATTRS_MESSAGE_TYPE, SEMATTRS_MESSAGE_ID, SEMATTRS_MESSAGE_COMPRESSED_SIZE, SEMATTRS_MESSAGE_UNCOMPRESSED_SIZE, SemanticAttributes, TMP_DBSYSTEMVALUES_OTHER_SQL, TMP_DBSYSTEMVALUES_MSSQL, TMP_DBSYSTEMVALUES_MYSQL, TMP_DBSYSTEMVALUES_ORACLE, TMP_DBSYSTEMVALUES_DB2, TMP_DBSYSTEMVALUES_POSTGRESQL, TMP_DBSYSTEMVALUES_REDSHIFT, TMP_DBSYSTEMVALUES_HIVE, TMP_DBSYSTEMVALUES_CLOUDSCAPE, TMP_DBSYSTEMVALUES_HSQLDB, TMP_DBSYSTEMVALUES_PROGRESS, TMP_DBSYSTEMVALUES_MAXDB, TMP_DBSYSTEMVALUES_HANADB, TMP_DBSYSTEMVALUES_INGRES, TMP_DBSYSTEMVALUES_FIRSTSQL, TMP_DBSYSTEMVALUES_EDB, TMP_DBSYSTEMVALUES_CACHE, TMP_DBSYSTEMVALUES_ADABAS, TMP_DBSYSTEMVALUES_FIREBIRD, TMP_DBSYSTEMVALUES_DERBY, TMP_DBSYSTEMVALUES_FILEMAKER, TMP_DBSYSTEMVALUES_INFORMIX, TMP_DBSYSTEMVALUES_INSTANTDB, TMP_DBSYSTEMVALUES_INTERBASE, TMP_DBSYSTEMVALUES_MARIADB, TMP_DBSYSTEMVALUES_NETEZZA, TMP_DBSYSTEMVALUES_PERVASIVE, TMP_DBSYSTEMVALUES_POINTBASE, TMP_DBSYSTEMVALUES_SQLITE, TMP_DBSYSTEMVALUES_SYBASE, TMP_DBSYSTEMVALUES_TERADATA, TMP_DBSYSTEMVALUES_VERTICA, TMP_DBSYSTEMVALUES_H2, TMP_DBSYSTEMVALUES_COLDFUSION, TMP_DBSYSTEMVALUES_CASSANDRA, TMP_DBSYSTEMVALUES_HBASE, TMP_DBSYSTEMVALUES_MONGODB, TMP_DBSYSTEMVALUES_REDIS, TMP_DBSYSTEMVALUES_COUCHBASE, TMP_DBSYSTEMVALUES_COUCHDB, TMP_DBSYSTEMVALUES_COSMOSDB, TMP_DBSYSTEMVALUES_DYNAMODB, TMP_DBSYSTEMVALUES_NEO4J, TMP_DBSYSTEMVALUES_GEODE, TMP_DBSYSTEMVALUES_ELASTICSEARCH, TMP_DBSYSTEMVALUES_MEMCACHED, TMP_DBSYSTEMVALUES_COCKROACHDB, DBSYSTEMVALUES_OTHER_SQL, DBSYSTEMVALUES_MSSQL, DBSYSTEMVALUES_MYSQL, DBSYSTEMVALUES_ORACLE, DBSYSTEMVALUES_DB2, DBSYSTEMVALUES_POSTGRESQL, DBSYSTEMVALUES_REDSHIFT, DBSYSTEMVALUES_HIVE, DBSYSTEMVALUES_CLOUDSCAPE, DBSYSTEMVALUES_HSQLDB, DBSYSTEMVALUES_PROGRESS, DBSYSTEMVALUES_MAXDB, DBSYSTEMVALUES_HANADB, DBSYSTEMVALUES_INGRES, DBSYSTEMVALUES_FIRSTSQL, DBSYSTEMVALUES_EDB, DBSYSTEMVALUES_CACHE, DBSYSTEMVALUES_ADABAS, DBSYSTEMVALUES_FIREBIRD, DBSYSTEMVALUES_DERBY, DBSYSTEMVALUES_FILEMAKER, DBSYSTEMVALUES_INFORMIX, DBSYSTEMVALUES_INSTANTDB, DBSYSTEMVALUES_INTERBASE, DBSYSTEMVALUES_MARIADB, DBSYSTEMVALUES_NETEZZA, DBSYSTEMVALUES_PERVASIVE, DBSYSTEMVALUES_POINTBASE, DBSYSTEMVALUES_SQLITE, DBSYSTEMVALUES_SYBASE, DBSYSTEMVALUES_TERADATA, DBSYSTEMVALUES_VERTICA, DBSYSTEMVALUES_H2, DBSYSTEMVALUES_COLDFUSION, DBSYSTEMVALUES_CASSANDRA, DBSYSTEMVALUES_HBASE, DBSYSTEMVALUES_MONGODB, DBSYSTEMVALUES_REDIS, DBSYSTEMVALUES_COUCHBASE, DBSYSTEMVALUES_COUCHDB, DBSYSTEMVALUES_COSMOSDB, DBSYSTEMVALUES_DYNAMODB, DBSYSTEMVALUES_NEO4J, DBSYSTEMVALUES_GEODE, DBSYSTEMVALUES_ELASTICSEARCH, DBSYSTEMVALUES_MEMCACHED, DBSYSTEMVALUES_COCKROACHDB, DbSystemValues, TMP_DBCASSANDRACONSISTENCYLEVELVALUES_ALL, TMP_DBCASSANDRACONSISTENCYLEVELVALUES_EACH_QUORUM, TMP_DBCASSANDRACONSISTENCYLEVELVALUES_QUORUM, TMP_DBCASSANDRACONSISTENCYLEVELVALUES_LOCAL_QUORUM, TMP_DBCASSANDRACONSISTENCYLEVELVALUES_ONE, TMP_DBCASSANDRACONSISTENCYLEVELVALUES_TWO, TMP_DBCASSANDRACONSISTENCYLEVELVALUES_THREE, TMP_DBCASSANDRACONSISTENCYLEVELVALUES_LOCAL_ONE, TMP_DBCASSANDRACONSISTENCYLEVELVALUES_ANY, TMP_DBCASSANDRACONSISTENCYLEVELVALUES_SERIAL, TMP_DBCASSANDRACONSISTENCYLEVELVALUES_LOCAL_SERIAL, DBCASSANDRACONSISTENCYLEVELVALUES_ALL, DBCASSANDRACONSISTENCYLEVELVALUES_EACH_QUORUM, DBCASSANDRACONSISTENCYLEVELVALUES_QUORUM, DBCASSANDRACONSISTENCYLEVELVALUES_LOCAL_QUORUM, DBCASSANDRACONSISTENCYLEVELVALUES_ONE, DBCASSANDRACONSISTENCYLEVELVALUES_TWO, DBCASSANDRACONSISTENCYLEVELVALUES_THREE, DBCASSANDRACONSISTENCYLEVELVALUES_LOCAL_ONE, DBCASSANDRACONSISTENCYLEVELVALUES_ANY, DBCASSANDRACONSISTENCYLEVELVALUES_SERIAL, DBCASSANDRACONSISTENCYLEVELVALUES_LOCAL_SERIAL, DbCassandraConsistencyLevelValues, TMP_FAASTRIGGERVALUES_DATASOURCE, TMP_FAASTRIGGERVALUES_HTTP, TMP_FAASTRIGGERVALUES_PUBSUB, TMP_FAASTRIGGERVALUES_TIMER, TMP_FAASTRIGGERVALUES_OTHER, FAASTRIGGERVALUES_DATASOURCE, FAASTRIGGERVALUES_HTTP, FAASTRIGGERVALUES_PUBSUB, FAASTRIGGERVALUES_TIMER, FAASTRIGGERVALUES_OTHER, FaasTriggerValues, TMP_FAASDOCUMENTOPERATIONVALUES_INSERT, TMP_FAASDOCUMENTOPERATIONVALUES_EDIT, TMP_FAASDOCUMENTOPERATIONVALUES_DELETE, FAASDOCUMENTOPERATIONVALUES_INSERT, FAASDOCUMENTOPERATIONVALUES_EDIT, FAASDOCUMENTOPERATIONVALUES_DELETE, FaasDocumentOperationValues, TMP_FAASINVOKEDPROVIDERVALUES_ALIBABA_CLOUD, TMP_FAASINVOKEDPROVIDERVALUES_AWS, TMP_FAASINVOKEDPROVIDERVALUES_AZURE, TMP_FAASINVOKEDPROVIDERVALUES_GCP, FAASINVOKEDPROVIDERVALUES_ALIBABA_CLOUD, FAASINVOKEDPROVIDERVALUES_AWS, FAASINVOKEDPROVIDERVALUES_AZURE, FAASINVOKEDPROVIDERVALUES_GCP, FaasInvokedProviderValues, TMP_NETTRANSPORTVALUES_IP_TCP, TMP_NETTRANSPORTVALUES_IP_UDP, TMP_NETTRANSPORTVALUES_IP, TMP_NETTRANSPORTVALUES_UNIX, TMP_NETTRANSPORTVALUES_PIPE, TMP_NETTRANSPORTVALUES_INPROC, TMP_NETTRANSPORTVALUES_OTHER, NETTRANSPORTVALUES_IP_TCP, NETTRANSPORTVALUES_IP_UDP, NETTRANSPORTVALUES_IP, NETTRANSPORTVALUES_UNIX, NETTRANSPORTVALUES_PIPE, NETTRANSPORTVALUES_INPROC, NETTRANSPORTVALUES_OTHER, NetTransportValues, TMP_NETHOSTCONNECTIONTYPEVALUES_WIFI, TMP_NETHOSTCONNECTIONTYPEVALUES_WIRED, TMP_NETHOSTCONNECTIONTYPEVALUES_CELL, TMP_NETHOSTCONNECTIONTYPEVALUES_UNAVAILABLE, TMP_NETHOSTCONNECTIONTYPEVALUES_UNKNOWN, NETHOSTCONNECTIONTYPEVALUES_WIFI, NETHOSTCONNECTIONTYPEVALUES_WIRED, NETHOSTCONNECTIONTYPEVALUES_CELL, NETHOSTCONNECTIONTYPEVALUES_UNAVAILABLE, NETHOSTCONNECTIONTYPEVALUES_UNKNOWN, NetHostConnectionTypeValues, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_GPRS, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_EDGE, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_UMTS, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_CDMA, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_EVDO_0, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_EVDO_A, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_CDMA2000_1XRTT, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_HSDPA, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_HSUPA, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_HSPA, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_IDEN, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_EVDO_B, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_LTE, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_EHRPD, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_HSPAP, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_GSM, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_TD_SCDMA, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_IWLAN, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_NR, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_NRNSA, TMP_NETHOSTCONNECTIONSUBTYPEVALUES_LTE_CA, NETHOSTCONNECTIONSUBTYPEVALUES_GPRS, NETHOSTCONNECTIONSUBTYPEVALUES_EDGE, NETHOSTCONNECTIONSUBTYPEVALUES_UMTS, NETHOSTCONNECTIONSUBTYPEVALUES_CDMA, NETHOSTCONNECTIONSUBTYPEVALUES_EVDO_0, NETHOSTCONNECTIONSUBTYPEVALUES_EVDO_A, NETHOSTCONNECTIONSUBTYPEVALUES_CDMA2000_1XRTT, NETHOSTCONNECTIONSUBTYPEVALUES_HSDPA, NETHOSTCONNECTIONSUBTYPEVALUES_HSUPA, NETHOSTCONNECTIONSUBTYPEVALUES_HSPA, NETHOSTCONNECTIONSUBTYPEVALUES_IDEN, NETHOSTCONNECTIONSUBTYPEVALUES_EVDO_B, NETHOSTCONNECTIONSUBTYPEVALUES_LTE, NETHOSTCONNECTIONSUBTYPEVALUES_EHRPD, NETHOSTCONNECTIONSUBTYPEVALUES_HSPAP, NETHOSTCONNECTIONSUBTYPEVALUES_GSM, NETHOSTCONNECTIONSUBTYPEVALUES_TD_SCDMA, NETHOSTCONNECTIONSUBTYPEVALUES_IWLAN, NETHOSTCONNECTIONSUBTYPEVALUES_NR, NETHOSTCONNECTIONSUBTYPEVALUES_NRNSA, NETHOSTCONNECTIONSUBTYPEVALUES_LTE_CA, NetHostConnectionSubtypeValues, TMP_HTTPFLAVORVALUES_HTTP_1_0, TMP_HTTPFLAVORVALUES_HTTP_1_1, TMP_HTTPFLAVORVALUES_HTTP_2_0, TMP_HTTPFLAVORVALUES_SPDY, TMP_HTTPFLAVORVALUES_QUIC, HTTPFLAVORVALUES_HTTP_1_0, HTTPFLAVORVALUES_HTTP_1_1, HTTPFLAVORVALUES_HTTP_2_0, HTTPFLAVORVALUES_SPDY, HTTPFLAVORVALUES_QUIC, HttpFlavorValues, TMP_MESSAGINGDESTINATIONKINDVALUES_QUEUE, TMP_MESSAGINGDESTINATIONKINDVALUES_TOPIC, MESSAGINGDESTINATIONKINDVALUES_QUEUE, MESSAGINGDESTINATIONKINDVALUES_TOPIC, MessagingDestinationKindValues, TMP_MESSAGINGOPERATIONVALUES_RECEIVE, TMP_MESSAGINGOPERATIONVALUES_PROCESS, MESSAGINGOPERATIONVALUES_RECEIVE, MESSAGINGOPERATIONVALUES_PROCESS, MessagingOperationValues, TMP_RPCGRPCSTATUSCODEVALUES_OK, TMP_RPCGRPCSTATUSCODEVALUES_CANCELLED, TMP_RPCGRPCSTATUSCODEVALUES_UNKNOWN, TMP_RPCGRPCSTATUSCODEVALUES_INVALID_ARGUMENT, TMP_RPCGRPCSTATUSCODEVALUES_DEADLINE_EXCEEDED, TMP_RPCGRPCSTATUSCODEVALUES_NOT_FOUND, TMP_RPCGRPCSTATUSCODEVALUES_ALREADY_EXISTS, TMP_RPCGRPCSTATUSCODEVALUES_PERMISSION_DENIED, TMP_RPCGRPCSTATUSCODEVALUES_RESOURCE_EXHAUSTED, TMP_RPCGRPCSTATUSCODEVALUES_FAILED_PRECONDITION, TMP_RPCGRPCSTATUSCODEVALUES_ABORTED, TMP_RPCGRPCSTATUSCODEVALUES_OUT_OF_RANGE, TMP_RPCGRPCSTATUSCODEVALUES_UNIMPLEMENTED, TMP_RPCGRPCSTATUSCODEVALUES_INTERNAL, TMP_RPCGRPCSTATUSCODEVALUES_UNAVAILABLE, TMP_RPCGRPCSTATUSCODEVALUES_DATA_LOSS, TMP_RPCGRPCSTATUSCODEVALUES_UNAUTHENTICATED, RPCGRPCSTATUSCODEVALUES_OK, RPCGRPCSTATUSCODEVALUES_CANCELLED, RPCGRPCSTATUSCODEVALUES_UNKNOWN, RPCGRPCSTATUSCODEVALUES_INVALID_ARGUMENT, RPCGRPCSTATUSCODEVALUES_DEADLINE_EXCEEDED, RPCGRPCSTATUSCODEVALUES_NOT_FOUND, RPCGRPCSTATUSCODEVALUES_ALREADY_EXISTS, RPCGRPCSTATUSCODEVALUES_PERMISSION_DENIED, RPCGRPCSTATUSCODEVALUES_RESOURCE_EXHAUSTED, RPCGRPCSTATUSCODEVALUES_FAILED_PRECONDITION, RPCGRPCSTATUSCODEVALUES_ABORTED, RPCGRPCSTATUSCODEVALUES_OUT_OF_RANGE, RPCGRPCSTATUSCODEVALUES_UNIMPLEMENTED, RPCGRPCSTATUSCODEVALUES_INTERNAL, RPCGRPCSTATUSCODEVALUES_UNAVAILABLE, RPCGRPCSTATUSCODEVALUES_DATA_LOSS, RPCGRPCSTATUSCODEVALUES_UNAUTHENTICATED, RpcGrpcStatusCodeValues, TMP_MESSAGETYPEVALUES_SENT, TMP_MESSAGETYPEVALUES_RECEIVED, MESSAGETYPEVALUES_SENT, MESSAGETYPEVALUES_RECEIVED, MessageTypeValues;
 var init_SemanticAttributes = __esmMin((() => {
 	init_utils();
@@ -76800,13 +76800,13 @@ var init_SemanticAttributes = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/semantic-conventions/build/esm/trace/index.js
+//#region node_modules/@opentelemetry/semantic-conventions/build/esm/trace/index.js
 var init_trace = __esmMin((() => {
 	init_SemanticAttributes();
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/semantic-conventions/build/esm/resource/SemanticResourceAttributes.js
+//#region node_modules/@opentelemetry/semantic-conventions/build/esm/resource/SemanticResourceAttributes.js
 var TMP_CLOUD_PROVIDER, TMP_CLOUD_ACCOUNT_ID, TMP_CLOUD_REGION, TMP_CLOUD_AVAILABILITY_ZONE, TMP_CLOUD_PLATFORM, TMP_AWS_ECS_CONTAINER_ARN, TMP_AWS_ECS_CLUSTER_ARN, TMP_AWS_ECS_LAUNCHTYPE, TMP_AWS_ECS_TASK_ARN, TMP_AWS_ECS_TASK_FAMILY, TMP_AWS_ECS_TASK_REVISION, TMP_AWS_EKS_CLUSTER_ARN, TMP_AWS_LOG_GROUP_NAMES, TMP_AWS_LOG_GROUP_ARNS, TMP_AWS_LOG_STREAM_NAMES, TMP_AWS_LOG_STREAM_ARNS, TMP_CONTAINER_NAME, TMP_CONTAINER_ID, TMP_CONTAINER_RUNTIME, TMP_CONTAINER_IMAGE_NAME, TMP_CONTAINER_IMAGE_TAG, TMP_DEPLOYMENT_ENVIRONMENT, TMP_DEVICE_ID, TMP_DEVICE_MODEL_IDENTIFIER, TMP_DEVICE_MODEL_NAME, TMP_FAAS_NAME, TMP_FAAS_ID, TMP_FAAS_VERSION, TMP_FAAS_INSTANCE, TMP_FAAS_MAX_MEMORY, TMP_HOST_ID, TMP_HOST_NAME, TMP_HOST_TYPE, TMP_HOST_ARCH, TMP_HOST_IMAGE_NAME, TMP_HOST_IMAGE_ID, TMP_HOST_IMAGE_VERSION, TMP_K8S_CLUSTER_NAME, TMP_K8S_NODE_NAME, TMP_K8S_NODE_UID, TMP_K8S_NAMESPACE_NAME, TMP_K8S_POD_UID, TMP_K8S_POD_NAME, TMP_K8S_CONTAINER_NAME, TMP_K8S_REPLICASET_UID, TMP_K8S_REPLICASET_NAME, TMP_K8S_DEPLOYMENT_UID, TMP_K8S_DEPLOYMENT_NAME, TMP_K8S_STATEFULSET_UID, TMP_K8S_STATEFULSET_NAME, TMP_K8S_DAEMONSET_UID, TMP_K8S_DAEMONSET_NAME, TMP_K8S_JOB_UID, TMP_K8S_JOB_NAME, TMP_K8S_CRONJOB_UID, TMP_K8S_CRONJOB_NAME, TMP_OS_TYPE, TMP_OS_DESCRIPTION, TMP_OS_NAME, TMP_OS_VERSION, TMP_PROCESS_PID, TMP_PROCESS_EXECUTABLE_NAME, TMP_PROCESS_EXECUTABLE_PATH, TMP_PROCESS_COMMAND, TMP_PROCESS_COMMAND_LINE, TMP_PROCESS_COMMAND_ARGS, TMP_PROCESS_OWNER, TMP_PROCESS_RUNTIME_NAME, TMP_PROCESS_RUNTIME_VERSION, TMP_PROCESS_RUNTIME_DESCRIPTION, TMP_SERVICE_NAME, TMP_SERVICE_NAMESPACE, TMP_SERVICE_INSTANCE_ID, TMP_SERVICE_VERSION, TMP_TELEMETRY_SDK_NAME, TMP_TELEMETRY_SDK_LANGUAGE, TMP_TELEMETRY_SDK_VERSION, TMP_TELEMETRY_AUTO_VERSION, TMP_WEBENGINE_NAME, TMP_WEBENGINE_VERSION, TMP_WEBENGINE_DESCRIPTION, SEMRESATTRS_CLOUD_PROVIDER, SEMRESATTRS_CLOUD_ACCOUNT_ID, SEMRESATTRS_CLOUD_REGION, SEMRESATTRS_CLOUD_AVAILABILITY_ZONE, SEMRESATTRS_CLOUD_PLATFORM, SEMRESATTRS_AWS_ECS_CONTAINER_ARN, SEMRESATTRS_AWS_ECS_CLUSTER_ARN, SEMRESATTRS_AWS_ECS_LAUNCHTYPE, SEMRESATTRS_AWS_ECS_TASK_ARN, SEMRESATTRS_AWS_ECS_TASK_FAMILY, SEMRESATTRS_AWS_ECS_TASK_REVISION, SEMRESATTRS_AWS_EKS_CLUSTER_ARN, SEMRESATTRS_AWS_LOG_GROUP_NAMES, SEMRESATTRS_AWS_LOG_GROUP_ARNS, SEMRESATTRS_AWS_LOG_STREAM_NAMES, SEMRESATTRS_AWS_LOG_STREAM_ARNS, SEMRESATTRS_CONTAINER_NAME, SEMRESATTRS_CONTAINER_ID, SEMRESATTRS_CONTAINER_RUNTIME, SEMRESATTRS_CONTAINER_IMAGE_NAME, SEMRESATTRS_CONTAINER_IMAGE_TAG, SEMRESATTRS_DEPLOYMENT_ENVIRONMENT, SEMRESATTRS_DEVICE_ID, SEMRESATTRS_DEVICE_MODEL_IDENTIFIER, SEMRESATTRS_DEVICE_MODEL_NAME, SEMRESATTRS_FAAS_NAME, SEMRESATTRS_FAAS_ID, SEMRESATTRS_FAAS_VERSION, SEMRESATTRS_FAAS_INSTANCE, SEMRESATTRS_FAAS_MAX_MEMORY, SEMRESATTRS_HOST_ID, SEMRESATTRS_HOST_NAME, SEMRESATTRS_HOST_TYPE, SEMRESATTRS_HOST_ARCH, SEMRESATTRS_HOST_IMAGE_NAME, SEMRESATTRS_HOST_IMAGE_ID, SEMRESATTRS_HOST_IMAGE_VERSION, SEMRESATTRS_K8S_CLUSTER_NAME, SEMRESATTRS_K8S_NODE_NAME, SEMRESATTRS_K8S_NODE_UID, SEMRESATTRS_K8S_NAMESPACE_NAME, SEMRESATTRS_K8S_POD_UID, SEMRESATTRS_K8S_POD_NAME, SEMRESATTRS_K8S_CONTAINER_NAME, SEMRESATTRS_K8S_REPLICASET_UID, SEMRESATTRS_K8S_REPLICASET_NAME, SEMRESATTRS_K8S_DEPLOYMENT_UID, SEMRESATTRS_K8S_DEPLOYMENT_NAME, SEMRESATTRS_K8S_STATEFULSET_UID, SEMRESATTRS_K8S_STATEFULSET_NAME, SEMRESATTRS_K8S_DAEMONSET_UID, SEMRESATTRS_K8S_DAEMONSET_NAME, SEMRESATTRS_K8S_JOB_UID, SEMRESATTRS_K8S_JOB_NAME, SEMRESATTRS_K8S_CRONJOB_UID, SEMRESATTRS_K8S_CRONJOB_NAME, SEMRESATTRS_OS_TYPE, SEMRESATTRS_OS_DESCRIPTION, SEMRESATTRS_OS_NAME, SEMRESATTRS_OS_VERSION, SEMRESATTRS_PROCESS_PID, SEMRESATTRS_PROCESS_EXECUTABLE_NAME, SEMRESATTRS_PROCESS_EXECUTABLE_PATH, SEMRESATTRS_PROCESS_COMMAND, SEMRESATTRS_PROCESS_COMMAND_LINE, SEMRESATTRS_PROCESS_COMMAND_ARGS, SEMRESATTRS_PROCESS_OWNER, SEMRESATTRS_PROCESS_RUNTIME_NAME, SEMRESATTRS_PROCESS_RUNTIME_VERSION, SEMRESATTRS_PROCESS_RUNTIME_DESCRIPTION, SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_NAMESPACE, SEMRESATTRS_SERVICE_INSTANCE_ID, SEMRESATTRS_SERVICE_VERSION, SEMRESATTRS_TELEMETRY_SDK_NAME, SEMRESATTRS_TELEMETRY_SDK_LANGUAGE, SEMRESATTRS_TELEMETRY_SDK_VERSION, SEMRESATTRS_TELEMETRY_AUTO_VERSION, SEMRESATTRS_WEBENGINE_NAME, SEMRESATTRS_WEBENGINE_VERSION, SEMRESATTRS_WEBENGINE_DESCRIPTION, SemanticResourceAttributes, TMP_CLOUDPROVIDERVALUES_ALIBABA_CLOUD, TMP_CLOUDPROVIDERVALUES_AWS, TMP_CLOUDPROVIDERVALUES_AZURE, TMP_CLOUDPROVIDERVALUES_GCP, CLOUDPROVIDERVALUES_ALIBABA_CLOUD, CLOUDPROVIDERVALUES_AWS, CLOUDPROVIDERVALUES_AZURE, CLOUDPROVIDERVALUES_GCP, CloudProviderValues, TMP_CLOUDPLATFORMVALUES_ALIBABA_CLOUD_ECS, TMP_CLOUDPLATFORMVALUES_ALIBABA_CLOUD_FC, TMP_CLOUDPLATFORMVALUES_AWS_EC2, TMP_CLOUDPLATFORMVALUES_AWS_ECS, TMP_CLOUDPLATFORMVALUES_AWS_EKS, TMP_CLOUDPLATFORMVALUES_AWS_LAMBDA, TMP_CLOUDPLATFORMVALUES_AWS_ELASTIC_BEANSTALK, TMP_CLOUDPLATFORMVALUES_AZURE_VM, TMP_CLOUDPLATFORMVALUES_AZURE_CONTAINER_INSTANCES, TMP_CLOUDPLATFORMVALUES_AZURE_AKS, TMP_CLOUDPLATFORMVALUES_AZURE_FUNCTIONS, TMP_CLOUDPLATFORMVALUES_AZURE_APP_SERVICE, TMP_CLOUDPLATFORMVALUES_GCP_COMPUTE_ENGINE, TMP_CLOUDPLATFORMVALUES_GCP_CLOUD_RUN, TMP_CLOUDPLATFORMVALUES_GCP_KUBERNETES_ENGINE, TMP_CLOUDPLATFORMVALUES_GCP_CLOUD_FUNCTIONS, TMP_CLOUDPLATFORMVALUES_GCP_APP_ENGINE, CLOUDPLATFORMVALUES_ALIBABA_CLOUD_ECS, CLOUDPLATFORMVALUES_ALIBABA_CLOUD_FC, CLOUDPLATFORMVALUES_AWS_EC2, CLOUDPLATFORMVALUES_AWS_ECS, CLOUDPLATFORMVALUES_AWS_EKS, CLOUDPLATFORMVALUES_AWS_LAMBDA, CLOUDPLATFORMVALUES_AWS_ELASTIC_BEANSTALK, CLOUDPLATFORMVALUES_AZURE_VM, CLOUDPLATFORMVALUES_AZURE_CONTAINER_INSTANCES, CLOUDPLATFORMVALUES_AZURE_AKS, CLOUDPLATFORMVALUES_AZURE_FUNCTIONS, CLOUDPLATFORMVALUES_AZURE_APP_SERVICE, CLOUDPLATFORMVALUES_GCP_COMPUTE_ENGINE, CLOUDPLATFORMVALUES_GCP_CLOUD_RUN, CLOUDPLATFORMVALUES_GCP_KUBERNETES_ENGINE, CLOUDPLATFORMVALUES_GCP_CLOUD_FUNCTIONS, CLOUDPLATFORMVALUES_GCP_APP_ENGINE, CloudPlatformValues, TMP_AWSECSLAUNCHTYPEVALUES_EC2, TMP_AWSECSLAUNCHTYPEVALUES_FARGATE, AWSECSLAUNCHTYPEVALUES_EC2, AWSECSLAUNCHTYPEVALUES_FARGATE, AwsEcsLaunchtypeValues, TMP_HOSTARCHVALUES_AMD64, TMP_HOSTARCHVALUES_ARM32, TMP_HOSTARCHVALUES_ARM64, TMP_HOSTARCHVALUES_IA64, TMP_HOSTARCHVALUES_PPC32, TMP_HOSTARCHVALUES_PPC64, TMP_HOSTARCHVALUES_X86, HOSTARCHVALUES_AMD64, HOSTARCHVALUES_ARM32, HOSTARCHVALUES_ARM64, HOSTARCHVALUES_IA64, HOSTARCHVALUES_PPC32, HOSTARCHVALUES_PPC64, HOSTARCHVALUES_X86, HostArchValues, TMP_OSTYPEVALUES_WINDOWS, TMP_OSTYPEVALUES_LINUX, TMP_OSTYPEVALUES_DARWIN, TMP_OSTYPEVALUES_FREEBSD, TMP_OSTYPEVALUES_NETBSD, TMP_OSTYPEVALUES_OPENBSD, TMP_OSTYPEVALUES_DRAGONFLYBSD, TMP_OSTYPEVALUES_HPUX, TMP_OSTYPEVALUES_AIX, TMP_OSTYPEVALUES_SOLARIS, TMP_OSTYPEVALUES_Z_OS, OSTYPEVALUES_WINDOWS, OSTYPEVALUES_LINUX, OSTYPEVALUES_DARWIN, OSTYPEVALUES_FREEBSD, OSTYPEVALUES_NETBSD, OSTYPEVALUES_OPENBSD, OSTYPEVALUES_DRAGONFLYBSD, OSTYPEVALUES_HPUX, OSTYPEVALUES_AIX, OSTYPEVALUES_SOLARIS, OSTYPEVALUES_Z_OS, OsTypeValues, TMP_TELEMETRYSDKLANGUAGEVALUES_CPP, TMP_TELEMETRYSDKLANGUAGEVALUES_DOTNET, TMP_TELEMETRYSDKLANGUAGEVALUES_ERLANG, TMP_TELEMETRYSDKLANGUAGEVALUES_GO, TMP_TELEMETRYSDKLANGUAGEVALUES_JAVA, TMP_TELEMETRYSDKLANGUAGEVALUES_NODEJS, TMP_TELEMETRYSDKLANGUAGEVALUES_PHP, TMP_TELEMETRYSDKLANGUAGEVALUES_PYTHON, TMP_TELEMETRYSDKLANGUAGEVALUES_RUBY, TMP_TELEMETRYSDKLANGUAGEVALUES_WEBJS, TELEMETRYSDKLANGUAGEVALUES_CPP, TELEMETRYSDKLANGUAGEVALUES_DOTNET, TELEMETRYSDKLANGUAGEVALUES_ERLANG, TELEMETRYSDKLANGUAGEVALUES_GO, TELEMETRYSDKLANGUAGEVALUES_JAVA, TELEMETRYSDKLANGUAGEVALUES_NODEJS, TELEMETRYSDKLANGUAGEVALUES_PHP, TELEMETRYSDKLANGUAGEVALUES_PYTHON, TELEMETRYSDKLANGUAGEVALUES_RUBY, TELEMETRYSDKLANGUAGEVALUES_WEBJS, TelemetrySdkLanguageValues;
 var init_SemanticResourceAttributes = __esmMin((() => {
 	init_utils();
@@ -77220,13 +77220,13 @@ var init_SemanticResourceAttributes = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/semantic-conventions/build/esm/resource/index.js
+//#region node_modules/@opentelemetry/semantic-conventions/build/esm/resource/index.js
 var init_resource = __esmMin((() => {
 	init_SemanticResourceAttributes();
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/semantic-conventions/build/esm/stable_attributes.js
+//#region node_modules/@opentelemetry/semantic-conventions/build/esm/stable_attributes.js
 var ATTR_ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT, ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT_VALUE_ABORTED, ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT_VALUE_HANDLED, ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT_VALUE_SKIPPED, ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT_VALUE_UNHANDLED, ATTR_ASPNETCORE_DIAGNOSTICS_HANDLER_TYPE, ATTR_ASPNETCORE_RATE_LIMITING_POLICY, ATTR_ASPNETCORE_RATE_LIMITING_RESULT, ASPNETCORE_RATE_LIMITING_RESULT_VALUE_ACQUIRED, ASPNETCORE_RATE_LIMITING_RESULT_VALUE_ENDPOINT_LIMITER, ASPNETCORE_RATE_LIMITING_RESULT_VALUE_GLOBAL_LIMITER, ASPNETCORE_RATE_LIMITING_RESULT_VALUE_REQUEST_CANCELED, ATTR_ASPNETCORE_REQUEST_IS_UNHANDLED, ATTR_ASPNETCORE_ROUTING_IS_FALLBACK, ATTR_ASPNETCORE_ROUTING_MATCH_STATUS, ASPNETCORE_ROUTING_MATCH_STATUS_VALUE_FAILURE, ASPNETCORE_ROUTING_MATCH_STATUS_VALUE_SUCCESS, ATTR_ASPNETCORE_USER_IS_AUTHENTICATED, ATTR_CLIENT_ADDRESS, ATTR_CLIENT_PORT, ATTR_CODE_COLUMN_NUMBER, ATTR_CODE_FILE_PATH, ATTR_CODE_FUNCTION_NAME, ATTR_CODE_LINE_NUMBER, ATTR_CODE_STACKTRACE, ATTR_DB_COLLECTION_NAME, ATTR_DB_NAMESPACE, ATTR_DB_OPERATION_BATCH_SIZE, ATTR_DB_OPERATION_NAME, ATTR_DB_QUERY_SUMMARY, ATTR_DB_QUERY_TEXT, ATTR_DB_RESPONSE_STATUS_CODE, ATTR_DB_STORED_PROCEDURE_NAME, ATTR_DB_SYSTEM_NAME, DB_SYSTEM_NAME_VALUE_MARIADB, DB_SYSTEM_NAME_VALUE_MICROSOFT_SQL_SERVER, DB_SYSTEM_NAME_VALUE_MYSQL, DB_SYSTEM_NAME_VALUE_POSTGRESQL, ATTR_DOTNET_GC_HEAP_GENERATION, DOTNET_GC_HEAP_GENERATION_VALUE_GEN0, DOTNET_GC_HEAP_GENERATION_VALUE_GEN1, DOTNET_GC_HEAP_GENERATION_VALUE_GEN2, DOTNET_GC_HEAP_GENERATION_VALUE_LOH, DOTNET_GC_HEAP_GENERATION_VALUE_POH, ATTR_ERROR_TYPE, ERROR_TYPE_VALUE_OTHER, ATTR_EXCEPTION_ESCAPED, ATTR_EXCEPTION_MESSAGE, ATTR_EXCEPTION_STACKTRACE, ATTR_EXCEPTION_TYPE, ATTR_HTTP_REQUEST_HEADER, ATTR_HTTP_REQUEST_METHOD, HTTP_REQUEST_METHOD_VALUE_OTHER, HTTP_REQUEST_METHOD_VALUE_CONNECT, HTTP_REQUEST_METHOD_VALUE_DELETE, HTTP_REQUEST_METHOD_VALUE_GET, HTTP_REQUEST_METHOD_VALUE_HEAD, HTTP_REQUEST_METHOD_VALUE_OPTIONS, HTTP_REQUEST_METHOD_VALUE_PATCH, HTTP_REQUEST_METHOD_VALUE_POST, HTTP_REQUEST_METHOD_VALUE_PUT, HTTP_REQUEST_METHOD_VALUE_TRACE, ATTR_HTTP_REQUEST_METHOD_ORIGINAL, ATTR_HTTP_REQUEST_RESEND_COUNT, ATTR_HTTP_RESPONSE_HEADER, ATTR_HTTP_RESPONSE_STATUS_CODE, ATTR_HTTP_ROUTE, ATTR_JVM_GC_ACTION, ATTR_JVM_GC_NAME, ATTR_JVM_MEMORY_POOL_NAME, ATTR_JVM_MEMORY_TYPE, JVM_MEMORY_TYPE_VALUE_HEAP, JVM_MEMORY_TYPE_VALUE_NON_HEAP, ATTR_JVM_THREAD_DAEMON, ATTR_JVM_THREAD_STATE, JVM_THREAD_STATE_VALUE_BLOCKED, JVM_THREAD_STATE_VALUE_NEW, JVM_THREAD_STATE_VALUE_RUNNABLE, JVM_THREAD_STATE_VALUE_TERMINATED, JVM_THREAD_STATE_VALUE_TIMED_WAITING, JVM_THREAD_STATE_VALUE_WAITING, ATTR_NETWORK_LOCAL_ADDRESS, ATTR_NETWORK_LOCAL_PORT, ATTR_NETWORK_PEER_ADDRESS, ATTR_NETWORK_PEER_PORT, ATTR_NETWORK_PROTOCOL_NAME, ATTR_NETWORK_PROTOCOL_VERSION, ATTR_NETWORK_TRANSPORT, NETWORK_TRANSPORT_VALUE_PIPE, NETWORK_TRANSPORT_VALUE_QUIC, NETWORK_TRANSPORT_VALUE_TCP, NETWORK_TRANSPORT_VALUE_UDP, NETWORK_TRANSPORT_VALUE_UNIX, ATTR_NETWORK_TYPE, NETWORK_TYPE_VALUE_IPV4, NETWORK_TYPE_VALUE_IPV6, ATTR_OTEL_SCOPE_NAME, ATTR_OTEL_SCOPE_VERSION, ATTR_OTEL_STATUS_CODE, OTEL_STATUS_CODE_VALUE_ERROR, OTEL_STATUS_CODE_VALUE_OK, ATTR_OTEL_STATUS_DESCRIPTION, ATTR_SERVER_ADDRESS, ATTR_SERVER_PORT, ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION, ATTR_SIGNALR_CONNECTION_STATUS, SIGNALR_CONNECTION_STATUS_VALUE_APP_SHUTDOWN, SIGNALR_CONNECTION_STATUS_VALUE_NORMAL_CLOSURE, SIGNALR_CONNECTION_STATUS_VALUE_TIMEOUT, ATTR_SIGNALR_TRANSPORT, SIGNALR_TRANSPORT_VALUE_LONG_POLLING, SIGNALR_TRANSPORT_VALUE_SERVER_SENT_EVENTS, SIGNALR_TRANSPORT_VALUE_WEB_SOCKETS, ATTR_TELEMETRY_SDK_LANGUAGE, TELEMETRY_SDK_LANGUAGE_VALUE_CPP, TELEMETRY_SDK_LANGUAGE_VALUE_DOTNET, TELEMETRY_SDK_LANGUAGE_VALUE_ERLANG, TELEMETRY_SDK_LANGUAGE_VALUE_GO, TELEMETRY_SDK_LANGUAGE_VALUE_JAVA, TELEMETRY_SDK_LANGUAGE_VALUE_NODEJS, TELEMETRY_SDK_LANGUAGE_VALUE_PHP, TELEMETRY_SDK_LANGUAGE_VALUE_PYTHON, TELEMETRY_SDK_LANGUAGE_VALUE_RUBY, TELEMETRY_SDK_LANGUAGE_VALUE_RUST, TELEMETRY_SDK_LANGUAGE_VALUE_SWIFT, TELEMETRY_SDK_LANGUAGE_VALUE_WEBJS, ATTR_TELEMETRY_SDK_NAME, ATTR_TELEMETRY_SDK_VERSION, ATTR_URL_FRAGMENT, ATTR_URL_FULL, ATTR_URL_PATH, ATTR_URL_QUERY, ATTR_URL_SCHEME, ATTR_USER_AGENT_ORIGINAL;
 var init_stable_attributes = __esmMin((() => {
 	ATTR_ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT = "aspnetcore.diagnostics.exception.result";
@@ -77367,7 +77367,7 @@ var init_stable_attributes = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/semantic-conventions/build/esm/stable_metrics.js
+//#region node_modules/@opentelemetry/semantic-conventions/build/esm/stable_metrics.js
 var METRIC_ASPNETCORE_DIAGNOSTICS_EXCEPTIONS, METRIC_ASPNETCORE_RATE_LIMITING_ACTIVE_REQUEST_LEASES, METRIC_ASPNETCORE_RATE_LIMITING_QUEUED_REQUESTS, METRIC_ASPNETCORE_RATE_LIMITING_REQUEST_TIME_IN_QUEUE, METRIC_ASPNETCORE_RATE_LIMITING_REQUEST_LEASE_DURATION, METRIC_ASPNETCORE_RATE_LIMITING_REQUESTS, METRIC_ASPNETCORE_ROUTING_MATCH_ATTEMPTS, METRIC_DB_CLIENT_OPERATION_DURATION, METRIC_DOTNET_ASSEMBLY_COUNT, METRIC_DOTNET_EXCEPTIONS, METRIC_DOTNET_GC_COLLECTIONS, METRIC_DOTNET_GC_HEAP_TOTAL_ALLOCATED, METRIC_DOTNET_GC_LAST_COLLECTION_HEAP_FRAGMENTATION_SIZE, METRIC_DOTNET_GC_LAST_COLLECTION_HEAP_SIZE, METRIC_DOTNET_GC_LAST_COLLECTION_MEMORY_COMMITTED_SIZE, METRIC_DOTNET_GC_PAUSE_TIME, METRIC_DOTNET_JIT_COMPILATION_TIME, METRIC_DOTNET_JIT_COMPILED_IL_SIZE, METRIC_DOTNET_JIT_COMPILED_METHODS, METRIC_DOTNET_MONITOR_LOCK_CONTENTIONS, METRIC_DOTNET_PROCESS_CPU_COUNT, METRIC_DOTNET_PROCESS_CPU_TIME, METRIC_DOTNET_PROCESS_MEMORY_WORKING_SET, METRIC_DOTNET_THREAD_POOL_QUEUE_LENGTH, METRIC_DOTNET_THREAD_POOL_THREAD_COUNT, METRIC_DOTNET_THREAD_POOL_WORK_ITEM_COUNT, METRIC_DOTNET_TIMER_COUNT, METRIC_HTTP_CLIENT_REQUEST_DURATION, METRIC_HTTP_SERVER_REQUEST_DURATION, METRIC_JVM_CLASS_COUNT, METRIC_JVM_CLASS_LOADED, METRIC_JVM_CLASS_UNLOADED, METRIC_JVM_CPU_COUNT, METRIC_JVM_CPU_RECENT_UTILIZATION, METRIC_JVM_CPU_TIME, METRIC_JVM_GC_DURATION, METRIC_JVM_MEMORY_COMMITTED, METRIC_JVM_MEMORY_LIMIT, METRIC_JVM_MEMORY_USED, METRIC_JVM_MEMORY_USED_AFTER_LAST_GC, METRIC_JVM_THREAD_COUNT, METRIC_KESTREL_ACTIVE_CONNECTIONS, METRIC_KESTREL_ACTIVE_TLS_HANDSHAKES, METRIC_KESTREL_CONNECTION_DURATION, METRIC_KESTREL_QUEUED_CONNECTIONS, METRIC_KESTREL_QUEUED_REQUESTS, METRIC_KESTREL_REJECTED_CONNECTIONS, METRIC_KESTREL_TLS_HANDSHAKE_DURATION, METRIC_KESTREL_UPGRADED_CONNECTIONS, METRIC_SIGNALR_SERVER_ACTIVE_CONNECTIONS, METRIC_SIGNALR_SERVER_CONNECTION_DURATION;
 var init_stable_metrics = __esmMin((() => {
 	METRIC_ASPNETCORE_DIAGNOSTICS_EXCEPTIONS = "aspnetcore.diagnostics.exceptions";
@@ -77424,14 +77424,14 @@ var init_stable_metrics = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/semantic-conventions/build/esm/stable_events.js
+//#region node_modules/@opentelemetry/semantic-conventions/build/esm/stable_events.js
 var EVENT_EXCEPTION;
 var init_stable_events = __esmMin((() => {
 	EVENT_EXCEPTION = "exception";
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/semantic-conventions/build/esm/index.js
+//#region node_modules/@opentelemetry/semantic-conventions/build/esm/index.js
 var esm_exports$1 = /* @__PURE__ */ __exportAll({
 	ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT_VALUE_ABORTED: () => ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT_VALUE_ABORTED,
 	ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT_VALUE_HANDLED: () => ASPNETCORE_DIAGNOSTICS_EXCEPTION_RESULT_VALUE_HANDLED,
@@ -78042,7 +78042,7 @@ var init_esm$1 = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/semconv.js
+//#region node_modules/@opentelemetry/core/build/src/semconv.js
 var require_semconv$36 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ATTR_PROCESS_RUNTIME_NAME = void 0;
@@ -78057,7 +78057,7 @@ var require_semconv$36 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/platform/node/sdk-info.js
+//#region node_modules/@opentelemetry/core/build/src/platform/node/sdk-info.js
 var require_sdk_info = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SDK_INFO = void 0;
@@ -78074,7 +78074,7 @@ var require_sdk_info = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/platform/node/index.js
+//#region node_modules/@opentelemetry/core/build/src/platform/node/index.js
 var require_node$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.otperformance = exports.SDK_INFO = exports._globalThis = exports.getStringListFromEnv = exports.getNumberFromEnv = exports.getBooleanFromEnv = exports.getStringFromEnv = void 0;
@@ -78124,7 +78124,7 @@ var require_node$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/platform/index.js
+//#region node_modules/@opentelemetry/core/build/src/platform/index.js
 var require_platform$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getStringListFromEnv = exports.getNumberFromEnv = exports.getStringFromEnv = exports.getBooleanFromEnv = exports.otperformance = exports._globalThis = exports.SDK_INFO = void 0;
@@ -78174,7 +78174,7 @@ var require_platform$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/common/time.js
+//#region node_modules/@opentelemetry/core/build/src/common/time.js
 var require_time = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.addHrTimes = exports.isTimeInput = exports.isTimeInputHrTime = exports.hrTimeToSeconds = exports.hrTimeToMilliseconds = exports.hrTimeToMicroseconds = exports.hrTimeToNanoseconds = exports.hrTimeToTimeStamp = exports.hrTimeDuration = exports.timeInputToHrTime = exports.hrTime = exports.getTimeOrigin = exports.millisToHrTime = void 0;
@@ -78308,7 +78308,7 @@ var require_time = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/common/timer-util.js
+//#region node_modules/@opentelemetry/core/build/src/common/timer-util.js
 var require_timer_util = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.unrefTimer = void 0;
@@ -78323,7 +78323,7 @@ var require_timer_util = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/ExportResult.js
+//#region node_modules/@opentelemetry/core/build/src/ExportResult.js
 var require_ExportResult = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ExportResultCode = void 0;
@@ -78334,7 +78334,7 @@ var require_ExportResult = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/propagation/composite.js
+//#region node_modules/@opentelemetry/core/build/src/propagation/composite.js
 var require_composite = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CompositePropagator = void 0;
@@ -78400,7 +78400,7 @@ var require_composite = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/internal/validators.js
+//#region node_modules/@opentelemetry/core/build/src/internal/validators.js
 var require_validators = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.validateValue = exports.validateKey = void 0;
@@ -78433,7 +78433,7 @@ var require_validators = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/trace/TraceState.js
+//#region node_modules/@opentelemetry/core/build/src/trace/TraceState.js
 var require_TraceState = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TraceState = void 0;
@@ -78528,7 +78528,7 @@ var require_TraceState = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/trace/W3CTraceContextPropagator.js
+//#region node_modules/@opentelemetry/core/build/src/trace/W3CTraceContextPropagator.js
 var require_W3CTraceContextPropagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.W3CTraceContextPropagator = exports.parseTraceParent = exports.TRACE_STATE_HEADER = exports.TRACE_PARENT_HEADER = void 0;
@@ -78597,7 +78597,7 @@ var require_W3CTraceContextPropagator = /* @__PURE__ */ __commonJSMin(((exports)
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/trace/rpc-metadata.js
+//#region node_modules/@opentelemetry/core/build/src/trace/rpc-metadata.js
 var require_rpc_metadata = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getRPCMetadata = exports.deleteRPCMetadata = exports.setRPCMetadata = exports.RPCType = void 0;
@@ -78620,7 +78620,7 @@ var require_rpc_metadata = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/utils/lodash.merge.js
+//#region node_modules/@opentelemetry/core/build/src/utils/lodash.merge.js
 var require_lodash_merge = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.isPlainObject = void 0;
@@ -78744,7 +78744,7 @@ var require_lodash_merge = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/utils/merge.js
+//#region node_modules/@opentelemetry/core/build/src/utils/merge.js
 var require_merge$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.merge = void 0;
@@ -78858,7 +78858,7 @@ var require_merge$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/utils/timeout.js
+//#region node_modules/@opentelemetry/core/build/src/utils/timeout.js
 var require_timeout = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.callWithTimeout = exports.TimeoutError = void 0;
@@ -78900,7 +78900,7 @@ var require_timeout = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/utils/url.js
+//#region node_modules/@opentelemetry/core/build/src/utils/url.js
 var require_url = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.isUrlIgnored = exports.urlMatches = void 0;
@@ -78923,7 +78923,7 @@ var require_url = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/utils/promise.js
+//#region node_modules/@opentelemetry/core/build/src/utils/promise.js
 var require_promise = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Deferred = void 0;
@@ -78951,7 +78951,7 @@ var require_promise = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/utils/callback.js
+//#region node_modules/@opentelemetry/core/build/src/utils/callback.js
 var require_callback = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BindOnceFuture = void 0;
@@ -78990,7 +78990,7 @@ var require_callback = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/utils/configuration.js
+//#region node_modules/@opentelemetry/core/build/src/utils/configuration.js
 var require_configuration = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.diagLogLevelFromString = void 0;
@@ -79021,7 +79021,7 @@ var require_configuration = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/internal/exporter.js
+//#region node_modules/@opentelemetry/core/build/src/internal/exporter.js
 var require_exporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports._export = void 0;
@@ -79042,7 +79042,7 @@ var require_exporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/core/build/src/index.js
+//#region node_modules/@opentelemetry/core/build/src/index.js
 var require_src$83 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.diagLogLevelFromString = exports.BindOnceFuture = exports.urlMatches = exports.isUrlIgnored = exports.callWithTimeout = exports.TimeoutError = exports.merge = exports.TraceState = exports.unsuppressTracing = exports.suppressTracing = exports.isTracingSuppressed = exports.setRPCMetadata = exports.getRPCMetadata = exports.deleteRPCMetadata = exports.RPCType = exports.parseTraceParent = exports.W3CTraceContextPropagator = exports.TRACE_STATE_HEADER = exports.TRACE_PARENT_HEADER = exports.CompositePropagator = exports.otperformance = exports.getStringListFromEnv = exports.getNumberFromEnv = exports.getBooleanFromEnv = exports.getStringFromEnv = exports._globalThis = exports.SDK_INFO = exports.parseKeyPairsIntoRecord = exports.ExportResultCode = exports.unrefTimer = exports.timeInputToHrTime = exports.millisToHrTime = exports.isTimeInputHrTime = exports.isTimeInput = exports.hrTimeToTimeStamp = exports.hrTimeToSeconds = exports.hrTimeToNanoseconds = exports.hrTimeToMilliseconds = exports.hrTimeToMicroseconds = exports.hrTimeDuration = exports.hrTime = exports.getTimeOrigin = exports.addHrTimes = exports.loggingErrorHandler = exports.setGlobalErrorHandler = exports.globalErrorHandler = exports.sanitizeAttributes = exports.isAttributeValue = exports.AnchoredClock = exports.W3CBaggagePropagator = void 0;
@@ -79372,7 +79372,7 @@ var require_src$83 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-express/build/src/enums/ExpressLayerType.js
+//#region node_modules/@opentelemetry/instrumentation-express/build/src/enums/ExpressLayerType.js
 var require_ExpressLayerType = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ExpressLayerType = void 0;
@@ -79384,7 +79384,7 @@ var require_ExpressLayerType = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-express/build/src/enums/AttributeNames.js
+//#region node_modules/@opentelemetry/instrumentation-express/build/src/enums/AttributeNames.js
 var require_AttributeNames$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = void 0;
@@ -79395,7 +79395,7 @@ var require_AttributeNames$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-express/build/src/internal-types.js
+//#region node_modules/@opentelemetry/instrumentation-express/build/src/internal-types.js
 var require_internal_types$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports._LAYERS_STORE_PROPERTY = exports.kLayerPatched = void 0;
@@ -79424,7 +79424,7 @@ var require_internal_types$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-express/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-express/build/src/utils.js
 var require_utils$41 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getActualMatchedRoute = exports.getConstructedRoute = exports.getLayerPath = exports.asErrorAndMessage = exports.isLayerIgnored = exports.getLayerMetadata = exports.getRouterPath = exports.storeLayerPath = void 0;
@@ -79580,7 +79580,7 @@ var require_utils$41 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-express/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-express/build/src/version.js
 var require_version$44 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -79589,7 +79589,7 @@ var require_version$44 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/autoLoaderUtils.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/autoLoaderUtils.js
 var require_autoLoaderUtils = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.disableInstrumentations = exports.enableInstrumentations = void 0;
@@ -79620,7 +79620,7 @@ var require_autoLoaderUtils = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/autoLoader.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/autoLoader.js
 var require_autoLoader = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.registerInstrumentations = void 0;
@@ -79647,7 +79647,7 @@ var require_autoLoader = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/semver.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/semver.js
 var require_semver = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.satisfies = void 0;
@@ -79915,7 +79915,7 @@ var require_semver = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/shimmer.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/shimmer.js
 var require_shimmer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.massUnwrap = exports.unwrap = exports.massWrap = exports.wrap = void 0;
@@ -80014,7 +80014,7 @@ var require_shimmer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/instrumentation.js
 var require_instrumentation$36 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InstrumentationAbstract = void 0;
@@ -80128,7 +80128,7 @@ var require_instrumentation$36 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ms/index.js
+//#region node_modules/ms/index.js
 var require_ms$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Helpers.
@@ -80247,7 +80247,7 @@ var require_ms$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/debug/src/common.js
+//#region node_modules/debug/src/common.js
 var require_common$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* This is the common logic for both the Node.js and web browser
@@ -80450,7 +80450,7 @@ var require_common$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/debug/src/browser.js
+//#region node_modules/debug/src/browser.js
 var require_browser$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* This is the web browser implementation of `debug()`.
@@ -80647,7 +80647,7 @@ var require_browser$4 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/has-flag/index.js
+//#region node_modules/has-flag/index.js
 var require_has_flag = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = (flag, argv = process.argv) => {
 		const prefix = flag.startsWith("-") ? "" : flag.length === 1 ? "-" : "--";
@@ -80658,7 +80658,7 @@ var require_has_flag = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/supports-color/index.js
+//#region node_modules/supports-color/index.js
 var require_supports_color = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const os$8 = __require("os");
 	const tty$5 = __require("tty");
@@ -80727,7 +80727,7 @@ var require_supports_color = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/debug/src/node.js
+//#region node_modules/debug/src/node.js
 var require_node$15 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Module dependencies.
@@ -80935,7 +80935,7 @@ var require_node$15 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/debug/src/index.js
+//#region node_modules/debug/src/index.js
 var require_src$82 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Detect Electron renderer / nwjs process, which is node, but we should
@@ -80946,7 +80946,7 @@ var require_src$82 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/module-details-from-path/index.js
+//#region node_modules/module-details-from-path/index.js
 var require_module_details_from_path = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var sep = __require("path").sep;
 	module.exports = function(file) {
@@ -80974,7 +80974,7 @@ var require_module_details_from_path = /* @__PURE__ */ __commonJSMin(((exports, 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/require-in-the-middle/index.js
+//#region node_modules/require-in-the-middle/index.js
 var require_require_in_the_middle = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const path$13 = __require("path");
 	const Module = __require("module");
@@ -81177,7 +81177,7 @@ var require_require_in_the_middle = /* @__PURE__ */ __commonJSMin(((exports, mod
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/platform/node/ModuleNameTrie.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/platform/node/ModuleNameTrie.js
 var require_ModuleNameTrie = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ModuleNameTrie = exports.ModuleNameSeparator = void 0;
@@ -81247,7 +81247,7 @@ var require_ModuleNameTrie = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/platform/node/RequireInTheMiddleSingleton.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/platform/node/RequireInTheMiddleSingleton.js
 var require_RequireInTheMiddleSingleton = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RequireInTheMiddleSingleton = void 0;
@@ -81334,7 +81334,7 @@ var require_RequireInTheMiddleSingleton = /* @__PURE__ */ __commonJSMin(((export
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/import-in-the-middle/lib/register.js
+//#region node_modules/import-in-the-middle/lib/register.js
 var require_register = /* @__PURE__ */ __commonJSMin(((exports) => {
 	const importHooks = [];
 	const setters = /* @__PURE__ */ new WeakMap();
@@ -81380,7 +81380,7 @@ var require_register = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/import-in-the-middle/index.js
+//#region node_modules/import-in-the-middle/index.js
 var require_import_in_the_middle = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const path$11 = __require("path");
 	const moduleDetailsFromPath = require_module_details_from_path();
@@ -81544,7 +81544,7 @@ var require_import_in_the_middle = /* @__PURE__ */ __commonJSMin(((exports, modu
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/utils.js
 var require_utils$40 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.isWrapped = exports.safeExecuteInTheMiddleAsync = exports.safeExecuteInTheMiddle = void 0;
@@ -81597,7 +81597,7 @@ var require_utils$40 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/platform/node/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/platform/node/instrumentation.js
 var require_instrumentation$35 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InstrumentationBase = void 0;
@@ -81812,7 +81812,7 @@ var require_instrumentation$35 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/platform/node/normalize.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/platform/node/normalize.js
 var require_normalize = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.normalize = void 0;
@@ -81826,7 +81826,7 @@ var require_normalize = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/platform/node/index.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/platform/node/index.js
 var require_node$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.normalize = exports.InstrumentationBase = void 0;
@@ -81847,7 +81847,7 @@ var require_node$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/platform/index.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/platform/index.js
 var require_platform$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.normalize = exports.InstrumentationBase = void 0;
@@ -81867,7 +81867,7 @@ var require_platform$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/instrumentationNodeModuleDefinition.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/instrumentationNodeModuleDefinition.js
 var require_instrumentationNodeModuleDefinition = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InstrumentationNodeModuleDefinition = void 0;
@@ -81889,7 +81889,7 @@ var require_instrumentationNodeModuleDefinition = /* @__PURE__ */ __commonJSMin(
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/instrumentationNodeModuleFile.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/instrumentationNodeModuleFile.js
 var require_instrumentationNodeModuleFile = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InstrumentationNodeModuleFile = void 0;
@@ -81910,7 +81910,7 @@ var require_instrumentationNodeModuleFile = /* @__PURE__ */ __commonJSMin(((expo
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/semconvStability.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/semconvStability.js
 var require_semconvStability = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.semconvStabilityFromStr = exports.SemconvStability = void 0;
@@ -81982,7 +81982,7 @@ var require_semconvStability = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation/build/src/index.js
 var require_src$81 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.semconvStabilityFromStr = exports.SemconvStability = exports.safeExecuteInTheMiddleAsync = exports.safeExecuteInTheMiddle = exports.isWrapped = exports.InstrumentationNodeModuleFile = exports.InstrumentationNodeModuleDefinition = exports.InstrumentationBase = exports.registerInstrumentations = void 0;
@@ -82049,7 +82049,7 @@ var require_src$81 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-express/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-express/build/src/instrumentation.js
 var require_instrumentation$34 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ExpressInstrumentation = void 0;
@@ -82257,7 +82257,7 @@ var require_instrumentation$34 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-express/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-express/build/src/index.js
 var require_src$80 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = exports.ExpressLayerType = exports.ExpressInstrumentation = void 0;
@@ -82285,7 +82285,7 @@ var require_src$80 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-http/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-http/build/src/version.js
 var require_version$43 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.VERSION = void 0;
@@ -82293,7 +82293,7 @@ var require_version$43 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-http/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-http/build/src/semconv.js
 var require_semconv$35 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.HTTP_FLAVOR_VALUE_HTTP_1_1 = exports.NET_TRANSPORT_VALUE_IP_UDP = exports.NET_TRANSPORT_VALUE_IP_TCP = exports.ATTR_NET_TRANSPORT = exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = exports.ATTR_NET_PEER_IP = exports.ATTR_NET_HOST_PORT = exports.ATTR_NET_HOST_NAME = exports.ATTR_NET_HOST_IP = exports.ATTR_HTTP_USER_AGENT = exports.ATTR_HTTP_URL = exports.ATTR_HTTP_TARGET = exports.ATTR_HTTP_STATUS_CODE = exports.ATTR_HTTP_SERVER_NAME = exports.ATTR_HTTP_SCHEME = exports.ATTR_HTTP_RESPONSE_CONTENT_LENGTH_UNCOMPRESSED = exports.ATTR_HTTP_RESPONSE_CONTENT_LENGTH = exports.ATTR_HTTP_REQUEST_CONTENT_LENGTH_UNCOMPRESSED = exports.ATTR_HTTP_REQUEST_CONTENT_LENGTH = exports.ATTR_HTTP_METHOD = exports.ATTR_HTTP_HOST = exports.ATTR_HTTP_FLAVOR = exports.ATTR_HTTP_CLIENT_IP = exports.USER_AGENT_SYNTHETIC_TYPE_VALUE_TEST = exports.USER_AGENT_SYNTHETIC_TYPE_VALUE_BOT = exports.ATTR_USER_AGENT_SYNTHETIC_TYPE = void 0;
@@ -82538,7 +82538,7 @@ var require_semconv$35 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-http/build/src/enums/AttributeNames.js
+//#region node_modules/@opentelemetry/instrumentation-http/build/src/enums/AttributeNames.js
 var require_AttributeNames$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = void 0;
@@ -82550,7 +82550,7 @@ var require_AttributeNames$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-http/build/src/internal-types.js
+//#region node_modules/@opentelemetry/instrumentation-http/build/src/internal-types.js
 var require_internal_types$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DEFAULT_QUERY_STRINGS_TO_REDACT = exports.STR_REDACTED = exports.SYNTHETIC_BOT_NAMES = exports.SYNTHETIC_TEST_NAMES = void 0;
@@ -82578,7 +82578,7 @@ var require_internal_types$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/forwarded-parse/lib/error.js
+//#region node_modules/forwarded-parse/lib/error.js
 var require_error$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var util$13 = __require("util");
 	/**
@@ -82600,7 +82600,7 @@ var require_error$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/forwarded-parse/lib/ascii.js
+//#region node_modules/forwarded-parse/lib/ascii.js
 var require_ascii = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Check if a character is a delimiter as defined in section 3.2.6 of RFC 7230.
@@ -82653,7 +82653,7 @@ var require_ascii = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/forwarded-parse/index.js
+//#region node_modules/forwarded-parse/index.js
 var require_forwarded_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var util$12 = __require("util");
 	var ParseError = require_error$1();
@@ -82755,7 +82755,7 @@ var require_forwarded_parse = /* @__PURE__ */ __commonJSMin(((exports, module) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-http/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-http/build/src/utils.js
 var require_utils$39 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.headerCapture = exports.getIncomingStableRequestMetricAttributesOnResponse = exports.getIncomingRequestMetricAttributesOnResponse = exports.getIncomingRequestAttributesOnResponse = exports.getIncomingRequestMetricAttributes = exports.getIncomingRequestAttributes = exports.getRemoteClientAddress = exports.getOutgoingStableRequestMetricAttributesOnResponse = exports.getOutgoingRequestMetricAttributesOnResponse = exports.getOutgoingRequestAttributesOnResponse = exports.setAttributesFromHttpKind = exports.getOutgoingRequestMetricAttributes = exports.getOutgoingRequestAttributes = exports.extractHostnameAndPort = exports.isValidOptionsType = exports.getRequestInfo = exports.isCompressed = exports.setResponseContentLengthAttribute = exports.setRequestContentLengthAttribute = exports.setSpanWithError = exports.satisfiesPattern = exports.parseResponseStatus = exports.getAbsoluteUrl = void 0;
@@ -83376,7 +83376,7 @@ var require_utils$39 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-http/build/src/http.js
+//#region node_modules/@opentelemetry/instrumentation-http/build/src/http.js
 var require_http = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.HttpInstrumentation = void 0;
@@ -83818,7 +83818,7 @@ var require_http = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-http/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-http/build/src/index.js
 var require_src$79 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.HttpInstrumentation = void 0;
@@ -83832,7 +83832,7 @@ var require_src$79 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/telemetry/instrumentations.js
+//#region node_modules/@databricks/appkit/dist/telemetry/instrumentations.js
 var import_src$13 = require_src$80();
 var import_src$14 = require_src$79();
 /**
@@ -83870,7 +83870,7 @@ const instrumentations = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/telemetry/noop.js
+//#region node_modules/@databricks/appkit/dist/telemetry/noop.js
 init_esm$2();
 var NonRecordingSpan = class {
 	_spanContext;
@@ -83922,7 +83922,7 @@ const NOOP_METER = createNoopMeter();
 const NOOP_LOGGER = (0, import_src$15.createNoopLogger)();
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/telemetry/telemetry-provider.js
+//#region node_modules/@databricks/appkit/dist/telemetry/telemetry-provider.js
 init_esm$2();
 /**
 * Scoped telemetry instance for specific plugins and other classes.
@@ -84001,7 +84001,7 @@ var TelemetryProvider = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/default-service-name.js
+//#region node_modules/@opentelemetry/resources/build/src/default-service-name.js
 var require_default_service_name = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports._clearDefaultServiceNameCache = exports.defaultServiceName = void 0;
@@ -84029,7 +84029,7 @@ var require_default_service_name = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/utils.js
+//#region node_modules/@opentelemetry/resources/build/src/utils.js
 var require_utils$38 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.isPromiseLike = void 0;
@@ -84040,7 +84040,7 @@ var require_utils$38 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/ResourceImpl.js
+//#region node_modules/@opentelemetry/resources/build/src/ResourceImpl.js
 var require_ResourceImpl = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.defaultResource = exports.emptyResource = exports.resourceFromDetectedResource = exports.resourceFromAttributes = void 0;
@@ -84153,7 +84153,7 @@ var require_ResourceImpl = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/detect-resources.js
+//#region node_modules/@opentelemetry/resources/build/src/detect-resources.js
 var require_detect_resources = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.detectResources = void 0;
@@ -84180,7 +84180,7 @@ var require_detect_resources = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/detectors/EnvDetector.js
+//#region node_modules/@opentelemetry/resources/build/src/detectors/EnvDetector.js
 var require_EnvDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.envDetector = void 0;
@@ -84261,7 +84261,7 @@ var require_EnvDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/semconv.js
+//#region node_modules/@opentelemetry/resources/build/src/semconv.js
 var require_semconv$34 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ATTR_WEBENGINE_VERSION = exports.ATTR_WEBENGINE_NAME = exports.ATTR_WEBENGINE_DESCRIPTION = exports.ATTR_SERVICE_NAMESPACE = exports.ATTR_SERVICE_INSTANCE_ID = exports.ATTR_PROCESS_RUNTIME_VERSION = exports.ATTR_PROCESS_RUNTIME_NAME = exports.ATTR_PROCESS_RUNTIME_DESCRIPTION = exports.ATTR_PROCESS_PID = exports.ATTR_PROCESS_OWNER = exports.ATTR_PROCESS_EXECUTABLE_PATH = exports.ATTR_PROCESS_EXECUTABLE_NAME = exports.ATTR_PROCESS_COMMAND_ARGS = exports.ATTR_PROCESS_COMMAND = exports.ATTR_OS_VERSION = exports.ATTR_OS_TYPE = exports.ATTR_K8S_POD_NAME = exports.ATTR_K8S_NAMESPACE_NAME = exports.ATTR_K8S_DEPLOYMENT_NAME = exports.ATTR_K8S_CLUSTER_NAME = exports.ATTR_HOST_TYPE = exports.ATTR_HOST_NAME = exports.ATTR_HOST_IMAGE_VERSION = exports.ATTR_HOST_IMAGE_NAME = exports.ATTR_HOST_IMAGE_ID = exports.ATTR_HOST_ID = exports.ATTR_HOST_ARCH = exports.ATTR_CONTAINER_NAME = exports.ATTR_CONTAINER_IMAGE_TAGS = exports.ATTR_CONTAINER_IMAGE_NAME = exports.ATTR_CONTAINER_ID = exports.ATTR_CLOUD_REGION = exports.ATTR_CLOUD_PROVIDER = exports.ATTR_CLOUD_AVAILABILITY_ZONE = exports.ATTR_CLOUD_ACCOUNT_ID = void 0;
@@ -84579,7 +84579,7 @@ var require_semconv$34 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/detectors/platform/node/machine-id/getMachineId.js
+//#region node_modules/@opentelemetry/resources/build/src/detectors/platform/node/machine-id/getMachineId.js
 var require_getMachineId = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getMachineId = void 0;
@@ -84588,19 +84588,19 @@ var require_getMachineId = /* @__PURE__ */ __commonJSMin(((exports) => {
 	async function getMachineId() {
 		if (!getMachineIdImpl) switch (process$2.platform) {
 			case "darwin":
-				getMachineIdImpl = (await import("./getMachineId-darwin-B5CqDgur.mjs").then((m) => /* @__PURE__ */ __toESM(m.default))).getMachineId;
+				getMachineIdImpl = (await import("./getMachineId-darwin-DIvuKfgi.mjs").then((m) => /* @__PURE__ */ __toESM(m.default))).getMachineId;
 				break;
 			case "linux":
-				getMachineIdImpl = (await import("./getMachineId-linux-Ps_nI9qO.mjs").then((m) => /* @__PURE__ */ __toESM(m.default))).getMachineId;
+				getMachineIdImpl = (await import("./getMachineId-linux-COoX1WzV.mjs").then((m) => /* @__PURE__ */ __toESM(m.default))).getMachineId;
 				break;
 			case "freebsd":
-				getMachineIdImpl = (await import("./getMachineId-bsd-CM4d2WRu.mjs").then((m) => /* @__PURE__ */ __toESM(m.default))).getMachineId;
+				getMachineIdImpl = (await import("./getMachineId-bsd-eZkTvNKU.mjs").then((m) => /* @__PURE__ */ __toESM(m.default))).getMachineId;
 				break;
 			case "win32":
-				getMachineIdImpl = (await import("./getMachineId-win-B2WE6ZzF.mjs").then((m) => /* @__PURE__ */ __toESM(m.default))).getMachineId;
+				getMachineIdImpl = (await import("./getMachineId-win-DaJjb2Lh.mjs").then((m) => /* @__PURE__ */ __toESM(m.default))).getMachineId;
 				break;
 			default:
-				getMachineIdImpl = (await import("./getMachineId-unsupported-Dz3elax4.mjs").then((m) => /* @__PURE__ */ __toESM(m.default))).getMachineId;
+				getMachineIdImpl = (await import("./getMachineId-unsupported-CP2gZv-p.mjs").then((m) => /* @__PURE__ */ __toESM(m.default))).getMachineId;
 				break;
 		}
 		return getMachineIdImpl();
@@ -84609,7 +84609,7 @@ var require_getMachineId = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/detectors/platform/node/utils.js
+//#region node_modules/@opentelemetry/resources/build/src/detectors/platform/node/utils.js
 var require_utils$37 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.normalizeType = exports.normalizeArch = void 0;
@@ -84633,7 +84633,7 @@ var require_utils$37 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/detectors/platform/node/HostDetector.js
+//#region node_modules/@opentelemetry/resources/build/src/detectors/platform/node/HostDetector.js
 var require_HostDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.hostDetector = void 0;
@@ -84658,7 +84658,7 @@ var require_HostDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/detectors/platform/node/OSDetector.js
+//#region node_modules/@opentelemetry/resources/build/src/detectors/platform/node/OSDetector.js
 var require_OSDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.osDetector = void 0;
@@ -84681,7 +84681,7 @@ var require_OSDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/detectors/platform/node/ProcessDetector.js
+//#region node_modules/@opentelemetry/resources/build/src/detectors/platform/node/ProcessDetector.js
 var require_ProcessDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.processDetector = void 0;
@@ -84721,7 +84721,7 @@ var require_ProcessDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/detectors/platform/node/ServiceInstanceIdDetector.js
+//#region node_modules/@opentelemetry/resources/build/src/detectors/platform/node/ServiceInstanceIdDetector.js
 var require_ServiceInstanceIdDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.serviceInstanceIdDetector = void 0;
@@ -84742,7 +84742,7 @@ var require_ServiceInstanceIdDetector = /* @__PURE__ */ __commonJSMin(((exports)
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/detectors/platform/node/index.js
+//#region node_modules/@opentelemetry/resources/build/src/detectors/platform/node/index.js
 var require_node$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.serviceInstanceIdDetector = exports.processDetector = exports.osDetector = exports.hostDetector = void 0;
@@ -84777,7 +84777,7 @@ var require_node$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/detectors/platform/index.js
+//#region node_modules/@opentelemetry/resources/build/src/detectors/platform/index.js
 var require_platform$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.serviceInstanceIdDetector = exports.processDetector = exports.osDetector = exports.hostDetector = void 0;
@@ -84809,7 +84809,7 @@ var require_platform$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/detectors/NoopDetector.js
+//#region node_modules/@opentelemetry/resources/build/src/detectors/NoopDetector.js
 var require_NoopDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.noopDetector = exports.NoopDetector = void 0;
@@ -84823,7 +84823,7 @@ var require_NoopDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/detectors/index.js
+//#region node_modules/@opentelemetry/resources/build/src/detectors/index.js
 var require_detectors$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.noopDetector = exports.serviceInstanceIdDetector = exports.processDetector = exports.osDetector = exports.hostDetector = exports.envDetector = void 0;
@@ -84869,7 +84869,7 @@ var require_detectors$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resources/build/src/index.js
+//#region node_modules/@opentelemetry/resources/build/src/index.js
 var require_src$78 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.defaultServiceName = exports.emptyResource = exports.defaultResource = exports.resourceFromAttributes = exports.serviceInstanceIdDetector = exports.processDetector = exports.osDetector = exports.hostDetector = exports.envDetector = exports.detectResources = void 0;
@@ -84940,7 +84940,7 @@ var require_src$78 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/enums.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/enums.js
 var require_enums$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ExceptionEventName = void 0;
@@ -84948,7 +84948,7 @@ var require_enums$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/inspect.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/inspect.js
 var require_inspect = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.formatInspect = exports.settledResourceAttributes = exports.inspectCustom = void 0;
@@ -84998,7 +84998,7 @@ var require_inspect = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/Span.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/Span.js
 var require_Span = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SpanImpl = void 0;
@@ -85305,7 +85305,7 @@ var require_Span = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/Sampler.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/Sampler.js
 var require_Sampler = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SamplingDecision = void 0;
@@ -85329,7 +85329,7 @@ var require_Sampler = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/sampler/AlwaysOffSampler.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/sampler/AlwaysOffSampler.js
 var require_AlwaysOffSampler = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AlwaysOffSampler = void 0;
@@ -85347,7 +85347,7 @@ var require_AlwaysOffSampler = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/sampler/AlwaysOnSampler.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/sampler/AlwaysOnSampler.js
 var require_AlwaysOnSampler = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AlwaysOnSampler = void 0;
@@ -85365,7 +85365,7 @@ var require_AlwaysOnSampler = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/sampler/ParentBasedSampler.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/sampler/ParentBasedSampler.js
 var require_ParentBasedSampler = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ParentBasedSampler = void 0;
@@ -85412,7 +85412,7 @@ var require_ParentBasedSampler = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/sampler/TraceIdRatioBasedSampler.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/sampler/TraceIdRatioBasedSampler.js
 var require_TraceIdRatioBasedSampler = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TraceIdRatioBasedSampler = void 0;
@@ -85454,7 +85454,7 @@ var require_TraceIdRatioBasedSampler = /* @__PURE__ */ __commonJSMin(((exports) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/config.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/config.js
 var require_config = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.buildSamplerFromEnv = exports.loadDefaultConfig = void 0;
@@ -85532,7 +85532,7 @@ var require_config = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/utility.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/utility.js
 var require_utility = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.reconfigureLimits = exports.mergeConfig = exports.DEFAULT_ATTRIBUTE_VALUE_LENGTH_LIMIT = exports.DEFAULT_ATTRIBUTE_COUNT_LIMIT = void 0;
@@ -85574,7 +85574,7 @@ var require_utility = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/export/BatchSpanProcessorBase.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/export/BatchSpanProcessorBase.js
 var require_BatchSpanProcessorBase = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BatchSpanProcessorBase = void 0;
@@ -85723,7 +85723,7 @@ var require_BatchSpanProcessorBase = /* @__PURE__ */ __commonJSMin(((exports) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/platform/node/export/BatchSpanProcessor.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/platform/node/export/BatchSpanProcessor.js
 var require_BatchSpanProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BatchSpanProcessor = void 0;
@@ -85735,7 +85735,7 @@ var require_BatchSpanProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/platform/node/RandomIdGenerator.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/platform/node/RandomIdGenerator.js
 var require_RandomIdGenerator = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RandomIdGenerator = void 0;
@@ -85766,7 +85766,7 @@ var require_RandomIdGenerator = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/platform/node/index.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/platform/node/index.js
 var require_node$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RandomIdGenerator = exports.BatchSpanProcessor = void 0;
@@ -85787,7 +85787,7 @@ var require_node$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/platform/index.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/platform/index.js
 var require_platform$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RandomIdGenerator = exports.BatchSpanProcessor = void 0;
@@ -85807,7 +85807,7 @@ var require_platform$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/semconv.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/semconv.js
 var require_semconv$33 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.METRIC_OTEL_SDK_SPAN_STARTED = exports.METRIC_OTEL_SDK_SPAN_LIVE = exports.ATTR_OTEL_SPAN_SAMPLING_RESULT = exports.ATTR_OTEL_SPAN_PARENT_ORIGIN = void 0;
@@ -85840,7 +85840,7 @@ var require_semconv$33 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/TracerMetrics.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/TracerMetrics.js
 var require_TracerMetrics = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TracerMetrics = void 0;
@@ -85893,7 +85893,7 @@ var require_TracerMetrics = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/version.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/version.js
 var require_version$42 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.VERSION = void 0;
@@ -85901,7 +85901,7 @@ var require_version$42 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/Tracer.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/Tracer.js
 var require_Tracer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Tracer = void 0;
@@ -86042,7 +86042,7 @@ var require_Tracer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/MultiSpanProcessor.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/MultiSpanProcessor.js
 var require_MultiSpanProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MultiSpanProcessor = void 0;
@@ -86091,7 +86091,7 @@ var require_MultiSpanProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/BasicTracerProvider.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/BasicTracerProvider.js
 var require_BasicTracerProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BasicTracerProvider = exports.ForceFlushState = void 0;
@@ -86181,7 +86181,7 @@ var require_BasicTracerProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/export/ConsoleSpanExporter.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/export/ConsoleSpanExporter.js
 var require_ConsoleSpanExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ConsoleSpanExporter = void 0;
@@ -86250,7 +86250,7 @@ var require_ConsoleSpanExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/export/InMemorySpanExporter.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/export/InMemorySpanExporter.js
 var require_InMemorySpanExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InMemorySpanExporter = void 0;
@@ -86297,7 +86297,7 @@ var require_InMemorySpanExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/export/SimpleSpanProcessor.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/export/SimpleSpanProcessor.js
 var require_SimpleSpanProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SimpleSpanProcessor = void 0;
@@ -86348,7 +86348,7 @@ var require_SimpleSpanProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/export/NoopSpanProcessor.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/export/NoopSpanProcessor.js
 var require_NoopSpanProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.NoopSpanProcessor = void 0;
@@ -86367,7 +86367,7 @@ var require_NoopSpanProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-base/build/src/index.js
+//#region node_modules/@opentelemetry/sdk-trace-base/build/src/index.js
 var require_src$77 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SamplingDecision = exports.TraceIdRatioBasedSampler = exports.ParentBasedSampler = exports.AlwaysOnSampler = exports.AlwaysOffSampler = exports.NoopSpanProcessor = exports.SimpleSpanProcessor = exports.InMemorySpanExporter = exports.ConsoleSpanExporter = exports.RandomIdGenerator = exports.BatchSpanProcessor = exports.BasicTracerProvider = void 0;
@@ -86457,7 +86457,7 @@ var require_src$77 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/telemetry/trace-sampler.js
+//#region node_modules/@databricks/appkit/dist/telemetry/trace-sampler.js
 var import_src$12 = require_src$77();
 /**
 * Custom sampler that filters out asset requests and other noise.
@@ -86486,7 +86486,7 @@ var AppKitSampler = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-amqplib/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-amqplib/build/src/semconv.js
 var require_semconv$32 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = exports.ATTR_MESSAGING_SYSTEM = exports.ATTR_MESSAGING_OPERATION = void 0;
@@ -86533,7 +86533,7 @@ var require_semconv$32 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-amqplib/build/src/semconv-obsolete.js
+//#region node_modules/@opentelemetry/instrumentation-amqplib/build/src/semconv-obsolete.js
 var require_semconv_obsolete$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ATTR_MESSAGING_CONVERSATION_ID = exports.OLD_ATTR_MESSAGING_MESSAGE_ID = exports.MESSAGING_DESTINATION_KIND_VALUE_TOPIC = exports.ATTR_MESSAGING_URL = exports.ATTR_MESSAGING_PROTOCOL_VERSION = exports.ATTR_MESSAGING_PROTOCOL = exports.MESSAGING_OPERATION_VALUE_PROCESS = exports.ATTR_MESSAGING_RABBITMQ_ROUTING_KEY = exports.ATTR_MESSAGING_DESTINATION_KIND = exports.ATTR_MESSAGING_DESTINATION = void 0;
@@ -86602,7 +86602,7 @@ var require_semconv_obsolete$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-amqplib/build/src/types.js
+//#region node_modules/@opentelemetry/instrumentation-amqplib/build/src/types.js
 var require_types$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DEFAULT_CONFIG = exports.EndOperation = void 0;
@@ -86624,7 +86624,7 @@ var require_types$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-amqplib/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-amqplib/build/src/utils.js
 var require_utils$36 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.isConfirmChannelTracing = exports.unmarkConfirmChannelTracing = exports.markConfirmChannelTracing = exports.getConnectionAttributesFromUrl = exports.getConnectionAttributesFromServer = exports.normalizeExchange = exports.CONNECTION_ATTRIBUTES = exports.CHANNEL_CONSUME_TIMEOUT_TIMER = exports.CHANNEL_SPANS_NOT_ENDED = exports.MESSAGE_STORED_SPAN = void 0;
@@ -86717,7 +86717,7 @@ var require_utils$36 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-amqplib/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-amqplib/build/src/version.js
 var require_version$41 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -86726,7 +86726,7 @@ var require_version$41 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-amqplib/build/src/amqplib.js
+//#region node_modules/@opentelemetry/instrumentation-amqplib/build/src/amqplib.js
 var require_amqplib = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AmqplibInstrumentation = void 0;
@@ -87059,7 +87059,7 @@ var require_amqplib = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-amqplib/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-amqplib/build/src/index.js
 var require_src$76 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.EndOperation = exports.DEFAULT_CONFIG = exports.AmqplibInstrumentation = void 0;
@@ -87086,7 +87086,7 @@ var require_src$76 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/propagator-aws-xray/build/src/AWSXRayPropagator.js
+//#region node_modules/@opentelemetry/propagator-aws-xray/build/src/AWSXRayPropagator.js
 var require_AWSXRayPropagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AWSXRayPropagator = exports.AWSXRAY_TRACE_ID_HEADER = void 0;
@@ -87190,7 +87190,7 @@ var require_AWSXRayPropagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/propagator-aws-xray/build/src/index.js
+//#region node_modules/@opentelemetry/propagator-aws-xray/build/src/index.js
 var require_src$75 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AWSXRayPropagator = exports.AWSXRAY_TRACE_ID_HEADER = void 0;
@@ -87210,7 +87210,7 @@ var require_src$75 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-lambda/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-aws-lambda/build/src/semconv.js
 var require_semconv$31 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MESSAGING_SYSTEM_VALUE_AWS_SQS = exports.MESSAGING_OPERATION_TYPE_VALUE_PROCESS = exports.FAAS_TRIGGER_VALUE_PUBSUB = exports.ATTR_MESSAGING_SYSTEM = exports.ATTR_MESSAGING_OPERATION_TYPE = exports.ATTR_MESSAGING_OPERATION_NAME = exports.ATTR_MESSAGING_MESSAGE_ID = exports.ATTR_MESSAGING_DESTINATION_NAME = exports.ATTR_MESSAGING_BATCH_MESSAGE_COUNT = exports.ATTR_FAAS_TRIGGER = exports.ATTR_FAAS_NAME = exports.ATTR_FAAS_COLDSTART = exports.ATTR_CLOUD_ACCOUNT_ID = exports.ATTR_AWS_SQS_QUEUE_URL = void 0;
@@ -87353,7 +87353,7 @@ var require_semconv$31 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-lambda/build/src/semconv-obsolete.js
+//#region node_modules/@opentelemetry/instrumentation-aws-lambda/build/src/semconv-obsolete.js
 var require_semconv_obsolete$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ATTR_FAAS_ID = exports.ATTR_FAAS_EXECUTION = void 0;
@@ -87387,7 +87387,7 @@ var require_semconv_obsolete$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-lambda/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-aws-lambda/build/src/version.js
 var require_version$40 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -87396,7 +87396,7 @@ var require_version$40 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-lambda/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-aws-lambda/build/src/instrumentation.js
 var require_instrumentation$33 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AwsLambdaInstrumentation = exports.AWS_HANDLER_STREAMING_RESPONSE = exports.AWS_HANDLER_STREAMING_SYMBOL = exports.lambdaMaxInitInMilliseconds = exports.sqsContextGetter = void 0;
@@ -87823,7 +87823,7 @@ var require_instrumentation$33 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-lambda/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-aws-lambda/build/src/index.js
 var require_src$74 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.lambdaMaxInitInMilliseconds = exports.AwsLambdaInstrumentation = void 0;
@@ -87843,7 +87843,7 @@ var require_src$74 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/enums.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/enums.js
 var require_enums$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = void 0;
@@ -87862,7 +87862,7 @@ var require_enums$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/semconv.js
 var require_semconv$30 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ATTR_MESSAGING_SYSTEM = exports.ATTR_MESSAGING_OPERATION_TYPE = exports.ATTR_MESSAGING_OPERATION = exports.ATTR_MESSAGING_MESSAGE_ID = exports.ATTR_MESSAGING_DESTINATION_NAME = exports.ATTR_MESSAGING_BATCH_MESSAGE_COUNT = exports.ATTR_HTTP_STATUS_CODE = exports.ATTR_GEN_AI_USAGE_OUTPUT_TOKENS = exports.ATTR_GEN_AI_USAGE_INPUT_TOKENS = exports.ATTR_GEN_AI_TOKEN_TYPE = exports.ATTR_GEN_AI_SYSTEM = exports.ATTR_GEN_AI_RESPONSE_FINISH_REASONS = exports.ATTR_GEN_AI_REQUEST_TOP_P = exports.ATTR_GEN_AI_REQUEST_TEMPERATURE = exports.ATTR_GEN_AI_REQUEST_STOP_SEQUENCES = exports.ATTR_GEN_AI_REQUEST_MODEL = exports.ATTR_GEN_AI_REQUEST_MAX_TOKENS = exports.ATTR_GEN_AI_OPERATION_NAME = exports.ATTR_FAAS_INVOKED_REGION = exports.ATTR_FAAS_INVOKED_PROVIDER = exports.ATTR_FAAS_INVOKED_NAME = exports.ATTR_DB_SYSTEM = exports.ATTR_DB_STATEMENT = exports.ATTR_DB_OPERATION = exports.ATTR_DB_NAME = exports.ATTR_AWS_STEP_FUNCTIONS_STATE_MACHINE_ARN = exports.ATTR_AWS_STEP_FUNCTIONS_ACTIVITY_ARN = exports.ATTR_AWS_SNS_TOPIC_ARN = exports.ATTR_AWS_SECRETSMANAGER_SECRET_ARN = exports.ATTR_AWS_DYNAMODB_TOTAL_SEGMENTS = exports.ATTR_AWS_DYNAMODB_TABLE_NAMES = exports.ATTR_AWS_DYNAMODB_TABLE_COUNT = exports.ATTR_AWS_DYNAMODB_SELECT = exports.ATTR_AWS_DYNAMODB_SEGMENT = exports.ATTR_AWS_DYNAMODB_SCAN_FORWARD = exports.ATTR_AWS_DYNAMODB_SCANNED_COUNT = exports.ATTR_AWS_DYNAMODB_PROVISIONED_WRITE_CAPACITY = exports.ATTR_AWS_DYNAMODB_PROVISIONED_READ_CAPACITY = exports.ATTR_AWS_DYNAMODB_PROJECTION = exports.ATTR_AWS_DYNAMODB_LOCAL_SECONDARY_INDEXES = exports.ATTR_AWS_DYNAMODB_LIMIT = exports.ATTR_AWS_DYNAMODB_ITEM_COLLECTION_METRICS = exports.ATTR_AWS_DYNAMODB_INDEX_NAME = exports.ATTR_AWS_DYNAMODB_GLOBAL_SECONDARY_INDEX_UPDATES = exports.ATTR_AWS_DYNAMODB_GLOBAL_SECONDARY_INDEXES = exports.ATTR_AWS_DYNAMODB_EXCLUSIVE_START_TABLE = exports.ATTR_AWS_DYNAMODB_COUNT = exports.ATTR_AWS_DYNAMODB_CONSUMED_CAPACITY = exports.ATTR_AWS_DYNAMODB_CONSISTENT_READ = exports.ATTR_AWS_DYNAMODB_ATTRIBUTE_DEFINITIONS = void 0;
@@ -88389,7 +88389,7 @@ var require_semconv$30 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/MessageAttributes.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/MessageAttributes.js
 var require_MessageAttributes = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.addPropagationFieldsToAttributeNames = exports.extractPropagationContext = exports.injectPropagationContext = exports.contextGetter = exports.contextSetter = exports.MAX_MESSAGE_ATTRIBUTES = void 0;
@@ -88438,7 +88438,7 @@ var require_MessageAttributes = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/sqs.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/sqs.js
 var require_sqs = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SqsServiceExtension = void 0;
@@ -88532,7 +88532,7 @@ var require_sqs = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/bedrock-runtime.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/bedrock-runtime.js
 var require_bedrock_runtime = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BedrockRuntimeServiceExtension = void 0;
@@ -88843,7 +88843,7 @@ var require_bedrock_runtime = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/dynamodb.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/dynamodb.js
 var require_dynamodb = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DynamodbServiceExtension = void 0;
@@ -88942,7 +88942,7 @@ var require_dynamodb = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/secretsmanager.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/secretsmanager.js
 var require_secretsmanager = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SecretsManagerServiceExtension = void 0;
@@ -88971,7 +88971,7 @@ var require_secretsmanager = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/semconv-obsolete.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/semconv-obsolete.js
 var require_semconv_obsolete$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MESSAGING_OPERATION_VALUE_RECEIVE = exports.MESSAGING_DESTINATION_KIND_VALUE_TOPIC = exports.ATTR_MESSAGING_DESTINATION_KIND = exports.ATTR_MESSAGING_DESTINATION = exports.ATTR_FAAS_EXECUTION = void 0;
@@ -89008,7 +89008,7 @@ var require_semconv_obsolete$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/sns.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/sns.js
 var require_sns = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SnsServiceExtension = void 0;
@@ -89064,7 +89064,7 @@ var require_sns = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/stepfunctions.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/stepfunctions.js
 var require_stepfunctions = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.StepFunctionsServiceExtension = void 0;
@@ -89089,7 +89089,7 @@ var require_stepfunctions = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/lambda.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/lambda.js
 var require_lambda = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LambdaServiceExtension = void 0;
@@ -89167,7 +89167,7 @@ var require_lambda = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/s3.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/s3.js
 var require_s3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.S3ServiceExtension = void 0;
@@ -89190,7 +89190,7 @@ var require_s3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/kinesis.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/kinesis.js
 var require_kinesis = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.KinesisServiceExtension = void 0;
@@ -89213,7 +89213,7 @@ var require_kinesis = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/ServicesExtensions.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/ServicesExtensions.js
 var require_ServicesExtensions = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ServicesExtensions = void 0;
@@ -89263,7 +89263,7 @@ var require_ServicesExtensions = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/index.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/services/index.js
 var require_services = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ServicesExtensions = void 0;
@@ -89277,7 +89277,7 @@ var require_services = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/version.js
 var require_version$39 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -89286,7 +89286,7 @@ var require_version$39 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/utils.js
 var require_utils$35 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.bindPromise = exports.extractAttributesFromNormalizedRequest = exports.normalizeV3Request = exports.removeSuffixFromStringIfExists = void 0;
@@ -89330,7 +89330,7 @@ var require_utils$35 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/propwrap.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/propwrap.js
 var require_propwrap = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.propwrap = void 0;
@@ -89420,7 +89420,7 @@ var require_propwrap = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/aws-sdk.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/aws-sdk.js
 var require_aws_sdk = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AwsInstrumentation = void 0;
@@ -89637,7 +89637,7 @@ var require_aws_sdk = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-aws-sdk/build/src/index.js
 var require_src$73 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AwsInstrumentation = void 0;
@@ -89651,7 +89651,7 @@ var require_src$73 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-bunyan/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-bunyan/build/src/version.js
 var require_version$38 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -89660,7 +89660,7 @@ var require_version$38 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-bunyan/build/src/OpenTelemetryBunyanStream.js
+//#region node_modules/@opentelemetry/instrumentation-bunyan/build/src/OpenTelemetryBunyanStream.js
 var require_OpenTelemetryBunyanStream = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OpenTelemetryBunyanStream = void 0;
@@ -89771,7 +89771,7 @@ var require_OpenTelemetryBunyanStream = /* @__PURE__ */ __commonJSMin(((exports)
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-bunyan/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-bunyan/build/src/instrumentation.js
 var require_instrumentation$32 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BunyanInstrumentation = void 0;
@@ -89884,7 +89884,7 @@ var require_instrumentation$32 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-bunyan/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-bunyan/build/src/index.js
 var require_src$72 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OpenTelemetryBunyanStream = exports.BunyanInstrumentation = void 0;
@@ -89905,7 +89905,7 @@ var require_src$72 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-cassandra-driver/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-cassandra-driver/build/src/semconv.js
 var require_semconv$29 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DB_SYSTEM_NAME_VALUE_CASSANDRA = exports.DB_SYSTEM_VALUE_CASSANDRA = exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = exports.ATTR_DB_USER = exports.ATTR_DB_SYSTEM = exports.ATTR_DB_STATEMENT = exports.ATTR_DB_NAME = void 0;
@@ -89989,7 +89989,7 @@ var require_semconv$29 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-cassandra-driver/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-cassandra-driver/build/src/version.js
 var require_version$37 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -89998,7 +89998,7 @@ var require_version$37 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-cassandra-driver/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-cassandra-driver/build/src/instrumentation.js
 var require_instrumentation$31 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CassandraDriverInstrumentation = void 0;
@@ -90233,7 +90233,7 @@ var require_instrumentation$31 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-cassandra-driver/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-cassandra-driver/build/src/index.js
 var require_src$71 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CassandraDriverInstrumentation = void 0;
@@ -90247,7 +90247,7 @@ var require_src$71 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-connect/build/src/enums/AttributeNames.js
+//#region node_modules/@opentelemetry/instrumentation-connect/build/src/enums/AttributeNames.js
 var require_AttributeNames$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ConnectNames = exports.ConnectTypes = exports.AttributeNames = void 0;
@@ -90266,7 +90266,7 @@ var require_AttributeNames$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-connect/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-connect/build/src/version.js
 var require_version$36 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -90275,7 +90275,7 @@ var require_version$36 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-connect/build/src/internal-types.js
+//#region node_modules/@opentelemetry/instrumentation-connect/build/src/internal-types.js
 var require_internal_types$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports._LAYERS_STORE_PROPERTY = void 0;
@@ -90283,7 +90283,7 @@ var require_internal_types$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-connect/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-connect/build/src/utils.js
 var require_utils$34 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.generateRoute = exports.replaceCurrentStackRoute = exports.addNewStackLayer = void 0;
@@ -90313,7 +90313,7 @@ var require_utils$34 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-connect/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-connect/build/src/instrumentation.js
 var require_instrumentation$30 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ConnectInstrumentation = exports.ANONYMOUS_NAME = void 0;
@@ -90452,7 +90452,7 @@ var require_instrumentation$30 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-connect/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-connect/build/src/index.js
 var require_src$70 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ConnectTypes = exports.ConnectNames = exports.AttributeNames = exports.ANONYMOUS_NAME = exports.ConnectInstrumentation = void 0;
@@ -90491,7 +90491,7 @@ var require_src$70 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-cucumber/build/src/types.js
+//#region node_modules/@opentelemetry/instrumentation-cucumber/build/src/types.js
 var require_types$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = void 0;
@@ -90508,7 +90508,7 @@ var require_types$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-cucumber/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-cucumber/build/src/version.js
 var require_version$35 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -90517,7 +90517,7 @@ var require_version$35 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-cucumber/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-cucumber/build/src/instrumentation.js
 var require_instrumentation$29 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CucumberInstrumentation = void 0;
@@ -90757,7 +90757,7 @@ var require_instrumentation$29 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-cucumber/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-cucumber/build/src/index.js
 var require_src$69 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = exports.CucumberInstrumentation = void 0;
@@ -90778,7 +90778,7 @@ var require_src$69 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-dataloader/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-dataloader/build/src/version.js
 var require_version$34 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -90787,7 +90787,7 @@ var require_version$34 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-dataloader/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-dataloader/build/src/instrumentation.js
 var require_instrumentation$28 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DataloaderInstrumentation = void 0;
@@ -90976,7 +90976,7 @@ var require_instrumentation$28 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-dataloader/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-dataloader/build/src/index.js
 var require_src$68 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DataloaderInstrumentation = void 0;
@@ -90990,7 +90990,7 @@ var require_src$68 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-dns/build/src/enums/AttributeNames.js
+//#region node_modules/@opentelemetry/instrumentation-dns/build/src/enums/AttributeNames.js
 var require_AttributeNames$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = void 0;
@@ -91001,7 +91001,7 @@ var require_AttributeNames$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-dns/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-dns/build/src/utils.js
 var require_utils$33 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.isIgnored = exports.satisfiesPattern = exports.setLookupAttributes = exports.getOperationName = exports.getFamilyAttribute = exports.setError = void 0;
@@ -91098,7 +91098,7 @@ var require_utils$33 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-dns/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-dns/build/src/version.js
 var require_version$33 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -91107,7 +91107,7 @@ var require_version$33 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-dns/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-dns/build/src/instrumentation.js
 var require_instrumentation$27 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DnsInstrumentation = void 0;
@@ -91206,7 +91206,7 @@ var require_instrumentation$27 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-dns/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-dns/build/src/index.js
 var require_src$67 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DnsInstrumentation = void 0;
@@ -91220,7 +91220,7 @@ var require_src$67 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-fs/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-fs/build/src/version.js
 var require_version$32 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -91229,7 +91229,7 @@ var require_version$32 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-fs/build/src/constants.js
+//#region node_modules/@opentelemetry/instrumentation-fs/build/src/constants.js
 var require_constants$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SYNC_FUNCTIONS = exports.CALLBACK_FUNCTIONS = exports.PROMISE_FUNCTIONS = void 0;
@@ -91327,7 +91327,7 @@ var require_constants$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-fs/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-fs/build/src/utils.js
 var require_utils$32 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.indexFs = exports.splitTwoLevels = void 0;
@@ -91355,7 +91355,7 @@ var require_utils$32 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-fs/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-fs/build/src/instrumentation.js
 var require_instrumentation$26 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.FsInstrumentation = void 0;
@@ -91605,7 +91605,7 @@ var require_instrumentation$26 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-fs/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-fs/build/src/index.js
 var require_src$66 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.FsInstrumentation = void 0;
@@ -91619,7 +91619,7 @@ var require_src$66 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-generic-pool/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-generic-pool/build/src/version.js
 var require_version$31 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -91628,7 +91628,7 @@ var require_version$31 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-generic-pool/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-generic-pool/build/src/instrumentation.js
 var require_instrumentation$25 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.GenericPoolInstrumentation = void 0;
@@ -91719,7 +91719,7 @@ var require_instrumentation$25 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-generic-pool/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-generic-pool/build/src/index.js
 var require_src$65 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.GenericPoolInstrumentation = void 0;
@@ -91733,7 +91733,7 @@ var require_src$65 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-graphql/build/src/enum.js
+//#region node_modules/@opentelemetry/instrumentation-graphql/build/src/enum.js
 var require_enum$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SpanNames = exports.TokenKind = exports.AllowedOperationTypes = void 0;
@@ -91777,7 +91777,7 @@ var require_enum$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-graphql/build/src/enums/AttributeNames.js
+//#region node_modules/@opentelemetry/instrumentation-graphql/build/src/enums/AttributeNames.js
 var require_AttributeNames$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = void 0;
@@ -91795,7 +91795,7 @@ var require_AttributeNames$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-graphql/build/src/symbols.js
+//#region node_modules/@opentelemetry/instrumentation-graphql/build/src/symbols.js
 var require_symbols = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTEL_GRAPHQL_DATA_SYMBOL = exports.OTEL_PATCHED_SYMBOL = void 0;
@@ -91804,7 +91804,7 @@ var require_symbols = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-graphql/build/src/internal-types.js
+//#region node_modules/@opentelemetry/instrumentation-graphql/build/src/internal-types.js
 var require_internal_types$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OPERATION_NOT_SUPPORTED = void 0;
@@ -91813,7 +91813,7 @@ var require_internal_types$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-graphql/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-graphql/build/src/utils.js
 var require_utils$31 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.wrapFieldResolver = exports.wrapFields = exports.getSourceFromLocation = exports.getOperation = exports.endSpan = exports.addSpanSource = exports.addInputVariableAttributes = exports.isPromise = void 0;
@@ -92051,7 +92051,7 @@ var require_utils$31 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-graphql/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-graphql/build/src/version.js
 var require_version$30 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -92060,7 +92060,7 @@ var require_version$30 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-graphql/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-graphql/build/src/instrumentation.js
 var require_instrumentation$24 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.GraphQLInstrumentation = void 0;
@@ -92291,7 +92291,7 @@ var require_instrumentation$24 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-graphql/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-graphql/build/src/index.js
 var require_src$64 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.GraphQLInstrumentation = void 0;
@@ -92305,7 +92305,7 @@ var require_src$64 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-grpc/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-grpc/build/src/semconv.js
 var require_semconv$28 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RPC_GRPC_STATUS_CODE_VALUE_OK = exports.ATTR_RPC_GRPC_STATUS_CODE = exports.ATTR_RPC_SYSTEM = exports.ATTR_RPC_SERVICE = exports.ATTR_RPC_METHOD = exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = void 0;
@@ -92368,7 +92368,7 @@ var require_semconv$28 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-grpc/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-grpc/build/src/utils.js
 var require_utils$30 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.metadataCapture = exports._extractMethodAndService = exports._methodIsIgnored = exports._grpcStatusCodeToSpanStatus = exports._grpcStatusCodeToOpenTelemetryStatusCode = exports.URI_REGEX = void 0;
@@ -92438,7 +92438,7 @@ var require_utils$30 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-grpc/build/src/enums/AttributeNames.js
+//#region node_modules/@opentelemetry/instrumentation-grpc/build/src/enums/AttributeNames.js
 var require_AttributeNames$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = void 0;
@@ -92449,7 +92449,7 @@ var require_AttributeNames$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-grpc/build/src/serverUtils.js
+//#region node_modules/@opentelemetry/instrumentation-grpc/build/src/serverUtils.js
 var require_serverUtils = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.shouldNotTraceServerCall = exports.handleUntracedServerFunction = exports.handleServerFunction = exports.CALL_SPAN_ENDED = void 0;
@@ -92569,7 +92569,7 @@ var require_serverUtils = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-grpc/build/src/clientUtils.js
+//#region node_modules/@opentelemetry/instrumentation-grpc/build/src/clientUtils.js
 var require_clientUtils = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.setSpanContext = exports.extractMetadataOrSpliceDefault = exports.extractMetadataOrSplice = exports.getMetadataIndex = exports.makeGrpcClientRemoteCall = exports.patchResponseStreamEvents = exports.patchResponseMetadataEvent = exports.patchedCallback = exports.getMethodsToWrap = void 0;
@@ -92713,7 +92713,7 @@ var require_clientUtils = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-grpc/build/src/enums/AttributeValues.js
+//#region node_modules/@opentelemetry/instrumentation-grpc/build/src/enums/AttributeValues.js
 var require_AttributeValues = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeValues = void 0;
@@ -92721,7 +92721,7 @@ var require_AttributeValues = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-grpc/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-grpc/build/src/version.js
 var require_version$29 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.VERSION = void 0;
@@ -92729,7 +92729,7 @@ var require_version$29 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-grpc/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-grpc/build/src/instrumentation.js
 var require_instrumentation$23 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.GrpcInstrumentation = void 0;
@@ -92989,7 +92989,7 @@ var require_instrumentation$23 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-grpc/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-grpc/build/src/index.js
 var require_src$63 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.GrpcInstrumentation = void 0;
@@ -93003,7 +93003,7 @@ var require_src$63 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-hapi/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-hapi/build/src/version.js
 var require_version$28 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -93012,7 +93012,7 @@ var require_version$28 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-hapi/build/src/internal-types.js
+//#region node_modules/@opentelemetry/instrumentation-hapi/build/src/internal-types.js
 var require_internal_types$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.HapiLifecycleMethodNames = exports.HapiLayerType = exports.handlerPatched = exports.HapiComponentName = void 0;
@@ -93041,7 +93041,7 @@ var require_internal_types$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-hapi/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-hapi/build/src/semconv.js
 var require_semconv$27 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ATTR_HTTP_METHOD = void 0;
@@ -93060,7 +93060,7 @@ var require_semconv$27 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-hapi/build/src/enums/AttributeNames.js
+//#region node_modules/@opentelemetry/instrumentation-hapi/build/src/enums/AttributeNames.js
 var require_AttributeNames$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = void 0;
@@ -93072,7 +93072,7 @@ var require_AttributeNames$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-hapi/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-hapi/build/src/utils.js
 var require_utils$29 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getPluginFromInput = exports.getExtMetadata = exports.getRouteMetadata = exports.isPatchableExtMethod = exports.isDirectExtInput = exports.isLifecycleExtEventObj = exports.isLifecycleExtType = exports.getPluginName = void 0;
@@ -93153,7 +93153,7 @@ var require_utils$29 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-hapi/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-hapi/build/src/instrumentation.js
 var require_instrumentation$22 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.HapiInstrumentation = void 0;
@@ -93396,7 +93396,7 @@ var require_instrumentation$22 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-hapi/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-hapi/build/src/index.js
 var require_src$62 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = exports.HapiInstrumentation = void 0;
@@ -93417,7 +93417,7 @@ var require_src$62 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-host-metrics/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-host-metrics/build/src/version.js
 var require_version$27 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -93426,7 +93426,7 @@ var require_version$27 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-host-metrics/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-host-metrics/build/src/semconv.js
 var require_semconv$26 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SYSTEM_MEMORY_STATE_VALUE_USED = exports.SYSTEM_MEMORY_STATE_VALUE_FREE = exports.CPU_MODE_VALUE_USER = exports.CPU_MODE_VALUE_SYSTEM = exports.CPU_MODE_VALUE_NICE = exports.CPU_MODE_VALUE_INTERRUPT = exports.CPU_MODE_VALUE_IDLE = exports.NETWORK_IO_DIRECTION_VALUE_TRANSMIT = exports.NETWORK_IO_DIRECTION_VALUE_RECEIVE = exports.METRIC_SYSTEM_NETWORK_PACKET_DROPPED = exports.METRIC_SYSTEM_NETWORK_IO = exports.METRIC_SYSTEM_NETWORK_ERRORS = exports.METRIC_SYSTEM_MEMORY_UTILIZATION = exports.METRIC_SYSTEM_MEMORY_USAGE = exports.METRIC_SYSTEM_CPU_UTILIZATION = exports.METRIC_SYSTEM_CPU_TIME = exports.METRIC_PROCESS_MEMORY_USAGE = exports.METRIC_PROCESS_CPU_UTILIZATION = exports.METRIC_PROCESS_CPU_TIME = exports.ATTR_SYSTEM_MEMORY_STATE = exports.ATTR_SYSTEM_DEVICE = exports.ATTR_CPU_MODE = exports.ATTR_CPU_LOGICAL_NUMBER = exports.ATTR_NETWORK_IO_DIRECTION = void 0;
@@ -93597,7 +93597,7 @@ var require_semconv$26 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-host-metrics/build/src/stats/common.js
+//#region node_modules/@opentelemetry/instrumentation-host-metrics/build/src/stats/common.js
 var require_common$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getProcessMemoryData = exports.getMemoryData = exports.getProcessCpuUsageData = exports.getCpuUsageData = void 0;
@@ -93720,7 +93720,7 @@ var require_common$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/systeminformation/lib/util.js
+//#region node_modules/systeminformation/lib/util.js
 var require_util$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	const os$6 = __require("os");
 	const fs$19 = __require("fs");
@@ -96189,7 +96189,7 @@ var require_util$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/systeminformation/lib/network.js
+//#region node_modules/systeminformation/lib/network.js
 var require_network = /* @__PURE__ */ __commonJSMin(((exports) => {
 	const os$5 = __require("os");
 	const exec = __require("child_process").exec;
@@ -97686,7 +97686,7 @@ var require_network = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-host-metrics/build/src/stats/si.js
+//#region node_modules/@opentelemetry/instrumentation-host-metrics/build/src/stats/si.js
 var require_si = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getNetworkData = void 0;
@@ -97702,7 +97702,7 @@ var require_si = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-host-metrics/build/src/metric.js
+//#region node_modules/@opentelemetry/instrumentation-host-metrics/build/src/metric.js
 var require_metric = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.HostMetricsInstrumentation = void 0;
@@ -97909,7 +97909,7 @@ var require_metric = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-host-metrics/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-host-metrics/build/src/index.js
 var require_src$61 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.HostMetricsInstrumentation = void 0;
@@ -97923,7 +97923,7 @@ var require_src$61 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-ioredis/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-ioredis/build/src/semconv.js
 var require_semconv$25 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DB_SYSTEM_VALUE_REDIS = exports.DB_SYSTEM_NAME_VALUE_REDIS = exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = exports.ATTR_DB_SYSTEM = exports.ATTR_DB_STATEMENT = exports.ATTR_DB_CONNECTION_STRING = void 0;
@@ -97995,7 +97995,7 @@ var require_semconv$25 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-ioredis/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-ioredis/build/src/utils.js
 var require_utils$28 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.endSpan = void 0;
@@ -98014,7 +98014,7 @@ var require_utils$28 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/redis-common/build/src/index.js
+//#region node_modules/@opentelemetry/redis-common/build/src/index.js
 var require_src$60 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.defaultDbStatementSerializer = void 0;
@@ -98070,7 +98070,7 @@ var require_src$60 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-ioredis/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-ioredis/build/src/version.js
 var require_version$26 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -98079,7 +98079,7 @@ var require_version$26 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-ioredis/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-ioredis/build/src/instrumentation.js
 var require_instrumentation$21 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.IORedisInstrumentation = void 0;
@@ -98246,7 +98246,7 @@ var require_instrumentation$21 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-ioredis/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-ioredis/build/src/index.js
 var require_src$59 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.IORedisInstrumentation = void 0;
@@ -98260,7 +98260,7 @@ var require_src$59 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-kafkajs/build/src/internal-types.js
+//#region node_modules/@opentelemetry/instrumentation-kafkajs/build/src/internal-types.js
 var require_internal_types$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.EVENT_LISTENERS_SET = void 0;
@@ -98268,7 +98268,7 @@ var require_internal_types$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-kafkajs/build/src/propagator.js
+//#region node_modules/@opentelemetry/instrumentation-kafkajs/build/src/propagator.js
 var require_propagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.bufferTextMapGetter = void 0;
@@ -98285,7 +98285,7 @@ var require_propagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-kafkajs/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-kafkajs/build/src/semconv.js
 var require_semconv$24 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.METRIC_MESSAGING_PROCESS_DURATION = exports.METRIC_MESSAGING_CLIENT_SENT_MESSAGES = exports.METRIC_MESSAGING_CLIENT_OPERATION_DURATION = exports.METRIC_MESSAGING_CLIENT_CONSUMED_MESSAGES = exports.MESSAGING_SYSTEM_VALUE_KAFKA = exports.MESSAGING_OPERATION_TYPE_VALUE_SEND = exports.MESSAGING_OPERATION_TYPE_VALUE_RECEIVE = exports.MESSAGING_OPERATION_TYPE_VALUE_PROCESS = exports.ATTR_MESSAGING_SYSTEM = exports.ATTR_MESSAGING_OPERATION_TYPE = exports.ATTR_MESSAGING_OPERATION_NAME = exports.ATTR_MESSAGING_KAFKA_OFFSET = exports.ATTR_MESSAGING_KAFKA_MESSAGE_TOMBSTONE = exports.ATTR_MESSAGING_KAFKA_MESSAGE_KEY = exports.ATTR_MESSAGING_DESTINATION_PARTITION_ID = exports.ATTR_MESSAGING_DESTINATION_NAME = exports.ATTR_MESSAGING_BATCH_MESSAGE_COUNT = void 0;
@@ -98422,7 +98422,7 @@ var require_semconv$24 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-kafkajs/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-kafkajs/build/src/version.js
 var require_version$25 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -98431,7 +98431,7 @@ var require_version$25 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-kafkajs/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-kafkajs/build/src/instrumentation.js
 var require_instrumentation$20 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.KafkaJsInstrumentation = void 0;
@@ -98815,7 +98815,7 @@ var require_instrumentation$20 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-kafkajs/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-kafkajs/build/src/index.js
 var require_src$58 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.KafkaJsInstrumentation = void 0;
@@ -98829,7 +98829,7 @@ var require_src$58 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-knex/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-knex/build/src/version.js
 var require_version$24 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -98838,7 +98838,7 @@ var require_version$24 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-knex/build/src/constants.js
+//#region node_modules/@opentelemetry/instrumentation-knex/build/src/constants.js
 var require_constants$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SUPPORTED_VERSIONS = exports.MODULE_NAME = void 0;
@@ -98852,7 +98852,7 @@ var require_constants$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-knex/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-knex/build/src/semconv.js
 var require_semconv$23 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DB_SYSTEM_NAME_VALUE_SQLITE = exports.ATTR_NET_TRANSPORT = exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = exports.ATTR_DB_USER = exports.ATTR_DB_SYSTEM = exports.ATTR_DB_STATEMENT = exports.ATTR_DB_SQL_TABLE = exports.ATTR_DB_OPERATION = exports.ATTR_DB_NAME = void 0;
@@ -98958,7 +98958,7 @@ var require_semconv$23 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-knex/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-knex/build/src/utils.js
 var require_utils$27 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.extractTableName = exports.extractPortFromConnectionString = exports.extractHostFromConnectionString = exports.extractDatabaseFromConnectionString = exports.limitLength = exports.getName = exports.mapSystem = exports.otelExceptionFromKnexError = exports.getFormatter = void 0;
@@ -99047,7 +99047,7 @@ var require_utils$27 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-knex/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-knex/build/src/instrumentation.js
 var require_instrumentation$19 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.KnexInstrumentation = void 0;
@@ -99184,7 +99184,7 @@ var require_instrumentation$19 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-knex/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-knex/build/src/index.js
 var require_src$57 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.KnexInstrumentation = void 0;
@@ -99198,7 +99198,7 @@ var require_src$57 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-koa/build/src/types.js
+//#region node_modules/@opentelemetry/instrumentation-koa/build/src/types.js
 var require_types$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.KoaLayerType = void 0;
@@ -99209,7 +99209,7 @@ var require_types$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-koa/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-koa/build/src/version.js
 var require_version$23 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -99218,7 +99218,7 @@ var require_version$23 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-koa/build/src/enums/AttributeNames.js
+//#region node_modules/@opentelemetry/instrumentation-koa/build/src/enums/AttributeNames.js
 var require_AttributeNames$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = void 0;
@@ -99229,7 +99229,7 @@ var require_AttributeNames$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-koa/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-koa/build/src/utils.js
 var require_utils$26 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.isLayerIgnored = exports.getMiddlewareMetadata = void 0;
@@ -99267,7 +99267,7 @@ var require_utils$26 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-koa/build/src/internal-types.js
+//#region node_modules/@opentelemetry/instrumentation-koa/build/src/internal-types.js
 var require_internal_types$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.kLayerPatched = void 0;
@@ -99279,7 +99279,7 @@ var require_internal_types$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-koa/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-koa/build/src/instrumentation.js
 var require_instrumentation$18 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.KoaInstrumentation = void 0;
@@ -99392,7 +99392,7 @@ var require_instrumentation$18 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-koa/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-koa/build/src/index.js
 var require_src$56 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.KoaLayerType = exports.AttributeNames = exports.KoaInstrumentation = void 0;
@@ -99420,7 +99420,7 @@ var require_src$56 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-lru-memoizer/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-lru-memoizer/build/src/version.js
 var require_version$22 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -99429,7 +99429,7 @@ var require_version$22 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-lru-memoizer/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-lru-memoizer/build/src/instrumentation.js
 var require_instrumentation$17 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LruMemoizerInstrumentation = void 0;
@@ -99462,7 +99462,7 @@ var require_instrumentation$17 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-lru-memoizer/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-lru-memoizer/build/src/index.js
 var require_src$55 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LruMemoizerInstrumentation = void 0;
@@ -99476,7 +99476,7 @@ var require_src$55 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-memcached/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-memcached/build/src/semconv.js
 var require_semconv$22 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DB_SYSTEM_NAME_VALUE_MEMCACHED = exports.DB_SYSTEM_VALUE_MEMCACHED = exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = exports.ATTR_DB_SYSTEM = exports.ATTR_DB_STATEMENT = exports.ATTR_DB_OPERATION = void 0;
@@ -99550,7 +99550,7 @@ var require_semconv$22 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-memcached/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-memcached/build/src/utils.js
 var require_utils$25 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getPeerAttributes = void 0;
@@ -99595,7 +99595,7 @@ var require_utils$25 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-memcached/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-memcached/build/src/version.js
 var require_version$21 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -99604,7 +99604,7 @@ var require_version$21 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-memcached/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-memcached/build/src/instrumentation.js
 var require_instrumentation$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MemcachedInstrumentation = void 0;
@@ -99703,7 +99703,7 @@ var require_instrumentation$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-memcached/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-memcached/build/src/index.js
 var require_src$54 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MemcachedInstrumentation = void 0;
@@ -99717,7 +99717,7 @@ var require_src$54 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mongodb/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-mongodb/build/src/semconv.js
 var require_semconv$21 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.METRIC_DB_CLIENT_CONNECTIONS_USAGE = exports.DB_SYSTEM_VALUE_MONGODB = exports.DB_SYSTEM_NAME_VALUE_MONGODB = exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = exports.ATTR_DB_SYSTEM = exports.ATTR_DB_STATEMENT = exports.ATTR_DB_OPERATION = exports.ATTR_DB_NAME = exports.ATTR_DB_MONGODB_COLLECTION = exports.ATTR_DB_CONNECTION_STRING = void 0;
@@ -99830,7 +99830,7 @@ var require_semconv$21 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mongodb/build/src/internal-types.js
+//#region node_modules/@opentelemetry/instrumentation-mongodb/build/src/internal-types.js
 var require_internal_types$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MongodbCommandType = void 0;
@@ -99845,7 +99845,7 @@ var require_internal_types$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mongodb/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-mongodb/build/src/version.js
 var require_version$20 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -99854,7 +99854,7 @@ var require_version$20 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mongodb/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-mongodb/build/src/instrumentation.js
 var require_instrumentation$15 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MongoDBInstrumentation = void 0;
@@ -100374,7 +100374,7 @@ var require_instrumentation$15 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mongodb/build/src/types.js
+//#region node_modules/@opentelemetry/instrumentation-mongodb/build/src/types.js
 var require_types$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MongodbCommandType = void 0;
@@ -100388,7 +100388,7 @@ var require_types$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mongodb/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-mongodb/build/src/index.js
 var require_src$53 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MongodbCommandType = exports.MongoDBInstrumentation = void 0;
@@ -100409,7 +100409,7 @@ var require_src$53 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mongoose/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-mongoose/build/src/semconv.js
 var require_semconv$20 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DB_SYSTEM_NAME_VALUE_MONGODB = exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = exports.ATTR_DB_USER = exports.ATTR_DB_SYSTEM = exports.ATTR_DB_STATEMENT = exports.ATTR_DB_OPERATION = exports.ATTR_DB_NAME = exports.ATTR_DB_MONGODB_COLLECTION = void 0;
@@ -100507,7 +100507,7 @@ var require_semconv$20 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mongoose/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-mongoose/build/src/utils.js
 var require_utils$24 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.handleCallbackResponse = exports.handlePromiseResponse = exports.getAttributesFromCollection = void 0;
@@ -100584,7 +100584,7 @@ var require_utils$24 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mongoose/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-mongoose/build/src/version.js
 var require_version$19 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -100593,7 +100593,7 @@ var require_version$19 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mongoose/build/src/mongoose.js
+//#region node_modules/@opentelemetry/instrumentation-mongoose/build/src/mongoose.js
 var require_mongoose = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MongooseInstrumentation = exports._ALREADY_INSTRUMENTED = exports._STORED_PARENT_SPAN = void 0;
@@ -100895,7 +100895,7 @@ var require_mongoose = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mongoose/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-mongoose/build/src/index.js
 var require_src$52 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MongooseInstrumentation = void 0;
@@ -100909,7 +100909,7 @@ var require_src$52 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mysql2/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-mysql2/build/src/semconv.js
 var require_semconv$19 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DB_SYSTEM_VALUE_MYSQL = exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = exports.ATTR_DB_USER = exports.ATTR_DB_SYSTEM = exports.ATTR_DB_STATEMENT = exports.ATTR_DB_NAME = exports.ATTR_DB_CONNECTION_STRING = void 0;
@@ -100995,7 +100995,7 @@ var require_semconv$19 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sql-common/build/src/index.js
+//#region node_modules/@opentelemetry/sql-common/build/src/index.js
 var require_src$51 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.addSqlCommenterComment = exports.buildTraceparent = void 0;
@@ -101039,7 +101039,7 @@ var require_src$51 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mysql2/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-mysql2/build/src/utils.js
 var require_utils$23 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getConnectionPrototypeToInstrument = exports.once = exports.getSpanName = exports.getQueryText = exports.getConnectionAttributes = void 0;
@@ -101152,7 +101152,7 @@ var require_utils$23 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mysql2/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-mysql2/build/src/version.js
 var require_version$18 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -101161,7 +101161,7 @@ var require_version$18 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mysql2/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-mysql2/build/src/instrumentation.js
 var require_instrumentation$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MySQL2Instrumentation = void 0;
@@ -101278,7 +101278,7 @@ var require_instrumentation$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mysql2/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-mysql2/build/src/index.js
 var require_src$50 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MySQL2Instrumentation = void 0;
@@ -101292,7 +101292,7 @@ var require_src$50 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mysql/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-mysql/build/src/semconv.js
 var require_semconv$18 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.METRIC_DB_CLIENT_CONNECTIONS_USAGE = exports.DB_SYSTEM_VALUE_MYSQL = exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = exports.ATTR_DB_USER = exports.ATTR_DB_SYSTEM = exports.ATTR_DB_STATEMENT = exports.ATTR_DB_NAME = exports.ATTR_DB_CONNECTION_STRING = void 0;
@@ -101386,7 +101386,7 @@ var require_semconv$18 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mysql/build/src/AttributeNames.js
+//#region node_modules/@opentelemetry/instrumentation-mysql/build/src/AttributeNames.js
 var require_AttributeNames$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = void 0;
@@ -101396,7 +101396,7 @@ var require_AttributeNames$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mysql/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-mysql/build/src/utils.js
 var require_utils$22 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getPoolNameOld = exports.arrayStringifyHelper = exports.getSpanName = exports.getDbValues = exports.getDbQueryText = exports.getJDBCString = exports.getConfig = void 0;
@@ -101464,7 +101464,7 @@ var require_utils$22 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mysql/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-mysql/build/src/version.js
 var require_version$17 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -101473,7 +101473,7 @@ var require_version$17 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mysql/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-mysql/build/src/instrumentation.js
 var require_instrumentation$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MySQLInstrumentation = void 0;
@@ -101723,7 +101723,7 @@ var require_instrumentation$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-mysql/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-mysql/build/src/index.js
 var require_src$49 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MySQLInstrumentation = void 0;
@@ -101737,7 +101737,7 @@ var require_src$49 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-nestjs-core/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-nestjs-core/build/src/version.js
 var require_version$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -101746,7 +101746,7 @@ var require_version$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-nestjs-core/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-nestjs-core/build/src/semconv.js
 var require_semconv$17 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ATTR_HTTP_URL = exports.ATTR_HTTP_METHOD = void 0;
@@ -101775,7 +101775,7 @@ var require_semconv$17 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-nestjs-core/build/src/enums/AttributeNames.js
+//#region node_modules/@opentelemetry/instrumentation-nestjs-core/build/src/enums/AttributeNames.js
 var require_AttributeNames$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = void 0;
@@ -101792,7 +101792,7 @@ var require_AttributeNames$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-nestjs-core/build/src/enums/NestType.js
+//#region node_modules/@opentelemetry/instrumentation-nestjs-core/build/src/enums/NestType.js
 var require_NestType = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.NestType = void 0;
@@ -101804,7 +101804,7 @@ var require_NestType = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-nestjs-core/build/src/enums/index.js
+//#region node_modules/@opentelemetry/instrumentation-nestjs-core/build/src/enums/index.js
 var require_enums = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.NestType = exports.AttributeNames = void 0;
@@ -101825,7 +101825,7 @@ var require_enums = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-nestjs-core/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-nestjs-core/build/src/instrumentation.js
 var require_instrumentation$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.NestInstrumentation = void 0;
@@ -101972,7 +101972,7 @@ var require_instrumentation$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-nestjs-core/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-nestjs-core/build/src/index.js
 var require_src$48 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = exports.NestInstrumentation = void 0;
@@ -101993,7 +101993,7 @@ var require_src$48 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-net/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-net/build/src/semconv.js
 var require_semconv$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.NET_TRANSPORT_VALUE_PIPE = exports.NET_TRANSPORT_VALUE_IP_TCP = exports.ATTR_NET_TRANSPORT = exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = exports.ATTR_NET_PEER_IP = exports.ATTR_NET_HOST_PORT = exports.ATTR_NET_HOST_IP = void 0;
@@ -102072,7 +102072,7 @@ var require_semconv$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-net/build/src/types.js
+//#region node_modules/@opentelemetry/instrumentation-net/build/src/types.js
 var require_types$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TLSAttributes = void 0;
@@ -102090,7 +102090,7 @@ var require_types$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-net/build/src/internal-types.js
+//#region node_modules/@opentelemetry/instrumentation-net/build/src/internal-types.js
 var require_internal_types$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SocketEvent = void 0;
@@ -102103,7 +102103,7 @@ var require_internal_types$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-net/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-net/build/src/utils.js
 var require_utils$21 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getNormalizedArgs = exports.STABLE_IPC_TRANSPORT_VALUE = exports.OLD_IPC_TRANSPORT_VALUE = void 0;
@@ -102141,7 +102141,7 @@ var require_utils$21 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-net/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-net/build/src/version.js
 var require_version$15 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -102150,7 +102150,7 @@ var require_version$15 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-net/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-net/build/src/instrumentation.js
 var require_instrumentation$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.NetInstrumentation = void 0;
@@ -102342,7 +102342,7 @@ var require_instrumentation$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-net/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-net/build/src/index.js
 var require_src$47 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TLSAttributes = exports.NetInstrumentation = void 0;
@@ -102363,7 +102363,7 @@ var require_src$47 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-openai/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-openai/build/src/semconv.js
 var require_semconv$15 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.METRIC_GEN_AI_CLIENT_TOKEN_USAGE = exports.METRIC_GEN_AI_CLIENT_OPERATION_DURATION = exports.ATTR_GEN_AI_USAGE_OUTPUT_TOKENS = exports.ATTR_GEN_AI_USAGE_INPUT_TOKENS = exports.ATTR_GEN_AI_TOKEN_TYPE = exports.ATTR_GEN_AI_SYSTEM = exports.ATTR_GEN_AI_RESPONSE_MODEL = exports.ATTR_GEN_AI_RESPONSE_ID = exports.ATTR_GEN_AI_RESPONSE_FINISH_REASONS = exports.ATTR_GEN_AI_REQUEST_TOP_P = exports.ATTR_GEN_AI_REQUEST_TEMPERATURE = exports.ATTR_GEN_AI_REQUEST_STOP_SEQUENCES = exports.ATTR_GEN_AI_REQUEST_PRESENCE_PENALTY = exports.ATTR_GEN_AI_REQUEST_MODEL = exports.ATTR_GEN_AI_REQUEST_MAX_TOKENS = exports.ATTR_GEN_AI_REQUEST_FREQUENCY_PENALTY = exports.ATTR_GEN_AI_REQUEST_ENCODING_FORMATS = exports.ATTR_GEN_AI_OPERATION_NAME = exports.ATTR_EVENT_NAME = void 0;
@@ -102538,7 +102538,7 @@ var require_semconv$15 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-openai/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-openai/build/src/version.js
 var require_version$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -102547,7 +102547,7 @@ var require_version$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-openai/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-openai/build/src/utils.js
 var require_utils$20 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getAttrsFromBaseURL = exports.getEnvBool = void 0;
@@ -102609,7 +102609,7 @@ var require_utils$20 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-openai/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-openai/build/src/instrumentation.js
 var require_instrumentation$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OpenAIInstrumentation = void 0;
@@ -103102,7 +103102,7 @@ var require_instrumentation$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-openai/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-openai/build/src/index.js
 var require_src$46 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OpenAIInstrumentation = void 0;
@@ -103116,7 +103116,7 @@ var require_src$46 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-oracledb/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-oracledb/build/src/semconv.js
 var require_semconv$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DB_SYSTEM_NAME_VALUE_ORACLE_DB = exports.ATTR_DB_USER = exports.ATTR_DB_OPERATION_PARAMETER = void 0;
@@ -103158,7 +103158,7 @@ var require_semconv$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-oracledb/build/src/constants.js
+//#region node_modules/@opentelemetry/instrumentation-oracledb/build/src/constants.js
 var require_constants$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SpanNames = void 0;
@@ -103182,7 +103182,7 @@ var require_constants$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-oracledb/build/src/OracleTelemetryTraceHandler.js
+//#region node_modules/@opentelemetry/instrumentation-oracledb/build/src/OracleTelemetryTraceHandler.js
 var require_OracleTelemetryTraceHandler = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getOracleTelemetryTraceHandlerClass = exports.buildTraceparent = void 0;
@@ -103387,7 +103387,7 @@ var require_OracleTelemetryTraceHandler = /* @__PURE__ */ __commonJSMin(((export
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-oracledb/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-oracledb/build/src/version.js
 var require_version$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -103396,7 +103396,7 @@ var require_version$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-oracledb/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-oracledb/build/src/instrumentation.js
 var require_instrumentation$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OracleInstrumentation = void 0;
@@ -103441,7 +103441,7 @@ var require_instrumentation$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-oracledb/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-oracledb/build/src/index.js
 var require_src$45 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OracleInstrumentation = void 0;
@@ -103455,7 +103455,7 @@ var require_src$45 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-pg/build/src/internal-types.js
+//#region node_modules/@opentelemetry/instrumentation-pg/build/src/internal-types.js
 var require_internal_types$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.EVENT_LISTENERS_SET = void 0;
@@ -103463,7 +103463,7 @@ var require_internal_types$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-pg/build/src/enums/AttributeNames.js
+//#region node_modules/@opentelemetry/instrumentation-pg/build/src/enums/AttributeNames.js
 var require_AttributeNames$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = void 0;
@@ -103476,7 +103476,7 @@ var require_AttributeNames$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-pg/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-pg/build/src/semconv.js
 var require_semconv$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.METRIC_DB_CLIENT_CONNECTION_PENDING_REQUESTS = exports.METRIC_DB_CLIENT_CONNECTION_COUNT = exports.DB_SYSTEM_VALUE_POSTGRESQL = exports.DB_CLIENT_CONNECTION_STATE_VALUE_USED = exports.DB_CLIENT_CONNECTION_STATE_VALUE_IDLE = exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = exports.ATTR_DB_USER = exports.ATTR_DB_SYSTEM = exports.ATTR_DB_STATEMENT = exports.ATTR_DB_NAME = exports.ATTR_DB_CONNECTION_STRING = exports.ATTR_DB_CLIENT_CONNECTION_STATE = exports.ATTR_DB_CLIENT_CONNECTION_POOL_NAME = void 0;
@@ -103594,7 +103594,7 @@ var require_semconv$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-pg/build/src/enums/SpanNames.js
+//#region node_modules/@opentelemetry/instrumentation-pg/build/src/enums/SpanNames.js
 var require_SpanNames = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SpanNames = void 0;
@@ -103606,7 +103606,7 @@ var require_SpanNames = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-pg/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-pg/build/src/utils.js
 var require_utils$19 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.sanitizedErrorMessage = exports.isObjectWithTextString = exports.getErrorMessage = exports.patchClientConnectCallback = exports.patchCallbackPGPool = exports.updateCounter = exports.getPoolName = exports.patchCallback = exports.handleExecutionResult = exports.handleConfigQuery = exports.shouldSkipInstrumentation = exports.getSemanticAttributesFromPoolConnection = exports.getSemanticAttributesFromConnection = exports.getConnectionString = exports.parseAndMaskConnectionString = exports.parseNormalizedOperationName = exports.getQuerySpanName = void 0;
@@ -103858,7 +103858,7 @@ var require_utils$19 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-pg/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-pg/build/src/version.js
 var require_version$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -103867,7 +103867,7 @@ var require_version$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-pg/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-pg/build/src/instrumentation.js
 var require_instrumentation$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PgInstrumentation = void 0;
@@ -104186,7 +104186,7 @@ var require_instrumentation$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-pg/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-pg/build/src/index.js
 var require_src$44 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = exports.PgInstrumentation = void 0;
@@ -104207,7 +104207,7 @@ var require_src$44 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-pino/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-pino/build/src/version.js
 var require_version$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -104216,7 +104216,7 @@ var require_version$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-pino/build/src/log-sending-utils.js
+//#region node_modules/@opentelemetry/instrumentation-pino/build/src/log-sending-utils.js
 var require_log_sending_utils = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTelPinoStream = exports.getTimeConverter = void 0;
@@ -104359,7 +104359,7 @@ var require_log_sending_utils = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-pino/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-pino/build/src/instrumentation.js
 var require_instrumentation$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PinoInstrumentation = void 0;
@@ -104460,7 +104460,7 @@ var require_instrumentation$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-pino/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-pino/build/src/index.js
 var require_src$43 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PinoInstrumentation = void 0;
@@ -104474,7 +104474,7 @@ var require_src$43 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-redis/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-redis/build/src/version.js
 var require_version$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -104483,7 +104483,7 @@ var require_version$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-redis/build/src/v2-v3/utils.js
+//#region node_modules/@opentelemetry/instrumentation-redis/build/src/v2-v3/utils.js
 var require_utils$18 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getTracedCreateStreamTrace = exports.getTracedCreateClient = exports.endSpan = void 0;
@@ -104521,7 +104521,7 @@ var require_utils$18 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-redis/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-redis/build/src/semconv.js
 var require_semconv$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DB_SYSTEM_VALUE_REDIS = exports.DB_SYSTEM_NAME_VALUE_REDIS = exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = exports.ATTR_DB_SYSTEM = exports.ATTR_DB_STATEMENT = exports.ATTR_DB_CONNECTION_STRING = void 0;
@@ -104593,7 +104593,7 @@ var require_semconv$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-redis/build/src/v2-v3/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-redis/build/src/v2-v3/instrumentation.js
 var require_instrumentation$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RedisInstrumentationV2_V3 = void 0;
@@ -104711,7 +104711,7 @@ var require_instrumentation$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-redis/build/src/v4-v5/utils.js
+//#region node_modules/@opentelemetry/instrumentation-redis/build/src/v4-v5/utils.js
 var require_utils$17 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getClientAttributes = void 0;
@@ -104756,7 +104756,7 @@ var require_utils$17 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-redis/build/src/v4-v5/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-redis/build/src/v4-v5/instrumentation.js
 var require_instrumentation$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RedisInstrumentationV4_V5 = void 0;
@@ -105049,7 +105049,7 @@ var require_instrumentation$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-redis/build/src/redis.js
+//#region node_modules/@opentelemetry/instrumentation-redis/build/src/redis.js
 var require_redis = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RedisInstrumentation = void 0;
@@ -105110,7 +105110,7 @@ var require_redis = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-redis/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-redis/build/src/index.js
 var require_src$42 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RedisInstrumentation = void 0;
@@ -105124,7 +105124,7 @@ var require_src$42 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-restify/build/src/types.js
+//#region node_modules/@opentelemetry/instrumentation-restify/build/src/types.js
 var require_types$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LayerType = void 0;
@@ -105135,7 +105135,7 @@ var require_types$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-restify/build/src/enums/AttributeNames.js
+//#region node_modules/@opentelemetry/instrumentation-restify/build/src/enums/AttributeNames.js
 var require_AttributeNames$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = void 0;
@@ -105148,7 +105148,7 @@ var require_AttributeNames$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-restify/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-restify/build/src/version.js
 var require_version$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -105157,7 +105157,7 @@ var require_version$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-restify/build/src/constants.js
+//#region node_modules/@opentelemetry/instrumentation-restify/build/src/constants.js
 var require_constants$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MODULE_NAME = exports.RESTIFY_METHODS = exports.RESTIFY_MW_METHODS = void 0;
@@ -105175,7 +105175,7 @@ var require_constants$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-restify/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-restify/build/src/utils.js
 var require_utils$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.isAsyncFunction = exports.isPromise = void 0;
@@ -105190,7 +105190,7 @@ var require_utils$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-restify/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-restify/build/src/instrumentation.js
 var require_instrumentation$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RestifyInstrumentation = void 0;
@@ -105321,7 +105321,7 @@ var require_instrumentation$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-restify/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-restify/build/src/index.js
 var require_src$41 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LayerType = exports.AttributeNames = exports.RestifyInstrumentation = void 0;
@@ -105349,7 +105349,7 @@ var require_src$41 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-router/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-router/build/src/version.js
 var require_version$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -105358,7 +105358,7 @@ var require_version$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-router/build/src/constants.js
+//#region node_modules/@opentelemetry/instrumentation-router/build/src/constants.js
 var require_constants$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.V2_CONSTANTS = exports.V1_CONSTANTS = exports.MODULE_NAME = void 0;
@@ -105386,7 +105386,7 @@ var require_constants$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-router/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-router/build/src/utils.js
 var require_utils$15 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.renameHttpSpan = exports.isInternal = void 0;
@@ -105403,7 +105403,7 @@ var require_utils$15 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-router/build/src/enums/AttributeNames.js
+//#region node_modules/@opentelemetry/instrumentation-router/build/src/enums/AttributeNames.js
 var require_AttributeNames$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = void 0;
@@ -105418,7 +105418,7 @@ var require_AttributeNames$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-router/build/src/enums/LayerType.js
+//#region node_modules/@opentelemetry/instrumentation-router/build/src/enums/LayerType.js
 var require_LayerType = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LayerType = void 0;
@@ -105431,7 +105431,7 @@ var require_LayerType = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-router/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-router/build/src/instrumentation.js
 var require_instrumentation$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RouterInstrumentation = void 0;
@@ -105552,7 +105552,7 @@ var require_instrumentation$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-router/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-router/build/src/index.js
 var require_src$40 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeNames = exports.RouterInstrumentation = void 0;
@@ -105573,7 +105573,7 @@ var require_src$40 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-runtime-node/build/src/metrics/baseCollector.js
+//#region node_modules/@opentelemetry/instrumentation-runtime-node/build/src/metrics/baseCollector.js
 var require_baseCollector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BaseCollector = void 0;
@@ -105595,7 +105595,7 @@ var require_baseCollector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-runtime-node/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-runtime-node/build/src/semconv.js
 var require_semconv$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.METRIC_V8JS_MEMORY_HEAP_SPACE_SIZE = exports.NODEJS_EVENTLOOP_STATE_VALUE_IDLE = exports.NODEJS_EVENTLOOP_STATE_VALUE_ACTIVE = exports.METRIC_V8JS_MEMORY_HEAP_USED = exports.METRIC_V8JS_MEMORY_HEAP_SPACE_PHYSICAL_SIZE = exports.METRIC_V8JS_MEMORY_HEAP_SPACE_AVAILABLE_SIZE = exports.METRIC_V8JS_MEMORY_HEAP_LIMIT = exports.METRIC_V8JS_GC_DURATION = exports.METRIC_NODEJS_EVENTLOOP_UTILIZATION = exports.METRIC_NODEJS_EVENTLOOP_TIME = exports.METRIC_NODEJS_EVENTLOOP_DELAY_STDDEV = exports.METRIC_NODEJS_EVENTLOOP_DELAY_P99 = exports.METRIC_NODEJS_EVENTLOOP_DELAY_P90 = exports.METRIC_NODEJS_EVENTLOOP_DELAY_P50 = exports.METRIC_NODEJS_EVENTLOOP_DELAY_MIN = exports.METRIC_NODEJS_EVENTLOOP_DELAY_MEAN = exports.METRIC_NODEJS_EVENTLOOP_DELAY_MAX = exports.ATTR_V8JS_HEAP_SPACE_NAME = exports.ATTR_V8JS_GC_TYPE = exports.ATTR_NODEJS_EVENTLOOP_STATE = void 0;
@@ -105759,7 +105759,7 @@ var require_semconv$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-runtime-node/build/src/metrics/eventLoopUtilizationCollector.js
+//#region node_modules/@opentelemetry/instrumentation-runtime-node/build/src/metrics/eventLoopUtilizationCollector.js
 var require_eventLoopUtilizationCollector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.EventLoopUtilizationCollector = void 0;
@@ -105788,7 +105788,7 @@ var require_eventLoopUtilizationCollector = /* @__PURE__ */ __commonJSMin(((expo
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-runtime-node/build/src/metrics/eventLoopDelayCollector.js
+//#region node_modules/@opentelemetry/instrumentation-runtime-node/build/src/metrics/eventLoopDelayCollector.js
 var require_eventLoopDelayCollector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.EventLoopDelayCollector = void 0;
@@ -105878,7 +105878,7 @@ var require_eventLoopDelayCollector = /* @__PURE__ */ __commonJSMin(((exports) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-runtime-node/build/src/metrics/gcCollector.js
+//#region node_modules/@opentelemetry/instrumentation-runtime-node/build/src/metrics/gcCollector.js
 var require_gcCollector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.GCCollector = void 0;
@@ -105938,7 +105938,7 @@ var require_gcCollector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-runtime-node/build/src/metrics/heapSpacesSizeAndUsedCollector.js
+//#region node_modules/@opentelemetry/instrumentation-runtime-node/build/src/metrics/heapSpacesSizeAndUsedCollector.js
 var require_heapSpacesSizeAndUsedCollector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.HeapSpacesSizeAndUsedCollector = void 0;
@@ -105998,7 +105998,7 @@ var require_heapSpacesSizeAndUsedCollector = /* @__PURE__ */ __commonJSMin(((exp
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-runtime-node/build/src/metrics/eventLoopTimeCollector.js
+//#region node_modules/@opentelemetry/instrumentation-runtime-node/build/src/metrics/eventLoopTimeCollector.js
 var require_eventLoopTimeCollector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.EventLoopTimeCollector = void 0;
@@ -106030,7 +106030,7 @@ var require_eventLoopTimeCollector = /* @__PURE__ */ __commonJSMin(((exports) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-runtime-node/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-runtime-node/build/src/version.js
 var require_version$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -106039,7 +106039,7 @@ var require_version$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-runtime-node/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-runtime-node/build/src/instrumentation.js
 var require_instrumentation$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RuntimeNodeInstrumentation = void 0;
@@ -106147,7 +106147,7 @@ var require_instrumentation$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-runtime-node/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-runtime-node/build/src/index.js
 var require_src$39 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RuntimeNodeInstrumentation = void 0;
@@ -106161,7 +106161,7 @@ var require_src$39 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-socket.io/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-socket.io/build/src/semconv.js
 var require_semconv$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ATTR_MESSAGING_SYSTEM = exports.ATTR_MESSAGING_OPERATION = void 0;
@@ -106188,7 +106188,7 @@ var require_semconv$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-socket.io/build/src/semconv-obsolete.js
+//#region node_modules/@opentelemetry/instrumentation-socket.io/build/src/semconv-obsolete.js
 var require_semconv_obsolete = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MESSAGING_DESTINATION_KIND_VALUE_TOPIC = exports.MESSAGING_OPERATION_VALUE_RECEIVE = exports.ATTR_MESSAGING_DESTINATION_KIND = exports.ATTR_MESSAGING_DESTINATION = void 0;
@@ -106219,7 +106219,7 @@ var require_semconv_obsolete = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-socket.io/build/src/AttributeNames.js
+//#region node_modules/@opentelemetry/instrumentation-socket.io/build/src/AttributeNames.js
 var require_AttributeNames = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SocketIoInstrumentationAttributes = void 0;
@@ -106231,7 +106231,7 @@ var require_AttributeNames = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-socket.io/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-socket.io/build/src/version.js
 var require_version$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -106240,7 +106240,7 @@ var require_version$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-socket.io/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-socket.io/build/src/utils.js
 var require_utils$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.extractRoomsAttributeValue = exports.normalizeConfig = exports.isPromise = void 0;
@@ -106265,7 +106265,7 @@ var require_utils$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-socket.io/build/src/socket.io.js
+//#region node_modules/@opentelemetry/instrumentation-socket.io/build/src/socket.io.js
 var require_socket_io = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SocketIoInstrumentation = void 0;
@@ -106481,7 +106481,7 @@ var require_socket_io = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-socket.io/build/src/types.js
+//#region node_modules/@opentelemetry/instrumentation-socket.io/build/src/types.js
 var require_types$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.defaultSocketIoPath = void 0;
@@ -106489,7 +106489,7 @@ var require_types$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-socket.io/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-socket.io/build/src/index.js
 var require_src$38 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.defaultSocketIoPath = exports.SocketIoInstrumentationAttributes = exports.SocketIoInstrumentation = void 0;
@@ -106517,7 +106517,7 @@ var require_src$38 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-tedious/build/src/semconv.js
+//#region node_modules/@opentelemetry/instrumentation-tedious/build/src/semconv.js
 var require_semconv$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DB_SYSTEM_VALUE_MSSQL = exports.ATTR_NET_PEER_PORT = exports.ATTR_NET_PEER_NAME = exports.ATTR_DB_USER = exports.ATTR_DB_SYSTEM = exports.ATTR_DB_STATEMENT = exports.ATTR_DB_SQL_TABLE = exports.ATTR_DB_NAME = void 0;
@@ -106603,7 +106603,7 @@ var require_semconv$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-tedious/build/src/utils.js
+//#region node_modules/@opentelemetry/instrumentation-tedious/build/src/utils.js
 var require_utils$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.once = exports.getSpanName = void 0;
@@ -106635,7 +106635,7 @@ var require_utils$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-tedious/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-tedious/build/src/version.js
 var require_version$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -106644,7 +106644,7 @@ var require_version$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-tedious/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-tedious/build/src/instrumentation.js
 var require_instrumentation$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TediousInstrumentation = exports.INJECTED_CTX = void 0;
@@ -106830,7 +106830,7 @@ var require_instrumentation$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-tedious/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-tedious/build/src/index.js
 var require_src$37 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TediousInstrumentation = void 0;
@@ -106844,7 +106844,7 @@ var require_src$37 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-undici/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-undici/build/src/version.js
 var require_version$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -106853,7 +106853,7 @@ var require_version$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-undici/build/src/undici.js
+//#region node_modules/@opentelemetry/instrumentation-undici/build/src/undici.js
 var require_undici = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.UndiciInstrumentation = void 0;
@@ -107120,7 +107120,7 @@ var require_undici = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-undici/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-undici/build/src/index.js
 var require_src$36 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.UndiciInstrumentation = void 0;
@@ -107134,7 +107134,7 @@ var require_src$36 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-winston/build/src/version.js
+//#region node_modules/@opentelemetry/instrumentation-winston/build/src/version.js
 var require_version$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PACKAGE_NAME = exports.PACKAGE_VERSION = void 0;
@@ -107143,7 +107143,7 @@ var require_version$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-winston/build/src/instrumentation.js
+//#region node_modules/@opentelemetry/instrumentation-winston/build/src/instrumentation.js
 var require_instrumentation = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.WinstonInstrumentation = void 0;
@@ -107307,7 +107307,7 @@ var require_instrumentation = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/instrumentation-winston/build/src/index.js
+//#region node_modules/@opentelemetry/instrumentation-winston/build/src/index.js
 var require_src$35 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.WinstonInstrumentation = void 0;
@@ -107321,7 +107321,7 @@ var require_src$35 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-alibaba-cloud/build/src/semconv.js
+//#region node_modules/@opentelemetry/resource-detector-alibaba-cloud/build/src/semconv.js
 var require_semconv$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CLOUD_PROVIDER_VALUE_ALIBABA_CLOUD = exports.CLOUD_PLATFORM_VALUE_ALIBABA_CLOUD_ECS = exports.ATTR_HOST_TYPE = exports.ATTR_HOST_NAME = exports.ATTR_HOST_ID = exports.ATTR_CLOUD_REGION = exports.ATTR_CLOUD_PROVIDER = exports.ATTR_CLOUD_PLATFORM = exports.ATTR_CLOUD_AVAILABILITY_ZONE = exports.ATTR_CLOUD_ACCOUNT_ID = void 0;
@@ -107412,7 +107412,7 @@ var require_semconv$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-alibaba-cloud/build/src/detectors/AlibabaCloudEcsDetector.js
+//#region node_modules/@opentelemetry/resource-detector-alibaba-cloud/build/src/detectors/AlibabaCloudEcsDetector.js
 var require_AlibabaCloudEcsDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.alibabaCloudEcsDetector = void 0;
@@ -107538,7 +107538,7 @@ var require_AlibabaCloudEcsDetector = /* @__PURE__ */ __commonJSMin(((exports) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-alibaba-cloud/build/src/detectors/index.js
+//#region node_modules/@opentelemetry/resource-detector-alibaba-cloud/build/src/detectors/index.js
 var require_detectors$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.alibabaCloudEcsDetector = void 0;
@@ -107552,7 +107552,7 @@ var require_detectors$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-alibaba-cloud/build/src/index.js
+//#region node_modules/@opentelemetry/resource-detector-alibaba-cloud/build/src/index.js
 var require_src$34 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.alibabaCloudEcsDetector = void 0;
@@ -107566,7 +107566,7 @@ var require_src$34 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-aws/build/src/semconv.js
+//#region node_modules/@opentelemetry/resource-detector-aws/build/src/semconv.js
 var require_semconv$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CLOUD_PROVIDER_VALUE_AWS = exports.CLOUD_PLATFORM_VALUE_AWS_LAMBDA = exports.CLOUD_PLATFORM_VALUE_AWS_ELASTIC_BEANSTALK = exports.CLOUD_PLATFORM_VALUE_AWS_EKS = exports.CLOUD_PLATFORM_VALUE_AWS_ECS = exports.CLOUD_PLATFORM_VALUE_AWS_EC2 = exports.ATTR_SERVICE_NAMESPACE = exports.ATTR_SERVICE_INSTANCE_ID = exports.ATTR_K8S_CLUSTER_NAME = exports.ATTR_HOST_TYPE = exports.ATTR_HOST_NAME = exports.ATTR_HOST_ID = exports.ATTR_FAAS_VERSION = exports.ATTR_FAAS_MAX_MEMORY = exports.ATTR_FAAS_INSTANCE = exports.ATTR_FAAS_NAME = exports.ATTR_CONTAINER_NAME = exports.ATTR_CONTAINER_ID = exports.ATTR_CLOUD_RESOURCE_ID = exports.ATTR_CLOUD_REGION = exports.ATTR_CLOUD_PROVIDER = exports.ATTR_CLOUD_PLATFORM = exports.ATTR_CLOUD_AVAILABILITY_ZONE = exports.ATTR_CLOUD_ACCOUNT_ID = exports.ATTR_AWS_LOG_STREAM_NAMES = exports.ATTR_AWS_LOG_STREAM_ARNS = exports.ATTR_AWS_LOG_GROUP_NAMES = exports.ATTR_AWS_LOG_GROUP_ARNS = exports.ATTR_AWS_ECS_TASK_REVISION = exports.ATTR_AWS_ECS_TASK_FAMILY = exports.ATTR_AWS_ECS_TASK_ARN = exports.ATTR_AWS_ECS_LAUNCHTYPE = exports.ATTR_AWS_ECS_CONTAINER_ARN = exports.ATTR_AWS_ECS_CLUSTER_ARN = void 0;
@@ -107913,7 +107913,7 @@ var require_semconv$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-aws/build/src/detectors/AwsBeanstalkDetector.js
+//#region node_modules/@opentelemetry/resource-detector-aws/build/src/detectors/AwsBeanstalkDetector.js
 var require_AwsBeanstalkDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.awsBeanstalkDetector = exports.AwsBeanstalkDetector = void 0;
@@ -107984,7 +107984,7 @@ var require_AwsBeanstalkDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-aws/build/src/detectors/AwsEc2Detector.js
+//#region node_modules/@opentelemetry/resource-detector-aws/build/src/detectors/AwsEc2Detector.js
 var require_AwsEc2Detector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.awsEc2Detector = void 0;
@@ -108119,7 +108119,7 @@ var require_AwsEc2Detector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-aws/build/src/detectors/AwsEcsDetector.js
+//#region node_modules/@opentelemetry/resource-detector-aws/build/src/detectors/AwsEcsDetector.js
 var require_AwsEcsDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.awsEcsDetector = exports.AwsEcsDetector = void 0;
@@ -108301,7 +108301,7 @@ var require_AwsEcsDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-aws/build/src/detectors/AwsEksDetector.js
+//#region node_modules/@opentelemetry/resource-detector-aws/build/src/detectors/AwsEksDetector.js
 var require_AwsEksDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.awsEksDetector = exports.AwsEksDetector = void 0;
@@ -108484,7 +108484,7 @@ var require_AwsEksDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-aws/build/src/detectors/AwsLambdaDetector.js
+//#region node_modules/@opentelemetry/resource-detector-aws/build/src/detectors/AwsLambdaDetector.js
 var require_AwsLambdaDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.awsLambdaDetector = exports.AwsLambdaDetector = void 0;
@@ -108521,7 +108521,7 @@ var require_AwsLambdaDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-aws/build/src/detectors/index.js
+//#region node_modules/@opentelemetry/resource-detector-aws/build/src/detectors/index.js
 var require_detectors$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.awsLambdaDetector = exports.awsEksDetector = exports.awsEcsDetector = exports.awsEc2Detector = exports.awsBeanstalkDetector = void 0;
@@ -108563,7 +108563,7 @@ var require_detectors$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-aws/build/src/index.js
+//#region node_modules/@opentelemetry/resource-detector-aws/build/src/index.js
 var require_src$33 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.awsLambdaDetector = exports.awsEksDetector = exports.awsEcsDetector = exports.awsEc2Detector = exports.awsBeanstalkDetector = void 0;
@@ -108601,7 +108601,7 @@ var require_src$33 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-container/build/src/detectors/utils.js
+//#region node_modules/@opentelemetry/resource-detector-container/build/src/detectors/utils.js
 var require_utils$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.extractContainerIdFromLine = exports.truncatePrefix = exports.HEX_STRING_REGEX = exports.DOCKER = exports.CRI_CONTAINERD = exports.CRIO = exports.MARKING_PREFIX = exports.HOSTNAME = exports.UTF8_UNICODE = exports.DEFAULT_CGROUP_V2_PATH = exports.DEFAULT_CGROUP_V1_PATH = exports.CONTAINER_ID_LENGTH = void 0;
@@ -108636,7 +108636,7 @@ var require_utils$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-container/build/src/semconv.js
+//#region node_modules/@opentelemetry/resource-detector-container/build/src/semconv.js
 var require_semconv$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ATTR_CONTAINER_ID = void 0;
@@ -108651,7 +108651,7 @@ var require_semconv$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-container/build/src/detectors/ContainerDetector.js
+//#region node_modules/@opentelemetry/resource-detector-container/build/src/detectors/ContainerDetector.js
 var require_ContainerDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.containerDetector = exports.ContainerDetector = void 0;
@@ -108708,7 +108708,7 @@ var require_ContainerDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-container/build/src/detectors/index.js
+//#region node_modules/@opentelemetry/resource-detector-container/build/src/detectors/index.js
 var require_detectors$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.containerDetector = void 0;
@@ -108722,7 +108722,7 @@ var require_detectors$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-container/build/src/index.js
+//#region node_modules/@opentelemetry/resource-detector-container/build/src/index.js
 var require_src$32 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.containerDetector = void 0;
@@ -108736,7 +108736,7 @@ var require_src$32 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-gcp/build/src/semconv.js
+//#region node_modules/@opentelemetry/resource-detector-gcp/build/src/semconv.js
 var require_semconv$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CLOUD_PROVIDER_VALUE_GCP = exports.CLOUD_PLATFORM_VALUE_GCP_KUBERNETES_ENGINE = exports.CLOUD_PLATFORM_VALUE_GCP_COMPUTE_ENGINE = exports.CLOUD_PLATFORM_VALUE_GCP_CLOUD_RUN = exports.CLOUD_PLATFORM_VALUE_GCP_CLOUD_FUNCTIONS = exports.CLOUD_PLATFORM_VALUE_GCP_APP_ENGINE = exports.ATTR_K8S_CLUSTER_NAME = exports.ATTR_HOST_TYPE = exports.ATTR_HOST_NAME = exports.ATTR_HOST_ID = exports.ATTR_FAAS_VERSION = exports.ATTR_FAAS_NAME = exports.ATTR_FAAS_INSTANCE = exports.ATTR_CLOUD_REGION = exports.ATTR_CLOUD_PROVIDER = exports.ATTR_CLOUD_PLATFORM = exports.ATTR_CLOUD_AVAILABILITY_ZONE = exports.ATTR_CLOUD_ACCOUNT_ID = void 0;
@@ -108922,7 +108922,7 @@ var require_semconv$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/gcp-metadata/build/src/gcp-residency.js
+//#region node_modules/gcp-metadata/build/src/gcp-residency.js
 var require_gcp_residency = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* Copyright 2022 Google LLC
@@ -109016,7 +109016,7 @@ var require_gcp_residency = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/gcp-metadata/build/src/index.js
+//#region node_modules/gcp-metadata/build/src/index.js
 var require_src$31 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -109349,7 +109349,7 @@ var require_src$31 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-gcp/build/src/detectors/faas.js
+//#region node_modules/@opentelemetry/resource-detector-gcp/build/src/detectors/faas.js
 var require_faas = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.faasCloudRegion = exports.faasInstance = exports.faasVersion = exports.faasName = exports.onCloudFunctions = exports.onCloudRun = void 0;
@@ -109415,7 +109415,7 @@ var require_faas = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-gcp/build/src/detectors/gce.js
+//#region node_modules/@opentelemetry/resource-detector-gcp/build/src/detectors/gce.js
 var require_gce = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.availabilityZoneAndRegion = exports.hostName = exports.hostId = exports.hostType = exports.onGce = void 0;
@@ -109480,7 +109480,7 @@ var require_gce = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-gcp/build/src/detectors/gae.js
+//#region node_modules/@opentelemetry/resource-detector-gcp/build/src/detectors/gae.js
 var require_gae = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.standardCloudRegion = exports.standardAvailabilityZone = exports.flexAvailabilityZoneAndRegion = exports.serviceInstance = exports.serviceVersion = exports.serviceName = exports.onAppEngine = exports.onAppEngineStandard = void 0;
@@ -109562,7 +109562,7 @@ var require_gae = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-gcp/build/src/detectors/gke.js
+//#region node_modules/@opentelemetry/resource-detector-gcp/build/src/detectors/gke.js
 var require_gke = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.availabilityZoneOrRegion = exports.clusterName = exports.hostId = exports.onGke = void 0;
@@ -109622,7 +109622,7 @@ var require_gke = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-gcp/build/src/detectors/GcpDetector.js
+//#region node_modules/@opentelemetry/resource-detector-gcp/build/src/detectors/GcpDetector.js
 var require_GcpDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.gcpDetector = exports.GcpDetector = void 0;
@@ -109765,7 +109765,7 @@ var require_GcpDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-gcp/build/src/detectors/index.js
+//#region node_modules/@opentelemetry/resource-detector-gcp/build/src/detectors/index.js
 var require_detectors$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.gcpDetector = void 0;
@@ -109779,7 +109779,7 @@ var require_detectors$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-gcp/build/src/index.js
+//#region node_modules/@opentelemetry/resource-detector-gcp/build/src/index.js
 var require_src$30 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.resetIsAvailableCache = exports.gcpDetector = void 0;
@@ -109800,7 +109800,7 @@ var require_src$30 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-azure/build/src/semconv.js
+//#region node_modules/@opentelemetry/resource-detector-azure/build/src/semconv.js
 var require_semconv$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CLOUD_PROVIDER_VALUE_AZURE = exports.CLOUD_PLATFORM_VALUE_AZURE_AKS = exports.CLOUD_PLATFORM_VALUE_AZURE_VM = exports.CLOUD_PLATFORM_VALUE_AZURE_FUNCTIONS = exports.CLOUD_PLATFORM_VALUE_AZURE_CONTAINER_APPS = exports.CLOUD_PLATFORM_VALUE_AZURE_APP_SERVICE = exports.ATTR_SERVICE_INSTANCE_ID = exports.ATTR_PROCESS_PID = exports.ATTR_OS_VERSION = exports.ATTR_HOST_TYPE = exports.ATTR_HOST_NAME = exports.ATTR_HOST_ID = exports.ATTR_FAAS_MAX_MEMORY = exports.ATTR_FAAS_INSTANCE = exports.ATTR_K8S_CLUSTER_NAME = exports.ATTR_DEPLOYMENT_ENVIRONMENT_NAME = exports.ATTR_CONTAINER_NAME = exports.ATTR_CLOUD_REGION = exports.ATTR_CLOUD_PROVIDER = exports.ATTR_CLOUD_PLATFORM = void 0;
@@ -110009,7 +110009,7 @@ var require_semconv$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-azure/build/src/types.js
+//#region node_modules/@opentelemetry/resource-detector-azure/build/src/types.js
 var require_types$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.extractClusterNameFromResourceId = exports.AKS_METADATA_FILE_PATH = exports.AKS_CLUSTER_RESOURCE_ID = exports.CONTAINER_APP_PORT = exports.CONTAINER_APP_REPLICA_NAME = exports.CONTAINER_APP_ENV_DNS_SUFFIX = exports.CONTAINER_APP_HOSTNAME = exports.CONTAINER_APP_REVISION = exports.CONTAINER_APP_NAME = exports.AZURE_CONTAINER_APP_VERSION = exports.AZURE_CONTAINER_APP_NAME = exports.AZURE_CONTAINER_APP_INSTANCE_ID = exports.AZURE_VM_SKU_ATTRIBUTE = exports.AZURE_VM_SCALE_SET_NAME_ATTRIBUTE = exports.AZURE_VM_METADATA_PATH = exports.AZURE_VM_METADATA_HOST = exports.FUNCTIONS_MEM_LIMIT = exports.FUNCTIONS_VERSION = exports.WEBSITE_SKU = exports.WEBSITE_SLOT_NAME = exports.WEBSITE_SITE_NAME = exports.WEBSITE_RESOURCE_GROUP = exports.WEBSITE_OWNER_NAME = exports.WEBSITE_INSTANCE_ID = exports.WEBSITE_HOSTNAME = exports.WEBSITE_HOME_STAMPNAME = exports.REGION_NAME = exports.CLOUD_RESOURCE_ID_RESOURCE_ATTRIBUTE = exports.AZURE_APP_SERVICE_STAMP_RESOURCE_ATTRIBUTE = void 0;
@@ -110058,7 +110058,7 @@ var require_types$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-azure/build/src/detectors/AzureAksDetector.js
+//#region node_modules/@opentelemetry/resource-detector-azure/build/src/detectors/AzureAksDetector.js
 var require_AzureAksDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.azureAksDetector = void 0;
@@ -110131,7 +110131,7 @@ var require_AzureAksDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-azure/build/src/utils.js
+//#region node_modules/@opentelemetry/resource-detector-azure/build/src/utils.js
 var require_utils$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.isAzureContainerApps = exports.isAzureFunction = exports.getAzureResourceUri = void 0;
@@ -110156,7 +110156,7 @@ var require_utils$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-azure/build/src/detectors/AzureAppServiceDetector.js
+//#region node_modules/@opentelemetry/resource-detector-azure/build/src/detectors/AzureAppServiceDetector.js
 var require_AzureAppServiceDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.azureAppServiceDetector = void 0;
@@ -110212,7 +110212,7 @@ var require_AzureAppServiceDetector = /* @__PURE__ */ __commonJSMin(((exports) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-azure/build/src/detectors/AzureContainerAppsDetector.js
+//#region node_modules/@opentelemetry/resource-detector-azure/build/src/detectors/AzureContainerAppsDetector.js
 var require_AzureContainerAppsDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.azureContainerAppsDetector = void 0;
@@ -110248,7 +110248,7 @@ var require_AzureContainerAppsDetector = /* @__PURE__ */ __commonJSMin(((exports
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-azure/build/src/detectors/AzureFunctionsDetector.js
+//#region node_modules/@opentelemetry/resource-detector-azure/build/src/detectors/AzureFunctionsDetector.js
 var require_AzureFunctionsDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.azureFunctionsDetector = void 0;
@@ -110315,7 +110315,7 @@ var require_AzureFunctionsDetector = /* @__PURE__ */ __commonJSMin(((exports) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-azure/build/src/detectors/AzureVmDetector.js
+//#region node_modules/@opentelemetry/resource-detector-azure/build/src/detectors/AzureVmDetector.js
 var require_AzureVmDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.azureVmDetector = void 0;
@@ -110406,7 +110406,7 @@ var require_AzureVmDetector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-azure/build/src/detectors/index.js
+//#region node_modules/@opentelemetry/resource-detector-azure/build/src/detectors/index.js
 var require_detectors = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.azureVmDetector = exports.azureFunctionsDetector = exports.azureContainerAppsDetector = exports.azureAppServiceDetector = exports.azureAksDetector = void 0;
@@ -110448,7 +110448,7 @@ var require_detectors = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/resource-detector-azure/build/src/index.js
+//#region node_modules/@opentelemetry/resource-detector-azure/build/src/index.js
 var require_src$29 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.azureVmDetector = exports.azureFunctionsDetector = exports.azureContainerAppsDetector = exports.azureAppServiceDetector = exports.azureAksDetector = void 0;
@@ -110486,7 +110486,7 @@ var require_src$29 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/auto-instrumentations-node/build/src/utils.js
+//#region node_modules/@opentelemetry/auto-instrumentations-node/build/src/utils.js
 var require_utils$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getResourceDetectorsFromEnv = exports.getNodeAutoInstrumentations = void 0;
@@ -110696,7 +110696,7 @@ var require_utils$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/auto-instrumentations-node/build/src/index.js
+//#region node_modules/@opentelemetry/auto-instrumentations-node/build/src/index.js
 var require_src$28 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getResourceDetectors = exports.getNodeAutoInstrumentations = void 0;
@@ -110716,7 +110716,7 @@ var require_src$28 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/OTLPExporterBase.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/OTLPExporterBase.js
 var OTLPExporterBase;
 var init_OTLPExporterBase = __esmMin((() => {
 	OTLPExporterBase = class {
@@ -110742,7 +110742,7 @@ var init_OTLPExporterBase = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/types.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/types.js
 var OTLPExporterError;
 var init_types = __esmMin((() => {
 	OTLPExporterError = class extends Error {
@@ -110758,7 +110758,7 @@ var init_types = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/shared-configuration.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/shared-configuration.js
 function validateTimeoutMillis(timeoutMillis) {
 	if (Number.isFinite(timeoutMillis) && timeoutMillis > 0) return timeoutMillis;
 	throw new Error(`Configuration: timeoutMillis is invalid, expected number greater than 0 (actual: '${timeoutMillis}')`);
@@ -110789,7 +110789,7 @@ function getSharedConfigurationDefaults() {
 var init_shared_configuration = __esmMin((() => {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/legacy-node-configuration.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/legacy-node-configuration.js
 var CompressionAlgorithm;
 var init_legacy_node_configuration = __esmMin((() => {
 	;
@@ -110800,7 +110800,7 @@ var init_legacy_node_configuration = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/bounded-queue-export-promise-handler.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/bounded-queue-export-promise-handler.js
 /**
 * Promise queue for keeping track of export promises. Finished promises will be auto-dequeued.
 * Allows for awaiting all promises in the queue.
@@ -110838,7 +110838,7 @@ var init_bounded_queue_export_promise_handler = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/logging-response-handler.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/logging-response-handler.js
 function isPartialSuccessResponse(response) {
 	return Object.prototype.hasOwnProperty.call(response, "partialSuccess");
 }
@@ -110856,7 +110856,7 @@ var init_logging_response_handler = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/otlp-export-delegate.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/otlp-export-delegate.js
 /**
 * Creates a generic delegate for OTLP exports which only contains parts of the OTLP export that are shared across all
 * signals.
@@ -110942,7 +110942,7 @@ var init_otlp_export_delegate = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/otlp-network-export-delegate.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/otlp-network-export-delegate.js
 function createOtlpNetworkExportDelegate(options, serializer, transport) {
 	return createOtlpExportDelegate({
 		transport,
@@ -110956,7 +110956,7 @@ var init_otlp_network_export_delegate = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/index.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/index.js
 var esm_exports = /* @__PURE__ */ __exportAll({
 	CompressionAlgorithm: () => CompressionAlgorithm,
 	OTLPExporterBase: () => OTLPExporterBase,
@@ -110974,7 +110974,7 @@ var init_esm = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/common/protobuf/utils.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/common/protobuf/utils.js
 var require_utils$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.estimateVarintSize = void 0;
@@ -110999,7 +110999,7 @@ var require_utils$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/common/protobuf/protobuf-writer.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/common/protobuf/protobuf-writer.js
 var require_protobuf_writer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ProtobufWriter = exports.GROWING_BUFFER_DEBUG_MESSAGE = void 0;
@@ -111229,7 +111229,7 @@ var require_protobuf_writer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/common/hex-to-binary.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/common/hex-to-binary.js
 var require_hex_to_binary = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.hexToBinary = void 0;
@@ -111252,7 +111252,7 @@ var require_hex_to_binary = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/common/protobuf/common-serializer.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/common/protobuf/common-serializer.js
 var require_common_serializer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.writeResource = exports.writeInstrumentationScope = exports.writeAnyValue = exports.writeKeyValue = exports.writeAttributes = exports.writeHrTimeAsFixed64 = void 0;
@@ -111419,7 +111419,7 @@ var require_common_serializer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/common/protobuf/protobuf-size-estimator.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/common/protobuf/protobuf-size-estimator.js
 var require_protobuf_size_estimator = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ProtobufSizeEstimator = void 0;
@@ -111491,7 +111491,7 @@ var require_protobuf_size_estimator = /* @__PURE__ */ __commonJSMin(((exports) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/logs/protobuf/logs-serializer.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/logs/protobuf/logs-serializer.js
 var require_logs_serializer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.serializeLogsExportRequest = void 0;
@@ -111624,7 +111624,7 @@ var require_logs_serializer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/common/protobuf/protobuf-reader.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/common/protobuf/protobuf-reader.js
 var require_protobuf_reader = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ProtobufReader = void 0;
@@ -111720,7 +111720,7 @@ var require_protobuf_reader = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/logs/protobuf/response-deserializer.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/logs/protobuf/response-deserializer.js
 var require_response_deserializer$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.deserializeExportLogsServiceResponse = void 0;
@@ -111780,7 +111780,7 @@ var require_response_deserializer$2 = /* @__PURE__ */ __commonJSMin(((exports) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/logs/protobuf/logs.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/logs/protobuf/logs.js
 var require_logs$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ProtobufLogsSerializer = void 0;
@@ -111797,7 +111797,7 @@ var require_logs$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/logs/protobuf/index.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/logs/protobuf/index.js
 var require_protobuf$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ProtobufLogsSerializer = void 0;
@@ -111811,7 +111811,7 @@ var require_protobuf$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/export/AggregationTemporality.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/export/AggregationTemporality.js
 var require_AggregationTemporality = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AggregationTemporality = void 0;
@@ -111822,7 +111822,7 @@ var require_AggregationTemporality = /* @__PURE__ */ __commonJSMin(((exports) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/export/MetricData.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/export/MetricData.js
 var require_MetricData = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DataPointType = exports.InstrumentType = void 0;
@@ -111862,7 +111862,7 @@ var require_MetricData = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/utils.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/utils.js
 var require_utils$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.equalsCaseInsensitive = exports.binarySearchUB = exports.setEquals = exports.callWithTimeout = exports.TimeoutError = exports.instrumentationScopeId = exports.hashAttributes = void 0;
@@ -111954,7 +111954,7 @@ var require_utils$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/types.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/types.js
 var require_types$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AggregatorKind = void 0;
@@ -111968,7 +111968,7 @@ var require_types$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/Drop.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/Drop.js
 var require_Drop = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DropAggregator = void 0;
@@ -111985,7 +111985,7 @@ var require_Drop = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/Histogram.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/Histogram.js
 var require_Histogram = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.HistogramAggregator = exports.HistogramAccumulation = void 0;
@@ -112145,7 +112145,7 @@ var require_Histogram = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/exponential-histogram/Buckets.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/exponential-histogram/Buckets.js
 var require_Buckets = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Buckets = void 0;
@@ -112384,7 +112384,7 @@ var require_Buckets = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/exponential-histogram/mapping/ieee754.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/exponential-histogram/mapping/ieee754.js
 var require_ieee754 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getSignificand = exports.getNormalBase2 = exports.MIN_VALUE = exports.MAX_NORMAL_EXPONENT = exports.MIN_NORMAL_EXPONENT = exports.SIGNIFICAND_WIDTH = void 0;
@@ -112458,7 +112458,7 @@ var require_ieee754 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/exponential-histogram/util.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/exponential-histogram/util.js
 var require_util$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.nextGreaterSquare = exports.ldexp = void 0;
@@ -112501,7 +112501,7 @@ var require_util$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/exponential-histogram/mapping/types.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/exponential-histogram/mapping/types.js
 var require_types$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MappingError = void 0;
@@ -112510,7 +112510,7 @@ var require_types$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/exponential-histogram/mapping/ExponentMapping.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/exponential-histogram/mapping/ExponentMapping.js
 var require_ExponentMapping = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ExponentMapping = void 0;
@@ -112572,7 +112572,7 @@ var require_ExponentMapping = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/exponential-histogram/mapping/LogarithmMapping.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/exponential-histogram/mapping/LogarithmMapping.js
 var require_LogarithmMapping = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LogarithmMapping = void 0;
@@ -112643,7 +112643,7 @@ var require_LogarithmMapping = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/exponential-histogram/mapping/getMapping.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/exponential-histogram/mapping/getMapping.js
 var require_getMapping = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getMapping = void 0;
@@ -112671,7 +112671,7 @@ var require_getMapping = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/ExponentialHistogram.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/ExponentialHistogram.js
 var require_ExponentialHistogram = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ExponentialHistogramAggregator = exports.ExponentialHistogramAccumulation = void 0;
@@ -113080,7 +113080,7 @@ var require_ExponentialHistogram = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/LastValue.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/LastValue.js
 var require_LastValue = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LastValueAggregator = exports.LastValueAccumulation = void 0;
@@ -113153,7 +113153,7 @@ var require_LastValue = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/Sum.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/Sum.js
 var require_Sum = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SumAggregator = exports.SumAccumulation = void 0;
@@ -113236,7 +113236,7 @@ var require_Sum = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/index.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/aggregator/index.js
 var require_aggregator = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SumAggregator = exports.SumAccumulation = exports.LastValueAggregator = exports.LastValueAccumulation = exports.ExponentialHistogramAggregator = exports.ExponentialHistogramAccumulation = exports.HistogramAggregator = exports.HistogramAccumulation = exports.DropAggregator = void 0;
@@ -113302,7 +113302,7 @@ var require_aggregator = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/view/Aggregation.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/view/Aggregation.js
 var require_Aggregation = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DEFAULT_AGGREGATION = exports.EXPONENTIAL_HISTOGRAM_AGGREGATION = exports.HISTOGRAM_AGGREGATION = exports.LAST_VALUE_AGGREGATION = exports.SUM_AGGREGATION = exports.DROP_AGGREGATION = exports.DefaultAggregation = exports.ExponentialHistogramAggregation = exports.ExplicitBucketHistogramAggregation = exports.HistogramAggregation = exports.LastValueAggregation = exports.SumAggregation = exports.DropAggregation = void 0;
@@ -113442,7 +113442,7 @@ var require_Aggregation = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/view/AggregationOption.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/view/AggregationOption.js
 var require_AggregationOption = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.toAggregation = exports.AggregationType = void 0;
@@ -113478,7 +113478,7 @@ var require_AggregationOption = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/export/AggregationSelector.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/export/AggregationSelector.js
 var require_AggregationSelector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DEFAULT_AGGREGATION_TEMPORALITY_SELECTOR = exports.DEFAULT_AGGREGATION_SELECTOR = void 0;
@@ -113493,7 +113493,7 @@ var require_AggregationSelector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/semconv.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/semconv.js
 var require_semconv$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ATTR_ERROR_TYPE = exports.METRIC_OTEL_SDK_METRIC_READER_COLLECTION_DURATION = exports.OTEL_COMPONENT_TYPE_VALUE_PERIODIC_METRIC_READER = exports.ATTR_OTEL_COMPONENT_TYPE = exports.ATTR_OTEL_COMPONENT_NAME = void 0;
@@ -113581,7 +113581,7 @@ var require_semconv$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/export/MetricReaderMetrics.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/export/MetricReaderMetrics.js
 var require_MetricReaderMetrics = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MetricReaderMetrics = void 0;
@@ -113619,7 +113619,7 @@ var require_MetricReaderMetrics = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/version.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/version.js
 var require_version$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.VERSION = void 0;
@@ -113627,7 +113627,7 @@ var require_version$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/export/MetricReader.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/export/MetricReader.js
 var require_MetricReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MetricReader = void 0;
@@ -113723,7 +113723,7 @@ var require_MetricReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/export/PeriodicExportingMetricReader.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/export/PeriodicExportingMetricReader.js
 var require_PeriodicExportingMetricReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PeriodicExportingMetricReader = void 0;
@@ -113822,7 +113822,7 @@ var require_PeriodicExportingMetricReader = /* @__PURE__ */ __commonJSMin(((expo
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/export/InMemoryMetricExporter.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/export/InMemoryMetricExporter.js
 var require_InMemoryMetricExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InMemoryMetricExporter = void 0;
@@ -113875,7 +113875,7 @@ var require_InMemoryMetricExporter = /* @__PURE__ */ __commonJSMin(((exports) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/export/ConsoleMetricExporter.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/export/ConsoleMetricExporter.js
 var require_ConsoleMetricExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ConsoleMetricExporter = void 0;
@@ -113923,7 +113923,7 @@ var require_ConsoleMetricExporter = /* @__PURE__ */ __commonJSMin(((exports) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/view/ViewRegistry.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/view/ViewRegistry.js
 var require_ViewRegistry = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ViewRegistry = void 0;
@@ -113948,7 +113948,7 @@ var require_ViewRegistry = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/InstrumentDescriptor.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/InstrumentDescriptor.js
 var require_InstrumentDescriptor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.isValidName = exports.isDescriptorCompatibleWith = exports.createInstrumentDescriptorWithView = exports.createInstrumentDescriptor = void 0;
@@ -113989,7 +113989,7 @@ var require_InstrumentDescriptor = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/Instruments.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/Instruments.js
 var require_Instruments = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.isObservableInstrument = exports.ObservableUpDownCounterInstrument = exports.ObservableGaugeInstrument = exports.ObservableCounterInstrument = exports.ObservableInstrument = exports.HistogramInstrument = exports.GaugeInstrument = exports.CounterInstrument = exports.UpDownCounterInstrument = exports.SyncInstrument = void 0;
@@ -114110,7 +114110,7 @@ var require_Instruments = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/Meter.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/Meter.js
 var require_Meter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Meter = void 0;
@@ -114198,7 +114198,7 @@ var require_Meter = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/state/MetricStorage.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/state/MetricStorage.js
 var require_MetricStorage = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MetricStorage = void 0;
@@ -114229,7 +114229,7 @@ var require_MetricStorage = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/state/HashMap.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/state/HashMap.js
 var require_HashMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AttributeHashMap = exports.HashMap = void 0;
@@ -114296,7 +114296,7 @@ var require_HashMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/state/DeltaMetricProcessor.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/state/DeltaMetricProcessor.js
 var require_DeltaMetricProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DeltaMetricProcessor = void 0;
@@ -114373,7 +114373,7 @@ var require_DeltaMetricProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/state/TemporalMetricProcessor.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/state/TemporalMetricProcessor.js
 var require_TemporalMetricProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TemporalMetricProcessor = void 0;
@@ -114475,7 +114475,7 @@ var require_TemporalMetricProcessor = /* @__PURE__ */ __commonJSMin(((exports) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/state/AsyncMetricStorage.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/state/AsyncMetricStorage.js
 var require_AsyncMetricStorage = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AsyncMetricStorage = void 0;
@@ -114521,7 +114521,7 @@ var require_AsyncMetricStorage = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/view/RegistrationConflicts.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/view/RegistrationConflicts.js
 var require_RegistrationConflicts = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getConflictResolutionRecipe = exports.getDescriptionResolutionRecipe = exports.getTypeConflictResolutionRecipe = exports.getUnitConflictResolutionRecipe = exports.getValueTypeConflictResolutionRecipe = exports.getIncompatibilityDetails = void 0;
@@ -114575,7 +114575,7 @@ var require_RegistrationConflicts = /* @__PURE__ */ __commonJSMin(((exports) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/state/MetricStorageRegistry.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/state/MetricStorageRegistry.js
 var require_MetricStorageRegistry = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MetricStorageRegistry = void 0;
@@ -114649,7 +114649,7 @@ var require_MetricStorageRegistry = /* @__PURE__ */ __commonJSMin(((exports) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/state/MultiWritableMetricStorage.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/state/MultiWritableMetricStorage.js
 var require_MultiWritableMetricStorage = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MultiMetricStorage = void 0;
@@ -114670,7 +114670,7 @@ var require_MultiWritableMetricStorage = /* @__PURE__ */ __commonJSMin(((exports
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/ObservableResult.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/ObservableResult.js
 var require_ObservableResult = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BatchObservableResultImpl = exports.ObservableResultImpl = void 0;
@@ -114742,7 +114742,7 @@ var require_ObservableResult = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/state/ObservableRegistry.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/state/ObservableRegistry.js
 var require_ObservableRegistry = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ObservableRegistry = void 0;
@@ -114838,7 +114838,7 @@ var require_ObservableRegistry = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/state/SyncMetricStorage.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/state/SyncMetricStorage.js
 var require_SyncMetricStorage = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SyncMetricStorage = void 0;
@@ -114881,7 +114881,7 @@ var require_SyncMetricStorage = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/view/AttributesProcessor.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/view/AttributesProcessor.js
 var require_AttributesProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createDenyListAttributesProcessor = exports.createAllowListAttributesProcessor = exports.createMultiAttributesProcessor = exports.createNoopAttributesProcessor = void 0;
@@ -114962,7 +114962,7 @@ var require_AttributesProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/state/MeterSharedState.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/state/MeterSharedState.js
 var require_MeterSharedState = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MeterSharedState = void 0;
@@ -115052,7 +115052,7 @@ var require_MeterSharedState = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/state/MeterProviderSharedState.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/state/MeterProviderSharedState.js
 var require_MeterProviderSharedState = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MeterProviderSharedState = void 0;
@@ -115090,7 +115090,7 @@ var require_MeterProviderSharedState = /* @__PURE__ */ __commonJSMin(((exports) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/state/MetricCollector.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/state/MetricCollector.js
 var require_MetricCollector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MetricCollector = void 0;
@@ -115155,7 +115155,7 @@ var require_MetricCollector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/view/Predicate.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/view/Predicate.js
 var require_Predicate = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ExactPredicate = exports.PatternPredicate = void 0;
@@ -115204,7 +115204,7 @@ var require_Predicate = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/view/InstrumentSelector.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/view/InstrumentSelector.js
 var require_InstrumentSelector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InstrumentSelector = void 0;
@@ -115232,7 +115232,7 @@ var require_InstrumentSelector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/view/MeterSelector.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/view/MeterSelector.js
 var require_MeterSelector = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MeterSelector = void 0;
@@ -115263,7 +115263,7 @@ var require_MeterSelector = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/view/View.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/view/View.js
 var require_View = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.View = void 0;
@@ -115370,7 +115370,7 @@ var require_View = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/MeterProvider.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/MeterProvider.js
 var require_MeterProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MeterProvider = void 0;
@@ -115445,7 +115445,7 @@ var require_MeterProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-metrics/build/src/index.js
+//#region node_modules/@opentelemetry/sdk-metrics/build/src/index.js
 var require_src$27 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TimeoutError = exports.createDenyListAttributesProcessor = exports.createAllowListAttributesProcessor = exports.AggregationType = exports.MeterProvider = exports.ConsoleMetricExporter = exports.InMemoryMetricExporter = exports.PeriodicExportingMetricReader = exports.MetricReader = exports.InstrumentType = exports.DataPointType = exports.AggregationTemporality = void 0;
@@ -115534,7 +115534,7 @@ var require_src$27 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/metrics/protobuf/metrics-serializer.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/metrics/protobuf/metrics-serializer.js
 var require_metrics_serializer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.serializeMetricsExportRequest = void 0;
@@ -115887,7 +115887,7 @@ var require_metrics_serializer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/metrics/protobuf/response-deserializer.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/metrics/protobuf/response-deserializer.js
 var require_response_deserializer$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.deserializeExportMetricsServiceResponse = void 0;
@@ -115947,7 +115947,7 @@ var require_response_deserializer$1 = /* @__PURE__ */ __commonJSMin(((exports) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/metrics/protobuf/metrics.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/metrics/protobuf/metrics.js
 var require_metrics$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ProtobufMetricsSerializer = void 0;
@@ -115964,7 +115964,7 @@ var require_metrics$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/metrics/protobuf/index.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/metrics/protobuf/index.js
 var require_protobuf$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ProtobufMetricsSerializer = void 0;
@@ -115978,7 +115978,7 @@ var require_protobuf$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/trace/protobuf/trace-serializer.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/trace/protobuf/trace-serializer.js
 var require_trace_serializer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.serializeTraceExportRequest = void 0;
@@ -116218,7 +116218,7 @@ var require_trace_serializer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/trace/protobuf/response-deserializer.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/trace/protobuf/response-deserializer.js
 var require_response_deserializer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.deserializeExportTraceServiceResponse = void 0;
@@ -116278,7 +116278,7 @@ var require_response_deserializer = /* @__PURE__ */ __commonJSMin(((exports) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/trace/protobuf/trace.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/trace/protobuf/trace.js
 var require_trace$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ProtobufTraceSerializer = void 0;
@@ -116295,7 +116295,7 @@ var require_trace$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/trace/protobuf/index.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/trace/protobuf/index.js
 var require_protobuf = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ProtobufTraceSerializer = void 0;
@@ -116309,7 +116309,7 @@ var require_protobuf = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/common/internal.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/common/internal.js
 var require_internal$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.toAnyValue = exports.toKeyValue = exports.toAttributes = exports.createInstrumentationScope = exports.createResource = void 0;
@@ -116375,7 +116375,7 @@ var require_internal$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/logs/internal.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/logs/internal.js
 var require_internal$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createExportLogsServiceRequest = void 0;
@@ -116440,7 +116440,7 @@ var require_internal$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/common/utils.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/common/utils.js
 var require_utils$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.JSON_ENCODER = exports.PROTOBUF_ENCODER = exports.encodeAsString = exports.encodeAsLongBits = exports.toLongBits = exports.hrTimeToNanos = void 0;
@@ -116502,7 +116502,7 @@ var require_utils$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/logs/json/logs.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/logs/json/logs.js
 var require_logs = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.JsonLogsSerializer = void 0;
@@ -116528,7 +116528,7 @@ var require_logs = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/logs/json/index.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/logs/json/index.js
 var require_json$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.JsonLogsSerializer = void 0;
@@ -116542,7 +116542,7 @@ var require_json$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/metrics/internal-types.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/metrics/internal-types.js
 var require_internal_types = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.EAggregationTemporality = void 0;
@@ -116613,7 +116613,7 @@ var require_internal_types = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/metrics/internal.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/metrics/internal.js
 var require_internal$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createExportMetricsServiceRequest = exports.toMetric = exports.toScopeMetrics = exports.toResourceMetrics = void 0;
@@ -116746,7 +116746,7 @@ var require_internal$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/metrics/json/metrics.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/metrics/json/metrics.js
 var require_metrics = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.JsonMetricsSerializer = void 0;
@@ -116772,7 +116772,7 @@ var require_metrics = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/metrics/json/index.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/metrics/json/index.js
 var require_json$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.JsonMetricsSerializer = void 0;
@@ -116786,7 +116786,7 @@ var require_json$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/trace/internal.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/trace/internal.js
 var require_internal$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createExportTraceServiceRequest = exports.toOtlpSpanEvent = exports.toOtlpLink = exports.sdkSpanToOtlpSpan = void 0;
@@ -116907,7 +116907,7 @@ var require_internal$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/trace/json/trace.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/trace/json/trace.js
 var require_trace = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.JsonTraceSerializer = void 0;
@@ -116933,7 +116933,7 @@ var require_trace = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/trace/json/index.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/trace/json/index.js
 var require_json$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.JsonTraceSerializer = void 0;
@@ -116947,7 +116947,7 @@ var require_json$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-transformer/build/src/index.js
+//#region node_modules/@opentelemetry/otlp-transformer/build/src/index.js
 var require_src$26 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.JsonTraceSerializer = exports.JsonMetricsSerializer = exports.JsonLogsSerializer = exports.ProtobufTraceSerializer = exports.ProtobufMetricsSerializer = exports.ProtobufLogsSerializer = void 0;
@@ -116996,7 +116996,7 @@ var require_src$26 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/util.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/util.js
 /**
 * Parses headers from config leaving only those that have defined values
 * @param partialHeaders
@@ -117014,7 +117014,7 @@ var init_util = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/otlp-http-configuration.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/otlp-http-configuration.js
 function mergeHeaders(userProvidedHeaders, fallbackHeaders, defaultHeaders) {
 	return async () => {
 		const requiredHeaders = { ...await defaultHeaders() };
@@ -117058,7 +117058,7 @@ var init_otlp_http_configuration = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/otlp-node-http-configuration.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/otlp-node-http-configuration.js
 function httpAgentFactoryFromOptions(options) {
 	return async (protocol) => {
 		const isInsecure = protocol === "http:";
@@ -117093,7 +117093,7 @@ var init_otlp_node_http_configuration = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/is-export-retryable.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/is-export-retryable.js
 function isExportHTTPErrorRetryable(statusCode) {
 	return statusCode === 429 || statusCode === 502 || statusCode === 503 || statusCode === 504;
 }
@@ -117108,14 +117108,14 @@ function parseRetryAfterToMills(retryAfter) {
 var init_is_export_retryable = __esmMin((() => {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/version.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/version.js
 var VERSION;
 var init_version = __esmMin((() => {
 	VERSION = "0.219.0";
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/transport/http-transport-utils.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/transport/http-transport-utils.js
 /**
 * Sends data using http
 * @param request
@@ -117241,7 +117241,7 @@ var init_http_transport_utils = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/transport/http-exporter-transport.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/transport/http-exporter-transport.js
 async function requestFunctionFactory(protocol) {
 	const { request } = await (protocol === "http:" ? import("http") : import("https"));
 	return request;
@@ -117280,7 +117280,7 @@ var init_http_exporter_transport = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/retrying-transport.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/retrying-transport.js
 /**
 * Get a pseudo-random jitter that falls in the range of [-JITTER, +JITTER]
 */
@@ -117343,7 +117343,7 @@ var init_retrying_transport = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/otlp-http-export-delegate.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/otlp-http-export-delegate.js
 function createOtlpHttpExportDelegate(options, serializer) {
 	return createOtlpExportDelegate({
 		transport: createRetryingTransport({ transport: createHttpExporterTransport(options) }),
@@ -117359,7 +117359,7 @@ var init_otlp_http_export_delegate = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/shared-env-configuration.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/shared-env-configuration.js
 function parseAndValidateTimeoutFromEnv(timeoutEnvVar) {
 	const envTimeout = (0, import_src$10.getNumberFromEnv)(timeoutEnvVar);
 	if (envTimeout != null) {
@@ -117395,7 +117395,7 @@ var init_shared_env_configuration = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/otlp-node-http-env-configuration.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/otlp-node-http-env-configuration.js
 function getStaticHeadersFromEnv(signalIdentifier) {
 	const signalSpecificRawHeaders = (0, import_src$9.getStringFromEnv)(`OTEL_EXPORTER_OTLP_${signalIdentifier}_HEADERS`);
 	const nonSignalSpecificRawHeaders = (0, import_src$9.getStringFromEnv)("OTEL_EXPORTER_OTLP_HEADERS");
@@ -117489,7 +117489,7 @@ var init_otlp_node_http_env_configuration = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/convert-legacy-http-options.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/convert-legacy-http-options.js
 function convertLegacyHeaders(config) {
 	if (typeof config.headers === "function") return config.headers;
 	return wrapStaticHeadersInFunction(config.headers);
@@ -117499,7 +117499,7 @@ var init_convert_legacy_http_options = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/convert-legacy-node-http-options.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/configuration/convert-legacy-node-http-options.js
 function convertLegacyAgentOptions(config) {
 	if (typeof config.httpAgentOptions === "function") return config.httpAgentOptions;
 	let legacy = config.httpAgentOptions;
@@ -117538,7 +117538,7 @@ var init_convert_legacy_node_http_options = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-exporter-base/build/esm/index-node-http.js
+//#region node_modules/@opentelemetry/otlp-exporter-base/build/esm/index-node-http.js
 var index_node_http_exports = /* @__PURE__ */ __exportAll({
 	convertLegacyHttpOptions: () => convertLegacyHttpOptions,
 	createOtlpHttpExportDelegate: () => createOtlpHttpExportDelegate,
@@ -117553,7 +117553,7 @@ var init_index_node_http = __esmMin((() => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-logs-otlp-proto/build/src/platform/node/OTLPLogExporter.js
+//#region node_modules/@opentelemetry/exporter-logs-otlp-proto/build/src/platform/node/OTLPLogExporter.js
 var require_OTLPLogExporter$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPLogExporter = void 0;
@@ -117572,7 +117572,7 @@ var require_OTLPLogExporter$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-logs-otlp-proto/build/src/platform/node/index.js
+//#region node_modules/@opentelemetry/exporter-logs-otlp-proto/build/src/platform/node/index.js
 var require_node$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPLogExporter = void 0;
@@ -117586,7 +117586,7 @@ var require_node$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-logs-otlp-proto/build/src/platform/index.js
+//#region node_modules/@opentelemetry/exporter-logs-otlp-proto/build/src/platform/index.js
 var require_platform$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPLogExporter = void 0;
@@ -117600,7 +117600,7 @@ var require_platform$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-logs-otlp-proto/build/src/index.js
+//#region node_modules/@opentelemetry/exporter-logs-otlp-proto/build/src/index.js
 var require_src$25 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPLogExporter = void 0;
@@ -117614,7 +117614,7 @@ var require_src$25 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-metrics-otlp-http/build/src/OTLPMetricExporterOptions.js
+//#region node_modules/@opentelemetry/exporter-metrics-otlp-http/build/src/OTLPMetricExporterOptions.js
 var require_OTLPMetricExporterOptions = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AggregationTemporalityPreference = void 0;
@@ -117626,7 +117626,7 @@ var require_OTLPMetricExporterOptions = /* @__PURE__ */ __commonJSMin(((exports)
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-metrics-otlp-http/build/src/OTLPMetricExporterBase.js
+//#region node_modules/@opentelemetry/exporter-metrics-otlp-http/build/src/OTLPMetricExporterBase.js
 var require_OTLPMetricExporterBase = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPMetricExporterBase = exports.LowMemoryTemporalitySelector = exports.DeltaTemporalitySelector = exports.CumulativeTemporalitySelector = void 0;
@@ -117700,7 +117700,7 @@ var require_OTLPMetricExporterBase = /* @__PURE__ */ __commonJSMin(((exports) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-metrics-otlp-http/build/src/platform/node/OTLPMetricExporter.js
+//#region node_modules/@opentelemetry/exporter-metrics-otlp-http/build/src/platform/node/OTLPMetricExporter.js
 var require_OTLPMetricExporter$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPMetricExporter = void 0;
@@ -117719,7 +117719,7 @@ var require_OTLPMetricExporter$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-metrics-otlp-http/build/src/platform/node/index.js
+//#region node_modules/@opentelemetry/exporter-metrics-otlp-http/build/src/platform/node/index.js
 var require_node$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPMetricExporter = void 0;
@@ -117733,7 +117733,7 @@ var require_node$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-metrics-otlp-http/build/src/platform/index.js
+//#region node_modules/@opentelemetry/exporter-metrics-otlp-http/build/src/platform/index.js
 var require_platform$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPMetricExporter = void 0;
@@ -117747,7 +117747,7 @@ var require_platform$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-metrics-otlp-http/build/src/index.js
+//#region node_modules/@opentelemetry/exporter-metrics-otlp-http/build/src/index.js
 var require_src$24 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPMetricExporterBase = exports.LowMemoryTemporalitySelector = exports.DeltaTemporalitySelector = exports.CumulativeTemporalitySelector = exports.AggregationTemporalityPreference = exports.OTLPMetricExporter = void 0;
@@ -117793,7 +117793,7 @@ var require_src$24 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-metrics-otlp-proto/build/src/platform/node/OTLPMetricExporter.js
+//#region node_modules/@opentelemetry/exporter-metrics-otlp-proto/build/src/platform/node/OTLPMetricExporter.js
 var require_OTLPMetricExporter$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPMetricExporter = void 0;
@@ -117809,7 +117809,7 @@ var require_OTLPMetricExporter$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-metrics-otlp-proto/build/src/platform/node/index.js
+//#region node_modules/@opentelemetry/exporter-metrics-otlp-proto/build/src/platform/node/index.js
 var require_node$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPMetricExporter = void 0;
@@ -117823,7 +117823,7 @@ var require_node$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-metrics-otlp-proto/build/src/platform/index.js
+//#region node_modules/@opentelemetry/exporter-metrics-otlp-proto/build/src/platform/index.js
 var require_platform$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPMetricExporter = void 0;
@@ -117837,7 +117837,7 @@ var require_platform$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-metrics-otlp-proto/build/src/index.js
+//#region node_modules/@opentelemetry/exporter-metrics-otlp-proto/build/src/index.js
 var require_src$23 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPMetricExporter = void 0;
@@ -117851,7 +117851,7 @@ var require_src$23 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-trace-otlp-proto/build/src/platform/node/OTLPTraceExporter.js
+//#region node_modules/@opentelemetry/exporter-trace-otlp-proto/build/src/platform/node/OTLPTraceExporter.js
 var require_OTLPTraceExporter$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPTraceExporter = void 0;
@@ -117870,7 +117870,7 @@ var require_OTLPTraceExporter$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-trace-otlp-proto/build/src/platform/node/index.js
+//#region node_modules/@opentelemetry/exporter-trace-otlp-proto/build/src/platform/node/index.js
 var require_node$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPTraceExporter = void 0;
@@ -117884,7 +117884,7 @@ var require_node$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-trace-otlp-proto/build/src/platform/index.js
+//#region node_modules/@opentelemetry/exporter-trace-otlp-proto/build/src/platform/index.js
 var require_platform$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPTraceExporter = void 0;
@@ -117898,7 +117898,7 @@ var require_platform$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-trace-otlp-proto/build/src/index.js
+//#region node_modules/@opentelemetry/exporter-trace-otlp-proto/build/src/index.js
 var require_src$22 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPTraceExporter = void 0;
@@ -117912,7 +117912,7 @@ var require_src$22 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/utils/validation.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/utils/validation.js
 var require_validation = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.normalizeScopeAttributes = exports.addAttribute = exports.AddAttributeDecision = exports.isLogAttributeValue = void 0;
@@ -118020,7 +118020,7 @@ var require_validation = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/LogRecordImpl.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/LogRecordImpl.js
 var require_LogRecordImpl = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LogRecordImpl = void 0;
@@ -118164,7 +118164,7 @@ var require_LogRecordImpl = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/Logger.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/Logger.js
 var require_Logger = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Logger = void 0;
@@ -118230,7 +118230,7 @@ var require_Logger = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/export/NoopLogRecordProcessor.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/export/NoopLogRecordProcessor.js
 var require_NoopLogRecordProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.NoopLogRecordProcessor = void 0;
@@ -118250,7 +118250,7 @@ var require_NoopLogRecordProcessor = /* @__PURE__ */ __commonJSMin(((exports) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/MultiLogRecordProcessor.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/MultiLogRecordProcessor.js
 var require_MultiLogRecordProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.MultiLogRecordProcessor = void 0;
@@ -118285,7 +118285,7 @@ var require_MultiLogRecordProcessor = /* @__PURE__ */ __commonJSMin(((exports) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/internal/utils.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/internal/utils.js
 var require_utils$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getInstrumentationScopeKey = void 0;
@@ -118337,7 +118337,7 @@ var require_utils$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/semconv.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/semconv.js
 var require_semconv$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.METRIC_OTEL_SDK_LOG_CREATED = void 0;
@@ -118350,7 +118350,7 @@ var require_semconv$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/LoggerMetrics.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/LoggerMetrics.js
 var require_LoggerMetrics = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LoggerMetrics = void 0;
@@ -118375,7 +118375,7 @@ var require_LoggerMetrics = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/version.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/version.js
 var require_version$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.VERSION = void 0;
@@ -118383,7 +118383,7 @@ var require_version$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/internal/LoggerProviderSharedState.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/internal/LoggerProviderSharedState.js
 var require_LoggerProviderSharedState = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LoggerProviderSharedState = exports.DEFAULT_LOGGER_CONFIGURATOR = void 0;
@@ -118448,7 +118448,7 @@ var require_LoggerProviderSharedState = /* @__PURE__ */ __commonJSMin(((exports)
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/LoggerProvider.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/LoggerProvider.js
 var require_LoggerProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LoggerProvider = exports.DEFAULT_LOGGER_NAME = void 0;
@@ -118531,7 +118531,7 @@ var require_LoggerProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/export/ConsoleLogRecordExporter.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/export/ConsoleLogRecordExporter.js
 var require_ConsoleLogRecordExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ConsoleLogRecordExporter = void 0;
@@ -118593,7 +118593,7 @@ var require_ConsoleLogRecordExporter = /* @__PURE__ */ __commonJSMin(((exports) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/export/SimpleLogRecordProcessor.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/export/SimpleLogRecordProcessor.js
 var require_SimpleLogRecordProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SimpleLogRecordProcessor = void 0;
@@ -118643,7 +118643,7 @@ var require_SimpleLogRecordProcessor = /* @__PURE__ */ __commonJSMin(((exports) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/export/InMemoryLogRecordExporter.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/export/InMemoryLogRecordExporter.js
 var require_InMemoryLogRecordExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InMemoryLogRecordExporter = void 0;
@@ -118684,7 +118684,7 @@ var require_InMemoryLogRecordExporter = /* @__PURE__ */ __commonJSMin(((exports)
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/export/BatchLogRecordProcessorBase.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/export/BatchLogRecordProcessorBase.js
 var require_BatchLogRecordProcessorBase = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BatchLogRecordProcessorBase = void 0;
@@ -118884,7 +118884,7 @@ var require_BatchLogRecordProcessorBase = /* @__PURE__ */ __commonJSMin(((export
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/platform/node/export/BatchLogRecordProcessor.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/platform/node/export/BatchLogRecordProcessor.js
 var require_BatchLogRecordProcessor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BatchLogRecordProcessor = void 0;
@@ -118896,7 +118896,7 @@ var require_BatchLogRecordProcessor = /* @__PURE__ */ __commonJSMin(((exports) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/platform/node/index.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/platform/node/index.js
 var require_node$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BatchLogRecordProcessor = void 0;
@@ -118910,7 +118910,7 @@ var require_node$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/platform/index.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/platform/index.js
 var require_platform$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BatchLogRecordProcessor = void 0;
@@ -118924,7 +118924,7 @@ var require_platform$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/config/LoggerConfigurators.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/config/LoggerConfigurators.js
 var require_LoggerConfigurators = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createLoggerConfigurator = void 0;
@@ -118990,7 +118990,7 @@ var require_LoggerConfigurators = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-logs/build/src/index.js
+//#region node_modules/@opentelemetry/sdk-logs/build/src/index.js
 var require_src$21 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createLoggerConfigurator = exports.BatchLogRecordProcessor = exports.InMemoryLogRecordExporter = exports.SimpleLogRecordProcessor = exports.ConsoleLogRecordExporter = exports.LoggerProvider = void 0;
@@ -119039,7 +119039,7 @@ var require_src$21 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/context-async-hooks/build/src/AbstractAsyncHooksContextManager.js
+//#region node_modules/@opentelemetry/context-async-hooks/build/src/AbstractAsyncHooksContextManager.js
 var require_AbstractAsyncHooksContextManager = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AbstractAsyncHooksContextManager = void 0;
@@ -119185,7 +119185,7 @@ var require_AbstractAsyncHooksContextManager = /* @__PURE__ */ __commonJSMin(((e
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/context-async-hooks/build/src/AsyncHooksContextManager.js
+//#region node_modules/@opentelemetry/context-async-hooks/build/src/AsyncHooksContextManager.js
 var require_AsyncHooksContextManager = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AsyncHooksContextManager = void 0;
@@ -119280,7 +119280,7 @@ var require_AsyncHooksContextManager = /* @__PURE__ */ __commonJSMin(((exports) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/context-async-hooks/build/src/AsyncLocalStorageContextManager.js
+//#region node_modules/@opentelemetry/context-async-hooks/build/src/AsyncLocalStorageContextManager.js
 var require_AsyncLocalStorageContextManager = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AsyncLocalStorageContextManager = void 0;
@@ -119312,7 +119312,7 @@ var require_AsyncLocalStorageContextManager = /* @__PURE__ */ __commonJSMin(((ex
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/context-async-hooks/build/src/index.js
+//#region node_modules/@opentelemetry/context-async-hooks/build/src/index.js
 var require_src$20 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.AsyncLocalStorageContextManager = exports.AsyncHooksContextManager = void 0;
@@ -119333,7 +119333,7 @@ var require_src$20 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-node/build/src/NodeTracerProvider.js
+//#region node_modules/@opentelemetry/sdk-trace-node/build/src/NodeTracerProvider.js
 var require_NodeTracerProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.NodeTracerProvider = void 0;
@@ -119388,7 +119388,7 @@ var require_NodeTracerProvider = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-trace-node/build/src/index.js
+//#region node_modules/@opentelemetry/sdk-trace-node/build/src/index.js
 var require_src$19 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.TraceIdRatioBasedSampler = exports.SimpleSpanProcessor = exports.SamplingDecision = exports.RandomIdGenerator = exports.ParentBasedSampler = exports.NoopSpanProcessor = exports.InMemorySpanExporter = exports.ConsoleSpanExporter = exports.BatchSpanProcessor = exports.BasicTracerProvider = exports.AlwaysOnSampler = exports.AlwaysOffSampler = exports.NodeTracerProvider = void 0;
@@ -119475,7 +119475,7 @@ var require_src$19 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-logs-otlp-http/build/src/platform/node/OTLPLogExporter.js
+//#region node_modules/@opentelemetry/exporter-logs-otlp-http/build/src/platform/node/OTLPLogExporter.js
 var require_OTLPLogExporter$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPLogExporter = void 0;
@@ -119494,7 +119494,7 @@ var require_OTLPLogExporter$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-logs-otlp-http/build/src/platform/node/index.js
+//#region node_modules/@opentelemetry/exporter-logs-otlp-http/build/src/platform/node/index.js
 var require_node$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPLogExporter = void 0;
@@ -119508,7 +119508,7 @@ var require_node$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-logs-otlp-http/build/src/platform/index.js
+//#region node_modules/@opentelemetry/exporter-logs-otlp-http/build/src/platform/index.js
 var require_platform$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPLogExporter = void 0;
@@ -119522,7 +119522,7 @@ var require_platform$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-logs-otlp-http/build/src/index.js
+//#region node_modules/@opentelemetry/exporter-logs-otlp-http/build/src/index.js
 var require_src$18 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPLogExporter = void 0;
@@ -119536,7 +119536,7 @@ var require_src$18 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/version.js
+//#region node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/version.js
 var require_version = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.VERSION = void 0;
@@ -119544,7 +119544,7 @@ var require_version = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/constants.js
+//#region node_modules/@grpc/grpc-js/build/src/constants.js
 var require_constants$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DEFAULT_MAX_RECEIVE_MESSAGE_LENGTH = exports.DEFAULT_MAX_SEND_MESSAGE_LENGTH = exports.Propagate = exports.LogVerbosity = exports.Status = void 0;
@@ -119592,7 +119592,7 @@ var require_constants$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/package.json
+//#region node_modules/@grpc/grpc-js/package.json
 var require_package$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = {
 		"name": "@grpc/grpc-js",
@@ -119678,7 +119678,7 @@ var require_package$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/logging.js
+//#region node_modules/@grpc/grpc-js/build/src/logging.js
 var require_logging = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var _a, _b, _c, _d;
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -119761,7 +119761,7 @@ var require_logging = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/error.js
+//#region node_modules/@grpc/grpc-js/build/src/error.js
 var require_error = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getErrorMessage = getErrorMessage;
@@ -119777,7 +119777,7 @@ var require_error = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/metadata.js
+//#region node_modules/@grpc/grpc-js/build/src/metadata.js
 var require_metadata = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Metadata = void 0;
@@ -119987,7 +119987,7 @@ var require_metadata = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/call-credentials.js
+//#region node_modules/@grpc/grpc-js/build/src/call-credentials.js
 var require_call_credentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CallCredentials = void 0;
@@ -120102,7 +120102,7 @@ var require_call_credentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/tls-helpers.js
+//#region node_modules/@grpc/grpc-js/build/src/tls-helpers.js
 var require_tls_helpers = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CIPHER_SUITES = void 0;
@@ -120121,7 +120121,7 @@ var require_tls_helpers = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/uri-parser.js
+//#region node_modules/@grpc/grpc-js/build/src/uri-parser.js
 var require_uri_parser = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.parseUri = parseUri;
@@ -120179,7 +120179,7 @@ var require_uri_parser = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/resolver.js
+//#region node_modules/@grpc/grpc-js/build/src/resolver.js
 var require_resolver = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CHANNEL_ARGS_CONFIG_SELECTOR_KEY = void 0;
@@ -120241,7 +120241,7 @@ var require_resolver = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/channel-credentials.js
+//#region node_modules/@grpc/grpc-js/build/src/channel-credentials.js
 var require_channel_credentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ChannelCredentials = void 0;
@@ -120594,7 +120594,7 @@ var require_channel_credentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/load-balancer.js
+//#region node_modules/@grpc/grpc-js/build/src/load-balancer.js
 var require_load_balancer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createChildChannelControlHelper = createChildChannelControlHelper;
@@ -120673,7 +120673,7 @@ var require_load_balancer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/service-config.js
+//#region node_modules/@grpc/grpc-js/build/src/service-config.js
 var require_service_config = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.validateRetryThrottling = validateRetryThrottling;
@@ -120869,7 +120869,7 @@ var require_service_config = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/connectivity-state.js
+//#region node_modules/@grpc/grpc-js/build/src/connectivity-state.js
 var require_connectivity_state = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ConnectivityState = void 0;
@@ -120884,7 +120884,7 @@ var require_connectivity_state = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/picker.js
+//#region node_modules/@grpc/grpc-js/build/src/picker.js
 var require_picker = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.QueuePicker = exports.UnavailablePicker = exports.PickResultType = void 0;
@@ -120956,7 +120956,7 @@ var require_picker = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/backoff-timeout.js
+//#region node_modules/@grpc/grpc-js/build/src/backoff-timeout.js
 var require_backoff_timeout = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BackoffTimeout = void 0;
@@ -121119,7 +121119,7 @@ var require_backoff_timeout = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/load-balancer-child-handler.js
+//#region node_modules/@grpc/grpc-js/build/src/load-balancer-child-handler.js
 var require_load_balancer_child_handler = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ChildLoadBalancerHandler = void 0;
@@ -121230,7 +121230,7 @@ var require_load_balancer_child_handler = /* @__PURE__ */ __commonJSMin(((export
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/resolving-load-balancer.js
+//#region node_modules/@grpc/grpc-js/build/src/resolving-load-balancer.js
 var require_resolving_load_balancer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ResolvingLoadBalancer = void 0;
@@ -121450,7 +121450,7 @@ var require_resolving_load_balancer = /* @__PURE__ */ __commonJSMin(((exports) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/channel-options.js
+//#region node_modules/@grpc/grpc-js/build/src/channel-options.js
 var require_channel_options = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.recognizedOptions = void 0;
@@ -121504,7 +121504,7 @@ var require_channel_options = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/subchannel-address.js
+//#region node_modules/@grpc/grpc-js/build/src/subchannel-address.js
 var require_subchannel_address = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.EndpointMap = void 0;
@@ -121628,7 +121628,7 @@ var require_subchannel_address = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@js-sdsl/ordered-map/dist/cjs/index.js
+//#region node_modules/@js-sdsl/ordered-map/dist/cjs/index.js
 var require_cjs = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "t", { value: true });
 	var TreeNode = class {
@@ -122327,7 +122327,7 @@ var require_cjs = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/admin.js
+//#region node_modules/@grpc/grpc-js/build/src/admin.js
 var require_admin = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.registerAdminService = registerAdminService;
@@ -122345,7 +122345,7 @@ var require_admin = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/call.js
+//#region node_modules/@grpc/grpc-js/build/src/call.js
 var require_call = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ClientDuplexStreamImpl = exports.ClientWritableStreamImpl = exports.ClientReadableStreamImpl = exports.ClientUnaryCallImpl = void 0;
@@ -122475,7 +122475,7 @@ var require_call = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/call-interface.js
+//#region node_modules/@grpc/grpc-js/build/src/call-interface.js
 var require_call_interface = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InterceptingListenerImpl = void 0;
@@ -122551,7 +122551,7 @@ var require_call_interface = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/client-interceptors.js
+//#region node_modules/@grpc/grpc-js/build/src/client-interceptors.js
 var require_client_interceptors = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InterceptingCall = exports.RequesterBuilder = exports.ListenerBuilder = exports.InterceptorConfigurationError = void 0;
@@ -122901,7 +122901,7 @@ var require_client_interceptors = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/client.js
+//#region node_modules/@grpc/grpc-js/build/src/client.js
 var require_client = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Client = void 0;
@@ -123246,7 +123246,7 @@ var require_client = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/make-client.js
+//#region node_modules/@grpc/grpc-js/build/src/make-client.js
 var require_make_client = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.makeClientConstructor = makeClientConstructor;
@@ -123345,7 +123345,7 @@ var require_make_client = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/lodash.camelcase/index.js
+//#region node_modules/lodash.camelcase/index.js
 var require_lodash_camelcase = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* lodash (Custom Build) <https://lodash.com/>
@@ -123989,7 +123989,7 @@ var require_lodash_camelcase = /* @__PURE__ */ __commonJSMin(((exports, module) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@protobufjs/aspromise/index.js
+//#region node_modules/@protobufjs/aspromise/index.js
 var require_aspromise = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = asPromise;
 	/**
@@ -124036,7 +124036,7 @@ var require_aspromise = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@protobufjs/base64/index.js
+//#region node_modules/@protobufjs/base64/index.js
 var require_base64 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* A minimal base64 implementation for number arrays.
@@ -124155,7 +124155,7 @@ var require_base64 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@protobufjs/eventemitter/index.js
+//#region node_modules/@protobufjs/eventemitter/index.js
 var require_eventemitter = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = EventEmitter;
 	/**
@@ -124228,7 +124228,7 @@ var require_eventemitter = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@protobufjs/float/index.js
+//#region node_modules/@protobufjs/float/index.js
 var require_float$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = factory(factory);
 	/**
@@ -124482,7 +124482,7 @@ var require_float$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@protobufjs/utf8/index.js
+//#region node_modules/@protobufjs/utf8/index.js
 var require_utf8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* A minimal UTF8 implementation for number arrays.
@@ -124572,7 +124572,7 @@ var require_utf8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@protobufjs/pool/index.js
+//#region node_modules/@protobufjs/pool/index.js
 var require_pool = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = pool;
 	/**
@@ -124619,7 +124619,7 @@ var require_pool = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/util/longbits.js
+//#region node_modules/protobufjs/src/util/longbits.js
 var require_longbits = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = LongBits;
 	var util = require_minimal();
@@ -124770,7 +124770,7 @@ var require_longbits = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/long/umd/index.js
+//#region node_modules/long/umd/index.js
 var require_umd = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	(function(global, factory) {
 		function preferDefault(exports$2) {
@@ -126247,7 +126247,7 @@ var require_umd = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/util/minimal.js
+//#region node_modules/protobufjs/src/util/minimal.js
 var require_minimal = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var util = exports;
 	util.asPromise = require_aspromise();
@@ -126627,7 +126627,7 @@ var require_minimal = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/writer.js
+//#region node_modules/protobufjs/src/writer.js
 var require_writer = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = Writer;
 	var util = require_minimal();
@@ -127010,7 +127010,7 @@ var require_writer = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/writer_buffer.js
+//#region node_modules/protobufjs/src/writer_buffer.js
 var require_writer_buffer = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = BufferWriter;
 	var Writer = require_writer();
@@ -127074,7 +127074,7 @@ var require_writer_buffer = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/reader.js
+//#region node_modules/protobufjs/src/reader.js
 var require_reader = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = Reader;
 	var util = require_minimal();
@@ -127393,7 +127393,7 @@ var require_reader = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/reader_buffer.js
+//#region node_modules/protobufjs/src/reader_buffer.js
 var require_reader_buffer = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = BufferReader;
 	var Reader = require_reader();
@@ -127435,7 +127435,7 @@ var require_reader_buffer = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/rpc/service.js
+//#region node_modules/protobufjs/src/rpc/service.js
 var require_service$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = Service;
 	var util = require_minimal();
@@ -127554,7 +127554,7 @@ var require_service$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/rpc.js
+//#region node_modules/protobufjs/src/rpc.js
 var require_rpc = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* Streaming RPC helpers.
@@ -127590,7 +127590,7 @@ var require_rpc = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/roots.js
+//#region node_modules/protobufjs/src/roots.js
 var require_roots = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = Object.create(null);
 }));
@@ -127611,7 +127611,7 @@ var require_roots = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 */
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/index-minimal.js
+//#region node_modules/protobufjs/src/index-minimal.js
 var require_index_minimal = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var protobuf = exports;
 	/**
@@ -127643,7 +127643,7 @@ var require_index_minimal = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@protobufjs/codegen/index.js
+//#region node_modules/@protobufjs/codegen/index.js
 var require_codegen = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = codegen;
 	var reservedRe = /^(?:do|if|in|for|let|new|try|var|case|else|enum|eval|false|null|this|true|void|with|break|catch|class|const|super|throw|while|yield|delete|export|import|public|return|static|switch|typeof|default|extends|finally|package|private|continue|debugger|function|arguments|interface|protected|implements|instanceof)$/;
@@ -127734,7 +127734,7 @@ var require_codegen = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@protobufjs/fetch/util/fs.js
+//#region node_modules/@protobufjs/fetch/util/fs.js
 var require_fs$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var fs = null;
 	try {
@@ -127748,7 +127748,7 @@ var require_fs$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@protobufjs/fetch/index.js
+//#region node_modules/@protobufjs/fetch/index.js
 var require_fetch = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = fetch;
 	var asPromise = require_aspromise(), fs = require_fs$1();
@@ -127828,7 +127828,7 @@ var require_fetch = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@protobufjs/path/index.js
+//#region node_modules/@protobufjs/path/index.js
 var require_path = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* A minimal path module to resolve Unix, Windows and URL paths alike.
@@ -127866,7 +127866,7 @@ var require_path = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/util/patterns.js
+//#region node_modules/protobufjs/src/util/patterns.js
 var require_patterns = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var patterns = exports;
 	patterns.numberRe = /^(?![eE])[0-9]*(?:\.[0-9]*)?(?:[eE][+-]?[0-9]+)?$/;
@@ -127875,7 +127875,7 @@ var require_patterns = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/util/fs.js
+//#region node_modules/protobufjs/src/util/fs.js
 var require_fs = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var fs = null;
 	try {
@@ -127889,7 +127889,7 @@ var require_fs = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/namespace.js
+//#region node_modules/protobufjs/src/namespace.js
 var require_namespace = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = Namespace;
 	var ReflectionObject = require_object();
@@ -128302,7 +128302,7 @@ var require_namespace = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/mapfield.js
+//#region node_modules/protobufjs/src/mapfield.js
 var require_mapfield = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = MapField;
 	var Field = require_field();
@@ -128408,7 +128408,7 @@ var require_mapfield = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/method.js
+//#region node_modules/protobufjs/src/method.js
 var require_method = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = Method;
 	var ReflectionObject = require_object();
@@ -128551,7 +128551,7 @@ var require_method = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/service.js
+//#region node_modules/protobufjs/src/service.js
 var require_service = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = Service;
 	var Namespace = require_namespace();
@@ -128716,7 +128716,7 @@ var require_service = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/message.js
+//#region node_modules/protobufjs/src/message.js
 var require_message = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = Message;
 	var util = require_minimal();
@@ -128843,7 +128843,7 @@ var require_message = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/decoder.js
+//#region node_modules/protobufjs/src/decoder.js
 var require_decoder = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = decoder;
 	var Enum = require_enum(), types = require_types$3(), util = require_util$2();
@@ -128902,7 +128902,7 @@ var require_decoder = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/verifier.js
+//#region node_modules/protobufjs/src/verifier.js
 var require_verifier = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = verifier;
 	var Enum = require_enum(), util = require_util$2();
@@ -129020,7 +129020,7 @@ var require_verifier = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/converter.js
+//#region node_modules/protobufjs/src/converter.js
 var require_converter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* Runtime message from/to plain object converters.
@@ -129215,7 +129215,7 @@ var require_converter = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/wrappers.js
+//#region node_modules/protobufjs/src/wrappers.js
 var require_wrappers = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* Wrappers for common types.
@@ -129291,7 +129291,7 @@ var require_wrappers = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/type.js
+//#region node_modules/protobufjs/src/type.js
 var require_type$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = Type;
 	var Namespace = require_namespace();
@@ -129749,7 +129749,7 @@ var require_type$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/root.js
+//#region node_modules/protobufjs/src/root.js
 var require_root = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = Root;
 	var Namespace = require_namespace();
@@ -130037,7 +130037,7 @@ var require_root = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/util.js
+//#region node_modules/protobufjs/src/util.js
 var require_util$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Various utility functions.
@@ -130229,7 +130229,7 @@ var require_util$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/types.js
+//#region node_modules/protobufjs/src/types.js
 var require_types$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* Common type constants.
@@ -130420,7 +130420,7 @@ var require_types$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/field.js
+//#region node_modules/protobufjs/src/field.js
 var require_field = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = Field;
 	var ReflectionObject = require_object();
@@ -130759,7 +130759,7 @@ var require_field = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/oneof.js
+//#region node_modules/protobufjs/src/oneof.js
 var require_oneof = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = OneOf;
 	var ReflectionObject = require_object();
@@ -130941,7 +130941,7 @@ var require_oneof = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/object.js
+//#region node_modules/protobufjs/src/object.js
 var require_object = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = ReflectionObject;
 	ReflectionObject.className = "ReflectionObject";
@@ -131236,7 +131236,7 @@ var require_object = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/enum.js
+//#region node_modules/protobufjs/src/enum.js
 var require_enum = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = Enum;
 	var ReflectionObject = require_object();
@@ -131416,7 +131416,7 @@ var require_enum = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/encoder.js
+//#region node_modules/protobufjs/src/encoder.js
 var require_encoder = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = encoder;
 	var Enum = require_enum(), types = require_types$3(), util = require_util$2();
@@ -131473,7 +131473,7 @@ var require_encoder = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/index-light.js
+//#region node_modules/protobufjs/src/index-light.js
 var require_index_light = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var protobuf = module.exports = require_index_minimal();
 	protobuf.build = "light";
@@ -131559,7 +131559,7 @@ var require_index_light = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/tokenize.js
+//#region node_modules/protobufjs/src/tokenize.js
 var require_tokenize = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = tokenize;
 	var delimRe = /[\s{}=;:[\],'"()<>]/g, stringDoubleRe = /(?:"([^"\\]*(?:\\.[^"\\]*)*)")/g, stringSingleRe = /(?:'([^'\\]*(?:\\.[^'\\]*)*)')/g;
@@ -131866,7 +131866,7 @@ var require_tokenize = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/parse.js
+//#region node_modules/protobufjs/src/parse.js
 var require_parse$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = parse;
 	parse.filename = null;
@@ -132527,7 +132527,7 @@ var require_parse$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 */
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/common.js
+//#region node_modules/protobufjs/src/common.js
 var require_common$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = common;
 	var commonRe = /\/|\./;
@@ -132694,7 +132694,7 @@ var require_common$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/src/index.js
+//#region node_modules/protobufjs/src/index.js
 var require_src$17 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var protobuf = module.exports = require_index_light();
 	protobuf.build = "full";
@@ -132705,13 +132705,13 @@ var require_src$17 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/index.js
+//#region node_modules/protobufjs/index.js
 var require_protobufjs = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = require_src$17();
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/google/protobuf/descriptor.json
+//#region node_modules/protobufjs/google/protobuf/descriptor.json
 var require_descriptor$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = { "nested": { "google": { "nested": { "protobuf": {
 		"options": {
@@ -133870,7 +133870,7 @@ var require_descriptor$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/ext/descriptor/index.js
+//#region node_modules/protobufjs/ext/descriptor/index.js
 var require_descriptor = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var $protobuf = require_protobufjs();
 	module.exports = exports = $protobuf.descriptor = $protobuf.Root.fromJSON(require_descriptor$1()).lookup(".google.protobuf");
@@ -134748,7 +134748,7 @@ var require_descriptor = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 */
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/google/protobuf/api.json
+//#region node_modules/protobufjs/google/protobuf/api.json
 var require_api = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = { "nested": { "google": { "nested": { "protobuf": { "nested": {
 		"Api": { "fields": {
@@ -134847,7 +134847,7 @@ var require_api = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/google/protobuf/source_context.json
+//#region node_modules/protobufjs/google/protobuf/source_context.json
 var require_source_context = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = { "nested": { "google": { "nested": { "protobuf": { "nested": { "SourceContext": { "fields": { "fileName": {
 		"type": "string",
@@ -134856,7 +134856,7 @@ var require_source_context = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/protobufjs/google/protobuf/type.json
+//#region node_modules/protobufjs/google/protobuf/type.json
 var require_type$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = { "nested": { "google": { "nested": { "protobuf": { "nested": {
 		"Type": { "fields": {
@@ -135033,7 +135033,7 @@ var require_type$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/proto-loader/build/src/util.js
+//#region node_modules/@grpc/proto-loader/build/src/util.js
 var require_util$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* @license
@@ -135115,7 +135115,7 @@ var require_util$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/proto-loader/build/src/index.js
+//#region node_modules/@grpc/proto-loader/build/src/index.js
 var require_src$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* @license
@@ -135326,7 +135326,7 @@ var require_src$16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/channelz.js
+//#region node_modules/@grpc/grpc-js/build/src/channelz.js
 var require_channelz = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.registerChannelzSocket = exports.registerChannelzServer = exports.registerChannelzSubchannel = exports.registerChannelzChannel = exports.ChannelzCallTrackerStub = exports.ChannelzCallTracker = exports.ChannelzChildrenTrackerStub = exports.ChannelzChildrenTracker = exports.ChannelzTrace = exports.ChannelzTraceStub = void 0;
@@ -135834,7 +135834,7 @@ var require_channelz = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/call-number.js
+//#region node_modules/@grpc/grpc-js/build/src/call-number.js
 var require_call_number = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getNextCallNumber = getNextCallNumber;
@@ -135845,7 +135845,7 @@ var require_call_number = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/compression-algorithms.js
+//#region node_modules/@grpc/grpc-js/build/src/compression-algorithms.js
 var require_compression_algorithms = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CompressionAlgorithms = void 0;
@@ -135858,7 +135858,7 @@ var require_compression_algorithms = /* @__PURE__ */ __commonJSMin(((exports) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/filter.js
+//#region node_modules/@grpc/grpc-js/build/src/filter.js
 var require_filter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BaseFilter = void 0;
@@ -135883,7 +135883,7 @@ var require_filter = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/compression-filter.js
+//#region node_modules/@grpc/grpc-js/build/src/compression-filter.js
 var require_compression_filter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.CompressionFilterFactory = exports.CompressionFilter = void 0;
@@ -136128,7 +136128,7 @@ var require_compression_filter = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/control-plane-status.js
+//#region node_modules/@grpc/grpc-js/build/src/control-plane-status.js
 var require_control_plane_status = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.restrictControlPlaneStatusCode = restrictControlPlaneStatusCode;
@@ -136156,7 +136156,7 @@ var require_control_plane_status = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/deadline.js
+//#region node_modules/@grpc/grpc-js/build/src/deadline.js
 var require_deadline = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.minDeadline = minDeadline;
@@ -136231,7 +136231,7 @@ var require_deadline = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/filter-stack.js
+//#region node_modules/@grpc/grpc-js/build/src/filter-stack.js
 var require_filter_stack = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.FilterStackFactory = exports.FilterStack = void 0;
@@ -136290,7 +136290,7 @@ var require_filter_stack = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/single-subchannel-channel.js
+//#region node_modules/@grpc/grpc-js/build/src/single-subchannel-channel.js
 var require_single_subchannel_channel = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SingleSubchannelChannel = void 0;
@@ -136477,7 +136477,7 @@ var require_single_subchannel_channel = /* @__PURE__ */ __commonJSMin(((exports)
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/subchannel.js
+//#region node_modules/@grpc/grpc-js/build/src/subchannel.js
 var require_subchannel = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Subchannel = void 0;
@@ -136780,7 +136780,7 @@ var require_subchannel = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/environment.js
+//#region node_modules/@grpc/grpc-js/build/src/environment.js
 var require_environment = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var _a;
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -136789,7 +136789,7 @@ var require_environment = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/resolver-dns.js
+//#region node_modules/@grpc/grpc-js/build/src/resolver-dns.js
 var require_resolver_dns = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DEFAULT_PORT = void 0;
@@ -137040,7 +137040,7 @@ var require_resolver_dns = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/http_proxy.js
+//#region node_modules/@grpc/grpc-js/build/src/http_proxy.js
 var require_http_proxy = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.parseCIDR = parseCIDR;
@@ -137209,7 +137209,7 @@ var require_http_proxy = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/stream-decoder.js
+//#region node_modules/@grpc/grpc-js/build/src/stream-decoder.js
 var require_stream_decoder = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.StreamDecoder = void 0;
@@ -137283,7 +137283,7 @@ var require_stream_decoder = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/subchannel-call.js
+//#region node_modules/@grpc/grpc-js/build/src/subchannel-call.js
 var require_subchannel_call = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Http2SubchannelCall = void 0;
@@ -137661,7 +137661,7 @@ var require_subchannel_call = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/transport.js
+//#region node_modules/@grpc/grpc-js/build/src/transport.js
 var require_transport = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Http2SubchannelConnector = void 0;
@@ -138134,7 +138134,7 @@ var require_transport = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/subchannel-pool.js
+//#region node_modules/@grpc/grpc-js/build/src/subchannel-pool.js
 var require_subchannel_pool = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SubchannelPool = void 0;
@@ -138229,7 +138229,7 @@ var require_subchannel_pool = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/load-balancing-call.js
+//#region node_modules/@grpc/grpc-js/build/src/load-balancing-call.js
 var require_load_balancing_call = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LoadBalancingCall = void 0;
@@ -138449,7 +138449,7 @@ var require_load_balancing_call = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/resolving-call.js
+//#region node_modules/@grpc/grpc-js/build/src/resolving-call.js
 var require_resolving_call = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ResolvingCall = void 0;
@@ -138689,7 +138689,7 @@ var require_resolving_call = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/retrying-call.js
+//#region node_modules/@grpc/grpc-js/build/src/retrying-call.js
 var require_retrying_call = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RetryingCall = exports.MessageBufferTracker = exports.RetryThrottler = void 0;
@@ -139220,7 +139220,7 @@ var require_retrying_call = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/subchannel-interface.js
+//#region node_modules/@grpc/grpc-js/build/src/subchannel-interface.js
 var require_subchannel_interface = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BaseSubchannelWrapper = void 0;
@@ -139307,7 +139307,7 @@ var require_subchannel_interface = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/internal-channel.js
+//#region node_modules/@grpc/grpc-js/build/src/internal-channel.js
 var require_internal_channel = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.InternalChannel = exports.SUBCHANNEL_ARGS_EXCLUDE_KEY_PREFIX = void 0;
@@ -139735,7 +139735,7 @@ var require_internal_channel = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/channel.js
+//#region node_modules/@grpc/grpc-js/build/src/channel.js
 var require_channel = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ChannelImplementation = void 0;
@@ -139780,7 +139780,7 @@ var require_channel = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/server-call.js
+//#region node_modules/@grpc/grpc-js/build/src/server-call.js
 var require_server_call = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ServerDuplexStreamImpl = exports.ServerWritableStreamImpl = exports.ServerReadableStreamImpl = exports.ServerUnaryCallImpl = void 0;
@@ -139979,7 +139979,7 @@ var require_server_call = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/server-credentials.js
+//#region node_modules/@grpc/grpc-js/build/src/server-credentials.js
 var require_server_credentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ServerCredentials = void 0;
@@ -140199,7 +140199,7 @@ var require_server_credentials = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/duration.js
+//#region node_modules/@grpc/grpc-js/build/src/duration.js
 var require_duration = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.durationMessageToDuration = durationMessageToDuration;
@@ -140250,7 +140250,7 @@ var require_duration = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/orca.js
+//#region node_modules/@grpc/grpc-js/build/src/orca.js
 var require_orca = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OrcaOobMetricsSubchannelWrapper = exports.GRPC_METRICS_HEADER = exports.ServerMetricRecorder = exports.PerRequestMetricRecorder = void 0;
@@ -140524,7 +140524,7 @@ var require_orca = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/server-interceptors.js
+//#region node_modules/@grpc/grpc-js/build/src/server-interceptors.js
 var require_server_interceptors = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.BaseServerInterceptingCall = exports.ServerInterceptingCall = exports.ResponderBuilder = exports.ServerListenerBuilder = void 0;
@@ -141199,7 +141199,7 @@ var require_server_interceptors = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/server.js
+//#region node_modules/@grpc/grpc-js/build/src/server.js
 var require_server = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __runInitializers = exports && exports.__runInitializers || function(thisArg, initializers, value) {
 		var useValue = arguments.length > 2;
@@ -142499,7 +142499,7 @@ var require_server = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/status-builder.js
+//#region node_modules/@grpc/grpc-js/build/src/status-builder.js
 var require_status_builder = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.StatusBuilder = void 0;
@@ -142548,7 +142548,7 @@ var require_status_builder = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/load-balancer-pick-first.js
+//#region node_modules/@grpc/grpc-js/build/src/load-balancer-pick-first.js
 var require_load_balancer_pick_first = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.LeafLoadBalancer = exports.PickFirstLoadBalancer = exports.PickFirstLoadBalancingConfig = void 0;
@@ -142948,7 +142948,7 @@ var require_load_balancer_pick_first = /* @__PURE__ */ __commonJSMin(((exports) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/certificate-provider.js
+//#region node_modules/@grpc/grpc-js/build/src/certificate-provider.js
 var require_certificate_provider = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.FileWatcherCertificateProvider = void 0;
@@ -143043,7 +143043,7 @@ var require_certificate_provider = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/experimental.js
+//#region node_modules/@grpc/grpc-js/build/src/experimental.js
 var require_experimental = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SUBCHANNEL_ARGS_EXCLUDE_KEY_PREFIX = exports.createCertificateProviderChannelCredentials = exports.FileWatcherCertificateProvider = exports.createCertificateProviderServerCredentials = exports.createServerCredentialsWithInterceptors = exports.BaseSubchannelWrapper = exports.registerAdminService = exports.FilterStackFactory = exports.BaseFilter = exports.statusOrFromError = exports.statusOrFromValue = exports.PickResultType = exports.QueuePicker = exports.UnavailablePicker = exports.ChildLoadBalancerHandler = exports.EndpointMap = exports.endpointHasAddress = exports.endpointToString = exports.subchannelAddressToString = exports.LeafLoadBalancer = exports.isLoadBalancerNameRegistered = exports.parseLoadBalancingConfig = exports.selectLbConfigFromList = exports.registerLoadBalancerType = exports.createChildChannelControlHelper = exports.BackoffTimeout = exports.parseDuration = exports.durationToMs = exports.splitHostPort = exports.uriToString = exports.CHANNEL_ARGS_CONFIG_SELECTOR_KEY = exports.createResolver = exports.registerResolver = exports.log = exports.trace = void 0;
@@ -143279,7 +143279,7 @@ var require_experimental = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/resolver-uds.js
+//#region node_modules/@grpc/grpc-js/build/src/resolver-uds.js
 var require_resolver_uds = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.setup = setup;
@@ -143314,7 +143314,7 @@ var require_resolver_uds = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/resolver-ip.js
+//#region node_modules/@grpc/grpc-js/build/src/resolver-ip.js
 var require_resolver_ip = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.setup = setup;
@@ -143403,7 +143403,7 @@ var require_resolver_ip = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/load-balancer-round-robin.js
+//#region node_modules/@grpc/grpc-js/build/src/load-balancer-round-robin.js
 var require_load_balancer_round_robin = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.RoundRobinLoadBalancer = void 0;
@@ -143540,7 +143540,7 @@ var require_load_balancer_round_robin = /* @__PURE__ */ __commonJSMin(((exports)
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/load-balancer-outlier-detection.js
+//#region node_modules/@grpc/grpc-js/build/src/load-balancer-outlier-detection.js
 var require_load_balancer_outlier_detection = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var _a;
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -143953,7 +143953,7 @@ var require_load_balancer_outlier_detection = /* @__PURE__ */ __commonJSMin(((ex
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/priority-queue.js
+//#region node_modules/@grpc/grpc-js/build/src/priority-queue.js
 var require_priority_queue = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PriorityQueue = void 0;
@@ -144057,7 +144057,7 @@ var require_priority_queue = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/load-balancer-weighted-round-robin.js
+//#region node_modules/@grpc/grpc-js/build/src/load-balancer-weighted-round-robin.js
 var require_load_balancer_weighted_round_robin = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.WeightedRoundRobinLoadBalancingConfig = void 0;
@@ -144329,7 +144329,7 @@ var require_load_balancer_weighted_round_robin = /* @__PURE__ */ __commonJSMin((
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@grpc/grpc-js/build/src/index.js
+//#region node_modules/@grpc/grpc-js/build/src/index.js
 var require_src$15 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.experimental = exports.ServerMetricRecorder = exports.ServerInterceptingCall = exports.ResponderBuilder = exports.ServerListenerBuilder = exports.addAdminServicesToServer = exports.getChannelzHandlers = exports.getChannelzServiceDefinition = exports.InterceptorConfigurationError = exports.InterceptingCall = exports.RequesterBuilder = exports.ListenerBuilder = exports.StatusBuilder = exports.getClientChannel = exports.ServerCredentials = exports.Server = exports.setLogVerbosity = exports.setLogger = exports.load = exports.loadObject = exports.CallCredentials = exports.ChannelCredentials = exports.waitForClientReady = exports.closeClient = exports.Channel = exports.makeGenericClientConstructor = exports.makeClientConstructor = exports.loadPackageDefinition = exports.Client = exports.compressionAlgorithms = exports.propagate = exports.connectivityState = exports.status = exports.logVerbosity = exports.Metadata = exports.credentials = void 0;
@@ -144580,7 +144580,7 @@ var require_src$15 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/create-service-client-constructor.js
+//#region node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/create-service-client-constructor.js
 var require_create_service_client_constructor = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createServiceClientConstructor = void 0;
@@ -144616,7 +144616,7 @@ var require_create_service_client_constructor = /* @__PURE__ */ __commonJSMin(((
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/grpc-exporter-transport.js
+//#region node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/grpc-exporter-transport.js
 var require_grpc_exporter_transport = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createOtlpGrpcExporterTransport = exports.GrpcExporterTransport = exports.createEmptyMetadata = exports.createSslCredentials = exports.createInsecureCredentials = void 0;
@@ -144726,7 +144726,7 @@ var require_grpc_exporter_transport = /* @__PURE__ */ __commonJSMin(((exports) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/configuration/otlp-grpc-configuration.js
+//#region node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/configuration/otlp-grpc-configuration.js
 var require_otlp_grpc_configuration = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getOtlpGrpcDefaultConfiguration = exports.mergeOtlpGrpcConfigurationWithDefaults = exports.validateAndNormalizeUrl = void 0;
@@ -144778,7 +144778,7 @@ var require_otlp_grpc_configuration = /* @__PURE__ */ __commonJSMin(((exports) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/configuration/otlp-grpc-env-configuration.js
+//#region node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/configuration/otlp-grpc-env-configuration.js
 var require_otlp_grpc_env_configuration = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getOtlpGrpcConfigurationFromEnv = void 0;
@@ -144895,7 +144895,7 @@ var require_otlp_grpc_env_configuration = /* @__PURE__ */ __commonJSMin(((export
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/configuration/convert-legacy-otlp-grpc-options.js
+//#region node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/configuration/convert-legacy-otlp-grpc-options.js
 var require_convert_legacy_otlp_grpc_options = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.convertLegacyOtlpGrpcOptions = void 0;
@@ -144925,7 +144925,7 @@ var require_convert_legacy_otlp_grpc_options = /* @__PURE__ */ __commonJSMin(((e
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/otlp-grpc-export-delegate.js
+//#region node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/otlp-grpc-export-delegate.js
 var require_otlp_grpc_export_delegate = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createOtlpGrpcExportDelegate = void 0;
@@ -144946,7 +144946,7 @@ var require_otlp_grpc_export_delegate = /* @__PURE__ */ __commonJSMin(((exports)
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/index.js
+//#region node_modules/@opentelemetry/otlp-grpc-exporter-base/build/src/index.js
 var require_src$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createSslCredentials = exports.createInsecureCredentials = exports.createEmptyMetadata = exports.createOtlpGrpcExportDelegate = exports.convertLegacyOtlpGrpcOptions = void 0;
@@ -144986,7 +144986,7 @@ var require_src$14 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-logs-otlp-grpc/build/src/OTLPLogExporter.js
+//#region node_modules/@opentelemetry/exporter-logs-otlp-grpc/build/src/OTLPLogExporter.js
 var require_OTLPLogExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPLogExporter = void 0;
@@ -145005,7 +145005,7 @@ var require_OTLPLogExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-logs-otlp-grpc/build/src/index.js
+//#region node_modules/@opentelemetry/exporter-logs-otlp-grpc/build/src/index.js
 var require_src$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPLogExporter = void 0;
@@ -145019,7 +145019,7 @@ var require_src$13 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-prometheus/build/src/PrometheusSerializer.js
+//#region node_modules/@opentelemetry/exporter-prometheus/build/src/PrometheusSerializer.js
 var require_PrometheusSerializer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PrometheusSerializer = void 0;
@@ -145226,7 +145226,7 @@ var require_PrometheusSerializer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-prometheus/build/src/semconv.js
+//#region node_modules/@opentelemetry/exporter-prometheus/build/src/semconv.js
 var require_semconv$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTEL_COMPONENT_TYPE_VALUE_PROMETHEUS_HTTP_TEXT_METRIC_EXPORTER = void 0;
@@ -145241,7 +145241,7 @@ var require_semconv$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-prometheus/build/src/PrometheusExporter.js
+//#region node_modules/@opentelemetry/exporter-prometheus/build/src/PrometheusExporter.js
 var require_PrometheusExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PrometheusExporter = void 0;
@@ -145397,7 +145397,7 @@ var require_PrometheusExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-prometheus/build/src/index.js
+//#region node_modules/@opentelemetry/exporter-prometheus/build/src/index.js
 var require_src$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.PrometheusSerializer = exports.PrometheusExporter = void 0;
@@ -145418,7 +145418,7 @@ var require_src$12 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-trace-otlp-http/build/src/platform/node/OTLPTraceExporter.js
+//#region node_modules/@opentelemetry/exporter-trace-otlp-http/build/src/platform/node/OTLPTraceExporter.js
 var require_OTLPTraceExporter$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPTraceExporter = void 0;
@@ -145437,7 +145437,7 @@ var require_OTLPTraceExporter$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-trace-otlp-http/build/src/platform/node/index.js
+//#region node_modules/@opentelemetry/exporter-trace-otlp-http/build/src/platform/node/index.js
 var require_node$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPTraceExporter = void 0;
@@ -145451,7 +145451,7 @@ var require_node$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-trace-otlp-http/build/src/platform/index.js
+//#region node_modules/@opentelemetry/exporter-trace-otlp-http/build/src/platform/index.js
 var require_platform$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPTraceExporter = void 0;
@@ -145465,7 +145465,7 @@ var require_platform$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-trace-otlp-http/build/src/index.js
+//#region node_modules/@opentelemetry/exporter-trace-otlp-http/build/src/index.js
 var require_src$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPTraceExporter = void 0;
@@ -145479,7 +145479,7 @@ var require_src$11 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-trace-otlp-grpc/build/src/OTLPTraceExporter.js
+//#region node_modules/@opentelemetry/exporter-trace-otlp-grpc/build/src/OTLPTraceExporter.js
 var require_OTLPTraceExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPTraceExporter = void 0;
@@ -145498,7 +145498,7 @@ var require_OTLPTraceExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-trace-otlp-grpc/build/src/index.js
+//#region node_modules/@opentelemetry/exporter-trace-otlp-grpc/build/src/index.js
 var require_src$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPTraceExporter = void 0;
@@ -145512,7 +145512,7 @@ var require_src$10 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-zipkin/build/src/platform/node/util.js
+//#region node_modules/@opentelemetry/exporter-zipkin/build/src/platform/node/util.js
 var require_util = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.prepareSend = void 0;
@@ -145575,7 +145575,7 @@ var require_util = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-zipkin/build/src/platform/node/index.js
+//#region node_modules/@opentelemetry/exporter-zipkin/build/src/platform/node/index.js
 var require_node$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.prepareSend = void 0;
@@ -145589,7 +145589,7 @@ var require_node$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-zipkin/build/src/platform/index.js
+//#region node_modules/@opentelemetry/exporter-zipkin/build/src/platform/index.js
 var require_platform = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.prepareSend = void 0;
@@ -145603,7 +145603,7 @@ var require_platform = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-zipkin/build/src/types.js
+//#region node_modules/@opentelemetry/exporter-zipkin/build/src/types.js
 var require_types$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SpanKind = void 0;
@@ -145616,7 +145616,7 @@ var require_types$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-zipkin/build/src/transform.js
+//#region node_modules/@opentelemetry/exporter-zipkin/build/src/transform.js
 var require_transform = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports._toZipkinAnnotations = exports._toZipkinTags = exports.toZipkinSpan = exports.defaultStatusErrorTagName = exports.defaultStatusCodeTagName = void 0;
@@ -145677,7 +145677,7 @@ var require_transform = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-zipkin/build/src/utils.js
+//#region node_modules/@opentelemetry/exporter-zipkin/build/src/utils.js
 var require_utils$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.prepareGetHeaders = void 0;
@@ -145690,7 +145690,7 @@ var require_utils$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-zipkin/build/src/zipkin.js
+//#region node_modules/@opentelemetry/exporter-zipkin/build/src/zipkin.js
 var require_zipkin = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ZipkinExporter = void 0;
@@ -145791,7 +145791,7 @@ var require_zipkin = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-zipkin/build/src/index.js
+//#region node_modules/@opentelemetry/exporter-zipkin/build/src/index.js
 var require_src$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ZipkinExporter = exports.prepareSend = void 0;
@@ -145812,7 +145812,7 @@ var require_src$9 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/propagator-b3/build/src/common.js
+//#region node_modules/@opentelemetry/propagator-b3/build/src/common.js
 var require_common = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.B3_DEBUG_FLAG_KEY = void 0;
@@ -145822,7 +145822,7 @@ var require_common = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/propagator-b3/build/src/constants.js
+//#region node_modules/@opentelemetry/propagator-b3/build/src/constants.js
 var require_constants$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.X_B3_FLAGS = exports.X_B3_PARENT_SPAN_ID = exports.X_B3_SAMPLED = exports.X_B3_SPAN_ID = exports.X_B3_TRACE_ID = exports.B3_CONTEXT_HEADER = void 0;
@@ -145836,7 +145836,7 @@ var require_constants$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/propagator-b3/build/src/B3MultiPropagator.js
+//#region node_modules/@opentelemetry/propagator-b3/build/src/B3MultiPropagator.js
 var require_B3MultiPropagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.B3MultiPropagator = void 0;
@@ -145929,7 +145929,7 @@ var require_B3MultiPropagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/propagator-b3/build/src/B3SinglePropagator.js
+//#region node_modules/@opentelemetry/propagator-b3/build/src/B3SinglePropagator.js
 var require_B3SinglePropagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.B3SinglePropagator = void 0;
@@ -145986,7 +145986,7 @@ var require_B3SinglePropagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/propagator-b3/build/src/types.js
+//#region node_modules/@opentelemetry/propagator-b3/build/src/types.js
 var require_types$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.B3InjectEncoding = void 0;
@@ -145997,7 +145997,7 @@ var require_types$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/propagator-b3/build/src/B3Propagator.js
+//#region node_modules/@opentelemetry/propagator-b3/build/src/B3Propagator.js
 var require_B3Propagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.B3Propagator = void 0;
@@ -146044,7 +146044,7 @@ var require_B3Propagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/propagator-b3/build/src/index.js
+//#region node_modules/@opentelemetry/propagator-b3/build/src/index.js
 var require_src$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.B3InjectEncoding = exports.X_B3_TRACE_ID = exports.X_B3_SPAN_ID = exports.X_B3_SAMPLED = exports.X_B3_PARENT_SPAN_ID = exports.X_B3_FLAGS = exports.B3_CONTEXT_HEADER = exports.B3Propagator = void 0;
@@ -146102,7 +146102,7 @@ var require_src$8 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/propagator-jaeger/build/src/JaegerPropagator.js
+//#region node_modules/@opentelemetry/propagator-jaeger/build/src/JaegerPropagator.js
 var require_JaegerPropagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.JaegerPropagator = exports.UBER_BAGGAGE_HEADER_PREFIX = exports.UBER_TRACE_ID_HEADER = void 0;
@@ -146194,7 +146194,7 @@ var require_JaegerPropagator = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/propagator-jaeger/build/src/index.js
+//#region node_modules/@opentelemetry/propagator-jaeger/build/src/index.js
 var require_src$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.UBER_TRACE_ID_HEADER = exports.UBER_BAGGAGE_HEADER_PREFIX = exports.JaegerPropagator = void 0;
@@ -146220,7 +146220,7 @@ var require_src$7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-metrics-otlp-grpc/build/src/OTLPMetricExporter.js
+//#region node_modules/@opentelemetry/exporter-metrics-otlp-grpc/build/src/OTLPMetricExporter.js
 var require_OTLPMetricExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPMetricExporter = void 0;
@@ -146239,7 +146239,7 @@ var require_OTLPMetricExporter = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/exporter-metrics-otlp-grpc/build/src/index.js
+//#region node_modules/@opentelemetry/exporter-metrics-otlp-grpc/build/src/index.js
 var require_src$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.OTLPMetricExporter = void 0;
@@ -146253,7 +146253,7 @@ var require_src$6 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-node/build/src/utils.js
+//#region node_modules/@opentelemetry/sdk-node/build/src/utils.js
 var require_utils$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.buildSamplerFromConfig = exports.getInstanceID = exports.getMeterViewsFromConfiguration = exports.getAggregationType = exports.getInstrumentType = exports.getMeterReadersFromConfiguration = exports.getSpanLimitsFromConfiguration = exports.getSpanProcessorsFromConfiguration = exports.getSpanExporter = exports.getHttpAgentOptionsFromTls = exports.getHeadersFromConfiguration = exports.getLogRecordProcessorsFromConfiguration = exports.getLogRecordExporter = exports.getBatchLogRecordProcessorFromEnv = exports.getBatchLogRecordProcessorConfigFromEnv = exports.getLoggerProviderConfigFromEnv = exports.getPeriodicMetricReaderFromConfiguration = exports.getOtlpMetricExporterFromEnv = exports.getPeriodicExportingMetricReaderFromEnv = exports.getNonNegativeNumberFromEnv = exports.getKeyListFromObjectArray = exports.setupPropagator = exports.setupContextManager = exports.getPropagatorFromConfiguration = exports.getPropagatorFromEnv = exports.getSpanProcessorsFromEnv = exports.getOtlpProtocolFromEnv = exports.getResourceDetectorsFromConfiguration = exports.getResourceDetectorsFromEnv = exports.getResourceFromConfiguration = void 0;
@@ -146860,7 +146860,7 @@ var require_utils$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-node/build/src/sdk.js
+//#region node_modules/@opentelemetry/sdk-node/build/src/sdk.js
 var require_sdk = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.NodeSDK = void 0;
@@ -147080,7 +147080,7 @@ var require_sdk = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/nodes/identity.js
+//#region node_modules/yaml/dist/nodes/identity.js
 var require_identity = /* @__PURE__ */ __commonJSMin(((exports) => {
 	const ALIAS = Symbol.for("yaml.alias");
 	const DOC = Symbol.for("yaml.document");
@@ -147131,7 +147131,7 @@ var require_identity = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/visit.js
+//#region node_modules/yaml/dist/visit.js
 var require_visit = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	const BREAK = Symbol("break visit");
@@ -147322,7 +147322,7 @@ var require_visit = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/doc/directives.js
+//#region node_modules/yaml/dist/doc/directives.js
 var require_directives = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var visit = require_visit();
@@ -147488,7 +147488,7 @@ var require_directives = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/doc/anchors.js
+//#region node_modules/yaml/dist/doc/anchors.js
 var require_anchors = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var visit = require_visit();
@@ -147551,7 +147551,7 @@ var require_anchors = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/doc/applyReviver.js
+//#region node_modules/yaml/dist/doc/applyReviver.js
 var require_applyReviver = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* Applies the JSON.parse reviver algorithm as defined in the ECMA-262 spec,
@@ -147592,7 +147592,7 @@ var require_applyReviver = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/nodes/toJS.js
+//#region node_modules/yaml/dist/nodes/toJS.js
 var require_toJS = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	/**
@@ -147630,7 +147630,7 @@ var require_toJS = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/nodes/Node.js
+//#region node_modules/yaml/dist/nodes/Node.js
 var require_Node = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var applyReviver = require_applyReviver();
 	var identity = require_identity();
@@ -147665,7 +147665,7 @@ var require_Node = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/nodes/Alias.js
+//#region node_modules/yaml/dist/nodes/Alias.js
 var require_Alias = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var anchors = require_anchors();
 	var visit = require_visit();
@@ -147760,7 +147760,7 @@ var require_Alias = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/nodes/Scalar.js
+//#region node_modules/yaml/dist/nodes/Scalar.js
 var require_Scalar = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var Node = require_Node();
@@ -147788,7 +147788,7 @@ var require_Scalar = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/doc/createNode.js
+//#region node_modules/yaml/dist/doc/createNode.js
 var require_createNode = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Alias = require_Alias();
 	var identity = require_identity();
@@ -147852,7 +147852,7 @@ var require_createNode = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/nodes/Collection.js
+//#region node_modules/yaml/dist/nodes/Collection.js
 var require_Collection = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var createNode = require_createNode();
 	var identity = require_identity();
@@ -147974,7 +147974,7 @@ var require_Collection = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/stringify/stringifyComment.js
+//#region node_modules/yaml/dist/stringify/stringifyComment.js
 var require_stringifyComment = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* Stringifies a comment.
@@ -147995,7 +147995,7 @@ var require_stringifyComment = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/stringify/foldFlowLines.js
+//#region node_modules/yaml/dist/stringify/foldFlowLines.js
 var require_foldFlowLines = /* @__PURE__ */ __commonJSMin(((exports) => {
 	const FOLD_FLOW = "flow";
 	const FOLD_BLOCK = "block";
@@ -148112,7 +148112,7 @@ var require_foldFlowLines = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/stringify/stringifyString.js
+//#region node_modules/yaml/dist/stringify/stringifyString.js
 var require_stringifyString = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Scalar = require_Scalar();
 	var foldFlowLines = require_foldFlowLines();
@@ -148337,7 +148337,7 @@ var require_stringifyString = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/stringify/stringify.js
+//#region node_modules/yaml/dist/stringify/stringify.js
 var require_stringify$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var anchors = require_anchors();
 	var identity = require_identity();
@@ -148446,7 +148446,7 @@ var require_stringify$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/stringify/stringifyPair.js
+//#region node_modules/yaml/dist/stringify/stringifyPair.js
 var require_stringifyPair = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var Scalar = require_Scalar();
@@ -148544,7 +148544,7 @@ var require_stringifyPair = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/log.js
+//#region node_modules/yaml/dist/log.js
 var require_log = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var node_process$2 = __require("process");
 	function debug(logLevel, ...messages) {
@@ -148559,7 +148559,7 @@ var require_log = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/yaml-1.1/merge.js
+//#region node_modules/yaml/dist/schema/yaml-1.1/merge.js
 var require_merge = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var Scalar = require_Scalar();
@@ -148603,7 +148603,7 @@ var require_merge = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/nodes/addPairToJSMap.js
+//#region node_modules/yaml/dist/nodes/addPairToJSMap.js
 var require_addPairToJSMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var log = require_log();
 	var merge = require_merge();
@@ -148655,7 +148655,7 @@ var require_addPairToJSMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/nodes/Pair.js
+//#region node_modules/yaml/dist/nodes/Pair.js
 var require_Pair = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var createNode = require_createNode();
 	var stringifyPair = require_stringifyPair();
@@ -148689,7 +148689,7 @@ var require_Pair = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/stringify/stringifyCollection.js
+//#region node_modules/yaml/dist/stringify/stringifyCollection.js
 var require_stringifyCollection = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var stringify = require_stringify$1();
@@ -148808,7 +148808,7 @@ var require_stringifyCollection = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/nodes/YAMLMap.js
+//#region node_modules/yaml/dist/nodes/YAMLMap.js
 var require_YAMLMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var stringifyCollection = require_stringifyCollection();
 	var addPairToJSMap = require_addPairToJSMap();
@@ -148918,7 +148918,7 @@ var require_YAMLMap = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/common/map.js
+//#region node_modules/yaml/dist/schema/common/map.js
 var require_map = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var YAMLMap = require_YAMLMap();
@@ -148937,7 +148937,7 @@ var require_map = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/nodes/YAMLSeq.js
+//#region node_modules/yaml/dist/nodes/YAMLSeq.js
 var require_YAMLSeq = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var createNode = require_createNode();
 	var stringifyCollection = require_stringifyCollection();
@@ -149044,7 +149044,7 @@ var require_YAMLSeq = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/common/seq.js
+//#region node_modules/yaml/dist/schema/common/seq.js
 var require_seq = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var YAMLSeq = require_YAMLSeq();
@@ -149063,7 +149063,7 @@ var require_seq = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/common/string.js
+//#region node_modules/yaml/dist/schema/common/string.js
 var require_string = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var stringifyString = require_stringifyString();
 	const string = {
@@ -149080,7 +149080,7 @@ var require_string = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/common/null.js
+//#region node_modules/yaml/dist/schema/common/null.js
 var require_null = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Scalar = require_Scalar();
 	const nullTag = {
@@ -149096,7 +149096,7 @@ var require_null = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/core/bool.js
+//#region node_modules/yaml/dist/schema/core/bool.js
 var require_bool$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Scalar = require_Scalar();
 	const boolTag = {
@@ -149116,7 +149116,7 @@ var require_bool$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/stringify/stringifyNumber.js
+//#region node_modules/yaml/dist/stringify/stringifyNumber.js
 var require_stringifyNumber = /* @__PURE__ */ __commonJSMin(((exports) => {
 	function stringifyNumber({ format, minFractionDigits, tag, value }) {
 		if (typeof value === "bigint") return String(value);
@@ -149138,7 +149138,7 @@ var require_stringifyNumber = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/core/float.js
+//#region node_modules/yaml/dist/schema/core/float.js
 var require_float$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Scalar = require_Scalar();
 	var stringifyNumber = require_stringifyNumber();
@@ -149181,7 +149181,7 @@ var require_float$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/core/int.js
+//#region node_modules/yaml/dist/schema/core/int.js
 var require_int$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var stringifyNumber = require_stringifyNumber();
 	const intIdentify = (value) => typeof value === "bigint" || Number.isInteger(value);
@@ -149223,7 +149223,7 @@ var require_int$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/core/schema.js
+//#region node_modules/yaml/dist/schema/core/schema.js
 var require_schema$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var map = require_map();
 	var _null = require_null();
@@ -149249,7 +149249,7 @@ var require_schema$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/json/schema.js
+//#region node_modules/yaml/dist/schema/json/schema.js
 var require_schema$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Scalar = require_Scalar();
 	var map = require_map();
@@ -149313,7 +149313,7 @@ var require_schema$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/yaml-1.1/binary.js
+//#region node_modules/yaml/dist/schema/yaml-1.1/binary.js
 var require_binary = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var node_buffer = __require("buffer");
 	var Scalar = require_Scalar();
@@ -149363,7 +149363,7 @@ var require_binary = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/yaml-1.1/pairs.js
+//#region node_modules/yaml/dist/schema/yaml-1.1/pairs.js
 var require_pairs = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var Pair = require_Pair();
@@ -149424,7 +149424,7 @@ var require_pairs = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/yaml-1.1/omap.js
+//#region node_modules/yaml/dist/schema/yaml-1.1/omap.js
 var require_omap = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var toJS = require_toJS();
@@ -149488,7 +149488,7 @@ var require_omap = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/yaml-1.1/bool.js
+//#region node_modules/yaml/dist/schema/yaml-1.1/bool.js
 var require_bool = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Scalar = require_Scalar();
 	function boolStringify({ value, source }, ctx) {
@@ -149516,7 +149516,7 @@ var require_bool = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/yaml-1.1/float.js
+//#region node_modules/yaml/dist/schema/yaml-1.1/float.js
 var require_float = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Scalar = require_Scalar();
 	var stringifyNumber = require_stringifyNumber();
@@ -149562,7 +149562,7 @@ var require_float = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/yaml-1.1/int.js
+//#region node_modules/yaml/dist/schema/yaml-1.1/int.js
 var require_int = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var stringifyNumber = require_stringifyNumber();
 	const intIdentify = (value) => typeof value === "bigint" || Number.isInteger(value);
@@ -149638,7 +149638,7 @@ var require_int = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/yaml-1.1/set.js
+//#region node_modules/yaml/dist/schema/yaml-1.1/set.js
 var require_set = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var Pair = require_Pair();
@@ -149707,7 +149707,7 @@ var require_set = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/yaml-1.1/timestamp.js
+//#region node_modules/yaml/dist/schema/yaml-1.1/timestamp.js
 var require_timestamp = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var stringifyNumber = require_stringifyNumber();
 	/** Internal types handle bigint as number, because TS can't figure it out. */
@@ -149791,7 +149791,7 @@ var require_timestamp = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/yaml-1.1/schema.js
+//#region node_modules/yaml/dist/schema/yaml-1.1/schema.js
 var require_schema = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var map = require_map();
 	var _null = require_null();
@@ -149833,7 +149833,7 @@ var require_schema = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/tags.js
+//#region node_modules/yaml/dist/schema/tags.js
 var require_tags = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var map = require_map();
 	var _null = require_null();
@@ -149918,7 +149918,7 @@ var require_tags = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/schema/Schema.js
+//#region node_modules/yaml/dist/schema/Schema.js
 var require_Schema = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var map = require_map();
@@ -149948,7 +149948,7 @@ var require_Schema = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/stringify/stringifyDocument.js
+//#region node_modules/yaml/dist/stringify/stringifyDocument.js
 var require_stringifyDocument = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var stringify = require_stringify$1();
@@ -150010,7 +150010,7 @@ var require_stringifyDocument = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/doc/Document.js
+//#region node_modules/yaml/dist/doc/Document.js
 var require_Document = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Alias = require_Alias();
 	var Collection = require_Collection();
@@ -150292,7 +150292,7 @@ var require_Document = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/errors.js
+//#region node_modules/yaml/dist/errors.js
 var require_errors = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var YAMLError = class extends Error {
 		constructor(name, pos, code, message) {
@@ -150346,7 +150346,7 @@ var require_errors = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/resolve-props.js
+//#region node_modules/yaml/dist/compose/resolve-props.js
 var require_resolve_props = /* @__PURE__ */ __commonJSMin(((exports) => {
 	function resolveProps(tokens, { flow, indicator, next, offset, onError, parentIndent, startOnNewline }) {
 		let spaceBefore = false;
@@ -150454,7 +150454,7 @@ var require_resolve_props = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/util-contains-newline.js
+//#region node_modules/yaml/dist/compose/util-contains-newline.js
 var require_util_contains_newline = /* @__PURE__ */ __commonJSMin(((exports) => {
 	function containsNewline(key) {
 		if (!key) return null;
@@ -150484,7 +150484,7 @@ var require_util_contains_newline = /* @__PURE__ */ __commonJSMin(((exports) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/util-flow-indent-check.js
+//#region node_modules/yaml/dist/compose/util-flow-indent-check.js
 var require_util_flow_indent_check = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var utilContainsNewline = require_util_contains_newline();
 	function flowIndentCheck(indent, fc, onError) {
@@ -150497,7 +150497,7 @@ var require_util_flow_indent_check = /* @__PURE__ */ __commonJSMin(((exports) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/util-map-includes.js
+//#region node_modules/yaml/dist/compose/util-map-includes.js
 var require_util_map_includes = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	function mapIncludes(ctx, items, search) {
@@ -150510,7 +150510,7 @@ var require_util_map_includes = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/resolve-block-map.js
+//#region node_modules/yaml/dist/compose/resolve-block-map.js
 var require_resolve_block_map = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Pair = require_Pair();
 	var YAMLMap = require_YAMLMap();
@@ -150595,7 +150595,7 @@ var require_resolve_block_map = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/resolve-block-seq.js
+//#region node_modules/yaml/dist/compose/resolve-block-seq.js
 var require_resolve_block_seq = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var YAMLSeq = require_YAMLSeq();
 	var resolveProps = require_resolve_props();
@@ -150638,7 +150638,7 @@ var require_resolve_block_seq = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/resolve-end.js
+//#region node_modules/yaml/dist/compose/resolve-end.js
 var require_resolve_end = /* @__PURE__ */ __commonJSMin(((exports) => {
 	function resolveEnd(end, offset, reqSpace, onError) {
 		let comment = "";
@@ -150677,7 +150677,7 @@ var require_resolve_end = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/resolve-flow-collection.js
+//#region node_modules/yaml/dist/compose/resolve-flow-collection.js
 var require_resolve_flow_collection = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var Pair = require_Pair();
@@ -150833,7 +150833,7 @@ var require_resolve_flow_collection = /* @__PURE__ */ __commonJSMin(((exports) =
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/compose-collection.js
+//#region node_modules/yaml/dist/compose/compose-collection.js
 var require_compose_collection = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var Scalar = require_Scalar();
@@ -150886,7 +150886,7 @@ var require_compose_collection = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/resolve-block-scalar.js
+//#region node_modules/yaml/dist/compose/resolve-block-scalar.js
 var require_resolve_block_scalar = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Scalar = require_Scalar();
 	function resolveBlockScalar(ctx, scalar, onError) {
@@ -151062,7 +151062,7 @@ var require_resolve_block_scalar = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/resolve-flow-scalar.js
+//#region node_modules/yaml/dist/compose/resolve-flow-scalar.js
 var require_resolve_flow_scalar = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Scalar = require_Scalar();
 	var resolveEnd = require_resolve_end();
@@ -151266,7 +151266,7 @@ var require_resolve_flow_scalar = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/compose-scalar.js
+//#region node_modules/yaml/dist/compose/compose-scalar.js
 var require_compose_scalar = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var identity = require_identity();
 	var Scalar = require_Scalar();
@@ -151326,7 +151326,7 @@ var require_compose_scalar = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/util-empty-scalar-position.js
+//#region node_modules/yaml/dist/compose/util-empty-scalar-position.js
 var require_util_empty_scalar_position = /* @__PURE__ */ __commonJSMin(((exports) => {
 	function emptyScalarPosition(offset, before, pos) {
 		if (before) {
@@ -151354,7 +151354,7 @@ var require_util_empty_scalar_position = /* @__PURE__ */ __commonJSMin(((exports
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/compose-node.js
+//#region node_modules/yaml/dist/compose/compose-node.js
 var require_compose_node = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Alias = require_Alias();
 	var identity = require_identity();
@@ -151444,7 +151444,7 @@ var require_compose_node = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/compose-doc.js
+//#region node_modules/yaml/dist/compose/compose-doc.js
 var require_compose_doc = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Document = require_Document();
 	var composeNode = require_compose_node();
@@ -151487,7 +151487,7 @@ var require_compose_doc = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/compose/composer.js
+//#region node_modules/yaml/dist/compose/composer.js
 var require_composer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var node_process$1 = __require("process");
 	var directives = require_directives();
@@ -151686,7 +151686,7 @@ var require_composer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/parse/cst-scalar.js
+//#region node_modules/yaml/dist/parse/cst-scalar.js
 var require_cst_scalar = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var resolveBlockScalar = require_resolve_block_scalar();
 	var resolveFlowScalar = require_resolve_flow_scalar();
@@ -151954,7 +151954,7 @@ var require_cst_scalar = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/parse/cst-stringify.js
+//#region node_modules/yaml/dist/parse/cst-stringify.js
 var require_cst_stringify = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* Stringify a CST document, token, or collection item
@@ -152006,7 +152006,7 @@ var require_cst_stringify = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/parse/cst-visit.js
+//#region node_modules/yaml/dist/parse/cst-visit.js
 var require_cst_visit = /* @__PURE__ */ __commonJSMin(((exports) => {
 	const BREAK = Symbol("break visit");
 	const SKIP = Symbol("skip children");
@@ -152098,7 +152098,7 @@ var require_cst_visit = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/parse/cst.js
+//#region node_modules/yaml/dist/parse/cst.js
 var require_cst = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var cstScalar = require_cst_scalar();
 	var cstStringify = require_cst_stringify();
@@ -152178,7 +152178,7 @@ var require_cst = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/parse/lexer.js
+//#region node_modules/yaml/dist/parse/lexer.js
 var require_lexer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var cst = require_cst();
 	function isEmpty(ch) {
@@ -152710,7 +152710,7 @@ var require_lexer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/parse/line-counter.js
+//#region node_modules/yaml/dist/parse/line-counter.js
 var require_line_counter = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* Tracks newlines during parsing in order to provide an efficient API for
@@ -152758,7 +152758,7 @@ var require_line_counter = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/parse/parser.js
+//#region node_modules/yaml/dist/parse/parser.js
 var require_parser = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var node_process = __require("process");
 	var cst = require_cst();
@@ -153619,7 +153619,7 @@ var require_parser = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/public-api.js
+//#region node_modules/yaml/dist/public-api.js
 var require_public_api = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var composer = require_composer();
 	var Document = require_Document();
@@ -153707,7 +153707,7 @@ var require_public_api = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/yaml/dist/index.js
+//#region node_modules/yaml/dist/index.js
 var require_dist = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var composer = require_composer();
 	var Document = require_Document();
@@ -153757,7 +153757,7 @@ var require_dist = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/configuration/build/src/utils.js
+//#region node_modules/@opentelemetry/configuration/build/src/utils.js
 var require_utils$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getHttpTlsConfig = exports.initializeDefaultLoggerProviderConfiguration = exports.initializeDefaultMeterProviderConfiguration = exports.initializeDefaultTracerProviderConfiguration = exports.initializeDefaultConfiguration = exports.getGrpcTlsConfig = exports.substituteEnvVars = void 0;
@@ -153900,7 +153900,7 @@ var require_utils$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/configuration/build/src/EnvDefinition.js
+//#region node_modules/@opentelemetry/configuration/build/src/EnvDefinition.js
 var require_EnvDefinition = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ENV_DEFS = exports.SamplerType = void 0;
@@ -153935,7 +153935,7 @@ var require_EnvDefinition = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/configuration/build/src/EnvReader.js
+//#region node_modules/@opentelemetry/configuration/build/src/EnvReader.js
 var require_EnvReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.readAllEnvVars = exports.readEnvVar = void 0;
@@ -153975,7 +153975,7 @@ var require_EnvReader = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/configuration/build/src/EnvironmentConfigFactory.js
+//#region node_modules/@opentelemetry/configuration/build/src/EnvironmentConfigFactory.js
 var require_EnvironmentConfigFactory = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.setLoggerProvider = exports.setMeterProvider = exports.setTracerProvider = exports.setSampler = exports.setPropagators = exports.setAttributeLimits = exports.setResources = exports.EnvironmentConfigFactory = void 0;
@@ -154333,7 +154333,7 @@ var require_EnvironmentConfigFactory = /* @__PURE__ */ __commonJSMin(((exports) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/configuration/build/src/generated/validator.js
+//#region node_modules/@opentelemetry/configuration/build/src/generated/validator.js
 var require_validator = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	module.exports = validate20;
@@ -168555,7 +168555,7 @@ var require_validator = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/configuration/build/src/FileConfigFactory.js
+//#region node_modules/@opentelemetry/configuration/build/src/FileConfigFactory.js
 var require_FileConfigFactory = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.parseConfigFile = exports.FileConfigFactory = void 0;
@@ -168703,7 +168703,7 @@ var require_FileConfigFactory = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/configuration/build/src/ConfigFactory.js
+//#region node_modules/@opentelemetry/configuration/build/src/ConfigFactory.js
 var require_ConfigFactory = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createConfigFactory = void 0;
@@ -168718,7 +168718,7 @@ var require_ConfigFactory = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/configuration/build/src/index.js
+//#region node_modules/@opentelemetry/configuration/build/src/index.js
 var require_src$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.createConfigFactory = void 0;
@@ -168732,7 +168732,7 @@ var require_src$5 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-node/build/src/semconv.js
+//#region node_modules/@opentelemetry/sdk-node/build/src/semconv.js
 var require_semconv = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ATTR_SERVICE_NAMESPACE = exports.ATTR_SERVICE_INSTANCE_ID = exports.ATTR_PROCESS_PID = exports.ATTR_HOST_NAME = void 0;
@@ -168800,7 +168800,7 @@ var require_semconv = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-node/build/src/diag.js
+//#region node_modules/@opentelemetry/sdk-node/build/src/diag.js
 var require_diag = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.diagLogLevelFromSeverityNumberConfig = void 0;
@@ -168898,7 +168898,7 @@ var require_diag = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-node/build/src/start.js
+//#region node_modules/@opentelemetry/sdk-node/build/src/start.js
 var require_start = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.setupResource = exports.startNodeSDK = exports.NOOP_SDK = void 0;
@@ -169005,7 +169005,7 @@ var require_start = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@opentelemetry/sdk-node/build/src/index.js
+//#region node_modules/@opentelemetry/sdk-node/build/src/index.js
 var require_src$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.startNodeSDK = exports.NodeSDK = exports.tracing = exports.resources = exports.node = exports.metrics = exports.logs = exports.core = exports.contextBase = exports.api = void 0;
@@ -169034,7 +169034,7 @@ var require_src$4 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/telemetry/telemetry-manager.js
+//#region node_modules/@databricks/appkit/dist/telemetry/telemetry-manager.js
 var import_src = require_src$28();
 var import_src$1 = require_src$25();
 var import_src$2 = require_src$23();
@@ -169147,11 +169147,11 @@ var TelemetryManager = class TelemetryManager {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/telemetry/index.js
+//#region node_modules/@databricks/appkit/dist/telemetry/index.js
 init_esm$2();
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/utils/merge.js
+//#region node_modules/@databricks/appkit/dist/utils/merge.js
 function deepMerge(target, ...sources) {
 	if (!sources.length) return target;
 	const source = sources.shift();
@@ -169170,7 +169170,7 @@ function isObject$4(item) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/cache/defaults.js
+//#region node_modules/@databricks/appkit/dist/cache/defaults.js
 /** Default configuration for cache */
 const cacheDefaults = {
 	enabled: true,
@@ -169182,7 +169182,7 @@ const cacheDefaults = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/cache/storage/defaults.js
+//#region node_modules/@databricks/appkit/dist/cache/storage/defaults.js
 /** Default configuration for in-memory storage */
 const inMemoryStorageDefaults = { maxSize: 1e3 };
 /** Default configuration for Lakebase storage */
@@ -169197,7 +169197,7 @@ const lakebaseStorageDefaults = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/cache/storage/memory.js
+//#region node_modules/@databricks/appkit/dist/cache/storage/memory.js
 /**
 * In-memory cache storage implementation. Uses a least recently used (LRU) eviction policy
 * to manage memory usage and ensure efficient cache operations.
@@ -169282,7 +169282,7 @@ var InMemoryStorage = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/cache/storage/persistent.js
+//#region node_modules/@databricks/appkit/dist/cache/storage/persistent.js
 const logger$45 = createLogger("cache:persistent");
 /**
 * Persistent cache storage implementation. Uses a least recently used (LRU) eviction policy
@@ -169522,7 +169522,7 @@ var PersistentStorage = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/cache/index.js
+//#region node_modules/@databricks/appkit/dist/cache/index.js
 const logger$44 = createLogger("cache");
 function createAbortError(signal) {
 	if (signal.reason !== void 0) return signal.reason;
@@ -169899,7 +169899,7 @@ var CacheManager = class CacheManager {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/shared/src/naming.js
+//#region node_modules/@databricks/appkit/dist/shared/src/naming.js
 /**
 * camelCase to kebab-case (e.g. `"aiSearch"` -> `"ai-search"`). Used to derive
 * HTTP route prefixes and folder paths from the canonical camelCase plugin
@@ -169910,7 +169910,7 @@ function camelToKebab(name) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/app/index.js
+//#region node_modules/@databricks/appkit/dist/app/index.js
 const logger$43 = createLogger("app");
 var AppManager = class {
 	_queriesDir;
@@ -170075,7 +170075,7 @@ var AppManager = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/stream/buffers.js
+//#region node_modules/@databricks/appkit/dist/stream/buffers.js
 var RingBuffer = class {
 	buffer;
 	capacity;
@@ -170168,7 +170168,7 @@ var EventRingBuffer = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/stream/defaults.js
+//#region node_modules/@databricks/appkit/dist/stream/defaults.js
 const streamDefaults = {
 	bufferSize: 100,
 	maxEventSize: 1 * 1024 * 1024,
@@ -170179,7 +170179,7 @@ const streamDefaults = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/stream/types.js
+//#region node_modules/@databricks/appkit/dist/stream/types.js
 const SSEWarningCode = { BUFFER_OVERFLOW_RESTART: "BUFFER_OVERFLOW_RESTART" };
 const SSEErrorCode = {
 	TEMPORARY_UNAVAILABLE: "TEMPORARY_UNAVAILABLE",
@@ -170193,7 +170193,7 @@ const SSEErrorCode = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/stream/validator.js
+//#region node_modules/@databricks/appkit/dist/stream/validator.js
 var StreamValidator = class StreamValidator {
 	static UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 	static STREAM_ID_REGEX = /^[a-zA-Z0-9_-]+$/;
@@ -170212,7 +170212,7 @@ var StreamValidator = class StreamValidator {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/stream/sse-writer.js
+//#region node_modules/@databricks/appkit/dist/stream/sse-writer.js
 var SSEWriter = class {
 	setupHeaders(res) {
 		res.setHeader("Content-Type", "text/event-stream; charset=utf-8");
@@ -170267,7 +170267,7 @@ var SSEWriter = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/stream/timers.js
+//#region node_modules/@databricks/appkit/dist/stream/timers.js
 function clearGraceTimer(entry) {
 	if (entry.disconnectGraceTimer) {
 		clearTimeout(entry.disconnectGraceTimer);
@@ -170282,7 +170282,7 @@ function clearRemovalTimer(entry) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/stream/stream-registry.js
+//#region node_modules/@databricks/appkit/dist/stream/stream-registry.js
 var StreamRegistry = class {
 	streams;
 	maxActiveStreams;
@@ -170349,7 +170349,7 @@ var StreamRegistry = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/stream/stream-manager.js
+//#region node_modules/@databricks/appkit/dist/stream/stream-manager.js
 init_esm$2();
 const logger$42 = createLogger("stream");
 var StreamManager = class {
@@ -170593,12 +170593,12 @@ var StreamManager = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/stream/sse-reader.js
+//#region node_modules/@databricks/appkit/dist/stream/sse-reader.js
 const DEFAULT_MAX_SSE_LINE_CHARS = 1024 * 1024;
 const DEFAULT_MAX_SSE_BUFFER_CHARS = 8 * 1024 * 1024;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/utils/safe-handler.js
+//#region node_modules/@databricks/appkit/dist/utils/safe-handler.js
 /**
 * Wrap an Express handler so synchronous throws and async rejections are
 * forwarded to the error-handling middleware via `next(err)`.
@@ -170624,7 +170624,7 @@ function forwardAsyncErrors(handler) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/server/remote-tunnel/gate.js
+//#region node_modules/@databricks/appkit/dist/plugins/server/remote-tunnel/gate.js
 /** Assets prefixes that are served through the remote tunnel */
 const REMOTE_TUNNEL_ASSET_PREFIXES = [
 	"/@vite/",
@@ -170673,7 +170673,7 @@ function isRemoteTunnelAssetRequest(req) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugin/dev-reader.js
+//#region node_modules/@databricks/appkit/dist/plugin/dev-reader.js
 const logger$41 = createLogger("plugin:dev-reader");
 /**
 * This class is used to read files from the local filesystem in dev mode
@@ -170767,7 +170767,7 @@ var DevFileReader = class DevFileReader {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugin/interceptors/cache.js
+//#region node_modules/@databricks/appkit/dist/plugin/interceptors/cache.js
 var CacheInterceptor = class {
 	constructor(cacheManager, config) {
 		this.cacheManager = cacheManager;
@@ -170792,7 +170792,7 @@ var CacheInterceptor = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugin/interceptors/retry.js
+//#region node_modules/@databricks/appkit/dist/plugin/interceptors/retry.js
 const logger$40 = createLogger("interceptors:retry");
 /**
 * Determines whether an error is safe to retry.
@@ -170851,7 +170851,7 @@ var RetryInterceptor = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugin/interceptors/telemetry.js
+//#region node_modules/@databricks/appkit/dist/plugin/interceptors/telemetry.js
 var TelemetryInterceptor = class {
 	constructor(telemetry, config) {
 		this.telemetry = telemetry;
@@ -170898,7 +170898,7 @@ var TelemetryInterceptor = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugin/interceptors/timeout.js
+//#region node_modules/@databricks/appkit/dist/plugin/interceptors/timeout.js
 const logger$39 = createLogger("interceptors:timeout");
 var TimeoutInterceptor = class {
 	constructor(timeoutMs) {
@@ -170933,7 +170933,7 @@ var TimeoutInterceptor = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugin/plugin.js
+//#region node_modules/@databricks/appkit/dist/plugin/plugin.js
 init_esm$2();
 const logger$38 = createLogger("plugin");
 /**
@@ -171410,7 +171410,7 @@ var Plugin = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugin/to-plugin.js
+//#region node_modules/@databricks/appkit/dist/plugin/to-plugin.js
 /**
 * Wraps a plugin class so it can be passed to `createApp` with optional
 * config. Infers the config type from the constructor and the plugin name
@@ -171429,7 +171429,7 @@ function toPlugin(plugin) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/registry/types.generated.js
+//#region node_modules/@databricks/appkit/dist/registry/types.generated.js
 /** Resource types from resourceTypeSchema.options */
 let ResourceType = /* @__PURE__ */ function(ResourceType) {
 	ResourceType["SECRET"] = "secret";
@@ -171488,7 +171488,7 @@ const PERMISSION_HIERARCHY_BY_TYPE = {
 const PERMISSIONS_BY_TYPE = PERMISSION_HIERARCHY_BY_TYPE;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/registry/manifest-loader.js
+//#region node_modules/@databricks/appkit/dist/registry/manifest-loader.js
 const logger$37 = createLogger("manifest-loader");
 function normalizeType(s) {
 	const v = Object.values(ResourceType).find((x) => x === s);
@@ -171547,7 +171547,7 @@ function getPluginManifest(plugin) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/utils/banner.js
+//#region node_modules/@databricks/appkit/dist/utils/banner.js
 /**
 * Frames content lines in an ASCII box (`===` border, `| … |` sides) padded to
 * the widest line. Used for prominent dev-mode warnings that must not be missed
@@ -171564,7 +171564,7 @@ function formatWarningBanner(lines) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/registry/resource-registry.js
+//#region node_modules/@databricks/appkit/dist/registry/resource-registry.js
 const logger$36 = createLogger("resource-registry");
 /**
 * Dedup key for registry: type + resourceKey (machine-stable).
@@ -171864,7 +171864,7 @@ var ResourceRegistry = class ResourceRegistry {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/internal-telemetry/config.js
+//#region node_modules/@databricks/appkit/dist/internal-telemetry/config.js
 /**
 * Checks whether internal telemetry is enabled.
 * Shared across all telemetry event types (startup, heartbeat, metrics, etc.).
@@ -171877,7 +171877,7 @@ function isInternalTelemetryEnabled(opts) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/internal-telemetry/appkit-log.js
+//#region node_modules/@databricks/appkit/dist/internal-telemetry/appkit-log.js
 function wrapAppkitLog(log) {
 	return {
 		frontend_log_event_id: `appkit-${log.event_name.toLowerCase()}-${crypto.randomUUID()}`,
@@ -171894,7 +171894,7 @@ function buildAppkitPayload(logs) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/internal-telemetry/reporter.js
+//#region node_modules/@databricks/appkit/dist/internal-telemetry/reporter.js
 const DEFAULT_HEARTBEAT_INTERVAL_MS = 300 * 1e3;
 const DEFAULT_METRICS_FLUSH_INTERVAL_MS = 60 * 1e3;
 function envIntervalMs(name, fallback) {
@@ -172022,7 +172022,7 @@ var TelemetryReporter = class TelemetryReporter {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/ui-variants/choice-sink.js
+//#region node_modules/@databricks/appkit/dist/plugins/ui-variants/choice-sink.js
 /**
 * Path of the JSONL choices file, relative to the app's working directory.
 * A coding agent reads it to pick up the developer's in-browser confirmation
@@ -172087,7 +172087,7 @@ var FileChoiceStore = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/ui-variants/manifest.js
+//#region node_modules/@databricks/appkit/dist/plugins/ui-variants/manifest.js
 var manifest_default$7 = {
 	$schema: "https://databricks.github.io/appkit/schemas/plugin-manifest.schema.json",
 	name: "uiVariants",
@@ -172102,7 +172102,7 @@ var manifest_default$7 = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/ui-variants/index.js
+//#region node_modules/@databricks/appkit/dist/plugins/ui-variants/index.js
 const logger$35 = createLogger("ui-variants");
 /**
 * Dev-only recorder backing the `<Variants>` UI picker.
@@ -172187,7 +172187,7 @@ var UiVariantsPlugin = class extends Plugin {
 const uiVariants = toPlugin(UiVariantsPlugin);
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/core/lifecycle-manager.js
+//#region node_modules/@databricks/appkit/dist/core/lifecycle-manager.js
 const logger$34 = createLogger("lifecycle");
 /**
 * Owns the process's graceful-shutdown sequence.
@@ -172361,7 +172361,7 @@ var LifecycleManager = class LifecycleManager {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/core/plugin-context.js
+//#region node_modules/@databricks/appkit/dist/core/plugin-context.js
 const logger$33 = createLogger("plugin-context");
 /**
 * Mediator for inter-plugin communication.
@@ -172580,7 +172580,7 @@ function isToolProvider(plugin) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/core/appkit.js
+//#region node_modules/@databricks/appkit/dist/core/appkit.js
 const logger$32 = createLogger("appkit");
 var AppKit = class AppKit {
 	#pluginInstances = {};
@@ -172784,7 +172784,7 @@ async function createApp(config = {}) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/files/policy.js
+//#region node_modules/@databricks/appkit/dist/plugins/files/policy.js
 /** Actions that only read data. */
 const READ_ACTIONS = new Set([
 	"list",
@@ -172839,7 +172839,7 @@ const policy = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/core/core.js
+//#region node_modules/zod/v4/core/core.js
 /** A special constant with type `never` */
 const NEVER = Object.freeze({ status: "aborted" });
 function $constructor(name, initializer, params) {
@@ -172899,7 +172899,7 @@ function config(newConfig) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/core/util.js
+//#region node_modules/zod/v4/core/util.js
 function getEnumValues(entries) {
 	const numericValues = Object.values(entries).filter((v) => typeof v === "number");
 	return Object.entries(entries).filter(([k, _]) => numericValues.indexOf(+k) === -1).map(([_, v]) => v);
@@ -173213,7 +173213,7 @@ function issue(...args) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/core/errors.js
+//#region node_modules/zod/v4/core/errors.js
 const initializer$1 = (inst, def) => {
 	inst.name = "$ZodError";
 	Object.defineProperty(inst, "_zod", {
@@ -173271,7 +173271,7 @@ function formatError(error, mapper = (issue) => issue.message) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/core/parse.js
+//#region node_modules/zod/v4/core/parse.js
 const _parse = (_Err) => (schema, value, _ctx, _params) => {
 	const ctx = _ctx ? Object.assign(_ctx, { async: false }) : { async: false };
 	const result = schema._zod.run({
@@ -173375,7 +173375,7 @@ const _safeDecodeAsync = (_Err) => async (schema, value, _ctx) => {
 const safeDecodeAsync$1 = /* @__PURE__ */ _safeDecodeAsync($ZodRealError);
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/core/regexes.js
+//#region node_modules/zod/v4/core/regexes.js
 const cuid = /^[cC][^\s-]{8,}$/;
 const cuid2 = /^[0-9a-z]+$/;
 const ulid = /^[0-9A-HJKMNP-TV-Za-hjkmnp-tv-z]{26}$/;
@@ -173434,7 +173434,7 @@ const lowercase = /^[^A-Z]*$/;
 const uppercase = /^[^a-z]*$/;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/core/checks.js
+//#region node_modules/zod/v4/core/checks.js
 const $ZodCheck = /* @__PURE__ */ $constructor("$ZodCheck", (inst, def) => {
 	var _a;
 	inst._zod ?? (inst._zod = {});
@@ -173793,7 +173793,7 @@ const $ZodCheckOverwrite = /* @__PURE__ */ $constructor("$ZodCheckOverwrite", (i
 });
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/core/doc.js
+//#region node_modules/zod/v4/core/doc.js
 var Doc = class {
 	constructor(args = []) {
 		this.content = [];
@@ -173825,7 +173825,7 @@ var Doc = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/core/versions.js
+//#region node_modules/zod/v4/core/versions.js
 const version = {
 	major: 4,
 	minor: 3,
@@ -173833,7 +173833,7 @@ const version = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/core/schemas.js
+//#region node_modules/zod/v4/core/schemas.js
 const $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
 	var _a;
 	inst ?? (inst = {});
@@ -174991,7 +174991,7 @@ function handleRefineResult(result, payload, input, inst) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/core/registries.js
+//#region node_modules/zod/v4/core/registries.js
 var _a$4;
 var $ZodRegistry = class {
 	constructor() {
@@ -175039,7 +175039,7 @@ function registry() {
 const globalRegistry = globalThis.__zod_globalRegistry;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/core/api.js
+//#region node_modules/zod/v4/core/api.js
 /* @__NO_SIDE_EFFECTS__ */
 function _string(Class, params) {
 	return new Class({
@@ -175566,7 +175566,7 @@ function meta$1(metadata) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/core/to-json-schema.js
+//#region node_modules/zod/v4/core/to-json-schema.js
 function initializeContext(params) {
 	let target = params?.target ?? "draft-2020-12";
 	if (target === "draft-4") target = "draft-04";
@@ -175852,7 +175852,7 @@ const createStandardJSONSchemaMethod = (schema, io, processors = {}) => (params)
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/core/json-schema-processors.js
+//#region node_modules/zod/v4/core/json-schema-processors.js
 const formatMap = {
 	guid: "uuid",
 	url: "uri",
@@ -176309,7 +176309,7 @@ function toJSONSchema(input, params) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/classic/iso.js
+//#region node_modules/zod/v4/classic/iso.js
 const ZodISODateTime = /* @__PURE__ */ $constructor("ZodISODateTime", (inst, def) => {
 	$ZodISODateTime.init(inst, def);
 	ZodStringFormat.init(inst, def);
@@ -176340,7 +176340,7 @@ function duration(params) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/classic/errors.js
+//#region node_modules/zod/v4/classic/errors.js
 const initializer = (inst, issues) => {
 	$ZodError.init(inst, issues);
 	inst.name = "ZodError";
@@ -176364,7 +176364,7 @@ const ZodError = $constructor("ZodError", initializer);
 const ZodRealError = $constructor("ZodError", initializer, { Parent: Error });
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/classic/parse.js
+//#region node_modules/zod/v4/classic/parse.js
 const parse$1 = /* @__PURE__ */ _parse(ZodRealError);
 const parseAsync = /* @__PURE__ */ _parseAsync(ZodRealError);
 const safeParse = /* @__PURE__ */ _safeParse(ZodRealError);
@@ -176379,7 +176379,7 @@ const safeEncodeAsync = /* @__PURE__ */ _safeEncodeAsync(ZodRealError);
 const safeDecodeAsync = /* @__PURE__ */ _safeDecodeAsync(ZodRealError);
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/classic/schemas.js
+//#region node_modules/zod/v4/classic/schemas.js
 const ZodType = /* @__PURE__ */ $constructor("ZodType", (inst, def) => {
 	$ZodType.init(inst, def);
 	Object.assign(inst["~standard"], { jsonSchema: {
@@ -176989,7 +176989,7 @@ const describe = describe$1;
 const meta = meta$1;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/zod/v4/classic/compat.js
+//#region node_modules/zod/v4/classic/compat.js
 /** @deprecated Use the raw string literal codes instead, e.g. "invalid_type". */
 const ZodIssueCode = {
 	invalid_type: "invalid_type",
@@ -177009,7 +177009,7 @@ var ZodFirstPartyTypeKind;
 (function(ZodFirstPartyTypeKind) {})(ZodFirstPartyTypeKind || (ZodFirstPartyTypeKind = {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/shared/src/sse/analytics.js
+//#region node_modules/@databricks/appkit/dist/shared/src/sse/analytics.js
 object({
 	type: literal("result"),
 	data: array(unknown()).optional(),
@@ -177026,7 +177026,7 @@ function makeResultMessage(data, extras = {}) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/stream/arrow-stream-processor.js
+//#region node_modules/@databricks/appkit/dist/stream/arrow-stream-processor.js
 const logger$31 = createLogger("stream:arrow");
 const BACKOFF_MULTIPLIER = 1e3;
 /**
@@ -177150,7 +177150,7 @@ var ArrowStreamProcessor = class ArrowStreamProcessor {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/tslib/tslib.es6.mjs
+//#region node_modules/tslib/tslib.es6.mjs
 function __awaiter(thisArg, _arguments, P, generator) {
 	function adopt(value) {
 		return value instanceof P ? value : new P(function(resolve) {
@@ -177279,7 +177279,7 @@ function __asyncValues(o) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/util/utf8.mjs
+//#region node_modules/apache-arrow/util/utf8.mjs
 const decoder = new TextDecoder("utf-8");
 /** @ignore */
 const decodeUtf8 = decoder.decode.bind(decoder);
@@ -177288,7 +177288,7 @@ const encoder = new TextEncoder();
 const encodeUtf8 = (value) => encoder.encode(value);
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/util/compat.mjs
+//#region node_modules/apache-arrow/util/compat.mjs
 /** @ignore */ const isNumber = (x) => typeof x === "number";
 /** @ignore */ const isBoolean = (x) => typeof x === "boolean";
 /** @ignore */ const isFunction = (x) => typeof x === "function";
@@ -177345,7 +177345,7 @@ const isFlatbuffersByteBuffer = (x) => {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/util/buffer.mjs
+//#region node_modules/apache-arrow/util/buffer.mjs
 /** @ignore */
 const SharedArrayBuf = typeof SharedArrayBuffer !== "undefined" ? SharedArrayBuffer : ArrayBuffer;
 /** @ignore */
@@ -177488,7 +177488,7 @@ function compareArrayLike(a, b) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/io/adapters.mjs
+//#region node_modules/apache-arrow/io/adapters.mjs
 /** @ignore */
 var adapters_default = {
 	fromIterable(source) {
@@ -177731,7 +177731,7 @@ function fromNodeStream(stream) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/metadata-version.mjs
+//#region node_modules/apache-arrow/fb/metadata-version.mjs
 /**
 * Logical types, vector layouts, and schemas
 * Format Version History.
@@ -177771,7 +177771,7 @@ var MetadataVersion;
 })(MetadataVersion || (MetadataVersion = {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/union-mode.mjs
+//#region node_modules/apache-arrow/fb/union-mode.mjs
 var UnionMode;
 (function(UnionMode) {
 	UnionMode[UnionMode["Sparse"] = 0] = "Sparse";
@@ -177779,7 +177779,7 @@ var UnionMode;
 })(UnionMode || (UnionMode = {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/precision.mjs
+//#region node_modules/apache-arrow/fb/precision.mjs
 var Precision;
 (function(Precision) {
 	Precision[Precision["HALF"] = 0] = "HALF";
@@ -177788,7 +177788,7 @@ var Precision;
 })(Precision || (Precision = {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/date-unit.mjs
+//#region node_modules/apache-arrow/fb/date-unit.mjs
 var DateUnit;
 (function(DateUnit) {
 	DateUnit[DateUnit["DAY"] = 0] = "DAY";
@@ -177796,7 +177796,7 @@ var DateUnit;
 })(DateUnit || (DateUnit = {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/time-unit.mjs
+//#region node_modules/apache-arrow/fb/time-unit.mjs
 var TimeUnit;
 (function(TimeUnit) {
 	TimeUnit[TimeUnit["SECOND"] = 0] = "SECOND";
@@ -177806,7 +177806,7 @@ var TimeUnit;
 })(TimeUnit || (TimeUnit = {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/interval-unit.mjs
+//#region node_modules/apache-arrow/fb/interval-unit.mjs
 var IntervalUnit;
 (function(IntervalUnit) {
 	IntervalUnit[IntervalUnit["YEAR_MONTH"] = 0] = "YEAR_MONTH";
@@ -177815,7 +177815,7 @@ var IntervalUnit;
 })(IntervalUnit || (IntervalUnit = {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/flatbuffers/js/constants.js
+//#region node_modules/flatbuffers/js/constants.js
 var require_constants = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.SIZE_PREFIX_LENGTH = exports.FILE_IDENTIFIER_LENGTH = exports.SIZEOF_INT = exports.SIZEOF_SHORT = void 0;
@@ -177826,7 +177826,7 @@ var require_constants = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/flatbuffers/js/utils.js
+//#region node_modules/flatbuffers/js/utils.js
 var require_utils$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.isLittleEndian = exports.float64 = exports.float32 = exports.int32 = void 0;
@@ -177837,7 +177837,7 @@ var require_utils$2 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/flatbuffers/js/encoding.js
+//#region node_modules/flatbuffers/js/encoding.js
 var require_encoding$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Encoding = void 0;
@@ -177849,7 +177849,7 @@ var require_encoding$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/flatbuffers/js/byte-buffer.js
+//#region node_modules/flatbuffers/js/byte-buffer.js
 var require_byte_buffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ByteBuffer = void 0;
@@ -178084,7 +178084,7 @@ var require_byte_buffer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/flatbuffers/js/builder.js
+//#region node_modules/flatbuffers/js/builder.js
 var require_builder = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Builder = void 0;
@@ -178544,7 +178544,7 @@ var require_builder = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/flatbuffers/js/flatbuffers.js
+//#region node_modules/flatbuffers/js/flatbuffers.js
 var require_flatbuffers = /* @__PURE__ */ __commonJSMin(((exports) => {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Encoding = exports.ByteBuffer = exports.Builder = exports.isLittleEndian = exports.int32 = exports.float64 = exports.float32 = exports.SIZE_PREFIX_LENGTH = exports.SIZEOF_SHORT = exports.SIZEOF_INT = exports.FILE_IDENTIFIER_LENGTH = void 0;
@@ -178622,7 +178622,7 @@ var require_flatbuffers = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/body-compression-method.mjs
+//#region node_modules/apache-arrow/fb/body-compression-method.mjs
 var import_flatbuffers = /* @__PURE__ */ __toESM(require_flatbuffers(), 1);
 /**
 * Provided for forward compatibility in case we need to support different
@@ -178644,7 +178644,7 @@ var BodyCompressionMethod;
 })(BodyCompressionMethod || (BodyCompressionMethod = {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/compression-type.mjs
+//#region node_modules/apache-arrow/fb/compression-type.mjs
 var CompressionType;
 (function(CompressionType) {
 	CompressionType[CompressionType["LZ4_FRAME"] = 0] = "LZ4_FRAME";
@@ -178652,7 +178652,7 @@ var CompressionType;
 })(CompressionType || (CompressionType = {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/body-compression.mjs
+//#region node_modules/apache-arrow/fb/body-compression.mjs
 /**
 * Optional compression for the memory buffers constituting IPC message
 * bodies. Intended for use with RecordBatch but could be used for other
@@ -178711,7 +178711,7 @@ var BodyCompression$1 = class BodyCompression$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/buffer.mjs
+//#region node_modules/apache-arrow/fb/buffer.mjs
 /**
 * ----------------------------------------------------------------------
 * A Buffer represents a single contiguous memory segment
@@ -178755,7 +178755,7 @@ var Buffer$3 = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/field-node.mjs
+//#region node_modules/apache-arrow/fb/field-node.mjs
 /**
 * ----------------------------------------------------------------------
 * Data structures for describing a table row batch (a collection of
@@ -178804,7 +178804,7 @@ var FieldNode$1 = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/record-batch.mjs
+//#region node_modules/apache-arrow/fb/record-batch.mjs
 /**
 * A data header describing the shared memory layout of a "record" or "row"
 * batch. Some systems call this a "row batch" internally and others a "record
@@ -178896,7 +178896,7 @@ var RecordBatch$2 = class RecordBatch$2 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/dictionary-batch.mjs
+//#region node_modules/apache-arrow/fb/dictionary-batch.mjs
 /**
 * For sending dictionary encoding information. Any Field can be
 * dictionary-encoded, but in this case none of its children may be
@@ -178957,7 +178957,7 @@ var DictionaryBatch$1 = class DictionaryBatch$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/endianness.mjs
+//#region node_modules/apache-arrow/fb/endianness.mjs
 /**
 * ----------------------------------------------------------------------
 * Endianness of the platform producing the data
@@ -178969,7 +178969,7 @@ var Endianness;
 })(Endianness || (Endianness = {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/dictionary-kind.mjs
+//#region node_modules/apache-arrow/fb/dictionary-kind.mjs
 /**
 * ----------------------------------------------------------------------
 * Dictionary encoding metadata
@@ -178983,7 +178983,7 @@ var DictionaryKind;
 })(DictionaryKind || (DictionaryKind = {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/int.mjs
+//#region node_modules/apache-arrow/fb/int.mjs
 var Int = class Int {
 	constructor() {
 		this.bb = null;
@@ -179030,7 +179030,7 @@ var Int = class Int {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/dictionary-encoding.mjs
+//#region node_modules/apache-arrow/fb/dictionary-encoding.mjs
 var DictionaryEncoding = class DictionaryEncoding {
 	constructor() {
 		this.bb = null;
@@ -179103,7 +179103,7 @@ var DictionaryEncoding = class DictionaryEncoding {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/key-value.mjs
+//#region node_modules/apache-arrow/fb/key-value.mjs
 /**
 * ----------------------------------------------------------------------
 * user defined key value pairs to add custom metadata to arrow
@@ -179155,7 +179155,7 @@ var KeyValue = class KeyValue {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/binary.mjs
+//#region node_modules/apache-arrow/fb/binary.mjs
 /**
 * Opaque binary data
 */
@@ -179189,7 +179189,7 @@ var Binary$1 = class Binary$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/bool.mjs
+//#region node_modules/apache-arrow/fb/bool.mjs
 var Bool$1 = class Bool$1 {
 	constructor() {
 		this.bb = null;
@@ -179220,7 +179220,7 @@ var Bool$1 = class Bool$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/date.mjs
+//#region node_modules/apache-arrow/fb/date.mjs
 /**
 * Date is either a 32-bit or 64-bit signed integer type representing an
 * elapsed time since UNIX epoch (1970-01-01), stored in either of two units:
@@ -179267,7 +179267,7 @@ var Date$1 = class Date$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/decimal.mjs
+//#region node_modules/apache-arrow/fb/decimal.mjs
 /**
 * Exact decimal value represented as an integer value in two's
 * complement. Currently only 128-bit (16-byte) and 256-bit (32-byte) integers
@@ -179338,7 +179338,7 @@ var Decimal$1 = class Decimal$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/duration.mjs
+//#region node_modules/apache-arrow/fb/duration.mjs
 var Duration$1 = class Duration$1 {
 	constructor() {
 		this.bb = null;
@@ -179377,7 +179377,7 @@ var Duration$1 = class Duration$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/fixed-size-binary.mjs
+//#region node_modules/apache-arrow/fb/fixed-size-binary.mjs
 var FixedSizeBinary$1 = class FixedSizeBinary$1 {
 	constructor() {
 		this.bb = null;
@@ -179419,7 +179419,7 @@ var FixedSizeBinary$1 = class FixedSizeBinary$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/fixed-size-list.mjs
+//#region node_modules/apache-arrow/fb/fixed-size-list.mjs
 var FixedSizeList$1 = class FixedSizeList$1 {
 	constructor() {
 		this.bb = null;
@@ -179461,7 +179461,7 @@ var FixedSizeList$1 = class FixedSizeList$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/floating-point.mjs
+//#region node_modules/apache-arrow/fb/floating-point.mjs
 var FloatingPoint = class FloatingPoint {
 	constructor() {
 		this.bb = null;
@@ -179500,7 +179500,7 @@ var FloatingPoint = class FloatingPoint {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/interval.mjs
+//#region node_modules/apache-arrow/fb/interval.mjs
 var Interval = class Interval {
 	constructor() {
 		this.bb = null;
@@ -179539,7 +179539,7 @@ var Interval = class Interval {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/large-binary.mjs
+//#region node_modules/apache-arrow/fb/large-binary.mjs
 /**
 * Same as Binary, but with 64-bit offsets, allowing to represent
 * extremely large data values.
@@ -179574,7 +179574,7 @@ var LargeBinary$1 = class LargeBinary$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/large-utf8.mjs
+//#region node_modules/apache-arrow/fb/large-utf8.mjs
 /**
 * Same as Utf8, but with 64-bit offsets, allowing to represent
 * extremely large data values.
@@ -179609,7 +179609,7 @@ var LargeUtf8$1 = class LargeUtf8$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/list.mjs
+//#region node_modules/apache-arrow/fb/list.mjs
 var List$1 = class List$1 {
 	constructor() {
 		this.bb = null;
@@ -179640,7 +179640,7 @@ var List$1 = class List$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/map.mjs
+//#region node_modules/apache-arrow/fb/map.mjs
 /**
 * A Map is a logical nested type that is represented as
 *
@@ -179709,7 +179709,7 @@ var Map$1 = class Map$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/null.mjs
+//#region node_modules/apache-arrow/fb/null.mjs
 /**
 * These are stored in the flatbuffer in the Type union below
 */
@@ -179743,7 +179743,7 @@ var Null$1 = class Null$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/struct-.mjs
+//#region node_modules/apache-arrow/fb/struct-.mjs
 /**
 * A Struct_ in the flatbuffer metadata is the same as an Arrow Struct
 * (according to the physical memory layout). We used Struct_ here as
@@ -179779,7 +179779,7 @@ var Struct_ = class Struct_ {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/time.mjs
+//#region node_modules/apache-arrow/fb/time.mjs
 /**
 * Time is either a 32-bit or 64-bit signed integer type representing an
 * elapsed time since midnight, stored in either of four units: seconds,
@@ -179842,7 +179842,7 @@ var Time = class Time {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/timestamp.mjs
+//#region node_modules/apache-arrow/fb/timestamp.mjs
 /**
 * Timestamp is a 64-bit signed integer representing an elapsed time since a
 * fixed epoch, stored in either of four units: seconds, milliseconds,
@@ -179996,7 +179996,7 @@ var Timestamp = class Timestamp {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/union.mjs
+//#region node_modules/apache-arrow/fb/union.mjs
 /**
 * A union is a complex type with children in Field
 * By default ids in the type vector refer to the offsets in the children
@@ -180065,7 +180065,7 @@ var Union = class Union {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/utf8.mjs
+//#region node_modules/apache-arrow/fb/utf8.mjs
 /**
 * Unicode with UTF-8 encoding
 */
@@ -180099,7 +180099,7 @@ var Utf8$1 = class Utf8$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/type.mjs
+//#region node_modules/apache-arrow/fb/type.mjs
 /**
 * ----------------------------------------------------------------------
 * Top-level Type value, enabling extensible type-specific metadata. We can
@@ -180133,7 +180133,7 @@ var Type$1;
 })(Type$1 || (Type$1 = {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/field.mjs
+//#region node_modules/apache-arrow/fb/field.mjs
 /**
 * ----------------------------------------------------------------------
 * A field represents a named column in a record / row batch or child of a
@@ -180254,7 +180254,7 @@ var Field$1 = class Field$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/schema.mjs
+//#region node_modules/apache-arrow/fb/schema.mjs
 /**
 * ----------------------------------------------------------------------
 * A Schema describes the columns in a row batch
@@ -180371,7 +180371,7 @@ var Schema$1 = class Schema$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/message-header.mjs
+//#region node_modules/apache-arrow/fb/message-header.mjs
 /**
 * ----------------------------------------------------------------------
 * The root Message type
@@ -180393,7 +180393,7 @@ var MessageHeader;
 })(MessageHeader || (MessageHeader = {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/enum.mjs
+//#region node_modules/apache-arrow/enum.mjs
 /**
 * Main data type enumeration.
 *
@@ -180495,7 +180495,7 @@ var BufferType;
 })(BufferType || (BufferType = {}));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/util/pretty.mjs
+//#region node_modules/apache-arrow/util/pretty.mjs
 /** @ignore */ const undf = void 0;
 /** @ignore */
 function valueToString(x) {
@@ -180515,7 +180515,7 @@ function valueToString(x) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/util/bigint.mjs
+//#region node_modules/apache-arrow/util/bigint.mjs
 /**
 * Converts an integer as a number or bigint to a number, throwing an error if the input cannot safely be represented as a number.
 */
@@ -180537,7 +180537,7 @@ function divideBigInts(number, divisor) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/util/bn.mjs
+//#region node_modules/apache-arrow/util/bn.mjs
 /** @ignore */
 const isArrowBigNumSymbol = Symbol.for("isArrowBigNum");
 /** @ignore */
@@ -180694,7 +180694,7 @@ var BN = class BN {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/type.mjs
+//#region node_modules/apache-arrow/type.mjs
 var _a$3, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x;
 /**
 * An abstract base class for classes that encapsulate metadata about each of
@@ -181335,7 +181335,7 @@ function strideForType(type) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/visitor.mjs
+//#region node_modules/apache-arrow/visitor.mjs
 var Visitor = class {
 	visitMany(nodes, ...args) {
 		return nodes.map((node, i) => this.visit(node, ...args.map((x) => x[i])));
@@ -181695,7 +181695,7 @@ Visitor.prototype.visitDurationMicrosecond = null;
 Visitor.prototype.visitDurationNanosecond = null;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/util/math.mjs
+//#region node_modules/apache-arrow/util/math.mjs
 const f64 = new Float64Array(1);
 const u32 = new Uint32Array(f64.buffer);
 /**
@@ -181744,7 +181744,7 @@ function float64ToUint16(d) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/visitor/set.mjs
+//#region node_modules/apache-arrow/visitor/set.mjs
 /** @ignore */
 var SetVisitor = class extends Visitor {};
 /** @ignore */
@@ -182028,7 +182028,7 @@ SetVisitor.prototype.visitMap = wrapSet(setMap);
 const instance$6 = new SetVisitor();
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/row/struct.mjs
+//#region node_modules/apache-arrow/row/struct.mjs
 /** @ignore */ const kParent = Symbol.for("parent");
 /** @ignore */ const kRowIndex = Symbol.for("rowIndex");
 var StructRow = class {
@@ -182147,7 +182147,7 @@ var StructRowProxyHandler = class {
 const structRowProxyHandler = new StructRowProxyHandler();
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/visitor/get.mjs
+//#region node_modules/apache-arrow/visitor/get.mjs
 /** @ignore */
 var GetVisitor = class extends Visitor {};
 /** @ignore */
@@ -182367,7 +182367,7 @@ GetVisitor.prototype.visitMap = wrapGet(getMap);
 const instance$5 = new GetVisitor();
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/row/map.mjs
+//#region node_modules/apache-arrow/row/map.mjs
 /** @ignore */ const kKeys = Symbol.for("keys");
 /** @ignore */ const kVals = Symbol.for("vals");
 /** @ignore */ const kKeysAsStrings = Symbol.for("kKeysAsStrings");
@@ -182497,7 +182497,7 @@ Object.defineProperties(MapRow.prototype, {
 });
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/util/vector.mjs
+//#region node_modules/apache-arrow/util/vector.mjs
 /** @ignore */
 let tmp;
 /** @ignore */
@@ -182601,7 +182601,7 @@ function compareObject(comparators, obj, keys) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/util/bit.mjs
+//#region node_modules/apache-arrow/util/bit.mjs
 /** @ignore */
 function getBool(_data, _index, byte, bit) {
 	return (byte & 1 << bit) !== 0;
@@ -182711,7 +182711,7 @@ function popcnt_uint32(uint32) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/data.mjs
+//#region node_modules/apache-arrow/data.mjs
 /** @ignore */ const kUnknownNullCount = -1;
 /**
 * Data structure underlying {@link Vector}s. Use the convenience method {@link makeData}.
@@ -183102,7 +183102,7 @@ function makeData(props) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/util/chunk.mjs
+//#region node_modules/apache-arrow/util/chunk.mjs
 /** @ignore */
 var ChunkedIterator = class {
 	constructor(numChunks = 0, getChunkIterator) {
@@ -183221,7 +183221,7 @@ function wrapChunkedIndexOf(indexOf) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/visitor/indexof.mjs
+//#region node_modules/apache-arrow/visitor/indexof.mjs
 /** @ignore */
 var IndexOfVisitor = class extends Visitor {};
 /** @ignore */
@@ -183314,7 +183314,7 @@ IndexOfVisitor.prototype.visitMap = indexOfValue;
 const instance$4 = new IndexOfVisitor();
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/visitor/iterator.mjs
+//#region node_modules/apache-arrow/visitor/iterator.mjs
 /** @ignore */
 var IteratorVisitor = class extends Visitor {};
 /** @ignore */
@@ -183404,7 +183404,7 @@ IteratorVisitor.prototype.visitMap = vectorIterator;
 const instance$3 = new IteratorVisitor();
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/vector.mjs
+//#region node_modules/apache-arrow/vector.mjs
 var _a$2;
 const visitorsByTypeId = {};
 const vectorPrototypesByTypeId = {};
@@ -183693,7 +183693,7 @@ var MemoizedVector = class MemoizedVector extends Vector {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/valid.mjs
+//#region node_modules/apache-arrow/builder/valid.mjs
 /**
 * Dynamically compile the null values into an `isValid()` function whose
 * implementation is a switch statement. Microbenchmarks in v8 indicate
@@ -183735,7 +183735,7 @@ function valueToCase(x) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/buffer.mjs
+//#region node_modules/apache-arrow/builder/buffer.mjs
 /** @ignore */
 function roundLengthUpToNearest64Bytes(len, BPE) {
 	const bytesMinus1 = Math.ceil(len) * BPE - 1;
@@ -183853,7 +183853,7 @@ var OffsetsBufferBuilder = class extends DataBufferBuilder {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder.mjs
+//#region node_modules/apache-arrow/builder.mjs
 /**
 * An abstract base class for types that construct Arrow Vectors from arbitrary JavaScript values.
 *
@@ -184171,7 +184171,7 @@ var VariableWidthBuilder = class extends Builder$2 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/block.mjs
+//#region node_modules/apache-arrow/fb/block.mjs
 var Block = class {
 	constructor() {
 		this.bb = null;
@@ -184215,7 +184215,7 @@ var Block = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/footer.mjs
+//#region node_modules/apache-arrow/fb/footer.mjs
 /**
 * ----------------------------------------------------------------------
 * Arrow File metadata
@@ -184317,7 +184317,7 @@ var Footer = class Footer {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/schema.mjs
+//#region node_modules/apache-arrow/schema.mjs
 var Schema = class Schema {
 	constructor(fields = [], metadata, dictionaries, metadataVersion = MetadataVersion.V5) {
 		this.fields = fields || [];
@@ -184424,7 +184424,7 @@ function generateDictionaryMap(fields, dictionaries = /* @__PURE__ */ new Map())
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/ipc/metadata/file.mjs
+//#region node_modules/apache-arrow/ipc/metadata/file.mjs
 var Builder$1 = import_flatbuffers.Builder;
 var ByteBuffer$2 = import_flatbuffers.ByteBuffer;
 /** @ignore */
@@ -184526,7 +184526,7 @@ var FileBlock = class FileBlock {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/fb/message.mjs
+//#region node_modules/apache-arrow/fb/message.mjs
 var Message$1 = class Message$1 {
 	constructor() {
 		this.bb = null;
@@ -184615,7 +184615,7 @@ var Message$1 = class Message$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/visitor/typeassembler.mjs
+//#region node_modules/apache-arrow/visitor/typeassembler.mjs
 /** @ignore */
 var TypeAssembler = class extends Visitor {
 	visit(node, builder) {
@@ -184735,7 +184735,7 @@ var TypeAssembler = class extends Visitor {
 const instance$2 = new TypeAssembler();
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/ipc/metadata/json.mjs
+//#region node_modules/apache-arrow/ipc/metadata/json.mjs
 /** @ignore */
 function schemaFromJSON(_schema, dictionaries = /* @__PURE__ */ new Map()) {
 	return new Schema(schemaFieldsFromJSON(_schema, dictionaries), customMetadataFromJSON(_schema["metadata"]), dictionaries);
@@ -184881,7 +184881,7 @@ function typeFromJSON(f, children) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/ipc/metadata/message.mjs
+//#region node_modules/apache-arrow/ipc/metadata/message.mjs
 var Builder = import_flatbuffers.Builder;
 var ByteBuffer$1 = import_flatbuffers.ByteBuffer;
 /**
@@ -185325,7 +185325,7 @@ const platformIsLittleEndian = (() => {
 })();
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/io/interfaces.mjs
+//#region node_modules/apache-arrow/io/interfaces.mjs
 /** @ignore */
 const ITERATOR_DONE = Object.freeze({
 	done: true,
@@ -185458,7 +185458,7 @@ var AsyncQueue = class extends ReadableInterop {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/io/stream.mjs
+//#region node_modules/apache-arrow/io/stream.mjs
 /** @ignore */
 var AsyncByteQueue = class extends AsyncQueue {
 	write(value) {
@@ -185632,7 +185632,7 @@ var AsyncByteStreamSource = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/io/file.mjs
+//#region node_modules/apache-arrow/io/file.mjs
 /** @ignore */
 var RandomAccessFile = class extends ByteStream {
 	constructor(buffer, byteLength) {
@@ -185761,7 +185761,7 @@ var AsyncRandomAccessFile = class extends AsyncByteStream {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/util/int.mjs
+//#region node_modules/apache-arrow/util/int.mjs
 /** @ignore */
 const carryBit16 = 65536;
 /** @ignore */
@@ -186058,7 +186058,7 @@ var Int128 = class Int128 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/util/interval.mjs
+//#region node_modules/apache-arrow/util/interval.mjs
 function toIntervalDayTimeInt32Array(objects) {
 	var _a, _b;
 	const length = objects.length;
@@ -186088,7 +186088,7 @@ function toIntervalMonthDayNanoInt32Array(objects) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/visitor/vectorloader.mjs
+//#region node_modules/apache-arrow/visitor/vectorloader.mjs
 /** @ignore */
 var VectorLoader = class extends Visitor {
 	constructor(bytes, nodes, buffers, dictionaries, metadataVersion = MetadataVersion.V5) {
@@ -186389,7 +186389,7 @@ var CompressedVectorLoader = class extends VectorLoader {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/binary.mjs
+//#region node_modules/apache-arrow/builder/binary.mjs
 /** @ignore */
 var BinaryBuilder = class extends VariableWidthBuilder {
 	constructor(opts) {
@@ -186421,7 +186421,7 @@ var BinaryBuilder = class extends VariableWidthBuilder {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/largebinary.mjs
+//#region node_modules/apache-arrow/builder/largebinary.mjs
 /** @ignore */
 var LargeBinaryBuilder = class extends VariableWidthBuilder {
 	constructor(opts) {
@@ -186453,7 +186453,7 @@ var LargeBinaryBuilder = class extends VariableWidthBuilder {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/bool.mjs
+//#region node_modules/apache-arrow/builder/bool.mjs
 /** @ignore */
 var BoolBuilder = class extends Builder$2 {
 	constructor(options) {
@@ -186466,7 +186466,7 @@ var BoolBuilder = class extends Builder$2 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/date.mjs
+//#region node_modules/apache-arrow/builder/date.mjs
 /** @ignore */
 var DateBuilder = class extends FixedWidthBuilder {};
 DateBuilder.prototype._setValue = setDate;
@@ -186478,13 +186478,13 @@ var DateMillisecondBuilder = class extends DateBuilder {};
 DateMillisecondBuilder.prototype._setValue = setDateMillisecond;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/decimal.mjs
+//#region node_modules/apache-arrow/builder/decimal.mjs
 /** @ignore */
 var DecimalBuilder = class extends FixedWidthBuilder {};
 DecimalBuilder.prototype._setValue = setDecimal;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/dictionary.mjs
+//#region node_modules/apache-arrow/builder/dictionary.mjs
 /** @ignore */
 var DictionaryBuilder = class extends Builder$2 {
 	constructor({ "type": type, "nullValues": nulls, "dictionaryHashFunction": hashFn }) {
@@ -186565,13 +186565,13 @@ var DictionaryBuilder = class extends Builder$2 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/fixedsizebinary.mjs
+//#region node_modules/apache-arrow/builder/fixedsizebinary.mjs
 /** @ignore */
 var FixedSizeBinaryBuilder = class extends FixedWidthBuilder {};
 FixedSizeBinaryBuilder.prototype._setValue = setFixedSizeBinary;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/fixedsizelist.mjs
+//#region node_modules/apache-arrow/builder/fixedsizelist.mjs
 /** @ignore */
 var FixedSizeListBuilder = class extends Builder$2 {
 	setValue(index, value) {
@@ -186592,7 +186592,7 @@ var FixedSizeListBuilder = class extends Builder$2 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/float.mjs
+//#region node_modules/apache-arrow/builder/float.mjs
 /** @ignore */
 var FloatBuilder = class extends FixedWidthBuilder {
 	setValue(index, value) {
@@ -186611,7 +186611,7 @@ var Float32Builder = class extends FloatBuilder {};
 var Float64Builder = class extends FloatBuilder {};
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/interval.mjs
+//#region node_modules/apache-arrow/builder/interval.mjs
 /** @ignore */
 var IntervalBuilder = class extends FixedWidthBuilder {};
 IntervalBuilder.prototype._setValue = setIntervalValue;
@@ -186626,7 +186626,7 @@ var IntervalMonthDayNanoBuilder = class extends IntervalBuilder {};
 IntervalMonthDayNanoBuilder.prototype._setValue = setIntervalMonthDayNano;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/duration.mjs
+//#region node_modules/apache-arrow/builder/duration.mjs
 /** @ignore */
 var DurationBuilder = class extends FixedWidthBuilder {};
 DurationBuilder.prototype._setValue = setDuration;
@@ -186644,7 +186644,7 @@ var DurationNanosecondBuilder = class extends DurationBuilder {};
 DurationNanosecondBuilder.prototype._setValue = setDurationNanosecond;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/int.mjs
+//#region node_modules/apache-arrow/builder/int.mjs
 /** @ignore */
 var IntBuilder = class extends FixedWidthBuilder {
 	setValue(index, value) {
@@ -186669,7 +186669,7 @@ var Uint32Builder = class extends IntBuilder {};
 var Uint64Builder = class extends IntBuilder {};
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/list.mjs
+//#region node_modules/apache-arrow/builder/list.mjs
 /** @ignore */
 var ListBuilder = class extends VariableWidthBuilder {
 	constructor(opts) {
@@ -186696,7 +186696,7 @@ var ListBuilder = class extends VariableWidthBuilder {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/map.mjs
+//#region node_modules/apache-arrow/builder/map.mjs
 /** @ignore */
 var MapBuilder = class extends VariableWidthBuilder {
 	set(index, value) {
@@ -186731,7 +186731,7 @@ var MapBuilder = class extends VariableWidthBuilder {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/null.mjs
+//#region node_modules/apache-arrow/builder/null.mjs
 /** @ignore */
 var NullBuilder = class extends Builder$2 {
 	setValue(index, value) {}
@@ -186742,7 +186742,7 @@ var NullBuilder = class extends Builder$2 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/struct.mjs
+//#region node_modules/apache-arrow/builder/struct.mjs
 /** @ignore */
 var StructBuilder = class extends Builder$2 {
 	setValue(index, value) {
@@ -186766,7 +186766,7 @@ var StructBuilder = class extends Builder$2 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/timestamp.mjs
+//#region node_modules/apache-arrow/builder/timestamp.mjs
 /** @ignore */
 var TimestampBuilder = class extends FixedWidthBuilder {};
 TimestampBuilder.prototype._setValue = setTimestamp;
@@ -186784,7 +186784,7 @@ var TimestampNanosecondBuilder = class extends TimestampBuilder {};
 TimestampNanosecondBuilder.prototype._setValue = setTimestampNanosecond;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/time.mjs
+//#region node_modules/apache-arrow/builder/time.mjs
 /** @ignore */
 var TimeBuilder = class extends FixedWidthBuilder {};
 TimeBuilder.prototype._setValue = setTime;
@@ -186802,7 +186802,7 @@ var TimeNanosecondBuilder = class extends TimeBuilder {};
 TimeNanosecondBuilder.prototype._setValue = setTimeNanosecond;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/union.mjs
+//#region node_modules/apache-arrow/builder/union.mjs
 /** @ignore */
 var UnionBuilder = class extends Builder$2 {
 	constructor(options) {
@@ -186861,7 +186861,7 @@ var DenseUnionBuilder = class extends UnionBuilder {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/utf8.mjs
+//#region node_modules/apache-arrow/builder/utf8.mjs
 /** @ignore */
 var Utf8Builder = class extends VariableWidthBuilder {
 	constructor(opts) {
@@ -186883,7 +186883,7 @@ var Utf8Builder = class extends VariableWidthBuilder {
 Utf8Builder.prototype._flushPending = BinaryBuilder.prototype._flushPending;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/builder/largeutf8.mjs
+//#region node_modules/apache-arrow/builder/largeutf8.mjs
 /** @ignore */
 var LargeUtf8Builder = class extends VariableWidthBuilder {
 	constructor(opts) {
@@ -186905,7 +186905,7 @@ var LargeUtf8Builder = class extends VariableWidthBuilder {
 LargeUtf8Builder.prototype._flushPending = LargeBinaryBuilder.prototype._flushPending;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/visitor/builderctor.mjs
+//#region node_modules/apache-arrow/visitor/builderctor.mjs
 /** @ignore */
 var GetBuilderCtor = class extends Visitor {
 	visitNull() {
@@ -187066,7 +187066,7 @@ var GetBuilderCtor = class extends Visitor {
 const instance$1 = new GetBuilderCtor();
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/visitor/typecomparator.mjs
+//#region node_modules/apache-arrow/visitor/typecomparator.mjs
 /** @ignore */
 var TypeComparator = class extends Visitor {
 	compareSchemas(schema, other) {
@@ -187185,7 +187185,7 @@ function compareSchemas(schema, other) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/factories.mjs
+//#region node_modules/apache-arrow/factories.mjs
 function makeBuilder(options) {
 	const type = options.type;
 	const builder = new (instance$1.getVisitFn(type)())(options);
@@ -187203,7 +187203,7 @@ function makeBuilder(options) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/util/recordbatch.mjs
+//#region node_modules/apache-arrow/util/recordbatch.mjs
 /** @ignore */
 function distributeVectorsIntoRecordBatches(schema, vecs) {
 	return uniformlyDistributeChunksAcrossRecordBatches(schema, vecs.map((v) => v.data.concat()));
@@ -187261,7 +187261,7 @@ function distributeChildren(fields, batchLength, children, columns, memo) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/table.mjs
+//#region node_modules/apache-arrow/table.mjs
 var _a$1;
 /**
 * Tables are collections of {@link Vector}s and have a {@link Schema}. Use the convenience methods {@link makeTable}
@@ -187516,7 +187516,7 @@ Table[_a$1] = ((proto) => {
 })(Table.prototype);
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/recordbatch.mjs
+//#region node_modules/apache-arrow/recordbatch.mjs
 var _a;
 /** @ignore */
 var RecordBatch = class RecordBatch {
@@ -187800,7 +187800,7 @@ var _InternalEmptyPlaceholderRecordBatch = class extends RecordBatch {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/ipc/message.mjs
+//#region node_modules/apache-arrow/ipc/message.mjs
 /** @ignore */ const invalidMessageType = (type) => `Expected ${MessageHeader[type]} Message in stream, but was null or length 0.`;
 /** @ignore */ const nullMessage = (type) => `Header pointer of flatbuffer-encoded ${MessageHeader[type]} Message is null or length 0.`;
 /** @ignore */ const invalidMessageMetadata = (expected, actual) => `Expected to read ${expected} metadata bytes, but only read ${actual}.`;
@@ -188024,7 +188024,7 @@ const magicAndPadding = magicLength + PADDING;
 const magicX2AndPadding = magicLength * 2 + PADDING;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/ipc/compression/validators.mjs
+//#region node_modules/apache-arrow/ipc/compression/validators.mjs
 var Lz4FrameValidator = class {
 	constructor() {
 		this.LZ4_FRAME_MAGIC = new Uint8Array([
@@ -188102,7 +188102,7 @@ const compressionValidators = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/ipc/compression/registry.mjs
+//#region node_modules/apache-arrow/ipc/compression/registry.mjs
 var _CompressionRegistry = class {
 	constructor() {
 		this.registry = {};
@@ -188119,12 +188119,12 @@ var _CompressionRegistry = class {
 const compressionRegistry = new _CompressionRegistry();
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/ipc/compression/constants.mjs
+//#region node_modules/apache-arrow/ipc/compression/constants.mjs
 const LENGTH_NO_COMPRESSED_DATA = -1;
 const COMPRESS_LENGTH_PREFIX = 8;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/ipc/reader.mjs
+//#region node_modules/apache-arrow/ipc/reader.mjs
 var RecordBatchReader = class RecordBatchReader extends ReadableInterop {
 	constructor(impl) {
 		super();
@@ -188768,7 +188768,7 @@ function fromFileHandle(source) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/visitor/vectorassembler.mjs
+//#region node_modules/apache-arrow/visitor/vectorassembler.mjs
 /** @ignore */
 var VectorAssembler = class VectorAssembler extends Visitor {
 	/** @nocollapse */
@@ -188918,7 +188918,7 @@ VectorAssembler.prototype.visitFixedSizeList = assembleListVector;
 VectorAssembler.prototype.visitMap = assembleListVector;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/ipc/writer.mjs
+//#region node_modules/apache-arrow/ipc/writer.mjs
 var RecordBatchWriter = class extends ReadableInterop {
 	/** @nocollapse */
 	static throughNode(options) {
@@ -189221,7 +189221,7 @@ function writeAllAsync(writer, batches) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/io/node/iterable.mjs
+//#region node_modules/apache-arrow/io/node/iterable.mjs
 /** @ignore */
 function toNodeStream(source, options) {
 	if (isAsyncIterable(source)) return new AsyncIterableReadable(source[Symbol.asyncIterator](), options);
@@ -189294,7 +189294,7 @@ var AsyncIterableReadable = class extends Readable$1 {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/io/node/builder.mjs
+//#region node_modules/apache-arrow/io/node/builder.mjs
 /** @ignore */
 function builderThroughNodeStream(options) {
 	return new BuilderDuplex(makeBuilder(options), options);
@@ -189347,7 +189347,7 @@ var BuilderDuplex = class extends Duplex {
 /** @ignore */ const builderByteLength = (builder) => builder.byteLength;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/io/node/reader.mjs
+//#region node_modules/apache-arrow/io/node/reader.mjs
 /** @ignore */
 function recordBatchReaderThroughNodeStream(options) {
 	return new RecordBatchReaderDuplex(options);
@@ -189408,7 +189408,7 @@ var RecordBatchReaderDuplex = class extends Duplex {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/io/node/writer.mjs
+//#region node_modules/apache-arrow/io/node/writer.mjs
 /** @ignore */
 function recordBatchWriterThroughNodeStream(options) {
 	return new RecordBatchWriterDuplex(new this(options));
@@ -189463,7 +189463,7 @@ var RecordBatchWriterDuplex = class extends Duplex {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/ipc/serialization.mjs
+//#region node_modules/apache-arrow/ipc/serialization.mjs
 function tableFromIPC(input) {
 	const reader = RecordBatchReader.from(input);
 	if (isPromise(reader)) return reader.then((reader) => tableFromIPC(reader));
@@ -189484,7 +189484,7 @@ function tableToIPC(table, type = "stream", compressionType = null) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/apache-arrow/Arrow.node.mjs
+//#region node_modules/apache-arrow/Arrow.node.mjs
 var Arrow_node_exports = /* @__PURE__ */ __exportAll({ tableFromIPC: () => tableFromIPC });
 adapters_default.toNodeStream = toNodeStream;
 Builder$2["throughNode"] = builderThroughNodeStream;
@@ -189492,7 +189492,7 @@ RecordBatchReader["throughNode"] = recordBatchReaderThroughNodeStream;
 RecordBatchWriter["throughNode"] = recordBatchWriterThroughNodeStream;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/sql-warehouse/arrow-schema.js
+//#region node_modules/@databricks/appkit/dist/connectors/sql-warehouse/arrow-schema.js
 /**
 * Parse a Databricks SQL type text (the value returned by the Statement
 * Execution API in `ColumnInfo.type_text`) into an Apache Arrow DataType.
@@ -189771,7 +189771,7 @@ var TypeParser = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/sql-warehouse/defaults.js
+//#region node_modules/@databricks/appkit/dist/connectors/sql-warehouse/defaults.js
 const executeStatementDefaults = {
 	wait_timeout: "30s",
 	disposition: "INLINE",
@@ -189781,7 +189781,7 @@ const executeStatementDefaults = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/sql-warehouse/warehouse-poll-backoff.js
+//#region node_modules/@databricks/appkit/dist/connectors/sql-warehouse/warehouse-poll-backoff.js
 const WAREHOUSE_POLL_INITIAL_MS = 1e3;
 const WAREHOUSE_POLL_MAX_MS = 3e4;
 /**
@@ -189803,7 +189803,7 @@ var WarehousePollBackoff = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/sql-warehouse/warehouse-status-emitter.js
+//#region node_modules/@databricks/appkit/dist/connectors/sql-warehouse/warehouse-status-emitter.js
 /**
 * Tracks state-change emissions for the warehouse readiness loop. Records
 * every poll on the OTel span and forwards real state changes (with de-dup)
@@ -189841,7 +189841,7 @@ var WarehouseStatusEmitter = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/sql-warehouse/client.js
+//#region node_modules/@databricks/appkit/dist/connectors/sql-warehouse/client.js
 const logger$30 = createLogger("connectors:sql-warehouse");
 /**
 * Real column names from a statement's result manifest (positional
@@ -190513,7 +190513,7 @@ var SQLWarehouseConnector = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/context.js
+//#region node_modules/@databricks/appkit/dist/connectors/context.js
 /**
 * Bridges {@link AbortSignal} to the SDK's {@link CancellationToken} so
 * `apiClient.request` can abort the outbound HTTP request (and stop pulling a
@@ -190546,11 +190546,11 @@ function contextFromAbortSignal(signal) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/ai-search/client.js
+//#region node_modules/@databricks/appkit/dist/connectors/ai-search/client.js
 const logger$29 = createLogger("connectors:ai-search");
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/files/defaults.js
+//#region node_modules/@databricks/appkit/dist/connectors/files/defaults.js
 /**
 * Default maximum size for `read()` in bytes (10 MB).
 * Prevents loading very large files into memory as a string.
@@ -190679,7 +190679,7 @@ function contentTypeFromPath(filePath, reported, customTypes) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/files/client.js
+//#region node_modules/@databricks/appkit/dist/connectors/files/client.js
 const logger$28 = createLogger("connectors:files");
 /**
 * Ambient span-attribute propagation for `FilesConnector.traced()`.
@@ -190923,7 +190923,7 @@ var FilesConnector = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/genie/defaults.js
+//#region node_modules/@databricks/appkit/dist/connectors/genie/defaults.js
 const genieConnectorDefaults = {
 	timeout: 12e4,
 	maxMessages: 200,
@@ -190932,7 +190932,7 @@ const genieConnectorDefaults = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/genie/poll-waiter.js
+//#region node_modules/@databricks/appkit/dist/connectors/genie/poll-waiter.js
 /**
 * Bridges a callback-based waiter into an async generator.
 *
@@ -190984,7 +190984,7 @@ async function* pollWaiter(waiter, options) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/genie/client.js
+//#region node_modules/@databricks/appkit/dist/connectors/genie/client.js
 const logger$27 = createLogger("connectors:genie");
 const GenieErrors = {
 	SPACE_ACCESS_DENIED: "You don't have access to this Genie Space.",
@@ -191263,7 +191263,7 @@ var GenieConnector = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/jobs/client.js
+//#region node_modules/@databricks/appkit/dist/connectors/jobs/client.js
 const logger$26 = createLogger("connectors:jobs");
 var JobsConnector = class {
 	name = "jobs";
@@ -191384,7 +191384,7 @@ var JobsConnector = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/mcp/client.js
+//#region node_modules/@databricks/appkit/dist/connectors/mcp/client.js
 const logger$25 = createLogger("connector:mcp");
 /**
 * Hard cap on the size of a single MCP response body, including SSE
@@ -191397,7 +191397,7 @@ const logger$25 = createLogger("connector:mcp");
 const MCP_RESPONSE_BODY_LIMIT_BYTES = 1024 * 1024;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/core/agent/toolkit-options.js
+//#region node_modules/@databricks/appkit/dist/core/agent/toolkit-options.js
 /**
 * Filter / prefix / rename a tool's local name into its toolkit key, or
 * skip it entirely. Encapsulates the four-knob `ToolkitOptions` contract:
@@ -191423,7 +191423,7 @@ function applyToolkitOptions(localName, pluginName, opts = {}) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/core/agent/tools/json-schema.js
+//#region node_modules/@databricks/appkit/dist/core/agent/tools/json-schema.js
 /**
 * Converts a Zod schema to JSON Schema suitable for an LLM tool-call
 * `parameters` field.
@@ -191443,7 +191443,7 @@ function toToolJSONSchema(schema) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/core/agent/build-toolkit.js
+//#region node_modules/@databricks/appkit/dist/core/agent/build-toolkit.js
 /**
 * Converts a plugin's internal `ToolRegistry` into a keyed record of
 * `ToolkitEntry` markers suitable for spreading into an `AgentDefinition.tools`
@@ -191483,7 +191483,7 @@ function buildToolkitEntries(pluginName, registry, opts = {}) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/core/agent/tools/tool.js
+//#region node_modules/@databricks/appkit/dist/core/agent/tools/tool.js
 /**
 * Formats a Zod validation error into an LLM-friendly string.
 *
@@ -191496,7 +191496,7 @@ function formatZodError(error, toolName) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/core/agent/tools/define-tool.js
+//#region node_modules/@databricks/appkit/dist/core/agent/tools/define-tool.js
 /**
 * Defines a single tool entry for a plugin's internal registry.
 *
@@ -191541,7 +191541,7 @@ function toolsFromRegistry(registry) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/core/agent/tools/sql-policy.js
+//#region node_modules/@databricks/appkit/dist/core/agent/tools/sql-policy.js
 /**
 * Conservative SQL classifier used by agent-facing query tools to enforce
 * `readOnly: true` annotations at execution time.
@@ -191795,7 +191795,7 @@ function firstKeyword(stmt) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/analytics/defaults.js
+//#region node_modules/@databricks/appkit/dist/plugins/analytics/defaults.js
 const queryDefaults = {
 	cache: {
 		enabled: true,
@@ -191810,7 +191810,7 @@ const queryDefaults = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/analytics/manifest.js
+//#region node_modules/@databricks/appkit/dist/plugins/analytics/manifest.js
 var manifest_default$6 = {
 	$schema: "https://databricks.github.io/appkit/schemas/plugin-manifest.schema.json",
 	name: "analytics",
@@ -191861,7 +191861,7 @@ var manifest_default$6 = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/shared/src/schemas/metric-fqn.js
+//#region node_modules/@databricks/appkit/dist/shared/src/schemas/metric-fqn.js
 /**
 * Unity Catalog object-name grammar
 * the single source of truth for metric view FQN (Fully Qualified Name).
@@ -191976,7 +191976,7 @@ function quoteIdentifier(name) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/analytics/mv/constants.js
+//#region node_modules/@databricks/appkit/dist/plugins/analytics/mv/constants.js
 /**
 * Measure, dimension, and filter-member names are **column identifiers**: they
 * are validated by the shared {@link isValidColumnName} (rejects only control
@@ -192044,7 +192044,7 @@ const METRIC_FILTER_OPERATORS = [
 ];
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/analytics/mv/formatters.js
+//#region node_modules/@databricks/appkit/dist/plugins/analytics/mv/formatters.js
 function quoteSafeFqn(fqn) {
 	if (!isValidFqn(fqn)) throw new Error(`Refusing to build SQL: "${fqn}" is not a valid three-part UC FQN.`);
 	return quoteFqnForSql(fqn);
@@ -192189,7 +192189,7 @@ function renderDimensionClause(dim, timeGrain, timeDimension) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/analytics/mv/cache.js
+//#region node_modules/@databricks/appkit/dist/plugins/analytics/mv/cache.js
 function composeMetricCacheKey(input) {
 	const sortedMeasures = [...input.measures].sort();
 	const sortedDimensions = [...input.dimensions ?? []].sort();
@@ -192233,7 +192233,7 @@ function canonicalizeFilter(node) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/analytics/mv/metadata.js
+//#region node_modules/@databricks/appkit/dist/plugins/analytics/mv/metadata.js
 /**
 * Flatten the injected {@link MetricViewsMetadata} for `key` into a single
 * `Record<column, meta>` covering only the requested measures and dimensions,
@@ -192261,7 +192261,7 @@ function selectMetricMetadata(all, key, measures, dimensions) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/shared/src/schemas/metric-source.js
+//#region node_modules/@databricks/appkit/dist/shared/src/schemas/metric-source.js
 /**
 * AppKit metric-source schema.
 *
@@ -192346,7 +192346,7 @@ const metricSourceSchema = object({
 });
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/analytics/mv/registry.js
+//#region node_modules/@databricks/appkit/dist/plugins/analytics/mv/registry.js
 const logger$24 = createLogger("analytics:metric-views");
 /**
 * Read and validate `config/metric-views/definitions.json` into a metric registry.
@@ -192393,7 +192393,7 @@ async function loadMetricRegistry(app, req, devFileReader) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/analytics/types.js
+//#region node_modules/@databricks/appkit/dist/plugins/analytics/types.js
 /**
 * Map a (possibly legacy) AnalyticsFormat to its canonical form.
 * Legacy values come from appkit/appkit-ui < 0.33.0 and can be removed
@@ -192406,7 +192406,7 @@ function normalizeAnalyticsFormat(f) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/analytics/mv/schemas.js
+//#region node_modules/@databricks/appkit/dist/plugins/analytics/mv/schemas.js
 /** A leaf predicate: `{ member, operator, values? }`, no extra keys. */
 const filterPredicateSchema = object({
 	member: string().min(1, { message: "filter predicate 'member' cannot be empty" }).refine(isValidColumnName, { message: "filter predicate 'member' contains a character that cannot be used in a SQL identifier (control character or newline)" }),
@@ -192575,7 +192575,7 @@ function validateMetricRequest(body) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/analytics/query.js
+//#region node_modules/@databricks/appkit/dist/plugins/analytics/query.js
 var QueryProcessor = class {
 	async processQueryParams(query, parameters) {
 		const processed = { ...parameters };
@@ -192620,7 +192620,7 @@ var QueryProcessor = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/analytics/result-delivery.js
+//#region node_modules/@databricks/appkit/dist/plugins/analytics/result-delivery.js
 /**
 * Centralized disposition/format fallback for analytics result delivery.
 *
@@ -192900,7 +192900,7 @@ function decodeArrowAttachmentToRows(attachment, columnNames) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/analytics/analytics.js
+//#region node_modules/@databricks/appkit/dist/plugins/analytics/analytics.js
 const logger$22 = createLogger("analytics");
 /**
 * Bridges a callback-emitting async function into an async iterable.
@@ -193560,7 +193560,7 @@ const MAX_ARROW_COLUMNS_HEADER_BYTES = 6e3;
 const analytics = toPlugin(AnalyticsPlugin);
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/files/defaults.js
+//#region node_modules/@databricks/appkit/dist/plugins/files/defaults.js
 /**
 * Execution defaults for read-tier operations (list, read, exists, metadata, preview).
 * Cache 60s (ttl in seconds)
@@ -193612,7 +193612,7 @@ const FILES_WRITE_DEFAULTS = {
 const FILES_MAX_UPLOAD_SIZE = 5 * 1024 * 1024 * 1024;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/files/helpers.js
+//#region node_modules/@databricks/appkit/dist/plugins/files/helpers.js
 /**
 * Extract the parent directory from a file or directory path.
 *
@@ -193638,7 +193638,7 @@ function sanitizeFilename(raw) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/files/manifest.js
+//#region node_modules/@databricks/appkit/dist/plugins/files/manifest.js
 var manifest_default$5 = {
 	$schema: "https://databricks.github.io/appkit/schemas/plugin-manifest.schema.json",
 	name: "files",
@@ -193682,7 +193682,7 @@ var manifest_default$5 = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/files/plugin.js
+//#region node_modules/@databricks/appkit/dist/plugins/files/plugin.js
 const logger$21 = createLogger("files");
 var FilesPlugin = class FilesPlugin extends Plugin {
 	name = "files";
@@ -194969,7 +194969,7 @@ var FilesPlugin = class FilesPlugin extends Plugin {
 const files = Object.assign(toPlugin(FilesPlugin), { policy });
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/genie/defaults.js
+//#region node_modules/@databricks/appkit/dist/plugins/genie/defaults.js
 const genieStreamDefaults = {
 	default: {
 		cache: { enabled: false },
@@ -194980,7 +194980,7 @@ const genieStreamDefaults = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/genie/manifest.js
+//#region node_modules/@databricks/appkit/dist/plugins/genie/manifest.js
 var manifest_default$4 = {
 	$schema: "https://databricks.github.io/appkit/schemas/plugin-manifest.schema.json",
 	name: "genie",
@@ -195027,7 +195027,7 @@ var manifest_default$4 = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/genie/genie.js
+//#region node_modules/@databricks/appkit/dist/plugins/genie/genie.js
 const logger$20 = createLogger("genie");
 var GeniePlugin = class extends Plugin {
 	static manifest = manifest_default$4;
@@ -195250,7 +195250,7 @@ var GeniePlugin = class extends Plugin {
 const genie = toPlugin(GeniePlugin);
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/jobs/defaults.js
+//#region node_modules/@databricks/appkit/dist/plugins/jobs/defaults.js
 /**
 * Execution defaults for read-tier operations (getRun, getJob, listRuns, lastRun, getRunOutput).
 * Cache 60s (ttl in seconds)
@@ -195293,7 +195293,7 @@ const JOBS_STREAM_DEFAULTS = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/jobs/manifest.js
+//#region node_modules/@databricks/appkit/dist/plugins/jobs/manifest.js
 var manifest_default$3 = {
 	$schema: "https://databricks.github.io/appkit/schemas/plugin-manifest.schema.json",
 	name: "jobs",
@@ -195331,7 +195331,7 @@ var manifest_default$3 = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/jobs/params.js
+//#region node_modules/@databricks/appkit/dist/plugins/jobs/params.js
 /** Throw if any value is not a string, number, or boolean. */
 function assertPrimitiveValues(params) {
 	for (const [k, v] of Object.entries(params)) if (v !== null && v !== void 0 && typeof v === "object") throw new Error(`Parameter "${k}" must be a primitive value, got ${Array.isArray(v) ? "array" : "object"}`);
@@ -195364,7 +195364,7 @@ function mapParams(taskType, params) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/jobs/plugin.js
+//#region node_modules/@databricks/appkit/dist/plugins/jobs/plugin.js
 const logger$19 = createLogger("jobs");
 const DEFAULT_WAIT_TIMEOUT = 6e5;
 const DEFAULT_POLL_INTERVAL = 5e3;
@@ -195866,7 +195866,7 @@ const jobs = toPlugin(class JobsPlugin extends Plugin {
 });
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/lakebase/manifest.js
+//#region node_modules/@databricks/appkit/dist/plugins/lakebase/manifest.js
 var manifest_default$2 = {
 	$schema: "https://databricks.github.io/appkit/schemas/plugin-manifest.schema.json",
 	name: "lakebase",
@@ -195949,7 +195949,7 @@ var manifest_default$2 = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/lakebase/lakebase.js
+//#region node_modules/@databricks/appkit/dist/plugins/lakebase/lakebase.js
 const logger$18 = createLogger("lakebase");
 /** Default pool settings for per-user OBO pools. */
 const OBO_POOL_DEFAULTS = {
@@ -196203,7 +196203,7 @@ const Lang = new Proxy({}, { get: (_t, key) => String(key) });
 const parse = unavailable;
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/serving/server-file-extractor.js
+//#region node_modules/@databricks/appkit/dist/type-generator/serving/server-file-extractor.js
 const logger$17 = createLogger("type-generator:serving:extractor");
 /**
 * Candidate paths for the server entry file, relative to the project root.
@@ -196327,7 +196327,7 @@ function extractEndpointEntry(pair) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/cache.js
+//#region node_modules/@databricks/appkit/dist/type-generator/cache.js
 const logger$16 = createLogger("type-generator:cache");
 /**
 * Structural gate for reviving a cached metric entry at partition time.
@@ -196398,7 +196398,7 @@ async function saveCache(cache) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/errors.js
+//#region node_modules/@databricks/appkit/dist/type-generator/errors.js
 /**
 * Shared error-introspection utilities for the type generator.
 *
@@ -196551,7 +196551,7 @@ function classifyEnvironmentalCause(error) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/migration.js
+//#region node_modules/@databricks/appkit/dist/type-generator/migration.js
 const logger$15 = createLogger("type-generator:migration");
 /**
 * Derive project root from an outFile path.
@@ -196698,7 +196698,7 @@ function printMigrationSummary(results) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/mv-registry/config.js
+//#region node_modules/@databricks/appkit/dist/type-generator/mv-registry/config.js
 /**
 * Safety cap on declared metric views — a typo / DoS guard, NOT a Unity Catalog
 * limit. Enforced by {@link resolveMetricConfig}.
@@ -196805,7 +196805,7 @@ function resolveMetricConfig(config) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/statement-result.js
+//#region node_modules/@databricks/appkit/dist/type-generator/statement-result.js
 const logger$14 = createLogger("type-generator:statement-result");
 /**
 * Normalize a Statement Execution response so downstream parsers can always
@@ -196916,7 +196916,7 @@ async function describeAdaptive(client, statement, warehouseId, memo) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/mv-registry/describe.js
+//#region node_modules/@databricks/appkit/dist/type-generator/mv-registry/describe.js
 /**
 * Parse the JSON payload returned by DESCRIBE TABLE EXTENDED ... AS JSON.
 *
@@ -197111,7 +197111,7 @@ function createWorkspaceDescribeFetcher(client, warehouseId) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/mv-registry/render-types.js
+//#region node_modules/@databricks/appkit/dist/type-generator/mv-registry/render-types.js
 /**
 * @todo unify with query-registry.ts
 * Map a Databricks SQL type to a TypeScript primitive.
@@ -197265,7 +197265,7 @@ ${renderMetricViewsMetadata(schemas)}`;
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/mv-registry/sync.js
+//#region node_modules/@databricks/appkit/dist/type-generator/mv-registry/sync.js
 /**
 * Build the degraded schema emitted when an entry's columns are not
 * available — same key/source/lane as a real schema, with empty
@@ -197356,7 +197356,7 @@ async function syncMetrics(resolution, fetcher) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/preflight.js
+//#region node_modules/@databricks/appkit/dist/type-generator/preflight.js
 /**
 * Pure policy mapping a warehouse state + mode to a preflight decision.
 *
@@ -197378,7 +197378,7 @@ function decidePreflight(state, mode) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/warehouse-status.js
+//#region node_modules/@databricks/appkit/dist/type-generator/warehouse-status.js
 /** Backoff bounds for {@link waitUntilRunning}. */
 const INITIAL_POLL_MS = 1e3;
 const MAX_POLL_MS = 15e3;
@@ -197492,7 +197492,7 @@ function throwIfAborted(signal) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/spinner.js
+//#region node_modules/@databricks/appkit/dist/type-generator/spinner.js
 /**
 * Simple loading spinner for CLI
 */
@@ -197532,7 +197532,7 @@ var Spinner = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/types.js
+//#region node_modules/@databricks/appkit/dist/type-generator/types.js
 /**
 * Map of SQL types to their corresponding marker types
 * Used to convert SQL types to their corresponding marker types
@@ -197575,7 +197575,7 @@ const sqlTypeToHelper = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/query-registry.js
+//#region node_modules/@databricks/appkit/dist/type-generator/query-registry.js
 const logger$13 = createLogger("type-generator:query-registry");
 /**
 * Upper bound on how long a `blocking`-mode preflight will wait for a starting
@@ -198304,7 +198304,7 @@ const typeMap = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/serving/cache.js
+//#region node_modules/@databricks/appkit/dist/type-generator/serving/cache.js
 const logger$12 = createLogger("type-generator:serving:cache");
 const CACHE_VERSION = "1";
 const CACHE_FILE = ".appkit-serving-types-cache.json";
@@ -198335,7 +198335,7 @@ async function saveServingCache(cache) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/serving/converter.js
+//#region node_modules/@databricks/appkit/dist/type-generator/serving/converter.js
 /**
 * Converts an OpenAPI schema to a TypeScript type string.
 */
@@ -198441,7 +198441,7 @@ function deriveChunkType(operation) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/serving/fetcher.js
+//#region node_modules/@databricks/appkit/dist/type-generator/serving/fetcher.js
 const logger$11 = createLogger("type-generator:serving:fetcher");
 /**
 * Fetches the OpenAPI schema for a serving endpoint using the SDK.
@@ -198490,7 +198490,7 @@ async function fetchOpenApiSchema(client, endpointName, servedModel) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/serving/generator.js
+//#region node_modules/@databricks/appkit/dist/type-generator/serving/generator.js
 const logger$10 = createLogger("type-generator:serving");
 const GENERIC_REQUEST = "Record<string, unknown>";
 const GENERIC_RESPONSE = "unknown";
@@ -198683,7 +198683,7 @@ ${entries.join("\n")}
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/dotenv/package.json
+//#region node_modules/dotenv/package.json
 var require_package = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = {
 		"name": "dotenv",
@@ -198746,7 +198746,7 @@ var require_package = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/dotenv/lib/main.js
+//#region node_modules/dotenv/lib/main.js
 var require_main = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const fs$5 = __require("fs");
 	const path$4 = __require("path");
@@ -198978,7 +198978,7 @@ var require_main = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/index.js
+//#region node_modules/@databricks/appkit/dist/type-generator/index.js
 var import_main = /* @__PURE__ */ __toESM(require_main(), 1);
 import_main.default.config();
 const logger$9 = createLogger("type-generator");
@@ -199427,7 +199427,7 @@ const SERVING_TYPES_FILE = "serving.d.ts";
 const METRIC_TYPES_FILE = "metric-views.ts";
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/serving/vite-plugin.js
+//#region node_modules/@databricks/appkit/dist/type-generator/serving/vite-plugin.js
 const logger$8 = createLogger("type-generator:serving:vite-plugin");
 /**
 * Vite plugin to generate TypeScript types for AppKit serving endpoints.
@@ -199480,7 +199480,7 @@ function appKitServingTypesPlugin(options) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/type-generator/vite-plugin.js
+//#region node_modules/@databricks/appkit/dist/type-generator/vite-plugin.js
 const logger$7 = createLogger("type-generator:vite-plugin");
 /**
 * How long the DEV background watcher waits for a STARTING warehouse to reach
@@ -199689,7 +199689,7 @@ function appKitTypesPlugin(options) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/server/client-config-sanitizer.js
+//#region node_modules/@databricks/appkit/dist/plugins/server/client-config-sanitizer.js
 const logger$6 = createLogger("server:config");
 const REDACTED_CLIENT_CONFIG_VALUE = "[redacted by appkit]";
 const MIN_SUBSTRING_LENGTH = 3;
@@ -199868,7 +199868,7 @@ function formatLeakedVarsBanner(pluginName, leakedVars) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/server/manifest.js
+//#region node_modules/@databricks/appkit/dist/plugins/server/manifest.js
 var manifest_default$1 = {
 	$schema: "https://databricks.github.io/appkit/schemas/plugin-manifest.schema.json",
 	name: "server",
@@ -199900,7 +199900,7 @@ var manifest_default$1 = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/server/remote-tunnel/remote-tunnel-controller.js
+//#region node_modules/@databricks/appkit/dist/plugins/server/remote-tunnel/remote-tunnel-controller.js
 const logger$5 = createLogger("server:remote-tunnel:controller");
 /**
 * Controller for the remote tunnel
@@ -199985,7 +199985,7 @@ var RemoteTunnelController = class {
 		if (this.initPromise) return await this.initPromise;
 		this.initPromise = (async () => {
 			if (isLocalDev() || !isRemoteTunnelAllowedByEnv()) return null;
-			const remoteTunnelManager = new (await (import("./remote-tunnel-manager-CpLld0jh.mjs"))).RemoteTunnelManager(this.devFileReader);
+			const remoteTunnelManager = new (await (import("./remote-tunnel-manager-XOBiGfeG.mjs"))).RemoteTunnelManager(this.devFileReader);
 			this.manager = remoteTunnelManager;
 			this.maybeSetupWebSocket();
 			logger$5.debug("RemoteTunnel: initialized (on-demand)");
@@ -200012,7 +200012,7 @@ var RemoteTunnelController = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/server/utils.js
+//#region node_modules/@databricks/appkit/dist/plugins/server/utils.js
 function parseCookies(req) {
 	const cookieHeader = req.headers.cookie;
 	if (!cookieHeader) return {};
@@ -200127,7 +200127,7 @@ function serializeRuntimeConfig(config) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/server/base-server.js
+//#region node_modules/@databricks/appkit/dist/plugins/server/base-server.js
 /**
 * Base server for the AppKit.
 *
@@ -200151,7 +200151,7 @@ var BaseServer = class {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/depd/index.js
+//#region node_modules/depd/index.js
 var require_depd = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/*!
 	* depd
@@ -200462,7 +200462,7 @@ var require_depd = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/bytes/index.js
+//#region node_modules/bytes/index.js
 /*!
 * bytes
 * Copyright(c) 2012-2014 TJ Holowaychuk
@@ -200578,7 +200578,7 @@ var require_bytes = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/content-type/index.js
+//#region node_modules/content-type/index.js
 /*!
 * content-type
 * Copyright(c) 2015 Douglas Christopher Wilson
@@ -200724,7 +200724,7 @@ var require_content_type = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/setprototypeof/index.js
+//#region node_modules/setprototypeof/index.js
 var require_setprototypeof = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = Object.setPrototypeOf || ({ __proto__: [] } instanceof Array ? setProtoOf : mixinProperties);
 	function setProtoOf(obj, proto) {
@@ -200738,7 +200738,7 @@ var require_setprototypeof = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/statuses/codes.json
+//#region node_modules/statuses/codes.json
 var require_codes = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = {
 		"100": "Continue",
@@ -200808,7 +200808,7 @@ var require_codes = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/statuses/index.js
+//#region node_modules/statuses/index.js
 /*!
 * statuses
 * Copyright(c) 2014 Jonathan Ong
@@ -200910,7 +200910,7 @@ var require_statuses = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/inherits/inherits_browser.js
+//#region node_modules/inherits/inherits_browser.js
 var require_inherits_browser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	if (typeof Object.create === "function") module.exports = function inherits(ctor, superCtor) {
 		if (superCtor) {
@@ -200935,7 +200935,7 @@ var require_inherits_browser = /* @__PURE__ */ __commonJSMin(((exports, module) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/inherits/inherits.js
+//#region node_modules/inherits/inherits.js
 var require_inherits = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	try {
 		var util$5 = __require("util");
@@ -200949,7 +200949,7 @@ var require_inherits = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/toidentifier/index.js
+//#region node_modules/toidentifier/index.js
 /*!
 * toidentifier
 * Copyright(c) 2016 Douglas Christopher Wilson
@@ -200976,7 +200976,7 @@ var require_toidentifier = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/http-errors/index.js
+//#region node_modules/http-errors/index.js
 /*!
 * http-errors
 * Copyright(c) 2014 Jonathan Ong
@@ -201176,7 +201176,7 @@ var require_http_errors = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/body-parser/node_modules/ms/index.js
+//#region node_modules/body-parser/node_modules/ms/index.js
 var require_ms$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Helpers.
@@ -201286,7 +201286,7 @@ var require_ms$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/body-parser/node_modules/debug/src/debug.js
+//#region node_modules/body-parser/node_modules/debug/src/debug.js
 var require_debug$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* This is the common logic for both the Node.js and web browser
@@ -201427,7 +201427,7 @@ var require_debug$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/body-parser/node_modules/debug/src/browser.js
+//#region node_modules/body-parser/node_modules/debug/src/browser.js
 var require_browser$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* This is the web browser implementation of `debug()`.
@@ -201550,7 +201550,7 @@ var require_browser$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/body-parser/node_modules/debug/src/node.js
+//#region node_modules/body-parser/node_modules/debug/src/node.js
 var require_node$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Module dependencies.
@@ -201723,7 +201723,7 @@ var require_node$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/body-parser/node_modules/debug/src/index.js
+//#region node_modules/body-parser/node_modules/debug/src/index.js
 var require_src$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Detect Electron renderer process, which is node, but we should
@@ -201734,7 +201734,7 @@ var require_src$3 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/destroy/index.js
+//#region node_modules/destroy/index.js
 /*!
 * destroy
 * Copyright(c) 2014 Jonathan Ong
@@ -201884,7 +201884,7 @@ var require_destroy = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/safer-buffer/safer.js
+//#region node_modules/safer-buffer/safer.js
 var require_safer = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var buffer = __require("buffer");
 	var Buffer = buffer.Buffer;
@@ -201927,7 +201927,7 @@ var require_safer = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/lib/bom-handling.js
+//#region node_modules/iconv-lite/lib/bom-handling.js
 var require_bom_handling = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var BOMChar = "﻿";
 	exports.PrependBOM = PrependBOMWrapper;
@@ -201967,7 +201967,7 @@ var require_bom_handling = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/internal.js
+//#region node_modules/iconv-lite/encodings/internal.js
 var require_internal = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var Buffer = require_safer().Buffer;
 	module.exports = {
@@ -202096,7 +202096,7 @@ var require_internal = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/utf16.js
+//#region node_modules/iconv-lite/encodings/utf16.js
 var require_utf16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Buffer = require_safer().Buffer;
 	exports.utf16be = Utf16BECodec;
@@ -202197,7 +202197,7 @@ var require_utf16 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/utf7.js
+//#region node_modules/iconv-lite/encodings/utf7.js
 var require_utf7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Buffer = require_safer().Buffer;
 	exports.utf7 = Utf7Codec;
@@ -202374,7 +202374,7 @@ var require_utf7 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/sbcs-codec.js
+//#region node_modules/iconv-lite/encodings/sbcs-codec.js
 var require_sbcs_codec = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Buffer = require_safer().Buffer;
 	exports._sbcs = SBCSCodec;
@@ -202421,7 +202421,7 @@ var require_sbcs_codec = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/sbcs-data.js
+//#region node_modules/iconv-lite/encodings/sbcs-data.js
 var require_sbcs_data = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = {
 		"10029": "maccenteuro",
@@ -202566,7 +202566,7 @@ var require_sbcs_data = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/sbcs-data-generated.js
+//#region node_modules/iconv-lite/encodings/sbcs-data-generated.js
 var require_sbcs_data_generated = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = {
 		"437": "cp437",
@@ -203019,7 +203019,7 @@ var require_sbcs_data_generated = /* @__PURE__ */ __commonJSMin(((exports, modul
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/dbcs-codec.js
+//#region node_modules/iconv-lite/encodings/dbcs-codec.js
 var require_dbcs_codec = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var Buffer = require_safer().Buffer;
 	exports._dbcs = DBCSCodec;
@@ -203334,7 +203334,7 @@ var require_dbcs_codec = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/tables/shiftjis.json
+//#region node_modules/iconv-lite/encodings/tables/shiftjis.json
 var require_shiftjis = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = [
 		[
@@ -203624,7 +203624,7 @@ var require_shiftjis = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/tables/eucjp.json
+//#region node_modules/iconv-lite/encodings/tables/eucjp.json
 var require_eucjp = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = [
 		[
@@ -204047,7 +204047,7 @@ var require_eucjp = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/tables/cp936.json
+//#region node_modules/iconv-lite/encodings/tables/cp936.json
 var require_cp936 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = [
 		[
@@ -206629,7 +206629,7 @@ var require_cp936 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/tables/gbk-added.json
+//#region node_modules/iconv-lite/encodings/tables/gbk-added.json
 var require_gbk_added = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = [
 		[
@@ -206856,7 +206856,7 @@ var require_gbk_added = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/tables/gb18030-ranges.json
+//#region node_modules/iconv-lite/encodings/tables/gb18030-ranges.json
 var require_gb18030_ranges = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = {
 		"uChars": [
@@ -207281,7 +207281,7 @@ var require_gb18030_ranges = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/tables/cp949.json
+//#region node_modules/iconv-lite/encodings/tables/cp949.json
 var require_cp949 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = [
 		[
@@ -209499,7 +209499,7 @@ var require_cp949 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/tables/cp950.json
+//#region node_modules/iconv-lite/encodings/tables/cp950.json
 var require_cp950 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = [
 		[
@@ -209724,7 +209724,7 @@ var require_cp950 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/tables/big5-added.json
+//#region node_modules/iconv-lite/encodings/tables/big5-added.json
 var require_big5_added = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = [
 		["8740", "䏰䰲䘃䖦䕸𧉧䵷䖳𧲱䳢𧳅㮕䜶䝄䱇䱀𤊿𣘗𧍒𦺋𧃒䱗𪍑䝏䗚䲅𧱬䴇䪤䚡𦬣爥𥩔𡩣𣸆𣽡晍囻"],
@@ -209891,7 +209891,7 @@ var require_big5_added = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/dbcs-data.js
+//#region node_modules/iconv-lite/encodings/dbcs-data.js
 var require_dbcs_data = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = {
 		"shiftjis": {
@@ -210004,7 +210004,7 @@ var require_dbcs_data = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/encodings/index.js
+//#region node_modules/iconv-lite/encodings/index.js
 var require_encodings = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var modules = [
 		require_internal(),
@@ -210023,7 +210023,7 @@ var require_encodings = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/lib/streams.js
+//#region node_modules/iconv-lite/lib/streams.js
 var require_streams = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var Buffer$2 = __require("buffer").Buffer, Transform = __require("stream").Transform;
 	module.exports = function(iconv) {
@@ -210115,7 +210115,7 @@ var require_streams = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/lib/extend-node.js
+//#region node_modules/iconv-lite/lib/extend-node.js
 var require_extend_node = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var Buffer$1 = __require("buffer").Buffer;
 	module.exports = function(iconv) {
@@ -210260,7 +210260,7 @@ var require_extend_node = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/iconv-lite/lib/index.js
+//#region node_modules/iconv-lite/lib/index.js
 var require_lib$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var Buffer = require_safer().Buffer;
 	var bomHandling = require_bom_handling(), iconv = module.exports;
@@ -210346,7 +210346,7 @@ var require_lib$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/unpipe/index.js
+//#region node_modules/unpipe/index.js
 /*!
 * unpipe
 * Copyright(c) 2015 Douglas Christopher Wilson
@@ -210391,7 +210391,7 @@ var require_unpipe = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/raw-body/index.js
+//#region node_modules/raw-body/index.js
 /*!
 * raw-body
 * Copyright(c) 2013-2014 Jonathan Ong
@@ -210591,7 +210591,7 @@ var require_raw_body = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ee-first/index.js
+//#region node_modules/ee-first/index.js
 /*!
 * ee-first
 * Copyright(c) 2014 Jonathan Ong
@@ -210661,7 +210661,7 @@ var require_ee_first = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/on-finished/index.js
+//#region node_modules/on-finished/index.js
 /*!
 * on-finished
 * Copyright(c) 2013 Jonathan Ong
@@ -210833,7 +210833,7 @@ var require_on_finished = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/body-parser/lib/read.js
+//#region node_modules/body-parser/lib/read.js
 /*!
 * body-parser
 * Copyright(c) 2014-2015 Douglas Christopher Wilson
@@ -210986,7 +210986,7 @@ var require_read = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/media-typer/index.js
+//#region node_modules/media-typer/index.js
 var require_media_typer = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/*!
 	* media-typer
@@ -211167,7 +211167,7 @@ var require_media_typer = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/mime-db/db.json
+//#region node_modules/mime-db/db.json
 var require_db = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = {
 		"application/1d-interleaved-parityfec": { "source": "iana" },
@@ -218213,7 +218213,7 @@ var require_db = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/mime-db/index.js
+//#region node_modules/mime-db/index.js
 var require_mime_db = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/*!
 	* mime-db
@@ -218228,7 +218228,7 @@ var require_mime_db = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/mime-types/index.js
+//#region node_modules/mime-types/index.js
 /*!
 * mime-types
 * Copyright(c) 2014 Jonathan Ong
@@ -218345,7 +218345,7 @@ var require_mime_types = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/type-is/index.js
+//#region node_modules/type-is/index.js
 /*!
 * type-is
 * Copyright(c) 2014 Jonathan Ong
@@ -218517,7 +218517,7 @@ var require_type_is = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/body-parser/lib/types/json.js
+//#region node_modules/body-parser/lib/types/json.js
 /*!
 * body-parser
 * Copyright(c) 2014 Jonathan Ong
@@ -218703,7 +218703,7 @@ var require_json = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/body-parser/lib/types/raw.js
+//#region node_modules/body-parser/lib/types/raw.js
 /*!
 * body-parser
 * Copyright(c) 2014-2015 Douglas Christopher Wilson
@@ -218779,7 +218779,7 @@ var require_raw = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/body-parser/lib/types/text.js
+//#region node_modules/body-parser/lib/types/text.js
 /*!
 * body-parser
 * Copyright(c) 2014-2015 Douglas Christopher Wilson
@@ -218870,20 +218870,20 @@ var require_text = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/es-errors/type.js
+//#region node_modules/es-errors/type.js
 var require_type = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./type')} */
 	module.exports = TypeError;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/object-inspect/util.inspect.js
+//#region node_modules/object-inspect/util.inspect.js
 var require_util_inspect = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = __require("util").inspect;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/object-inspect/index.js
+//#region node_modules/object-inspect/index.js
 var require_object_inspect = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var hasMap = typeof Map === "function" && Map.prototype;
 	var mapSizeDescriptor = Object.getOwnPropertyDescriptor && hasMap ? Object.getOwnPropertyDescriptor(Map.prototype, "size") : null;
@@ -219266,7 +219266,7 @@ var require_object_inspect = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/side-channel-list/index.js
+//#region node_modules/side-channel-list/index.js
 var require_side_channel_list = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var inspect = require_object_inspect();
 	var $TypeError = require_type();
@@ -219342,98 +219342,98 @@ var require_side_channel_list = /* @__PURE__ */ __commonJSMin(((exports, module)
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/es-object-atoms/index.js
+//#region node_modules/es-object-atoms/index.js
 var require_es_object_atoms = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('.')} */
 	module.exports = Object;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/es-errors/index.js
+//#region node_modules/es-errors/index.js
 var require_es_errors = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('.')} */
 	module.exports = Error;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/es-errors/eval.js
+//#region node_modules/es-errors/eval.js
 var require_eval = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./eval')} */
 	module.exports = EvalError;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/es-errors/range.js
+//#region node_modules/es-errors/range.js
 var require_range = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./range')} */
 	module.exports = RangeError;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/es-errors/ref.js
+//#region node_modules/es-errors/ref.js
 var require_ref = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./ref')} */
 	module.exports = ReferenceError;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/es-errors/syntax.js
+//#region node_modules/es-errors/syntax.js
 var require_syntax = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./syntax')} */
 	module.exports = SyntaxError;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/es-errors/uri.js
+//#region node_modules/es-errors/uri.js
 var require_uri = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./uri')} */
 	module.exports = URIError;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/math-intrinsics/abs.js
+//#region node_modules/math-intrinsics/abs.js
 var require_abs = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./abs')} */
 	module.exports = Math.abs;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/math-intrinsics/floor.js
+//#region node_modules/math-intrinsics/floor.js
 var require_floor = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./floor')} */
 	module.exports = Math.floor;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/math-intrinsics/max.js
+//#region node_modules/math-intrinsics/max.js
 var require_max = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./max')} */
 	module.exports = Math.max;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/math-intrinsics/min.js
+//#region node_modules/math-intrinsics/min.js
 var require_min = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./min')} */
 	module.exports = Math.min;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/math-intrinsics/pow.js
+//#region node_modules/math-intrinsics/pow.js
 var require_pow = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./pow')} */
 	module.exports = Math.pow;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/math-intrinsics/round.js
+//#region node_modules/math-intrinsics/round.js
 var require_round = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./round')} */
 	module.exports = Math.round;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/math-intrinsics/isNaN.js
+//#region node_modules/math-intrinsics/isNaN.js
 var require_isNaN = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./isNaN')} */
 	module.exports = Number.isNaN || function isNaN(a) {
@@ -219442,7 +219442,7 @@ var require_isNaN = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/math-intrinsics/sign.js
+//#region node_modules/math-intrinsics/sign.js
 var require_sign = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var $isNaN = require_isNaN();
 	/** @type {import('./sign')} */
@@ -219453,14 +219453,14 @@ var require_sign = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/gopd/gOPD.js
+//#region node_modules/gopd/gOPD.js
 var require_gOPD = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./gOPD')} */
 	module.exports = Object.getOwnPropertyDescriptor;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/gopd/index.js
+//#region node_modules/gopd/index.js
 var require_gopd = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('.')} */
 	var $gOPD = require_gOPD();
@@ -219473,7 +219473,7 @@ var require_gopd = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/es-define-property/index.js
+//#region node_modules/es-define-property/index.js
 var require_es_define_property = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('.')} */
 	var $defineProperty = Object.defineProperty || false;
@@ -219486,7 +219486,7 @@ var require_es_define_property = /* @__PURE__ */ __commonJSMin(((exports, module
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/has-symbols/shams.js
+//#region node_modules/has-symbols/shams.js
 var require_shams = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./shams')} */
 	module.exports = function hasSymbols() {
@@ -219516,7 +219516,7 @@ var require_shams = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/has-symbols/index.js
+//#region node_modules/has-symbols/index.js
 var require_has_symbols = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var origSymbol = typeof Symbol !== "undefined" && Symbol;
 	var hasSymbolSham = require_shams();
@@ -219531,14 +219531,14 @@ var require_has_symbols = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/get-proto/Reflect.getPrototypeOf.js
+//#region node_modules/get-proto/Reflect.getPrototypeOf.js
 var require_Reflect_getPrototypeOf = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./Reflect.getPrototypeOf')} */
 	module.exports = typeof Reflect !== "undefined" && Reflect.getPrototypeOf || null;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/get-proto/Object.getPrototypeOf.js
+//#region node_modules/get-proto/Object.getPrototypeOf.js
 var require_Object_getPrototypeOf = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var $Object = require_es_object_atoms();
 	/** @type {import('./Object.getPrototypeOf')} */
@@ -219546,7 +219546,7 @@ var require_Object_getPrototypeOf = /* @__PURE__ */ __commonJSMin(((exports, mod
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/function-bind/implementation.js
+//#region node_modules/function-bind/implementation.js
 var require_implementation = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var ERROR_MESSAGE = "Function.prototype.bind called on incompatible ";
 	var toStr = Object.prototype.toString;
@@ -219599,35 +219599,35 @@ var require_implementation = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/function-bind/index.js
+//#region node_modules/function-bind/index.js
 var require_function_bind = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var implementation = require_implementation();
 	module.exports = Function.prototype.bind || implementation;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/call-bind-apply-helpers/functionCall.js
+//#region node_modules/call-bind-apply-helpers/functionCall.js
 var require_functionCall = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./functionCall')} */
 	module.exports = Function.prototype.call;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/call-bind-apply-helpers/functionApply.js
+//#region node_modules/call-bind-apply-helpers/functionApply.js
 var require_functionApply = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./functionApply')} */
 	module.exports = Function.prototype.apply;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/call-bind-apply-helpers/reflectApply.js
+//#region node_modules/call-bind-apply-helpers/reflectApply.js
 var require_reflectApply = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/** @type {import('./reflectApply')} */
 	module.exports = typeof Reflect !== "undefined" && Reflect && Reflect.apply;
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/call-bind-apply-helpers/actualApply.js
+//#region node_modules/call-bind-apply-helpers/actualApply.js
 var require_actualApply = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var bind = require_function_bind();
 	var $apply = require_functionApply();
@@ -219638,7 +219638,7 @@ var require_actualApply = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/call-bind-apply-helpers/index.js
+//#region node_modules/call-bind-apply-helpers/index.js
 var require_call_bind_apply_helpers = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var bind = require_function_bind();
 	var $TypeError = require_type();
@@ -219652,7 +219652,7 @@ var require_call_bind_apply_helpers = /* @__PURE__ */ __commonJSMin(((exports, m
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/dunder-proto/get.js
+//#region node_modules/dunder-proto/get.js
 var require_get = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var callBind = require_call_bind_apply_helpers();
 	var gOPD = require_gopd();
@@ -219672,7 +219672,7 @@ var require_get = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/get-proto/index.js
+//#region node_modules/get-proto/index.js
 var require_get_proto = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var reflectGetProto = require_Reflect_getPrototypeOf();
 	var originalGetProto = require_Object_getPrototypeOf();
@@ -219689,7 +219689,7 @@ var require_get_proto = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/hasown/index.js
+//#region node_modules/hasown/index.js
 var require_hasown = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var call = Function.prototype.call;
 	var $hasOwn = Object.prototype.hasOwnProperty;
@@ -219699,7 +219699,7 @@ var require_hasown = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/get-intrinsic/index.js
+//#region node_modules/get-intrinsic/index.js
 var require_get_intrinsic = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var undefined;
 	var $Object = require_es_object_atoms();
@@ -220026,7 +220026,7 @@ var require_get_intrinsic = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/call-bound/index.js
+//#region node_modules/call-bound/index.js
 var require_call_bound = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var GetIntrinsic = require_get_intrinsic();
 	var callBindBasic = require_call_bind_apply_helpers();
@@ -220041,7 +220041,7 @@ var require_call_bound = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/side-channel-map/index.js
+//#region node_modules/side-channel-map/index.js
 var require_side_channel_map = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var GetIntrinsic = require_get_intrinsic();
 	var callBound = require_call_bound();
@@ -220094,7 +220094,7 @@ var require_side_channel_map = /* @__PURE__ */ __commonJSMin(((exports, module) 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/side-channel-weakmap/index.js
+//#region node_modules/side-channel-weakmap/index.js
 var require_side_channel_weakmap = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var GetIntrinsic = require_get_intrinsic();
 	var callBound = require_call_bound();
@@ -220157,7 +220157,7 @@ var require_side_channel_weakmap = /* @__PURE__ */ __commonJSMin(((exports, modu
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/side-channel/index.js
+//#region node_modules/side-channel/index.js
 var require_side_channel = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var $TypeError = require_type();
 	var inspect = require_object_inspect();
@@ -220192,7 +220192,7 @@ var require_side_channel = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/qs/lib/formats.js
+//#region node_modules/qs/lib/formats.js
 var require_formats = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var replace = String.prototype.replace;
 	var percentTwenties = /%20/g;
@@ -220216,7 +220216,7 @@ var require_formats = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/qs/lib/utils.js
+//#region node_modules/qs/lib/utils.js
 var require_utils$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var formats = require_formats();
 	var getSideChannel = require_side_channel();
@@ -220468,7 +220468,7 @@ var require_utils$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/qs/lib/stringify.js
+//#region node_modules/qs/lib/stringify.js
 var require_stringify = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var getSideChannel = require_side_channel();
 	var utils = require_utils$1();
@@ -220653,7 +220653,7 @@ var require_stringify = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/qs/lib/parse.js
+//#region node_modules/qs/lib/parse.js
 var require_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var utils = require_utils$1();
 	var has = Object.prototype.hasOwnProperty;
@@ -220890,7 +220890,7 @@ var require_parse = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/qs/lib/index.js
+//#region node_modules/qs/lib/index.js
 var require_lib = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	var stringify = require_stringify();
 	var parse = require_parse();
@@ -220903,7 +220903,7 @@ var require_lib = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/body-parser/lib/types/urlencoded.js
+//#region node_modules/body-parser/lib/types/urlencoded.js
 /*!
 * body-parser
 * Copyright(c) 2014 Jonathan Ong
@@ -221105,7 +221105,7 @@ var require_urlencoded = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/body-parser/index.js
+//#region node_modules/body-parser/index.js
 /*!
 * body-parser
 * Copyright(c) 2014-2015 Douglas Christopher Wilson
@@ -221230,7 +221230,7 @@ var require_body_parser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/merge-descriptors/index.js
+//#region node_modules/merge-descriptors/index.js
 /*!
 * merge-descriptors
 * Copyright(c) 2014 Jonathan Ong
@@ -221271,7 +221271,7 @@ var require_merge_descriptors = /* @__PURE__ */ __commonJSMin(((exports, module)
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/finalhandler/node_modules/ms/index.js
+//#region node_modules/finalhandler/node_modules/ms/index.js
 var require_ms$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Helpers.
@@ -221381,7 +221381,7 @@ var require_ms$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/finalhandler/node_modules/debug/src/debug.js
+//#region node_modules/finalhandler/node_modules/debug/src/debug.js
 var require_debug$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* This is the common logic for both the Node.js and web browser
@@ -221522,7 +221522,7 @@ var require_debug$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/finalhandler/node_modules/debug/src/browser.js
+//#region node_modules/finalhandler/node_modules/debug/src/browser.js
 var require_browser$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* This is the web browser implementation of `debug()`.
@@ -221645,7 +221645,7 @@ var require_browser$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/finalhandler/node_modules/debug/src/node.js
+//#region node_modules/finalhandler/node_modules/debug/src/node.js
 var require_node$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Module dependencies.
@@ -221818,7 +221818,7 @@ var require_node$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/finalhandler/node_modules/debug/src/index.js
+//#region node_modules/finalhandler/node_modules/debug/src/index.js
 var require_src$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Detect Electron renderer process, which is node, but we should
@@ -221829,7 +221829,7 @@ var require_src$2 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/encodeurl/index.js
+//#region node_modules/encodeurl/index.js
 /*!
 * encodeurl
 * Copyright(c) 2016 Douglas Christopher Wilson
@@ -221880,7 +221880,7 @@ var require_encodeurl = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/escape-html/index.js
+//#region node_modules/escape-html/index.js
 /*!
 * escape-html
 * Copyright(c) 2012-2013 TJ Holowaychuk
@@ -221942,7 +221942,7 @@ var require_escape_html = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/parseurl/index.js
+//#region node_modules/parseurl/index.js
 /*!
 * parseurl
 * Copyright(c) 2014 Jonathan Ong
@@ -222048,7 +222048,7 @@ var require_parseurl = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/finalhandler/index.js
+//#region node_modules/finalhandler/index.js
 /*!
 * finalhandler
 * Copyright(c) 2014-2022 Douglas Christopher Wilson
@@ -222270,7 +222270,7 @@ var require_finalhandler = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/node_modules/ms/index.js
+//#region node_modules/express/node_modules/ms/index.js
 var require_ms$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Helpers.
@@ -222380,7 +222380,7 @@ var require_ms$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/node_modules/debug/src/debug.js
+//#region node_modules/express/node_modules/debug/src/debug.js
 var require_debug$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* This is the common logic for both the Node.js and web browser
@@ -222521,7 +222521,7 @@ var require_debug$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/node_modules/debug/src/browser.js
+//#region node_modules/express/node_modules/debug/src/browser.js
 var require_browser$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* This is the web browser implementation of `debug()`.
@@ -222644,7 +222644,7 @@ var require_browser$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/node_modules/debug/src/node.js
+//#region node_modules/express/node_modules/debug/src/node.js
 var require_node$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Module dependencies.
@@ -222817,7 +222817,7 @@ var require_node$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/node_modules/debug/src/index.js
+//#region node_modules/express/node_modules/debug/src/index.js
 var require_src$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Detect Electron renderer process, which is node, but we should
@@ -222828,7 +222828,7 @@ var require_src$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/array-flatten/array-flatten.js
+//#region node_modules/array-flatten/array-flatten.js
 var require_array_flatten = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Expose `arrayFlatten`.
@@ -222879,7 +222879,7 @@ var require_array_flatten = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/path-to-regexp/index.js
+//#region node_modules/path-to-regexp/index.js
 var require_path_to_regexp = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Expose `pathToRegexp`.
@@ -222994,7 +222994,7 @@ var require_path_to_regexp = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/lib/router/layer.js
+//#region node_modules/express/lib/router/layer.js
 /*!
 * express
 * Copyright(c) 2009-2013 TJ Holowaychuk
@@ -223127,7 +223127,7 @@ var require_layer = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/methods/index.js
+//#region node_modules/methods/index.js
 /*!
 * methods
 * Copyright(c) 2013-2014 TJ Holowaychuk
@@ -223191,7 +223191,7 @@ var require_methods = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/lib/router/route.js
+//#region node_modules/express/lib/router/route.js
 /*!
 * express
 * Copyright(c) 2009-2013 TJ Holowaychuk
@@ -223340,7 +223340,7 @@ var require_route = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/utils-merge/index.js
+//#region node_modules/utils-merge/index.js
 var require_utils_merge = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Merge object b with object a.
@@ -223363,7 +223363,7 @@ var require_utils_merge = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/lib/router/index.js
+//#region node_modules/express/lib/router/index.js
 /*!
 * express
 * Copyright(c) 2009-2013 TJ Holowaychuk
@@ -223773,7 +223773,7 @@ var require_router = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/lib/middleware/init.js
+//#region node_modules/express/lib/middleware/init.js
 /*!
 * express
 * Copyright(c) 2009-2013 TJ Holowaychuk
@@ -223811,7 +223811,7 @@ var require_init = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/lib/middleware/query.js
+//#region node_modules/express/lib/middleware/query.js
 /*!
 * express
 * Copyright(c) 2009-2013 TJ Holowaychuk
@@ -223850,7 +223850,7 @@ var require_query = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/lib/view.js
+//#region node_modules/express/lib/view.js
 /*!
 * express
 * Copyright(c) 2009-2013 TJ Holowaychuk
@@ -223979,7 +223979,7 @@ var require_view = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/content-disposition/index.js
+//#region node_modules/content-disposition/index.js
 /*!
 * content-disposition
 * Copyright(c) 2014-2017 Douglas Christopher Wilson
@@ -224282,7 +224282,7 @@ var require_content_disposition = /* @__PURE__ */ __commonJSMin(((exports, modul
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/send/node_modules/debug/node_modules/ms/index.js
+//#region node_modules/send/node_modules/debug/node_modules/ms/index.js
 var require_ms = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Helpers.
@@ -224392,7 +224392,7 @@ var require_ms = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/send/node_modules/debug/src/debug.js
+//#region node_modules/send/node_modules/debug/src/debug.js
 var require_debug = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* This is the common logic for both the Node.js and web browser
@@ -224533,7 +224533,7 @@ var require_debug = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/send/node_modules/debug/src/browser.js
+//#region node_modules/send/node_modules/debug/src/browser.js
 var require_browser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* This is the web browser implementation of `debug()`.
@@ -224656,7 +224656,7 @@ var require_browser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/send/node_modules/debug/src/node.js
+//#region node_modules/send/node_modules/debug/src/node.js
 var require_node = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Module dependencies.
@@ -224829,7 +224829,7 @@ var require_node = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/send/node_modules/debug/src/index.js
+//#region node_modules/send/node_modules/debug/src/index.js
 var require_src = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	/**
 	* Detect Electron renderer process, which is node, but we should
@@ -224840,7 +224840,7 @@ var require_src = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/etag/index.js
+//#region node_modules/etag/index.js
 /*!
 * etag
 * Copyright(c) 2014-2016 Douglas Christopher Wilson
@@ -224917,7 +224917,7 @@ var require_etag = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/fresh/index.js
+//#region node_modules/fresh/index.js
 /*!
 * fresh
 * Copyright(c) 2012 TJ Holowaychuk
@@ -225008,7 +225008,7 @@ var require_fresh = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/mime/types.json
+//#region node_modules/mime/types.json
 var require_types = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	module.exports = {
 		"application/andrew-inset": ["ez"],
@@ -226107,7 +226107,7 @@ var require_types = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/mime/mime.js
+//#region node_modules/mime/mime.js
 var require_mime = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	__require("path");
 	var fs$3 = __require("fs");
@@ -226180,7 +226180,7 @@ var require_mime = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/range-parser/index.js
+//#region node_modules/range-parser/index.js
 /*!
 * range-parser
 * Copyright(c) 2012-2014 TJ Holowaychuk
@@ -226285,7 +226285,7 @@ var require_range_parser = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/send/index.js
+//#region node_modules/send/index.js
 /*!
 * send
 * Copyright(c) 2012 TJ Holowaychuk
@@ -227067,7 +227067,7 @@ var require_send = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/forwarded/index.js
+//#region node_modules/forwarded/index.js
 /*!
 * forwarded
 * Copyright(c) 2014-2017 Douglas Christopher Wilson
@@ -227129,7 +227129,7 @@ var require_forwarded = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/ipaddr.js/lib/ipaddr.js
+//#region node_modules/ipaddr.js/lib/ipaddr.js
 var require_ipaddr = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	(function() {
 		var expandIPv6, ipaddr = {}, ipv4Part, ipv4Regexes, ipv6Part, ipv6Regexes, matchCIDR, root = this, zoneIndex;
@@ -227801,7 +227801,7 @@ var require_ipaddr = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/proxy-addr/index.js
+//#region node_modules/proxy-addr/index.js
 /*!
 * proxy-addr
 * Copyright(c) 2014-2016 Douglas Christopher Wilson
@@ -228006,7 +228006,7 @@ var require_proxy_addr = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/lib/utils.js
+//#region node_modules/express/lib/utils.js
 /*!
 * express
 * Copyright(c) 2009-2013 TJ Holowaychuk
@@ -228242,7 +228242,7 @@ var require_utils = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/lib/application.js
+//#region node_modules/express/lib/application.js
 /*!
 * express
 * Copyright(c) 2009-2013 TJ Holowaychuk
@@ -228728,7 +228728,7 @@ var require_application = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/negotiator/lib/charset.js
+//#region node_modules/negotiator/lib/charset.js
 /**
 * negotiator
 * Copyright(c) 2012 Isaac Z. Schlueter
@@ -228855,7 +228855,7 @@ var require_charset = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/negotiator/lib/encoding.js
+//#region node_modules/negotiator/lib/encoding.js
 /**
 * negotiator
 * Copyright(c) 2012 Isaac Z. Schlueter
@@ -228993,7 +228993,7 @@ var require_encoding = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/negotiator/lib/language.js
+//#region node_modules/negotiator/lib/language.js
 /**
 * negotiator
 * Copyright(c) 2012 Isaac Z. Schlueter
@@ -229126,7 +229126,7 @@ var require_language = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/negotiator/lib/mediaType.js
+//#region node_modules/negotiator/lib/mediaType.js
 /**
 * negotiator
 * Copyright(c) 2012 Isaac Z. Schlueter
@@ -229321,7 +229321,7 @@ var require_mediaType = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/negotiator/index.js
+//#region node_modules/negotiator/index.js
 /*!
 * negotiator
 * Copyright(c) 2012 Federico Romero
@@ -229388,7 +229388,7 @@ var require_negotiator = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/accepts/index.js
+//#region node_modules/accepts/index.js
 /*!
 * accepts
 * Copyright(c) 2014 Jonathan Ong
@@ -229556,7 +229556,7 @@ var require_accepts = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/lib/request.js
+//#region node_modules/express/lib/request.js
 /*!
 * express
 * Copyright(c) 2009-2013 TJ Holowaychuk
@@ -229966,7 +229966,7 @@ var require_request = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/cookie-signature/index.js
+//#region node_modules/cookie-signature/index.js
 var require_cookie_signature = /* @__PURE__ */ __commonJSMin(((exports) => {
 	/**
 	* Module dependencies.
@@ -230009,7 +230009,7 @@ var require_cookie_signature = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/cookie/index.js
+//#region node_modules/cookie/index.js
 /*!
 * cookie
 * Copyright(c) 2012-2014 Roman Shtylman
@@ -230250,7 +230250,7 @@ var require_cookie = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/vary/index.js
+//#region node_modules/vary/index.js
 /*!
 * vary
 * Copyright(c) 2014-2017 Douglas Christopher Wilson
@@ -230340,7 +230340,7 @@ var require_vary = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/lib/response.js
+//#region node_modules/express/lib/response.js
 /*!
 * express
 * Copyright(c) 2009-2013 TJ Holowaychuk
@@ -231188,7 +231188,7 @@ var require_response = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/serve-static/index.js
+//#region node_modules/serve-static/index.js
 /*!
 * serve-static
 * Copyright(c) 2010 Sencha Inc.
@@ -231313,7 +231313,7 @@ var require_serve_static = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/lib/express.js
+//#region node_modules/express/lib/express.js
 /*!
 * express
 * Copyright(c) 2009-2013 TJ Holowaychuk
@@ -231413,7 +231413,7 @@ var require_express$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/express/index.js
+//#region node_modules/express/index.js
 /*!
 * express
 * Copyright(c) 2009-2013 TJ Holowaychuk
@@ -231426,7 +231426,7 @@ var require_express = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/server/static-server.js
+//#region node_modules/@databricks/appkit/dist/plugins/server/static-server.js
 var import_express = /* @__PURE__ */ __toESM(require_express(), 1);
 /**
 * Static server for the AppKit.
@@ -231468,7 +231468,7 @@ var StaticServer = class extends BaseServer {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/utils/vite-config-merge.js
+//#region node_modules/@databricks/appkit/dist/utils/vite-config-merge.js
 function flattenPlugins(plugins) {
 	return plugins.flat(Infinity).filter(Boolean);
 }
@@ -231487,7 +231487,7 @@ function mergeConfigDedup(base, override, mergeFn) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@jridgewell/sourcemap-codec/dist/sourcemap-codec.mjs
+//#region node_modules/@jridgewell/sourcemap-codec/dist/sourcemap-codec.mjs
 var comma = ",".charCodeAt(0);
 var semicolon = ";".charCodeAt(0);
 var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -231563,7 +231563,7 @@ function encode(decoded) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/magic-string/dist/magic-string.es.mjs
+//#region node_modules/magic-string/dist/magic-string.es.mjs
 var BitSet = class BitSet {
 	constructor(arg) {
 		this.bits = arg instanceof BitSet ? arg.bits.slice() : [];
@@ -232499,7 +232499,7 @@ var MagicString = class MagicString {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/server/react-source-loc-vite-plugin.js
+//#region node_modules/@databricks/appkit/dist/plugins/server/react-source-loc-vite-plugin.js
 const JSX_ELEMENT_MATCHER = { rule: { any: [{ kind: "jsx_opening_element" }, { kind: "jsx_self_closing_element" }] } };
 function cleanModuleId(id) {
 	return id.split("?")[0].split("#")[0];
@@ -232561,7 +232561,7 @@ function reactSourceLocPlugin(options) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/server/vite-dev-server.js
+//#region node_modules/@databricks/appkit/dist/plugins/server/vite-dev-server.js
 const logger$4 = createLogger("server:vite");
 /**
 * Vite dev server for the AppKit.
@@ -232665,7 +232665,7 @@ var ViteDevServer = class extends BaseServer {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/get-port/index.js
+//#region node_modules/get-port/index.js
 var Locked = class extends Error {
 	constructor(port) {
 		super(`${port} is locked`);
@@ -232772,7 +232772,7 @@ function portNumbers(from, to) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/server/index.js
+//#region node_modules/@databricks/appkit/dist/plugins/server/index.js
 import_main.default.config({ path: path.resolve(process.cwd(), "./.env") });
 const logger$3 = createLogger("server");
 /** Dev-only: try `requested` then consecutive ports (see `get-port` `portNumbers`). */
@@ -233163,7 +233163,7 @@ function errorHandlerMiddleware(err, req, res, next) {
 const server = toPlugin(ServerPlugin);
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/connectors/serving/client.js
+//#region node_modules/@databricks/appkit/dist/connectors/serving/client.js
 const logger$2 = createLogger("connectors:serving");
 /**
 * Invokes a serving endpoint using the SDK's high-level query API.
@@ -233227,7 +233227,7 @@ async function stream(client, endpointName, body, signal) {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/serving/defaults.js
+//#region node_modules/@databricks/appkit/dist/plugins/serving/defaults.js
 const servingInvokeDefaults = {
 	cache: { enabled: false },
 	retry: { enabled: false },
@@ -233235,7 +233235,7 @@ const servingInvokeDefaults = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/serving/manifest.js
+//#region node_modules/@databricks/appkit/dist/plugins/serving/manifest.js
 var manifest_default = {
 	$schema: "https://databricks.github.io/appkit/schemas/plugin-manifest.schema.json",
 	name: "serving",
@@ -233286,7 +233286,7 @@ var manifest_default = {
 };
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/serving/schema-filter.js
+//#region node_modules/@databricks/appkit/dist/plugins/serving/schema-filter.js
 const logger$1 = createLogger("serving:schema-filter");
 function isValidCache(data) {
 	return typeof data === "object" && data !== null && "version" in data && data.version === CACHE_VERSION && "endpoints" in data && typeof data.endpoints === "object";
@@ -233332,7 +233332,7 @@ function filterRequestBody(body, allowlists, alias, filterMode = "strip") {
 }
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/@databricks/appkit/dist/plugins/serving/serving.js
+//#region node_modules/@databricks/appkit/dist/plugins/serving/serving.js
 const logger = createLogger("serving");
 var EndpointNotFoundError = class extends Error {
 	constructor(alias) {
@@ -234516,6 +234516,14 @@ async function updatesSince(api, pipelineId, from, dl) {
 }
 
 //#endregion
+//#region shared/domain/ansi.ts
+const ESCAPES = /\x1b\[[0-?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|\x1b[@-Z\\-_]/g;
+/** Text without any escape sequences (for one-line summaries, search and copy). */
+function stripAnsi(text) {
+	return text.replace(ESCAPES, "");
+}
+
+//#endregion
 //#region server/data/live/causes.ts
 /** The mock's cause objects for the kinds that are not failures (see mock/generateRuns.ts). */
 const SUCCEEDED = {
@@ -234555,7 +234563,8 @@ const humanise = (code) => {
 	const s = code.toLowerCase().replace(/_/g, " ");
 	return s.charAt(0).toUpperCase() + s.slice(1);
 };
-const oneLine = (s) => s.replace(/\s+/g, " ").trim();
+/** One line of plain text: ANSI colour codes (IPython tracebacks) removed, whitespace collapsed. */
+const oneLine = (s) => stripAnsi(s).replace(/\s+/g, " ").trim();
 const trim = (s, max = 200) => s.length > max ? s.slice(0, max - 1) + "…" : s;
 /** Label from the mock vocabulary (Table not found, Cluster error, Timed out, Permission denied), else the humanised code. */
 function labelFor(code, message, timedOut) {
@@ -236340,12 +236349,49 @@ const mode = {
 	auth: provider.auth,
 	capture: !!store
 };
+/**
+* Which workspace the top bar names. Deployed: DATABRICKS_HOST (set by Databricks Apps, sometimes without a scheme).
+* Local: the CLI profile's host. Replay: the capture's workspace. Mock: none.
+*/
+let workspace;
+async function monitoredWorkspace() {
+	if (provider.kind === "replay") return { workspace: provider.file?.workspace?.host || void 0 };
+	if (provider.kind !== "live") return {};
+	const env = process.env.DATABRICKS_HOST;
+	if (env) return { workspace: (/^https?:\/\//.test(env) ? new URL(env) : new URL(`https://${env}`)).origin };
+	return {
+		workspace: await resolveDefaultHost(),
+		profile: process.env.DATABRICKS_CONFIG_PROFILE || void 0
+	};
+}
+/** The SDK default chain's own identity: the CLI login locally, the app's service principal on Databricks Apps. Cached; retried after a failure. */
+let defaultIdentity;
+function selfName() {
+	defaultIdentity ??= createSdkApi({}).me().then((u) => (u.userName?.includes("@") ? u.userName : u.displayName || u.userName) || void 0).catch(() => {
+		defaultIdentity = void 0;
+	});
+	return defaultIdentity;
+}
+/** Who is looking, and (when different) who the APIs are called as. See DataMode.user / readAs. */
+async function identity(viewer) {
+	if (provider.kind === "replay") return { user: provider.file?.workspace?.user || void 0 };
+	if (provider.kind !== "live") return {};
+	if (!viewer) return { user: await selfName() };
+	return provider.auth === "app" ? {
+		user: viewer,
+		readAs: await selfName()
+	} : { user: viewer };
+}
 createApp({
 	plugins: [server()],
 	onPluginsReady(appkit) {
 		appkit.server.extend((app) => {
-			app.get("/api/mode", (_req, res) => {
-				res.json(mode);
+			app.get("/api/mode", (req, res, next) => {
+				Promise.all([workspace ??= monitoredWorkspace(), identity(header(req, "x-forwarded-email"))]).then(([ws, who]) => res.json({
+					...mode,
+					...ws,
+					...who
+				})).catch(next);
 			});
 			app.get("/api/runs", (req, res, next) => {
 				serve(req, res, next, "/api/runs", (source) => listRuns(source, req.query));

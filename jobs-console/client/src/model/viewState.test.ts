@@ -94,4 +94,37 @@ describe('viewState', () => {
     expect(s.filters.window).toEqual(presetWindow('last2', '30d', end));
     expect(s.cap).toBe(PAGE);
   });
+
+  describe('follow: the window stays current across refreshes', () => {
+    const h = (hour: number, min = 0) => new Date(2026, 8, 22, hour, min).getTime();
+    const dayCtx: ViewCtx = { runs, end }; // timeline ends at the midnight after 22 Sep
+    const onHour = (from: number, to: number) => ({ ...initialState(dayCtx), scale: '24h' as const, filters: { ...initialState(dayCtx).filters, window: { from, to } } });
+
+    it('grows a window that showed the present to cover the new hour, keeping its start and the status filters', () => {
+      const s = { ...onHour(h(10), h(11)), cube: { col: 10, kind: 'failed' as const } };
+      const next = applyAction({ ...s, filters: { ...s.filters, statuses: ['failed' as const] } }, { type: 'follow', prevAsOf: h(10, 59), asOf: h(11, 1) }, dayCtx);
+      expect(next.filters.window).toEqual({ from: h(10), to: h(12) });
+      expect(next.filters.statuses).toEqual(['failed']);
+      expect(next.cube).toBeNull();
+    });
+
+    it('leaves the window alone while now is still inside it', () => {
+      const s = onHour(h(10), h(11));
+      expect(applyAction(s, { type: 'follow', prevAsOf: h(10, 20), asOf: h(10, 50) }, dayCtx)).toBe(s);
+    });
+
+    it('leaves a window in the past alone', () => {
+      const s = onHour(h(6), h(7));
+      expect(applyAction(s, { type: 'follow', prevAsOf: h(10, 59), asOf: h(11, 1) }, dayCtx)).toBe(s);
+    });
+
+    it('follows across midnight onto the next day', () => {
+      const nextEnd = new Date(2026, 8, 24).getTime();
+      const s = onHour(h(0), end); // "today" on 22 Sep
+      const next = applyAction(s, { type: 'follow', prevAsOf: h(23, 59), asOf: end + 60_000 }, { runs, end: nextEnd });
+      expect(next.filters.window.from).toBe(h(0));
+      expect(next.filters.window.to).toBeGreaterThan(end);
+      expect(next.filters.window.to).toBeLessThanOrEqual(nextEnd);
+    });
+  });
 });

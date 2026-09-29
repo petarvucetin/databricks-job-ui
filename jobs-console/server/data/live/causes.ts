@@ -1,4 +1,5 @@
 import type { Cause } from '../../../shared/domain/types';
+import { stripAnsi } from '../../../shared/domain/ansi';
 
 /** The mock's cause objects for the kinds that are not failures (see mock/generateRuns.ts). */
 export const SUCCEEDED: Cause = { label: 'Succeeded', code: '', detail: '' };
@@ -14,7 +15,8 @@ export const humanise = (code: string): string => {
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
-export const oneLine = (s: string): string => s.replace(/\s+/g, ' ').trim();
+/** One line of plain text: ANSI colour codes (IPython tracebacks) removed, whitespace collapsed. */
+export const oneLine = (s: string): string => stripAnsi(s).replace(/\s+/g, ' ').trim();
 
 const trim = (s: string, max = 200): string => (s.length > max ? s.slice(0, max - 1) + '…' : s);
 

@@ -107,6 +107,20 @@ describe('RunDrawer with real tasks', () => {
     expect(container.textContent).not.toMatch(/line 41|finance-gl|daily 06:00/);
   });
 
+  it('shows a Databricks log written with ANSI colours in colour, without the escape codes or CRs', async () => {
+    const ipython = '\x1b[31mPy4JJavaError\x1b[39m                             Traceback (most recent call last)\r\n\x1b[32m----> \x1b[39m\x1b[32m9\x1b[39m   \x1b[43mexec\x1b[49m(x)\r\nplain line';
+    fetchMock.mockImplementation(() => Promise.resolve({ ok: true, json: () => Promise.resolve({ text: ipython }) }));
+    const { container } = render(<RunDrawer run={makeRealRun()} nowMs={0} loadedAt={0} onClose={() => {}} />);
+    await waitFor(() => expect(container.querySelector('.log')!.textContent).toContain('Py4JJavaError'));
+    const log = container.querySelector('.log')!;
+    for (const bad of ['\x1b', '[31m', '\r']) expect(log.textContent).not.toContain(bad);
+    const err = [...log.querySelectorAll('span')].find((s) => s.textContent === 'Py4JJavaError');
+    expect(err?.style.color).toBe('rgb(196, 61, 40)');
+    const hl = [...log.querySelectorAll('span')].find((s) => s.textContent === 'exec');
+    expect(hl?.style.background).toContain('rgb(253, 240, 216)');
+    expect(log.querySelectorAll(':scope > div')[2]?.textContent).toBe('plain line');
+  });
+
   it('links the header title when the run has a url, and not otherwise', () => {
     const { container } = render(<RunDrawer run={makeRealRun()} nowMs={0} loadedAt={0} onClose={() => {}} />);
     const a = container.querySelector<HTMLAnchorElement>('.dh .title a')!;

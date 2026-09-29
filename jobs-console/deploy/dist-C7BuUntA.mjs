@@ -1,6 +1,6 @@
 import { a as require_src, d as __require, l as __commonJSMin } from "./server.mjs";
 
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/agent-base/dist/helpers.js
+//#region node_modules/agent-base/dist/helpers.js
 var require_helpers = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -70,7 +70,7 @@ var require_helpers = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/agent-base/dist/index.js
+//#region node_modules/agent-base/dist/index.js
 var require_dist$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
@@ -196,7 +196,7 @@ var require_dist$1 = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/https-proxy-agent/dist/parse-proxy-response.js
+//#region node_modules/https-proxy-agent/dist/parse-proxy-response.js
 var require_parse_proxy_response = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __importDefault = exports && exports.__importDefault || function(mod) {
 		return mod && mod.__esModule ? mod : { "default": mod };
@@ -282,7 +282,7 @@ var require_parse_proxy_response = /* @__PURE__ */ __commonJSMin(((exports) => {
 }));
 
 //#endregion
-//#region D:/ai/projects/databricks-UI/jobs-console/node_modules/https-proxy-agent/dist/index.js
+//#region node_modules/https-proxy-agent/dist/index.js
 var require_dist = /* @__PURE__ */ __commonJSMin(((exports) => {
 	var __createBinding = exports && exports.__createBinding || (Object.create ? (function(o, m, k, k2) {
 		if (k2 === void 0) k2 = k;
