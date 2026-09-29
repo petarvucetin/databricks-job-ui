@@ -105,13 +105,13 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
           <span className="rr-chev" aria-hidden="true">{showHist ? '▾' : '▸'}</span>
           <span>Run history</span>
           <span className="rr-n">{nRuns}</span>
-          {stats.length > 0 && (
-            <span className="rr-stats" data-c="20">
-              {stats.map((s) => <span key={s.key} className={`rs ${s.key}`}><b>{s.n}</b> {s.key}</span>)}
-            </span>
-          )}
           <span className="rr-avg-t" data-c="14">average <em>{stat.average}</em></span>
         </button>
+        {!showHist && stats.length > 0 && (
+          <div className="rr-stats" data-c="20">
+            {stats.map((s) => <span key={s.key} className={`rs ${s.key}`}><b>{s.n}</b> {s.key}</span>)}
+          </div>
+        )}
         {showHist && <div className="rr-hist-boxes">
           {hist.earlier > 0 && <span className="rh-more">+{hist.earlier} earlier</span>}
           {hist.shown.map((h) => (

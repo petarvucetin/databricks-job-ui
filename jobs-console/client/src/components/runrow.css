@@ -19,14 +19,16 @@
 .rr-chev { width: 11px; font-size: 13px; color: var(--ink-3); }
 .rr-hist-t > span:nth-child(2) { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
 .rr-n { min-width: 16px; padding: 0 5px; border-radius: 999px; background: var(--wash-sand); font-size: 10.5px; color: var(--ink-2); text-align: center; font-variant-numeric: tabular-nums; }
-.rr-n + .rr-avg-t, .rr-stats + .rr-avg-t { margin-left: 4px; }
-.rr-stats { display: flex; gap: 8px; font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.rs b { font-weight: 600; }
-.rs.failed b { color: var(--red); }
-.rs.slow b, .rs.partial b { color: var(--amber-ink); }
-.rs.ok b { color: var(--green); }
-.rs.cancelled b { color: var(--ink-2); }
-.rs.running b { color: var(--blue); }
+.rr-n + .rr-avg-t { margin-left: 4px; }
+/* Collapsed history: how the runs went, as chips under the title (lined up with its text); the boxes replace them when open. */
+.rr-stats { display: flex; flex-wrap: wrap; gap: 5px; margin: 4px 0 0 21px; }
+.rs { display: inline-flex; align-items: baseline; gap: 4px; padding: 1px 8px; border-radius: 999px; border: 1px solid; font-size: 12px; font-weight: 500; line-height: 1.5; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rs b { font-size: 13px; font-weight: 700; }
+.rs.failed { background: var(--wash-red); border-color: #eeb3a6; color: var(--red); }
+.rs.slow, .rs.partial { background: var(--wash-amber); border-color: #e7c27a; color: var(--amber-ink); }
+.rs.ok { background: var(--wash-green); border-color: #9fd1b8; color: var(--green); }
+.rs.cancelled { background: #f1ede7; border-color: #c9bfb2; color: var(--ink-2); }
+.rs.running { background: var(--wash-blue); border-color: #c5d6ec; color: var(--blue); }
 .rr-avg-t { font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .rr-avg-t em { font-style: normal; font-weight: 500; color: var(--ink); }
 .rr-hist-boxes { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
@@ -57,7 +59,6 @@
 .rr-task { min-height: 17px; margin-top: 4px; font-family: var(--mono); font-size: 12px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .rr-main { grid-column: 2; grid-row: 2; min-width: 0; display: flex; align-items: center; gap: 12px; min-height: 20px; }
-.rr.hist-open .rr-main { height: 28px; margin-top: 19px; }
 .rr-tgt { flex: none; display: inline-block; padding: 1px 9px; border-radius: 999px; background: var(--wash-blue); border: 1px solid #c5d6ec; font-size: 11.5px; color: var(--ink-3); line-height: 1.5; white-space: nowrap; }
 .rr-tgt b { color: var(--blue); font-weight: 500; }
 .rr-st { flex: none; display: inline-flex; align-items: baseline; gap: 5px; padding: 1px 10px; border-radius: 999px; background: #fdfaf5; border: 1px solid var(--rule); font-size: 11.5px; line-height: 1.5; font-variant-numeric: tabular-nums; white-space: nowrap; position: relative; top: -1px; }
