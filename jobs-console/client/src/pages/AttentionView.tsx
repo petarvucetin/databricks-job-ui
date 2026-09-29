@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { RunsResponse } from '../../../shared/domain/types';
 import { liveCount, menuCounts, passes, scopeCounts, sortRuns, tileCounts, type RowSort } from '../model/filters';
 import { timelineEnd } from '../model/timeline';
@@ -19,7 +19,7 @@ import './attention.css';
 
 const CODE_OPTIONS = ['CLIENT_ERROR', 'CLOUD_FAILURE', 'TIMEDOUT', 'MAX_CONCURRENT_RUNS_REACHED', 'none'];
 
-export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt: number }) {
+export function AttentionView({ data, loadedAt, refresh }: { data: RunsResponse; loadedAt: number; refresh?: ReactNode }) {
   const ctx: ViewCtx = useMemo(() => ({ runs: data.runs, end: timelineEnd(data.asOf) }), [data]);
   const [state, setState] = useState(() => initialState(ctx));
   const dispatch = useCallback((a: Action) => setState((s) => applyAction(s, a, ctx)), [ctx]);
@@ -93,6 +93,7 @@ export function AttentionView({ data, loadedAt }: { data: RunsResponse; loadedAt
         menus={menus}
         liveCount={liveCount(data.runs, f.scope)}
         updatedText={ago < 60 ? `updated ${ago}s ago` : `updated ${Math.floor(ago / 60)}m ago`}
+        refresh={refresh}
         dispatch={dispatch}
       />
       <Timeline runs={data.runs} end={ctx.end} scale={state.scale} window={f.window} cube={state.cube} collapsed={timelineCollapsed} dispatch={dispatch} />

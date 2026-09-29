@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { Filters } from '../model/filters';
 import type { Action, MenuKey } from '../model/viewState';
 import { FilterMenu } from './FilterMenu';
@@ -6,12 +7,14 @@ import './filterbar.css';
 type Option = { value: string; label: string; count: number };
 const MENU_LABELS: Record<MenuKey, string> = { types: 'Type', runAs: 'Run as', codes: 'Error code' };
 
-export function FilterBar({ filters, scopeCounts, menus, liveCount, updatedText, dispatch }: {
+export function FilterBar({ filters, scopeCounts, menus, liveCount, updatedText, refresh, dispatch }: {
   filters: Filters;
   scopeCounts: { mine: number; all: number };
   menus: Record<MenuKey, Option[]>;
   liveCount: number;
   updatedText: string;
+  /** Auto-refresh control shown after the "updated … ago" text. */
+  refresh?: ReactNode;
   dispatch: (a: Action) => void;
 }) {
   return (
@@ -44,7 +47,7 @@ export function FilterBar({ filters, scopeCounts, menus, liveCount, updatedText,
         <input value={filters.query} placeholder="search job, task, run id, cause, error" onChange={(e) => dispatch({ type: 'query', query: e.target.value })} />
       </span>
       <button type="button" className="clear" onClick={() => dispatch({ type: 'clear' })}>clear filters</button>
-      <span className="meta">{updatedText}</span>
+      <span className="meta">{updatedText}{refresh}</span>
     </div>
   );
 }

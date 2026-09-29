@@ -29,5 +29,13 @@
 .search input::placeholder { color: var(--ink-3); }
 .fbar .clear { margin-left: auto; border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 13px; }
 .fbar .clear:hover { color: var(--ink); }
-.fbar .meta { color: var(--ink-3); font-size: 12.5px; padding-left: 12px; border-left: 1px solid var(--rule); }
+.fbar .meta { color: var(--ink-3); font-size: 12.5px; padding-left: 12px; border-left: 1px solid var(--rule); display: inline-flex; align-items: center; gap: 8px; }
+.fbar .refresh { display: inline-flex; align-items: center; gap: 4px; }
+.fbar .refresh label { display: inline-flex; align-items: center; gap: 3px; }
+.fbar .refresh select { border: 0; background: none; color: var(--ink-3); font: inherit; cursor: pointer; padding: 0 2px; }
+.fbar .refresh select:hover, .fbar .refresh button:hover:not(:disabled) { color: var(--ink); }
+.fbar .refresh button { border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 14px; line-height: 1; padding: 0 2px; }
+.fbar .refresh button.spin { animation: fbar-spin 1s linear infinite; cursor: default; }
+.fbar .refresh-err { font-style: normal; color: var(--amber-ink); cursor: help; }
+@keyframes fbar-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .tgl.on i { animation: none; } }
