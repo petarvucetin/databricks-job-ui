@@ -102,6 +102,52 @@ describe('collection diagnostics', () => {
     expect(s.notes).toContainEqual(expect.objectContaining({ code: 'events-truncated', ref: 'pipeline p1' }));
   });
 
+  it('asks for at most 250 events per page and sends the filter only on the first page', async () => {
+    const api = fakeApi({
+      pipelines: [{ pipeline_id: 'p1' }],
+      updates: { p1: [{ update_id: 'u1', creation_time: NOW - MIN, state: 'COMPLETED' }] },
+      events: { p1: [] },
+    });
+    const reqs: pipelines.ListPipelineEventsRequest[] = [];
+    api.listPipelineEvents = (req) => {
+      reqs.push(req);
+      return Promise.resolve({ events: [{ id: `e${reqs.length}` }], next_page_token: reqs.length < 2 ? 'next' : undefined });
+    };
+    const got = await collectPipelines(api, NOW - 86400000, 2, new Deadline(NOW + 10000, () => NOW));
+    expect(reqs.map((r) => r.max_results)).toEqual([250, 250]);
+    expect(reqs[0].filter).toBeDefined();
+    expect(reqs[1]).toEqual({ pipeline_id: 'p1', max_results: 250, page_token: 'next' });
+    expect(got.pipelines[0].events?.map((e) => e.id)).toEqual(['e1', 'e2']);
+  });
+
+  it('keeps the pipeline and the whole list when its events call fails', async () => {
+    const s = sink();
+    const api = fakeApi({
+      pipelines: [{ pipeline_id: 'p1' }],
+      updates: { p1: [{ update_id: 'u1', creation_time: NOW - MIN, state: 'COMPLETED' }] },
+    });
+    api.listPipelineEvents = () => Promise.reject(Object.assign(new Error('Cannot have more than 250 events per page.'), { statusCode: 400 }));
+    const got = await collectPipelines(api, NOW - 86400000, 2, new Deadline(NOW + 10000, () => NOW), s.diag);
+    expect(got.pipelines.map((p) => p.info.pipelineId)).toEqual(['p1']);
+    expect(got.pipelines[0].events).toBeUndefined();
+    expect(s.notes).toContainEqual(expect.objectContaining({ code: 'events-failed', ref: 'pipeline p1', message: expect.stringContaining('250 events per page') as unknown }));
+  });
+
+  it('skips a pipeline on any error except a sign-in failure', async () => {
+    const withGetError = (statusCode: number) => {
+      const api = fakeApi({ pipelines: [{ pipeline_id: 'bad' }, { pipeline_id: 'p1' }], updates: { p1: [{ update_id: 'u1', creation_time: NOW - MIN, state: 'RUNNING' }] } });
+      const get = api.getPipeline;
+      api.getPipeline = (req) => (req.pipeline_id === 'bad' ? Promise.reject(Object.assign(new Error('nope'), { statusCode })) : get(req));
+      return collectPipelines(api, NOW - 86400000, 2, new Deadline(NOW + 10000, () => NOW));
+    };
+    for (const status of [400, 403, 404, 500]) {
+      const got = await withGetError(status);
+      expect(got.pipelines.map((p) => p.info.pipelineId)).toEqual(['p1']);
+      expect(got.skipped).toBe(1);
+    }
+    await expect(withGetError(401)).rejects.toMatchObject({ statusCode: 401 });
+  });
+
   it('notes pipelines not reached and events skipped when the budget runs out', async () => {
     const s = sink();
     let t = NOW;

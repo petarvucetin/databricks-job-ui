@@ -234373,38 +234373,19 @@ async function collectPipelines(api, from, concurrency, dl, diag = noDiag) {
 				updates
 			};
 			if (updates.some((u) => FINISHED.has(u.state ?? ""))) {
-				const page = await dl.call(() => api.listPipelineEvents({
-					pipeline_id: pipelineId,
-					max_results: 1e3,
-					filter: `level in ('INFO', 'WARN', 'ERROR') AND timestamp >= '${new Date(from).toISOString()}'`
-				}));
-				if (page === TIMEOUT) {
-					timedOut = true;
-					diag({
-						level: "warn",
-						code: "events-skipped-budget",
-						message: "events call skipped: the time budget ran out; finished updates have no end time or cause",
-						ref: `pipeline ${pipelineId}`
-					});
-				} else {
-					item.events = page.events ?? [];
-					if (page.next_page_token) diag({
-						level: "info",
-						code: "events-truncated",
-						message: `more than one events page (${item.events.length} read); older updates may have no end time`,
-						ref: `pipeline ${pipelineId}`
-					});
-				}
+				const events = await eventsSince(api, pipelineId, from, dl, diag);
+				if (events === TIMEOUT) timedOut = true;
+				else item.events = events;
 			}
 			out.push(item);
 		} catch (e) {
 			const s = statusOf(e);
-			if (s !== 403 && s !== 404) throw e;
+			if (s === 401) throw e;
 			skipped++;
 			diag({
 				level: "warn",
 				code: "pipeline-skipped",
-				message: `skipped (${s}): ${apiErrorParts(e).message}`,
+				message: `skipped (${s ?? "error"}): ${apiErrorParts(e).message}`,
 				ref: `pipeline ${pipelineId}`
 			});
 		}
@@ -234420,6 +234401,58 @@ async function collectPipelines(api, from, concurrency, dl, diag = noDiag) {
 		skipped,
 		timedOut: timedOut || dl.expired
 	};
+}
+/** The events API rejects max_results above 250 ("Cannot have more than 250 events per page"). */
+const EVENTS_PAGE_SIZE = 250;
+const EVENTS_MAX_PAGES = 4;
+/**
+* A pipeline's events since `from`, newest first, up to EVENTS_MAX_PAGES pages. Events only add end times and
+* failure causes, so a failing events call costs this pipeline those details (with a diagnostic), never the whole list.
+*/
+async function eventsSince(api, pipelineId, from, dl, diag) {
+	const out = [];
+	let token;
+	for (let n = 0; n < EVENTS_MAX_PAGES; n++) {
+		let page;
+		try {
+			page = await dl.call(() => api.listPipelineEvents(token ? {
+				pipeline_id: pipelineId,
+				max_results: EVENTS_PAGE_SIZE,
+				page_token: token
+			} : {
+				pipeline_id: pipelineId,
+				max_results: EVENTS_PAGE_SIZE,
+				filter: `level in ('INFO', 'WARN', 'ERROR') AND timestamp >= '${new Date(from).toISOString()}'`
+			}));
+		} catch (e) {
+			diag({
+				level: "warn",
+				code: "events-failed",
+				message: `events call failed; finished updates have no end time or cause: ${apiErrorParts(e).message}`,
+				ref: `pipeline ${pipelineId}`
+			});
+			return out.length ? out : void 0;
+		}
+		if (page === TIMEOUT) {
+			diag({
+				level: "warn",
+				code: "events-skipped-budget",
+				message: "events call skipped: the time budget ran out; finished updates have no end time or cause",
+				ref: `pipeline ${pipelineId}`
+			});
+			return out.length ? out : TIMEOUT;
+		}
+		out.push(...page.events ?? []);
+		token = page.next_page_token;
+		if (!token) return out;
+	}
+	diag({
+		level: "info",
+		code: "events-truncated",
+		message: `more than ${EVENTS_MAX_PAGES} events pages (${out.length} read); older updates may have no end time`,
+		ref: `pipeline ${pipelineId}`
+	});
+	return out;
 }
 async function updatesSince(api, pipelineId, from, dl) {
 	const out = [];
@@ -235014,14 +235047,14 @@ function createLiveRunSource(o) {
 	async function pipelineLog(ref) {
 		const events = [];
 		let token;
-		for (let pages = 0; pages < 5; pages++) {
+		for (let pages = 0; pages < 8; pages++) {
 			const page = await api.listPipelineEvents(token ? {
 				pipeline_id: ref.pipelineId,
 				page_token: token,
-				max_results: 1e3
+				max_results: EVENTS_PAGE_SIZE
 			} : {
 				pipeline_id: ref.pipelineId,
-				max_results: 1e3,
+				max_results: EVENTS_PAGE_SIZE,
 				order_by: ["timestamp asc"],
 				filter: `level in ('WARN', 'ERROR') AND timestamp >= '${new Date(ref.startTime).toISOString()}'`
 			});

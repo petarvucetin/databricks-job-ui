@@ -3,7 +3,7 @@ import type { RunSource } from '../runSource';
 import { SourceError } from '../sourceError';
 import type { LiveApi } from './api';
 import { apiErrorParts } from './apiError';
-import { Deadline, TIMEOUT, collectJobRuns, collectPipelines } from './collect';
+import { Deadline, EVENTS_PAGE_SIZE, TIMEOUT, collectJobRuns, collectPipelines } from './collect';
 import { jobDraft } from './jobs';
 import { finalize, type Draft } from './kinds';
 import type { LiveLimits } from './limits';
@@ -137,11 +137,11 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
   async function pipelineLog(ref: PipelineRef): Promise<string> {
     const events = [];
     let token: string | undefined;
-    for (let pages = 0; pages < 5; pages++) {
+    for (let pages = 0; pages < 8; pages++) {
       const page = await api.listPipelineEvents(
         token
-          ? { pipeline_id: ref.pipelineId, page_token: token, max_results: 1000 }
-          : { pipeline_id: ref.pipelineId, max_results: 1000, order_by: ['timestamp asc'], filter: `level in ('WARN', 'ERROR') AND timestamp >= '${new Date(ref.startTime).toISOString()}'` }
+          ? { pipeline_id: ref.pipelineId, page_token: token, max_results: EVENTS_PAGE_SIZE }
+          : { pipeline_id: ref.pipelineId, max_results: EVENTS_PAGE_SIZE, order_by: ['timestamp asc'], filter: `level in ('WARN', 'ERROR') AND timestamp >= '${new Date(ref.startTime).toISOString()}'` }
       );
       events.push(...(page.events ?? []));
       token = page.next_page_token;

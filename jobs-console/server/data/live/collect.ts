@@ -123,29 +123,60 @@ export async function collectPipelines(api: LiveApi, from: number, concurrency: 
       };
       const item: PipelineCollected = { info, updates };
       if (updates.some((u) => FINISHED.has(u.state ?? ''))) {
-        const page = await dl.call(() =>
-          api.listPipelineEvents({ pipeline_id: pipelineId, max_results: 1000, filter: `level in ('INFO', 'WARN', 'ERROR') AND timestamp >= '${new Date(from).toISOString()}'` })
-        );
-        if (page === TIMEOUT) {
-          timedOut = true;
-          diag({ level: 'warn', code: 'events-skipped-budget', message: 'events call skipped: the time budget ran out; finished updates have no end time or cause', ref: `pipeline ${pipelineId}` });
-        } else {
-          item.events = page.events ?? [];
-          if (page.next_page_token) {
-            diag({ level: 'info', code: 'events-truncated', message: `more than one events page (${item.events.length} read); older updates may have no end time`, ref: `pipeline ${pipelineId}` });
-          }
-        }
+        const events = await eventsSince(api, pipelineId, from, dl, diag);
+        if (events === TIMEOUT) timedOut = true;
+        else item.events = events;
       }
       out.push(item);
     } catch (e) {
+      // One pipeline's failure (permissions, a gone pipeline, an API quirk) skips that pipeline only. Sign-in failures
+      // affect every call, so they still fail the list.
       const s = statusOf(e);
-      if (s !== 403 && s !== 404) throw e;
+      if (s === 401) throw e;
       skipped++;
-      diag({ level: 'warn', code: 'pipeline-skipped', message: `skipped (${s}): ${apiErrorParts(e).message}`, ref: `pipeline ${pipelineId}` });
+      diag({ level: 'warn', code: 'pipeline-skipped', message: `skipped (${s ?? 'error'}): ${apiErrorParts(e).message}`, ref: `pipeline ${pipelineId}` });
     }
   });
   if (notReached) diag({ level: 'warn', code: 'pipelines-not-reached', message: `${notReached} of ${listed.length} pipelines not read: the time budget ran out` });
   return { pipelines: out, listed: listed.length, skipped, timedOut: timedOut || dl.expired };
+}
+
+/** The events API rejects max_results above 250 ("Cannot have more than 250 events per page"). */
+export const EVENTS_PAGE_SIZE = 250;
+const EVENTS_MAX_PAGES = 4;
+
+/**
+ * A pipeline's events since `from`, newest first, up to EVENTS_MAX_PAGES pages. Events only add end times and
+ * failure causes, so a failing events call costs this pipeline those details (with a diagnostic), never the whole list.
+ */
+async function eventsSince(api: LiveApi, pipelineId: string, from: number, dl: Deadline, diag: Diag): Promise<pipelines.PipelineEvent[] | undefined | typeof TIMEOUT> {
+  const out: pipelines.PipelineEvent[] = [];
+  let token: string | undefined;
+  for (let n = 0; n < EVENTS_MAX_PAGES; n++) {
+    let page: pipelines.ListPipelineEventsResponse | typeof TIMEOUT;
+    try {
+      // A page token carries the query; the API rejects filter alongside it.
+      page = await dl.call(() =>
+        api.listPipelineEvents(
+          token
+            ? { pipeline_id: pipelineId, max_results: EVENTS_PAGE_SIZE, page_token: token }
+            : { pipeline_id: pipelineId, max_results: EVENTS_PAGE_SIZE, filter: `level in ('INFO', 'WARN', 'ERROR') AND timestamp >= '${new Date(from).toISOString()}'` }
+        )
+      );
+    } catch (e) {
+      diag({ level: 'warn', code: 'events-failed', message: `events call failed; finished updates have no end time or cause: ${apiErrorParts(e).message}`, ref: `pipeline ${pipelineId}` });
+      return out.length ? out : undefined;
+    }
+    if (page === TIMEOUT) {
+      diag({ level: 'warn', code: 'events-skipped-budget', message: 'events call skipped: the time budget ran out; finished updates have no end time or cause', ref: `pipeline ${pipelineId}` });
+      return out.length ? out : TIMEOUT;
+    }
+    out.push(...(page.events ?? []));
+    token = page.next_page_token;
+    if (!token) return out;
+  }
+  diag({ level: 'info', code: 'events-truncated', message: `more than ${EVENTS_MAX_PAGES} events pages (${out.length} read); older updates may have no end time`, ref: `pipeline ${pipelineId}` });
+  return out;
 }
 
 async function updatesSince(api: LiveApi, pipelineId: string, from: number, dl: Deadline): Promise<pipelines.UpdateInfo[] | typeof TIMEOUT> {
