@@ -18,5 +18,21 @@ export function apiErrorParts(e: unknown): { status?: number; code: string; mess
       // not JSON after all: keep the SDK's message
     }
   }
-  return { status, code, message };
+  return { status, code, message: message + causeChain(e) };
+}
+
+/**
+ * Network failures surface as "fetch failed"; the reason (TLS interception, DNS, proxy) is in `cause`.
+ * Appends up to three levels, e.g. " (cause: self-signed certificate in certificate chain [SELF_SIGNED_CERT_IN_CHAIN])".
+ */
+function causeChain(e: unknown): string {
+  const parts: string[] = [];
+  let c = (e as { cause?: unknown } | null)?.cause;
+  for (let i = 0; i < 3 && c; i++) {
+    const x = c as { message?: unknown; code?: unknown; cause?: unknown };
+    const msg = typeof x.message === 'string' ? x.message : typeof c === 'string' ? c : JSON.stringify(c);
+    parts.push(typeof x.code === 'string' && !msg.includes(x.code) ? `${msg} [${x.code}]` : msg);
+    c = x.cause;
+  }
+  return parts.length ? ` (cause: ${parts.join(' <- ')})` : '';
 }

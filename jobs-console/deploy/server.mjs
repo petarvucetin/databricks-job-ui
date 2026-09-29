@@ -234223,8 +234223,23 @@ function apiErrorParts(e) {
 	return {
 		status,
 		code,
-		message
+		message: message + causeChain(e)
 	};
+}
+/**
+* Network failures surface as "fetch failed"; the reason (TLS interception, DNS, proxy) is in `cause`.
+* Appends up to three levels, e.g. " (cause: self-signed certificate in certificate chain [SELF_SIGNED_CERT_IN_CHAIN])".
+*/
+function causeChain(e) {
+	const parts = [];
+	let c = e?.cause;
+	for (let i = 0; i < 3 && c; i++) {
+		const x = c;
+		const msg = typeof x.message === "string" ? x.message : typeof c === "string" ? c : JSON.stringify(c);
+		parts.push(typeof x.code === "string" && !msg.includes(x.code) ? `${msg} [${x.code}]` : msg);
+		c = x.cause;
+	}
+	return parts.length ? ` (cause: ${parts.join(" <- ")})` : "";
 }
 
 //#endregion

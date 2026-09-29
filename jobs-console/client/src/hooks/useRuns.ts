@@ -15,7 +15,11 @@ export function useRuns(): RunsState {
     let alive = true;
     fetch(`/api/runs?tzOffset=${new Date().getTimezoneOffset()}`, { signal: AbortSignal.timeout(60000) })
       .then(async (res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        if (!res.ok) {
+          // The server answers errors as { error }: show its message (e.g. the Databricks error), not just the status.
+          const body = (await res.json().catch(() => null)) as { error?: unknown } | null;
+          throw new Error(typeof body?.error === 'string' ? `HTTP ${res.status}: ${body.error}` : `HTTP ${res.status}`);
+        }
         const data = (await res.json()) as RunsResponse;
         if (alive) setResult({ attempt, value: { state: 'ready', data, loadedAt: Date.now() } });
       })

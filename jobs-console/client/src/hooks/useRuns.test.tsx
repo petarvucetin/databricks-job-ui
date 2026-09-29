@@ -33,7 +33,14 @@ describe('useRuns', () => {
     vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('{"error":"boom"}', { status: 500 }))));
     const { result } = renderHook(() => useRuns());
     await waitFor(() => expect(result.current.state).toBe('error'));
-    if (result.current.state === 'error') expect(result.current.message).toBe('Could not load runs: HTTP 500');
+    if (result.current.state === 'error') expect(result.current.message).toBe('Could not load runs: HTTP 500: boom');
+  });
+
+  it('falls back to the status when the error body is not JSON', async () => {
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('Bad Gateway', { status: 502 }))));
+    const { result } = renderHook(() => useRuns());
+    await waitFor(() => expect(result.current.state).toBe('error'));
+    if (result.current.state === 'error') expect(result.current.message).toBe('Could not load runs: HTTP 502');
   });
 
   it('reports a timeout in plain language', async () => {
