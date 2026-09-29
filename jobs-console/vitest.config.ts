@@ -7,7 +7,7 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     env: { TZ: 'UTC' },
-    exclude: ['**/node_modules/**', '**/dist/**', '**/.databricks/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', '**/.databricks/**', 'deploy/**'],
   },
   resolve: {
     alias: {

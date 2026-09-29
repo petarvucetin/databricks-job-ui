@@ -24,7 +24,8 @@
     "typegen": "appkit generate-types",
     "replay": "tsx scripts/replay.ts",
     "capture:summary": "tsx --tsconfig ./tsconfig.server.json scripts/capture-summary.ts",
-    "setup": "appkit setup --write"
+    "setup": "appkit setup --write",
+    "package": "tsx scripts/package.ts"
   },
   "keywords": [],
   "author": "",

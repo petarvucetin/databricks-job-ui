@@ -96,61 +96,51 @@ npm run format
 npm run format:fix
 ```
 
-## Deployment with Databricks Asset Bundles
+## Deployment
 
-### 1. Configure Bundle
+The app deploys from `deploy/`, a prebuilt, self-contained folder that is committed to git:
 
-Update `databricks.yml` with your workspace settings:
+- `server.mjs` and its chunks: the server with every dependency bundled in.
+- `public/`: the built client.
+- `app.yaml`: runs `node server.mjs` with `NODE_ENV=production`.
 
-```yaml
-targets:
-  default:
-    workspace:
-      host: https://your-workspace.cloud.databricks.com
+`deploy/` has no `package.json` on purpose. Databricks Apps then logs "No dependencies file found. Skipping installation." and runs no `npm install` on the platform. That install fails where the app can't reach the npm registry (GovCloud: `npm error Exit handler never called!`).
+
+The deploying machine needs only git and the Databricks CLI, not Node.
+
+```powershell
+cd jobs-console
+databricks bundle deploy --profile <profile>   # uploads files; creates and starts the app the first time
+databricks bundle run app --profile <profile>  # deploys the uploaded source to the app: needed for every update
 ```
 
-Make sure to replace all placeholder values in `databricks.yml` with your actual resource IDs.
+`bundle deploy` alone does not redeploy an existing app. Always follow it with `bundle run app`.
 
-### 2. Deploy
+After changing code or `app.yaml`, rebuild `deploy/` on a dev machine and commit it:
 
-Deploy and start the app with a single command:
-
-```bash
-databricks apps deploy
+```powershell
+npm run package
+git add deploy app.yaml
 ```
 
-`databricks apps deploy` validates the project, deploys it, starts the app, and prints its URL.
+### Auth: the app reads as its service principal
 
-### Deploy to Production
+Databricks Apps user authorization has no `jobs` or `pipelines` scope. Declaring `jobs` fails with `400 INVALID_PARAMETER_VALUE: The specified scope jobs is not a valid scope` ([supported scopes](https://learn.microsoft.com/en-us/azure/databricks/dev-tools/databricks-apps/auth#supported-scopes)). So `app.yaml` sets `JOBS_CONSOLE_AUTH=app`, and the app reads Jobs and Pipelines as its own service principal. The viewer's `x-forwarded-email` still decides "Mine". The badge says "live data · as app".
 
-1. Configure the production target in `databricks.yml`
-2. Deploy to production:
+The service principal sees only the jobs and pipelines it has **CAN_VIEW** on. Find its ID with `databricks apps get jobs-console -o json` (`service_principal_client_id`). Grant it CAN_VIEW on the jobs and pipelines, or add it to a group that already has that access.
 
-```bash
-databricks apps deploy -t prod
-```
+### Another workspace (e.g. AWS GovCloud)
 
-> **Restarting a stopped app:** apps stop after a period of inactivity. To start one again without redeploying, run `databricks apps start <APP_NAME>`.
-
-## Deploy to another workspace (e.g. AWS GovCloud)
-
-The `gov` target in `databricks.yml` deploys the same app, with the same `user_api_scopes`, to the workspace of the `gov` CLI profile. The CLI does not substitute variables in `workspace.host`, so the host comes from the profile; `--var gov_host=<url>` is accepted but informational.
+The `gov` target deploys the same app to the workspace of the `gov` CLI profile. The CLI does not substitute variables in `workspace.host`, so the host comes from the profile, and `--var gov_host=<url>` is informational only.
 
 ```powershell
 $url = 'https://dbc-xxxxxxxx-xxxx.cloud.databricks.us'
 databricks auth login --host $url --profile gov
-databricks bundle deploy -t gov --var gov_host=$url --profile gov
+databricks bundle deploy -t gov --profile gov
 databricks bundle run app -t gov --profile gov
 ```
 
-`app.yaml` sets `JOBS_CONSOLE_DATA=live`. If per-user authorization is not enabled on that workspace, switch to the app's service principal by uncommenting in `app.yaml`:
-
-```yaml
-  - name: JOBS_CONSOLE_AUTH
-    value: app
-```
-
-then deploy again. The app then shows only what the service principal was granted (Can View on the jobs and pipelines), and the badge says "live data · as app".
+Logs: `databricks apps logs jobs-console --profile gov`, or `<app url>/logz` in the browser (app URL: `databricks apps get jobs-console --profile gov -o json`, field `url`).
 
 ### Bringing problems home: the Capture menu
 

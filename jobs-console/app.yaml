@@ -2,6 +2,7 @@ command: ['npm', 'run', 'start']
 env:
   - name: JOBS_CONSOLE_DATA
     value: live
-  # Read as the app's service principal instead of the signed-in user (when user authorization is not enabled):
-  # - name: JOBS_CONSOLE_AUTH
-  #   value: app
+  # Read as the app's service principal: Apps user authorization has no jobs/pipelines scope.
+  # `user` (per-user token) stays in the code for when Databricks adds those scopes.
+  - name: JOBS_CONSOLE_AUTH
+    value: app

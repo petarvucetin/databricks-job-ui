@@ -6,17 +6,17 @@ resources:
     app:
       name: "jobs-console"
       description: "Jobs and pipelines console: attention list, run timeline, run details"
-      source_code_path: ./
+      # Prebuilt by `npm run package` and committed: bundled server + built client + app.yaml, no package.json,
+      # so the platform runs no `npm install` (GovCloud apps can't reach the npm registry).
+      source_code_path: ./deploy
 
       # Start the app automatically on deploy.
       lifecycle:
         started: true
-      # Live mode (JOBS_CONSOLE_DATA=live) calls the Jobs and Pipelines APIs as the signed-in user.
-      # Scope names: https://docs.databricks.com/api/workspace/api/scopes (jobs, pipelines); Apps user authorization:
-      # https://learn.microsoft.com/en-us/azure/databricks/dev-tools/databricks-apps/auth
-      user_api_scopes:
-        - jobs
-        - pipelines
+      # No user_api_scopes: Apps user authorization has no jobs or pipelines scope (the API rejects `jobs` with
+      # 400 INVALID_PARAMETER_VALUE; supported list: https://learn.microsoft.com/en-us/azure/databricks/dev-tools/databricks-apps/auth#supported-scopes).
+      # The app reads Jobs and Pipelines as its service principal (JOBS_CONSOLE_AUTH=app in app.yaml), which needs
+      # CAN_VIEW on the jobs and pipelines it should show. The viewer's x-forwarded-email still decides "Mine".
 
 variables:
   # Accepted for the documented deploy command, but informational only: the CLI does not interpolate variables in
@@ -32,6 +32,6 @@ targets:
     workspace:
       host: https://adb-7405612029409959.19.azuredatabricks.net
 
-  # AWS GovCloud (us-gov-west-1). Same app, same user_api_scopes (they sit on the app resource, so every target gets
-  # them). No host here: it comes from --profile gov (see the gov_host note above).
+  # AWS GovCloud (us-gov-west-1). Same app, same prebuilt deploy/ folder.
+  # No host here: it comes from --profile gov (see the gov_host note above).
   gov: {}
