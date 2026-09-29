@@ -135,6 +135,16 @@ describe('RunDrawer with real tasks', () => {
     expect(container.textContent).not.toMatch(/48m 22s|38m 29s/);
   });
 
+  it('gives every task label its full name for the hover tooltip', () => {
+    const long = 'aiges_ingest_sap_backfill_sys_bic_ngc_dwh_edw_coretables_pe_md_cvg_ct_ecc_md_pa0000_dev';
+    const base = makeRealRun();
+    const run = { ...base, tasks: base.tasks?.map((t, i) => (i === 0 ? { ...t, key: long } : t)) };
+    const { container } = render(<RunDrawer run={run} nowMs={0} loadedAt={0} onClose={() => {}} />);
+    const labels = [...container.querySelectorAll<HTMLElement>('.gantt .grow .lbl')];
+    expect(labels[0]?.dataset.full).toBe(long);
+    expect(labels.every((l) => l.dataset.full === l.textContent)).toBe(true);
+  });
+
   it('puts the label after a bar too short to hold it', () => {
     const run = makeRealRun({ durationSec: 4000 }); // the 60s setup is 1.5% of the axis
     const { container } = render(<RunDrawer run={run} nowMs={0} loadedAt={0} onClose={() => {}} />);

@@ -70,7 +70,7 @@ function Bar({ t, run, total, sel }: { t: ScheduledTask; run: Run; total: number
   const inside = widthPct >= LABEL_INSIDE_PCT;
   return (
     <>
-      <span className={`sq bar${cls}${sel ? ' sel' : ''}`} style={{ left, width: `${widthPct}%` }} title={`${t.name}: ${label}`}>
+      <span className={`sq bar${cls}${sel ? ' sel' : ''}`} style={{ left, width: `${widthPct}%` }}>
         {inside ? label : ''}
       </span>
       {!inside && <span className={`sq-after${cls}`} style={{ left: `calc(${startPct + widthPct}% + 6px)` }}>{label}</span>}
@@ -126,7 +126,7 @@ function Gantt({ run, rows, total, isSel, onPick }: {
         const sel = isSel(t);
         return (
           <div key={t.i} className={`grow${sel ? ' sel' : ''}`} data-i={t.i} onClick={() => onPick(t)}>
-            <div className="lbl">{t.name}</div>
+            <div className="lbl" data-full={t.name}><span>{t.name}</span></div>
             <div className="trk"><Bar t={t} run={run} total={total} sel={sel} /></div>
           </div>
         );

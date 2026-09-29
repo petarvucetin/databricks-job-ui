@@ -73,7 +73,10 @@
 .dr .gantt .axis .ticks span:first-child { transform: none; }
 .dr .gantt .grow { display: grid; grid-template-columns: 170px 1fr; align-items: center; min-height: 26px; min-width: 720px; cursor: pointer; }
 .dr .gantt .grow.sel { background: var(--wash-amber); }
-.dr .gantt .lbl { font-family: var(--mono); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 10px 0 4px; }
+.dr .gantt .lbl { position: relative; font-family: var(--mono); font-size: 12px; white-space: nowrap; padding: 0 10px 0 4px; min-width: 0; }
+.dr .gantt .lbl > span { display: block; overflow: hidden; text-overflow: ellipsis; }
+/* Full task name on hover: overlays the row (not below it), so the gantt's scroll box can't clip it. */
+.dr .gantt .grow:hover .lbl::after { content: attr(data-full); position: absolute; left: 0; top: 50%; transform: translateY(-50%); z-index: 5; pointer-events: none; padding: 2px 8px; border-radius: 4px; background: var(--ink); color: var(--sheet); box-shadow: 0 2px 6px rgba(39, 33, 28, .18); }
 .dr .gantt .trk { position: relative; height: 26px; margin-right: 96px; background: repeating-linear-gradient(90deg, transparent 0 24.9%, #f1eadf 24.9% 25%); }
 .dr .gantt svg.links { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
 .dr .gantt svg.links path { fill: none; stroke: #b9ab99; stroke-width: 1.2; }
