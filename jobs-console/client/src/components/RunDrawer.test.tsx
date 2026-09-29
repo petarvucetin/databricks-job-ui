@@ -121,6 +121,16 @@ describe('RunDrawer with real tasks', () => {
     expect(log.querySelectorAll(':scope > div')[2]?.textContent).toBe('plain line');
   });
 
+  it('"open full log" opens the run in Databricks, and is hidden when the run has no url', () => {
+    const { container, unmount } = render(<RunDrawer run={makeRealRun({ url: 'https://adb-1.2.azuredatabricks.net/jobs/10/runs/7?o=1' })} nowMs={0} loadedAt={0} onClose={() => {}} />);
+    const a = [...container.querySelectorAll('.logh a')].find((x) => x.textContent === 'open full log ↗');
+    expect(a?.getAttribute('href')).toBe('https://adb-1.2.azuredatabricks.net/jobs/10/runs/7?o=1');
+    expect(a?.getAttribute('target')).toBe('_blank');
+    unmount();
+    const plain = render(<RunDrawer run={makeRealRun({ url: undefined })} nowMs={0} loadedAt={0} onClose={() => {}} />);
+    expect(plain.container.textContent).not.toContain('open full log');
+  });
+
   it('links the header title when the run has a url, and not otherwise', () => {
     const { container } = render(<RunDrawer run={makeRealRun()} nowMs={0} loadedAt={0} onClose={() => {}} />);
     const a = container.querySelector<HTMLAnchorElement>('.dh .title a')!;

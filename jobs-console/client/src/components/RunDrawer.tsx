@@ -169,7 +169,7 @@ function logLines(text: string): { plain: string; segments?: AnsiSegment[] }[] {
   });
 }
 
-function TaskLog({ runId, task, hint, failed, nonce }: { runId: number; task: string; hint?: string; failed: boolean; nonce: number }) {
+function TaskLog({ runId, task, hint, failed, nonce, url }: { runId: number; task: string; hint?: string; failed: boolean; nonce: number; url?: string }) {
   const log = useTaskLog(runId, task, hint, nonce);
   const ref = useRef<HTMLDivElement>(null);
   const text = log.state === 'ready' ? log.text : '';
@@ -182,7 +182,7 @@ function TaskLog({ runId, task, hint, failed, nonce }: { runId: number; task: st
       <div className="logh">
         <b>Log</b>
         <span>{log.state === 'loading' ? 'loading' : log.state === 'error' ? 'not available' : `${lines.length} lines${failed ? ', ends at the error' : ''}`}</span>
-        <span className="r">open full log ↗</span>
+        {url && <a className="r" href={url} target="_blank" rel="noopener noreferrer" title="Open this run in Databricks for the full output and driver logs">open full log ↗</a>}
       </div>
       <div className="log" ref={ref}>
         {log.state === 'error' ? 'log not available' : lines.map((l, i) => <div key={i}>{l.segments ? <AnsiLine segments={l.segments} /> : <LogLine line={l.plain} />}</div>)}
@@ -199,7 +199,7 @@ function TaskBody({ run, task, kind, hint, failed, nonce, compute = 'ingest_clus
     return (
       <>
         {params && <div className="kv"><span>parameters</span><span className="mono">{params}</span></div>}
-        <TaskLog runId={run.id} task={task} hint={hint} failed={failed} nonce={nonce} />
+        <TaskLog runId={run.id} task={task} hint={hint} failed={failed} nonce={nonce} url={run.url} />
       </>
     );
   }
@@ -211,7 +211,7 @@ function TaskBody({ run, task, kind, hint, failed, nonce, compute = 'ingest_clus
         <span>compute</span><span>{compute}</span>
         {kind === 'Python script' && <><span>cluster</span><span className="mono">0918-0600-gl4x</span></>}
       </div>
-      <TaskLog runId={run.id} task={task} hint={hint} failed={failed} nonce={nonce} />
+      <TaskLog runId={run.id} task={task} hint={hint} failed={failed} nonce={nonce} url={run.url} />
     </>
   );
 }
