@@ -3,11 +3,11 @@ import type { RunSource } from '../runSource';
 import { SourceError } from '../sourceError';
 import type { LiveApi } from './api';
 import { apiErrorParts } from './apiError';
-import { Deadline, EVENTS_PAGE_SIZE, TIMEOUT, collectJobRuns, collectPipelines } from './collect';
+import { Deadline, EVENTS_PAGE_SIZE, TIMEOUT, collectJobRuns, collectPipelines, eventsSince } from './collect';
 import { jobDraft } from './jobs';
-import { finalize, type Draft } from './kinds';
+import { finalize, runKey, usualByKey, type Draft } from './kinds';
 import type { LiveLimits } from './limits';
-import { indexEvents, updateDraft } from './pipelines';
+import { indexEvents, updateDraft, type PipelineInfo } from './pipelines';
 import { findTask, jobLogText, pipelineLogText } from './taskLog';
 import { noDiag, type Trace } from './trace';
 
@@ -15,6 +15,8 @@ const DAY = 86400000;
 const CACHE_TTL_MS = 20000;
 const CACHE_MAX = 50;
 const ID_MAP_MAX = 50000;
+const FINISHED_UPDATE = new Set<string>(['COMPLETED', 'FAILED', 'CANCELED']);
+type UpdateEventsInput = Parameters<typeof indexEvents>[0] | undefined;
 
 export { apiErrorParts };
 
@@ -22,11 +24,13 @@ export interface PipelineRef {
   pipelineId: string;
   updateId: string;
   startTime: number;
+  /** The pipeline as the list read it (name, continuous, run as), so refreshing one update needs no getPipeline. */
+  info: PipelineInfo;
 }
 
 /** Process-wide state shared by every request's source. Nothing in it grants access: every call still runs as the requester. */
 export interface LiveState {
-  /** Run.id of a pipeline update -> the update, for the log route. Refreshed on every list call. */
+  /** Run.id of a pipeline update -> the update, for the log and single-run routes. Refreshed on every list call. */
   pipelineRefs: Map<number, PipelineRef>;
   /** Per user and window, so reloads within the TTL don't fan out again. */
   cache: Map<string, { at: number; data: RunsResponse }>;
@@ -116,7 +120,7 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
       for (const u of p.updates) {
         const d = updateDraft(u, p.info, events.get(u.update_id ?? ''), now, diag, host);
         drafts.push(d);
-        remember(state.pipelineRefs, d.id, { pipelineId: p.info.pipelineId, updateId: u.update_id ?? '', startTime: d.startTime }, ID_MAP_MAX);
+        remember(state.pipelineRefs, d.id, { pipelineId: p.info.pipelineId, updateId: u.update_id ?? '', startTime: d.startTime, info: p.info }, ID_MAP_MAX);
       }
     }
     const all: Run[] = finalize(drafts, me === TIMEOUT ? undefined : me).sort((a, b) => b.startTime - a.startTime || b.id - a.id);
@@ -162,8 +166,64 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
     return jobLogText(task, output);
   }
 
+  const mineKey = `${o.userKey}|`;
+
+  /** The requester's newest cached list (any window): the runs a single refreshed run is averaged with. */
+  function cachedRuns(): Run[] {
+    let best: { at: number; data: RunsResponse } | undefined;
+    for (const [k, v] of state.cache) if (k.startsWith(mineKey) && (!best || v.at > best.at)) best = v;
+    return best?.data.runs ?? [];
+  }
+
+  /** Puts a refreshed run into the requester's cached lists, so a list served from the cache does not go back in time. */
+  function patchCache(run: Run): void {
+    for (const [k, v] of state.cache) {
+      if (!k.startsWith(mineKey)) continue;
+      const i = v.data.runs.findIndex((r) => r.id === run.id);
+      if (i < 0) continue;
+      const runs = v.data.runs.slice();
+      runs[i] = run;
+      state.cache.set(k, { at: v.at, data: { ...v.data, runs } });
+    }
+  }
+
+  /** One pipeline update: getUpdate, plus the pipeline's events since it started (end time and cause) once it has finished. */
+  async function updateDraftOf(ref: PipelineRef, now: number, host: string, dl: Deadline): Promise<Draft> {
+    const got = await api.getUpdate({ pipeline_id: ref.pipelineId, update_id: ref.updateId });
+    const u = got.update;
+    if (!u) throw new SourceError(404, `Pipeline ${ref.pipelineId} has no update ${ref.updateId}`);
+    let events: UpdateEventsInput = undefined;
+    if (FINISHED_UPDATE.has(u.state ?? '')) {
+      const got = await eventsSince(api, ref.pipelineId, u.creation_time ?? ref.startTime, dl, diag);
+      if (got !== TIMEOUT) events = got;
+    }
+    return updateDraft(u, ref.info, indexEvents(events ?? []).get(ref.updateId), now, diag, host);
+  }
+
   return {
     kind: 'live',
+    async getRun(runId) {
+      const now = clock();
+      o.trace?.note({ now, limits });
+      const dl = new Deadline(timer() + limits.timeoutMs, timer);
+      const ref = state.pipelineRefs.get(runId);
+      try {
+        const host = await o.api.host().catch(() => '');
+        const draft = ref ? await updateDraftOf(ref, now, host, dl) : jobDraft(await api.getRun({ run_id: runId }), now, diag, host);
+        // A replayed call answered by a nearby recording can be another run: that is not this one.
+        if (draft.id !== runId) throw new SourceError(404, `Run ${runId} does not exist`);
+        const cached = cachedRuns();
+        // usualSec as the list computes it: this run with the other runs of its job in the list.
+        const peers = cached.filter((r) => r.id !== runId && runKey(r) === draft.key).map((r) => ({ key: draft.key, live: r.live, queued: r.kind === 'queued', result: r.result, durationSec: r.durationSec }));
+        const me = await dl.call(() => o.user()).catch((): typeof TIMEOUT => TIMEOUT);
+        const [run] = finalize([draft], me === TIMEOUT ? undefined : me, usualByKey([...peers, draft]));
+        if (me === TIMEOUT) run.mine = cached.find((r) => r.id === runId)?.mine ?? false;
+        patchCache(run);
+        return run;
+      } catch (e) {
+        throw toSourceError(e, true);
+      }
+    },
     async listRuns(since) {
       const key = `${o.userKey}|${since ?? ''}`;
       const hit = state.cache.get(key);

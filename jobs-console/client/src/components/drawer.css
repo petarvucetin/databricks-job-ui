@@ -18,6 +18,13 @@
 .dr .dh .when { white-space: nowrap; }
 .dr .dh .x { margin-left: auto; border: 0; background: none; color: var(--ink-3); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 2px; }
 .dr .dh .x:hover { color: var(--ink); }
+.dr .dh .rf { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; color: var(--ink-3); font-size: 12px; line-height: 18px; }
+.dr .dh .rf button { border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 14px; line-height: 1; padding: 0 2px; }
+.dr .dh .rf button:hover:not(:disabled) { color: var(--ink); }
+.dr .dh .rf button.spin { animation: dr-spin 1s linear infinite; cursor: default; }
+.dr .dh .rf-err { font-style: normal; color: var(--amber-ink); cursor: help; }
+@keyframes dr-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .dr .dh .rf button.spin { animation: none; } }
 
 .dr .trace { padding: 20px 24px 28px 24px; }
 .dr .route { position: relative; padding-left: 34px; }

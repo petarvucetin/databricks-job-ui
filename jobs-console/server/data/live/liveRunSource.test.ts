@@ -38,7 +38,7 @@ describe('live listRuns', () => {
     const upd = res.runs[1];
     expect(upd).toMatchObject({ type: 'pipeline', durationSec: 60, runAs: 'sp-ingest', mine: false, kind: 'succeeded' });
     expect(res.runs[0].mine).toBe(true);
-    expect(state.pipelineRefs.get(pipelineNumber('u-1'))).toEqual({ pipelineId: 'p1', updateId: 'u-1', startTime: NOW - 5 * MIN });
+    expect(state.pipelineRefs.get(pipelineNumber('u-1'))).toEqual({ pipelineId: 'p1', updateId: 'u-1', startTime: NOW - 5 * MIN, info: { pipelineId: 'p1', name: 'pipe', continuous: false, runAs: 'sp-ingest' } });
   });
 
   it('uses since as the window start, else windowDays', async () => {

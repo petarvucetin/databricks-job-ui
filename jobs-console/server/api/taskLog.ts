@@ -9,8 +9,12 @@ const isTaskName = (s: string): boolean =>
  * `task` is a job task key, or for a pipeline update the flow or pipeline name (ignored there), so it allows any
  * printable text without path separators.
  */
+/** A Run.id from the path: 1 to 16 digits, a safe integer. */
+export const isRunId = (id: string): boolean => /^\d{1,16}$/.test(id) && Number.isSafeInteger(Number(id));
+export const BAD_RUN_ID: HandlerResult = { status: 400, body: { error: 'run id must be a number' } };
+
 export async function taskLog(source: RunSource, id: string, query: Record<string, unknown>): Promise<HandlerResult> {
-  if (!/^\d{1,16}$/.test(id) || !Number.isSafeInteger(Number(id))) return { status: 400, body: { error: 'run id must be a number' } };
+  if (!isRunId(id)) return BAD_RUN_ID;
   const { task, hint } = query;
   if (typeof task !== 'string' || !isTaskName(task)) return { status: 400, body: { error: 'task must be a task key' } };
   if (hint !== undefined && (typeof hint !== 'string' || hint.length > 60)) return { status: 400, body: { error: 'hint must be a short string' } };

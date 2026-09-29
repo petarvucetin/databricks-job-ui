@@ -12,7 +12,11 @@ export interface Draft extends Omit<Run, 'kind' | 'cause' | 'usualSec' | 'mine'>
   cause: Cause | null;
 }
 
-function usualByKey(drafts: Draft[]): Map<string, number> {
+/** What usualSec is averaged over: the finished, succeeded runs of each key. */
+export type UsualInput = Pick<Draft, 'key' | 'live' | 'queued' | 'result' | 'durationSec'>;
+
+/** Average duration (s) of each key's succeeded runs. */
+export function usualByKey(drafts: UsualInput[]): Map<string, number> {
   const sums = new Map<string, { n: number; total: number }>();
   for (const d of drafts) {
     if (d.live || d.queued || d.result !== 'succeeded') continue;
@@ -24,9 +28,11 @@ function usualByKey(drafts: Draft[]): Map<string, number> {
   return new Map([...sums].map(([k, s]) => [k, Math.round(s.total / s.n)]));
 }
 
-/** Kind rules, first match wins: queued, retrying, slow (live, >1.2x usual), running, failed, slow (finished, >1.5x usual), succeeded. */
-export function finalize(drafts: Draft[], me: string | undefined): Run[] {
-  const usual = usualByKey(drafts);
+/**
+ * Kind rules, first match wins: queued, retrying, slow (live, >1.2x usual), running, failed, slow (finished, >1.5x usual), succeeded.
+ * `usual` defaults to the averages over `drafts` themselves; a single refreshed run passes the averages of its list.
+ */
+export function finalize(drafts: Draft[], me: string | undefined, usual: Map<string, number> = usualByKey(drafts)): Run[] {
   const self = me?.toLowerCase();
   return drafts.map(({ key, queued, retryAttempt, cause, ...d }) => {
     const usualSec = usual.get(key) ?? d.durationSec;
@@ -43,3 +49,7 @@ export function finalize(drafts: Draft[], me: string | undefined): Run[] {
     return { ...d, kind, cause: c, usualSec, mine: !!self && d.runAs.toLowerCase() === self };
   });
 }
+
+/** The usualSec key of a run already mapped (the Draft key it was grouped by). */
+export const runKey = (r: Pick<Run, 'type' | 'jobId' | 'pipelineId' | 'name'>): string =>
+  r.type === 'pipeline' ? `p:${r.pipelineId ?? ''}` : r.jobId !== undefined ? `j:${r.jobId}` : `r:${r.name}`;

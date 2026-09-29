@@ -49,6 +49,12 @@ export function fakeApi(data: FakeData): LiveApi & { calls: string[] } {
     listPipelines: () => reply('listPipelines', () => ({ statuses: data.pipelines ?? [] })),
     getPipeline: (req) => reply('getPipeline', () => data.specs?.[req.pipeline_id] ?? { pipeline_id: req.pipeline_id }),
     listUpdates: (req) => reply('listUpdates', () => ({ updates: data.updates?.[req.pipeline_id] ?? [] })),
+    getUpdate: (req) =>
+      reply('getUpdate', () => {
+        const u = data.updates?.[req.pipeline_id]?.find((x) => x.update_id === req.update_id);
+        if (!u) throw Object.assign(new Error(`Update ${req.update_id} does not exist.`), { statusCode: 404, errorCode: 'RESOURCE_DOES_NOT_EXIST' });
+        return { update: u };
+      }),
     listPipelineEvents: (req) => reply('listPipelineEvents', () => ({ events: data.events?.[req.pipeline_id] ?? [] })),
   };
 }

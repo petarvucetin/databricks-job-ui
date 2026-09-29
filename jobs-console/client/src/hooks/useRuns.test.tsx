@@ -11,7 +11,11 @@ describe('useRuns', () => {
     const { result } = renderHook(() => useRuns());
     expect(result.current.state).toBe('loading');
     await waitFor(() => expect(result.current.state).toBe('ready'));
-    if (result.current.state === 'ready') expect(result.current.data.asOf).toBe(5);
+    if (result.current.state === 'ready') {
+      expect(result.current.data.asOf).toBe(5);
+      // When the fetch behind the data started: single-run refreshes compare against it.
+      expect(result.current.startedAt).toBeLessThanOrEqual(result.current.loadedAt);
+    }
   });
 
   it('reports an error and retries', async () => {

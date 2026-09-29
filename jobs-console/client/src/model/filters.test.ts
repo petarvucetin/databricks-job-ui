@@ -79,4 +79,18 @@ describe('filters', () => {
     expect(tileSubtitle('queued', [makeRun({ kind: 'queued', startTime: 0 })], 49 * 60_000)).toBe('longest 49m 00s');
     expect(tileSubtitle('failed', [], 0)).toBe('');
   });
+
+  it('keeps runs that were going during the window, not only those that started in it', () => {
+    // The 10:00-11:00 hour, as in the native Runs list with "Run status: Active".
+    const hour = { from: new Date(2026, 8, 29, 10).getTime(), to: new Date(2026, 8, 29, 11).getTime() };
+    const w = { ...base, window: hour };
+    const at = (h: number, m = 0) => new Date(2026, 8, 29, h, m).getTime();
+    const since4am = makeRun({ id: 10, kind: 'running', live: true, startTime: at(4), durationSec: 6.9 * 3600 });
+    const since0954 = makeRun({ id: 11, kind: 'running', live: true, startTime: at(9, 54), durationSec: 3600 });
+    const endedIn = makeRun({ id: 12, kind: 'succeeded', live: false, startTime: at(9, 30), durationSec: 45 * 60 }); // 09:30-10:15
+    const endedBefore = makeRun({ id: 13, kind: 'succeeded', live: false, startTime: at(9), durationSec: 30 * 60 }); // 09:00-09:30
+    const startsAfter = makeRun({ id: 14, kind: 'running', live: true, startTime: at(11, 5) });
+    const inside = [since4am, since0954, endedIn, endedBefore, startsAfter].filter((r) => passesExceptStatus(r, w)).map((r) => r.id);
+    expect(inside).toEqual([10, 11, 12]);
+  });
 });

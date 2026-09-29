@@ -15,11 +15,13 @@ import { CompareDrawer } from '../components/CompareView';
 import type { OpenHow } from '../components/RunRow';
 import { addToStack, idsFromSearch, stackRuns } from '../model/compare';
 import { ReferenceBlock } from '../components/ReferenceBlock';
+import type { RunRefresh } from '../hooks/useRunRefresh';
 import './attention.css';
 
 const CODE_OPTIONS = ['CLIENT_ERROR', 'CLOUD_FAILURE', 'TIMEDOUT', 'MAX_CONCURRENT_RUNS_REACHED', 'none'];
 
-export function AttentionView({ data, loadedAt, refresh }: { data: RunsResponse; loadedAt: number; refresh?: ReactNode }) {
+/** `runRefresh` refreshes single runs (the drawer's ↻); `data` should already carry its refreshed runs (useRunRefresh). */
+export function AttentionView({ data, loadedAt, refresh, runRefresh }: { data: RunsResponse; loadedAt: number; refresh?: ReactNode; runRefresh?: Pick<RunRefresh, 'refreshRun' | 'status'> }) {
   const ctx: ViewCtx = useMemo(() => ({ runs: data.runs, end: timelineEnd(data.asOf) }), [data]);
   const [state, setState] = useState(() => initialState(ctx));
   const dispatch = useCallback((a: Action) => setState((s) => applyAction(s, a, ctx)), [ctx]);
@@ -51,6 +53,10 @@ export function AttentionView({ data, loadedAt, refresh }: { data: RunsResponse;
   const open = stackRuns(stack, byId);
   const openIds = open.map((r) => r.id);
   const drawerRun = open.length === 1 ? open[0] : undefined;
+  const drawerId = drawerRun?.id;
+  const refreshRun = runRefresh?.refreshRun;
+  const onRefreshDrawer = () => (refreshRun && drawerId !== undefined ? refreshRun(drawerId) : Promise.resolve());
+  const drawerRefresh = runRefresh && drawerId !== undefined ? { onRefresh: onRefreshDrawer, ...runRefresh.status(drawerId) } : undefined;
   const nowMs = useNow(1000);
   const labels = useReferenceLabels();
   const timelineCollapsed = useTimelineCollapsed();
@@ -100,7 +106,7 @@ export function AttentionView({ data, loadedAt, refresh }: { data: RunsResponse;
       <StatusTiles tiles={tiles} statuses={f.statuses} asOf={data.asOf} dispatch={dispatch} />
       {labels && rows.length > 0 && <ReferenceBlock rows={rows} history={history} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} openRuns={openIds} onOpenRun={onOpenRun} />}
       <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} openRuns={openIds} onOpenRun={onOpenRun} dispatch={dispatch} compact={compactRows} sort={sort} onSort={setSort} />
-      {drawerRun && <RunDrawer key={drawerRun.id} run={drawerRun} history={history.get(drawerRun.name)} nowMs={nowMs} loadedAt={loadedAt} onClose={closeDrawer} />}
+      {drawerRun && <RunDrawer key={drawerRun.id} run={drawerRun} history={history.get(drawerRun.name)} nowMs={nowMs} loadedAt={loadedAt} onClose={closeDrawer} refresh={drawerRefresh} />}
       {open.length > 1 && <CompareDrawer runs={open} nowMs={nowMs} loadedAt={loadedAt} pool={pool} onToggle={toggleRun} addHint="click to add or remove; Ctrl+click in the list works too" onRemove={removeRun} onClose={closeDrawer} />}
     </div>
   );

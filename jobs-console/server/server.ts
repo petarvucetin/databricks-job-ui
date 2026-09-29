@@ -6,6 +6,7 @@ import type { LiveProvider } from './data/live/liveProvider';
 import { CaptureStore, Session, readCaptureLimits } from './data/capture/recorder';
 import { listRuns, type HandlerResult } from './api/listRuns';
 import { taskLog } from './api/taskLog';
+import { getRun } from './api/getRun';
 import { newSessionId, registerDiag, registerNoDiag } from './api/diag';
 
 const provider = selectRunSource(process.env);
@@ -64,6 +65,9 @@ createApp({
       });
       app.get('/api/runs', (req, res, next) => {
         serve(req, res, next, '/api/runs', (source) => listRuns(source, req.query));
+      });
+      app.get('/api/runs/:id', (req, res, next) => {
+        serve(req, res, next, '/api/runs/:id', (source) => getRun(source, req.params.id, req.query));
       });
       app.get('/api/runs/:id/log', (req, res, next) => {
         serve(req, res, next, '/api/runs/:id/log', (source) => taskLog(source, req.params.id, req.query));

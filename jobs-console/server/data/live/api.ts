@@ -15,6 +15,8 @@ export interface LiveApi {
   listPipelines: (req: pipelines.ListPipelinesRequest) => Promise<pipelines.ListPipelinesResponse>;
   getPipeline: (req: pipelines.GetPipelineRequest) => Promise<pipelines.GetPipelineResponse>;
   listUpdates: (req: pipelines.ListUpdatesRequest) => Promise<pipelines.ListUpdatesResponse>;
+  /** One pipeline update, for refreshing a single run (GET /api/2.0/pipelines/{pipeline_id}/updates/{update_id}). */
+  getUpdate: (req: pipelines.GetUpdateRequest) => Promise<pipelines.GetUpdateResponse>;
   listPipelineEvents: (req: pipelines.ListPipelineEventsRequest) => Promise<pipelines.ListPipelineEventsResponse>;
 }
 
@@ -46,6 +48,7 @@ export function createSdkApi(opts: { host?: string; token?: string }): LiveApi {
     listPipelines: (req) => page('/api/2.0/pipelines', { ...req }),
     getPipeline: (req) => client.pipelines.get(req),
     listUpdates: (req) => client.pipelines.listUpdates(req),
+    getUpdate: (req) => client.pipelines.getUpdate(req),
     listPipelineEvents: (req) => page(`/api/2.0/pipelines/${encodeURIComponent(req.pipeline_id)}/events`, { ...req }),
   };
 }

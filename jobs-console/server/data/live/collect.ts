@@ -149,7 +149,7 @@ const EVENTS_MAX_PAGES = 4;
  * A pipeline's events since `from`, newest first, up to EVENTS_MAX_PAGES pages. Events only add end times and
  * failure causes, so a failing events call costs this pipeline those details (with a diagnostic), never the whole list.
  */
-async function eventsSince(api: LiveApi, pipelineId: string, from: number, dl: Deadline, diag: Diag): Promise<pipelines.PipelineEvent[] | undefined | typeof TIMEOUT> {
+export async function eventsSince(api: LiveApi, pipelineId: string, from: number, dl: Deadline, diag: Diag): Promise<pipelines.PipelineEvent[] | undefined | typeof TIMEOUT> {
   const out: pipelines.PipelineEvent[] = [];
   let token: string | undefined;
   for (let n = 0; n < EVENTS_MAX_PAGES; n++) {

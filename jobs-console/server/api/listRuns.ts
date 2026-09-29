@@ -16,6 +16,16 @@ export async function orSourceError(work: () => Promise<HandlerResult>): Promise
   }
 }
 
+const TZ_ERROR: HandlerResult = { status: 400, body: { error: 'tzOffset must be minutes between -840 and 840' } };
+
+/** The `tzOffset` query (the client's getTimezoneOffset()): minutes, undefined when absent, or the 400 to answer with. */
+export function parseTzOffset(raw: unknown): number | undefined | HandlerResult {
+  if (raw === undefined) return undefined;
+  if (typeof raw !== 'string' || !/^-?\d+$/.test(raw)) return TZ_ERROR;
+  const min = Number(raw);
+  return min < -840 || min > 840 ? TZ_ERROR : min;
+}
+
 export async function listRuns(source: RunSource, query: Record<string, unknown>): Promise<HandlerResult> {
   const raw = query.since;
   let since: number | undefined;
@@ -23,12 +33,7 @@ export async function listRuns(source: RunSource, query: Record<string, unknown>
     if (typeof raw !== 'string' || !/^\d+$/.test(raw)) return { status: 400, body: { error: 'since must be epoch milliseconds' } };
     since = Number(raw);
   }
-  const rawTz = query.tzOffset;
-  let tzOffsetMin: number | undefined;
-  if (rawTz !== undefined) {
-    if (typeof rawTz !== 'string' || !/^-?\d+$/.test(rawTz)) return { status: 400, body: { error: 'tzOffset must be minutes between -840 and 840' } };
-    tzOffsetMin = Number(rawTz);
-    if (tzOffsetMin < -840 || tzOffsetMin > 840) return { status: 400, body: { error: 'tzOffset must be minutes between -840 and 840' } };
-  }
+  const tzOffsetMin = parseTzOffset(query.tzOffset);
+  if (typeof tzOffsetMin === 'object') return tzOffsetMin;
   return orSourceError(async () => ({ status: 200, body: await source.listRuns(since, tzOffsetMin) }));
 }

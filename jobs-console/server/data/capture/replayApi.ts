@@ -3,7 +3,7 @@ import { workspaceOrigin } from '../live/links';
 import type { Diag } from '../live/trace';
 import type { CallRecord, RecordedError, SessionRecord } from './recorder';
 
-const METHODS: Exclude<keyof LiveApi, 'host'>[] = ['me', 'listJobRuns', 'getRun', 'getRunOutput', 'listPipelines', 'getPipeline', 'listUpdates', 'listPipelineEvents'];
+const METHODS: Exclude<keyof LiveApi, 'host'>[] = ['me', 'listJobRuns', 'getRun', 'getRunOutput', 'listPipelines', 'getPipeline', 'listUpdates', 'getUpdate', 'listPipelineEvents'];
 
 /** JSON with object keys sorted and undefined dropped, so equal requests give equal strings. */
 export function canon(v: unknown): string {
@@ -66,6 +66,27 @@ export function createReplayApi(sessions: SessionRecord[], preferred: SessionRec
     return c.ok ? Promise.resolve(c.result) : Promise.reject(sdkError(c.error ?? { name: 'Error', message: 'recorded failure' }));
   };
 
+  /**
+   * A single-run call nobody recorded, answered from the recorded list pages that carry that run (the preferred session
+   * first): getRun from a runs/list page (tasks expanded), getUpdate from a listUpdates page. Undefined when none has it.
+   */
+  const fromList = (method: keyof LiveApi, args: Record<string, unknown>): unknown => {
+    for (const s of ordered) {
+      for (const c of s.calls) {
+        if (!c.ok || c.cutOff) continue;
+        if (method === 'getRun' && c.method === 'listJobRuns') {
+          const run = ((c.result as { runs?: { run_id?: unknown }[] } | undefined)?.runs ?? []).find((r) => r.run_id === args.run_id);
+          if (run) return run;
+        }
+        if (method === 'getUpdate' && c.method === 'listUpdates' && (c.args as { pipeline_id?: unknown } | undefined)?.pipeline_id === args.pipeline_id) {
+          const update = ((c.result as { updates?: { update_id?: unknown }[] } | undefined)?.updates ?? []).find((u) => u.update_id === args.update_id);
+          if (update) return { update };
+        }
+      }
+    }
+    return undefined;
+  };
+
   const replay = (method: keyof LiveApi, req: unknown): Promise<unknown> => {
     const args = (JSON.parse(canon(req)) ?? {}) as Record<string, unknown>;
     const slot = exact.get(method + ' ' + canon(args));
@@ -73,6 +94,11 @@ export function createReplayApi(sessions: SessionRecord[], preferred: SessionRec
       const c = slot.calls[Math.min(slot.next, slot.calls.length - 1)];
       slot.next++;
       return answer(c);
+    }
+    const listed = fromList(method, args);
+    if (listed !== undefined) {
+      diag({ level: 'info', code: 'replay-from-list', message: `${method} ${canon(args)} was not recorded; answered with the same item from a recorded list page` });
+      return Promise.resolve(listed);
     }
     const candidates = byMethod.get(method) ?? [];
     if (!candidates.length) {

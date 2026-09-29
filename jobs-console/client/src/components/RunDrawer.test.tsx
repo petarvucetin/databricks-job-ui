@@ -123,3 +123,72 @@ describe('RunDrawer with real tasks', () => {
     expect(container.textContent).not.toContain('extract_bseg');
   });
 });
+
+describe('RunDrawer refresh', () => {
+  const logCalls = () => fetchMock.mock.calls.filter((c) => String(c[0]).includes('/log?')).length;
+  const refresh = (over: Partial<{ onRefresh: () => Promise<void>; refreshing: boolean; error: string | null; updatedAt: number }> = {}) => ({
+    onRefresh: vi.fn(() => Promise.resolve()), refreshing: false, error: null, updatedAt: 0, ...over,
+  });
+
+  it('shows when the run was updated, and a quiet refresh control next to the close button', () => {
+    const { container } = render(<RunDrawer run={makeRealRun()} nowMs={12000} loadedAt={0} onClose={() => {}} refresh={refresh({ updatedAt: 2000 })} />);
+    expect(container.querySelector('.dh .rf .upd')!.textContent).toBe('updated 10s ago');
+    const b = container.querySelector<HTMLButtonElement>('.dh .rf button')!;
+    expect(b.getAttribute('title')).toBe('Refresh this run');
+    expect(b.textContent).toBe('↻');
+    expect(b.nextElementSibling).toBeNull();
+    expect(container.querySelector('.dh .rf')!.nextElementSibling!.className).toBe('x');
+  });
+
+  it('↻ refreshes the run, then refetches the open task log, keeping the old text meanwhile', async () => {
+    const r = refresh();
+    const { container } = render(<RunDrawer run={makeRealRun()} nowMs={0} loadedAt={0} onClose={() => {}} refresh={r} />);
+    await waitFor(() => expect(container.querySelector('.logh span')!.textContent).toBe('3 lines, ends at the error'));
+    expect(logCalls()).toBe(1);
+    fireEvent.click(container.querySelector('.dh .rf button')!);
+    expect(r.onRefresh).toHaveBeenCalledOnce();
+    await waitFor(() => expect(logCalls()).toBe(2));
+    expect(fetchMock.mock.calls.at(-1)![0]).toBe('/api/runs/7/log?task=transform&hint=Table+not+found');
+    expect(container.querySelector('.logh span')!.textContent).toBe('3 lines, ends at the error');
+  });
+
+  it('spins while refreshing and says so quietly when the refresh failed', () => {
+    const { container, rerender } = render(<RunDrawer run={makeRealRun()} nowMs={0} loadedAt={0} onClose={() => {}} refresh={refresh({ refreshing: true })} />);
+    const b = container.querySelector<HTMLButtonElement>('.dh .rf button')!;
+    expect(b.className).toBe('spin');
+    expect(b.disabled).toBe(true);
+    expect(container.querySelector('.rf-err')).toBeNull();
+    rerender(<RunDrawer run={makeRealRun()} nowMs={0} loadedAt={0} onClose={() => {}} refresh={refresh({ error: 'Could not refresh the run: HTTP 502: busy' })} />);
+    expect(b.className).toBe('');
+    const err = container.querySelector('.dh .rf .rf-err')!;
+    expect(err.textContent).toBe('refresh failed');
+    expect(err.getAttribute('title')).toBe('Could not refresh the run: HTTP 502: busy');
+  });
+
+  it("refetches a live run's log whenever the page data refreshes", async () => {
+    const run = makeRetryingRun();
+    const { container, rerender } = render(<RunDrawer run={run} nowMs={0} loadedAt={0} onClose={() => {}} refresh={refresh()} />);
+    await waitFor(() => expect(logCalls()).toBe(1));
+    // Pick a task, so its log stays open once the run has finished.
+    fireEvent.click(container.querySelectorAll('.gantt .grow')[0]);
+    await waitFor(() => expect(logCalls()).toBe(2));
+    fetchMock.mockClear();
+    rerender(<RunDrawer run={{ ...run, durationSec: run.durationSec + 60 }} nowMs={60000} loadedAt={60000} onClose={() => {}} refresh={refresh()} />);
+    await waitFor(() => expect(logCalls()).toBe(1));
+    // The refresh that sees it finish fetches the final log once more; after that, nothing.
+    const done = { ...run, live: false, kind: 'succeeded' as const, result: 'succeeded' as const };
+    rerender(<RunDrawer run={done} nowMs={120000} loadedAt={120000} onClose={() => {}} refresh={refresh()} />);
+    await waitFor(() => expect(logCalls()).toBe(2));
+    rerender(<RunDrawer run={done} nowMs={180000} loadedAt={180000} onClose={() => {}} refresh={refresh()} />);
+    await new Promise((r) => setTimeout(r, 20));
+    expect(logCalls()).toBe(2);
+  });
+
+  it("does not refetch a finished run's log when the page data refreshes", async () => {
+    const { container, rerender } = render(<RunDrawer run={makeRealRun()} nowMs={0} loadedAt={0} onClose={() => {}} refresh={refresh()} />);
+    await waitFor(() => expect(container.querySelector('.logh span')!.textContent).toBe('3 lines, ends at the error'));
+    rerender(<RunDrawer run={makeRealRun()} nowMs={60000} loadedAt={60000} onClose={() => {}} refresh={refresh()} />);
+    await new Promise((r) => setTimeout(r, 20));
+    expect(logCalls()).toBe(1);
+  });
+});

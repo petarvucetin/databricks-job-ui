@@ -48,11 +48,22 @@ export function codeOf(r: Run): string {
   return r.cause.code || 'none';
 }
 
+/**
+ * A run belongs to a time window when it was going during it: started before the window ends, and still running or
+ * finished after the window starts. So a run that started at 04:00 and is still running shows in the 10:00 hour,
+ * as it does in the native Runs list with "Run status: Active".
+ */
+export function overlapsWindow(r: Run, w: TimeWindow): boolean {
+  if (r.startTime >= w.to) return false;
+  const end = r.live ? Infinity : r.startTime + r.durationSec * 1000;
+  return end >= w.from;
+}
+
 /** Everything except status and search. The status tiles and auto-selection build on this. */
 export function passesExceptStatus(r: Run, f: Filters): boolean {
   if (f.scope === 'mine' && !r.mine) return false;
   if (f.live && !r.live) return false;
-  if (r.startTime < f.window.from || r.startTime >= f.window.to) return false;
+  if (!overlapsWindow(r, f.window)) return false;
   if (f.runAs.length && !f.runAs.includes(r.runAs)) return false;
   if (f.types.length && !f.types.includes(r.type)) return false;
   if (f.codes.length && !f.codes.includes(codeOf(r))) return false;

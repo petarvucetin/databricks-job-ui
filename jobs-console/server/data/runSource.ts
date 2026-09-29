@@ -1,4 +1,4 @@
-import type { DataSource, RunsResponse } from '../../shared/domain/types';
+import type { DataSource, Run, RunsResponse } from '../../shared/domain/types';
 import { createMockRunSource } from './mock/mockRunSource';
 import { createLiveProvider } from './live/liveProvider';
 import type { Trace } from './live/trace';
@@ -19,6 +19,11 @@ export interface RunSource {
    * Throws SourceError for an unknown run (404) or a refused one (401/403).
    */
   taskLog(runId: number, task: string, hint?: string): Promise<string>;
+  /**
+   * One run, freshly read, in the same shape as in listRuns (for refreshing an open drawer). `tzOffsetMin` as in listRuns.
+   * Throws SourceError for an unknown run (404) or a refused one (401/403).
+   */
+  getRun(runId: number, tzOffsetMin?: number): Promise<Run>;
 }
 
 export interface RequestLike {

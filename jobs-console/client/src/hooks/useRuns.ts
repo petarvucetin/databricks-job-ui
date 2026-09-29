@@ -8,6 +8,8 @@ export type RunsState =
       state: 'ready';
       data: RunsResponse;
       loadedAt: number;
+      /** When the fetch that brought `data` started (a single run fetched after this is newer than the list). */
+      startedAt: number;
       /** A background refresh is in flight; the current data stays on screen. */
       refreshing: boolean;
       /** Why the last background refresh failed (the data shown is from loadedAt); null when it worked. */
@@ -38,7 +40,7 @@ const describe = (err: unknown): string =>
 export function useRuns(intervalMs = 0): RunsState {
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState<{ attempt: number; message: string } | null>(null);
-  const [latest, setLatest] = useState<{ data: RunsResponse; loadedAt: number } | null>(null);
+  const [latest, setLatest] = useState<{ data: RunsResponse; loadedAt: number; startedAt: number } | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshError, setRefreshError] = useState<string | null>(null);
   const inFlight = useRef(false);
@@ -57,10 +59,11 @@ export function useRuns(intervalMs = 0): RunsState {
   // First load (and Retry after a failed first load).
   useEffect(() => {
     let current = true;
-    lastTry.current = Date.now();
+    const startedAt = Date.now();
+    lastTry.current = startedAt;
     fetchRuns()
       .then((data) => {
-        if (current) setLatest({ data, loadedAt: Date.now() });
+        if (current) setLatest({ data, loadedAt: Date.now(), startedAt });
       })
       .catch((err: unknown) => {
         if (current) setFailed({ attempt, message: describe(err) });
@@ -73,12 +76,13 @@ export function useRuns(intervalMs = 0): RunsState {
   const refresh = useCallback(() => {
     if (inFlight.current) return;
     inFlight.current = true;
-    lastTry.current = Date.now();
+    const startedAt = Date.now();
+    lastTry.current = startedAt;
     setRefreshing(true);
     fetchRuns()
       .then((data) => {
         if (!alive.current) return;
-        setLatest({ data, loadedAt: Date.now() });
+        setLatest({ data, loadedAt: Date.now(), startedAt });
         setRefreshError(null);
       })
       .catch((err: unknown) => {
@@ -106,6 +110,6 @@ export function useRuns(intervalMs = 0): RunsState {
     };
   }, [intervalMs, ready, refresh]);
 
-  if (latest) return { state: 'ready', data: latest.data, loadedAt: latest.loadedAt, refreshing, refreshError, refresh };
+  if (latest) return { state: 'ready', data: latest.data, loadedAt: latest.loadedAt, startedAt: latest.startedAt, refreshing, refreshError, refresh };
   return failed && failed.attempt === attempt ? { state: 'error', message: failed.message, retry } : { state: 'loading' };
 }

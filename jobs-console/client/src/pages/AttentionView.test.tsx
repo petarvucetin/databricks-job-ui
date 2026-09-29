@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import { AttentionView } from './AttentionView';
 import { AttentionPage } from './AttentionPage';
 import { makeRun } from '../test/fixtures';
@@ -94,5 +94,47 @@ describe('AttentionPage', () => {
     render(<AttentionPage />);
     expect(await screen.findByText('Could not load runs: HTTP 503')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Retry' })).toBeTruthy();
+  });
+});
+
+describe('the drawer follows the data', () => {
+  const log = () => Promise.resolve(new Response(JSON.stringify({ text: 'log' }), { status: 200 }));
+  /** Opens run 3 (running) from its row's history boxes. */
+  const openRunning = (c: HTMLElement) => {
+    const t = c.querySelector('.rl .rr[data-id="3"] .rr-hist-t');
+    if (t?.getAttribute('aria-expanded') === 'false') fireEvent.click(t);
+    const boxes = [...c.querySelectorAll<HTMLButtonElement>('.rl .rr[data-id="3"] .rh')];
+    fireEvent.click(boxes[boxes.length - 1]);
+  };
+  const live = { ...data, runs: data.runs.map((r) => (r.id === 3 ? { ...r, result: null } : r)) };
+  const finished = { ...data.runs[2], kind: 'succeeded' as const, live: false, result: 'succeeded' as const, cause: { label: 'Succeeded', code: '', detail: '' }, durationSec: 900 };
+
+  it('shows the updated run after the page data changes', () => {
+    vi.stubGlobal('fetch', vi.fn(log));
+    const { container, rerender } = render(<AttentionView data={live} loadedAt={Date.now()} />);
+    openRunning(container);
+    expect(container.querySelector('.dr .panel.last .hd .v')!.textContent).toBe('Running, on track');
+    rerender(<AttentionView data={{ ...data, runs: [data.runs[0], data.runs[1], finished, data.runs[3]] }} loadedAt={Date.now()} />);
+    expect(container.querySelector('.dr .panel.last .hd .v')!.textContent).toBe('Succeeded');
+    expect(container.querySelector('.dr .dh .when')!.textContent).toMatch(/15m 00s$/);
+  });
+
+  it('↻ in the drawer fetches the run and shows it in the drawer and its row', async () => {
+    const fetchMock = vi.fn((url: string) => {
+      if (url.startsWith('/api/runs?')) return Promise.resolve(new Response(JSON.stringify(live), { status: 200 }));
+      if (url.startsWith('/api/runs/3?')) return Promise.resolve(new Response(JSON.stringify(finished), { status: 200 }));
+      return log();
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const { container } = render(<AttentionPage />);
+    await waitFor(() => expect(container.querySelector('.rl .rr[data-id="3"]')).not.toBeNull());
+    openRunning(container);
+    expect(container.querySelector('.dr .panel.last .hd .v')!.textContent).toBe('Running, on track');
+    expect(container.querySelector('.rl .rr[data-id="3"] .rr-spin')).not.toBeNull();
+    expect(container.querySelector('.dr .dh .rf .upd')!.textContent).toMatch(/^updated \d+s ago$/);
+    fireEvent.click(screen.getByRole('button', { name: 'Refresh this run' }));
+    await waitFor(() => expect(container.querySelector('.dr .panel.last .hd .v')!.textContent).toBe('Succeeded'));
+    expect(fetchMock.mock.calls.some(([u]) => /^\/api\/runs\/3\?tzOffset=/.test(u))).toBe(true);
+    expect(container.querySelector('.rl .rr[data-id="3"] .rr-spin')).toBeNull();
   });
 });

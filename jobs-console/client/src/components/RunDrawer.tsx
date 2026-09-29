@@ -139,8 +139,8 @@ function LogLine({ line }: { line: string }) {
   return cls ? <span className={cls}>{body}</span> : body;
 }
 
-function TaskLog({ runId, task, hint, failed }: { runId: number; task: string; hint?: string; failed: boolean }) {
-  const log = useTaskLog(runId, task, hint);
+function TaskLog({ runId, task, hint, failed, nonce }: { runId: number; task: string; hint?: string; failed: boolean; nonce: number }) {
+  const log = useTaskLog(runId, task, hint, nonce);
   const ref = useRef<HTMLDivElement>(null);
   const lines = log.state === 'ready' ? log.text.split('\n') : [];
   useLayoutEffect(() => {
@@ -160,15 +160,15 @@ function TaskLog({ runId, task, hint, failed }: { runId: number; task: string; h
   );
 }
 
-function TaskBody({ run, task, kind, hint, failed, compute = 'ingest_cluster, 15.4 LTS, i4i.2xlarge, 2 to 10 workers, spot', ext = '.py' }: {
-  run: Run; task: string; kind: string; hint?: string; failed: boolean; compute?: string; ext?: string;
+function TaskBody({ run, task, kind, hint, failed, nonce, compute = 'ingest_cluster, 15.4 LTS, i4i.2xlarge, 2 to 10 workers, spot', ext = '.py' }: {
+  run: Run; task: string; kind: string; hint?: string; failed: boolean; nonce: number; compute?: string; ext?: string;
 }) {
   const params = Object.entries(run.params).map(([k, v]) => `${k}=${v}`).join('  ');
   if (run.tasks) {
     return (
       <>
         {params && <div className="kv"><span>parameters</span><span className="mono">{params}</span></div>}
-        <TaskLog runId={run.id} task={task} hint={hint} failed={failed} />
+        <TaskLog runId={run.id} task={task} hint={hint} failed={failed} nonce={nonce} />
       </>
     );
   }
@@ -180,19 +180,43 @@ function TaskBody({ run, task, kind, hint, failed, compute = 'ingest_cluster, 15
         <span>compute</span><span>{compute}</span>
         {kind === 'Python script' && <><span>cluster</span><span className="mono">0918-0600-gl4x</span></>}
       </div>
-      <TaskLog runId={run.id} task={task} hint={hint} failed={failed} />
+      <TaskLog runId={run.id} task={task} hint={hint} failed={failed} nonce={nonce} />
     </>
   );
 }
 
-/** Side drawer for one run, ported from the prototype (`prototype/drawer.html`); Escape, the scrim or × closes it. */
-export function RunDrawer({ run, history, nowMs, loadedAt, onClose }: {
-  run: Run; history?: Run[]; nowMs: number; loadedAt: number; onClose: () => void;
+/** The drawer run's own refresh: how it is going and when its data was loaded (see useRunRefresh). */
+export interface DrawerRefresh {
+  onRefresh: () => Promise<void>;
+  refreshing: boolean;
+  error: string | null;
+  updatedAt: number;
+}
+
+const agoText = (sec: number) => (sec < 60 ? `updated ${sec}s ago` : `updated ${Math.floor(sec / 60)}m ago`);
+
+/**
+ * Side drawer for one run, ported from the prototype (`prototype/drawer.html`); Escape, the scrim or × closes it.
+ * ↻ refreshes the run and its open task log. While the run is live, the log also refetches whenever the page's data
+ * refreshes (`loadedAt` changes); a finished run's log is fetched once.
+ */
+export function RunDrawer({ run, history, nowMs, loadedAt, onClose, refresh }: {
+  run: Run; history?: Run[]; nowMs: number; loadedAt: number; onClose: () => void; refresh?: DrawerRefresh;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const [view, setView] = useState<'timeline' | 'grid'>('timeline');
   const [selTask, setSelTask] = useState(0);
   const [selIdx, setSelIdx] = useState<number | null>(null);
+  // Log refetches: one per page refresh while the run is live (and the one that sees it finish), one per ↻.
+  const [auto, setAuto] = useState({ loadedAt, live: run.live, n: 0 });
+  if (auto.loadedAt !== loadedAt) setAuto({ loadedAt, live: run.live, n: auto.live || run.live ? auto.n + 1 : auto.n });
+  const [manual, setManual] = useState(0);
+  const logNonce = auto.n + manual;
+  const onRefresh = refresh?.onRefresh;
+  const refreshNow = () => {
+    if (onRefresh) void onRefresh().finally(() => setManual((n) => n + 1));
+  };
+  const updated = agoText(Math.max(0, Math.round((nowMs - (refresh?.updatedAt ?? loadedAt)) / 1000)));
   useEffect(() => {
     closeRef.current?.focus();
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -243,7 +267,7 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose }: {
     t?.state === 'f' ? run.failed[t.fail ?? 0]?.cause.label : t?.state === 'r' && run.kind === 'retrying' ? 'retrying' : undefined;
   const taskPanel = (name: string, t: ScheduledTask | undefined, kind = 'Python script', extra: Partial<Parameters<typeof TaskBody>[0]> = {}) => (
     <Panel key={`task-${name}`} cls="last" k="Task" v={<span className="mono-v">{name}</span>} r={real ? undefined : kind} open>
-      <TaskBody run={run} task={name} kind={kind} hint={hintFor(t)} failed={t?.state === 'f'} {...extra} />
+      <TaskBody run={run} task={name} kind={kind} hint={hintFor(t)} failed={t?.state === 'f'} nonce={logNonce} {...extra} />
     </Panel>
   );
 
@@ -314,6 +338,13 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose }: {
         <div className="dh">
           <span className="title"><Glyph type={run.type} /><TitleLink url={run.url}><i>{prefix}</i>{rest}</TitleLink></span>
           <span className="when pill">{when}</span>
+          <span className="rf">
+            <span className="upd">{updated}</span>
+            {refresh && (
+              <button type="button" className={refresh.refreshing ? 'spin' : ''} onClick={refreshNow} disabled={refresh.refreshing} title="Refresh this run" aria-label="Refresh this run">↻</button>
+            )}
+            {refresh?.error && <em className="rf-err" title={refresh.error}>refresh failed</em>}
+          </span>
           <button ref={closeRef} type="button" className="x" aria-label="Close" onClick={onClose}>×</button>
         </div>
         <div className="trace">

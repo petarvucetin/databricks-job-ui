@@ -1,5 +1,6 @@
 import type { RunsResponse } from '../../../shared/domain/types';
 import type { RunSource } from '../runSource';
+import { SourceError } from '../sourceError';
 import { generateRuns } from './generateRuns';
 import { mockTaskLog } from './taskLog';
 
@@ -30,6 +31,10 @@ export function createMockRunSource(clock: () => number = Date.now): RunSource {
     },
     taskLog(runId, task, hint) {
       return Promise.resolve(mockTaskLog(runId, task, hint));
+    },
+    getRun(runId, tzOffsetMin) {
+      const run = shiftTo(dataFor(tzOffsetMin ?? DEFAULT_TZ_OFFSET_MIN), clock()).runs.find((r) => r.id === runId);
+      return run ? Promise.resolve(run) : Promise.reject(new SourceError(404, `Run ${runId} does not exist`));
     },
   };
 }
