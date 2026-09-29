@@ -86,7 +86,7 @@ If you'd rather not use the script, this does the same by hand:
 ```powershell
 cd jobs-console\deploy
 $env:NODE_ENV='production'; $env:JOBS_CONSOLE_DATA='live'; $env:JOBS_CONSOLE_AUTH='app'
-$env:DATABRICKS_CONFIG_PROFILE='gov'; $env:DATABRICKS_APP_PORT='8000'
+$env:DATABRICKS_CONFIG_PROFILE='gov'; $env:DATABRICKS_APP_PORT='8000'; $env:FLASK_RUN_HOST='127.0.0.1'
 node server.mjs
 ```
 
@@ -99,6 +99,7 @@ set JOBS_CONSOLE_DATA=live
 set JOBS_CONSOLE_AUTH=app
 set DATABRICKS_CONFIG_PROFILE=gov
 set DATABRICKS_APP_PORT=8000
+set FLASK_RUN_HOST=127.0.0.1
 node server.mjs
 ```
 
@@ -110,14 +111,13 @@ From a Command Prompt tab, or if PowerShell refuses to run the script ("running 
 
 A Windows Terminal tab runs either **Command Prompt** or **PowerShell**. The prompt tells you which: `C:\...>` is Command Prompt, and `PS C:\...>` is PowerShell. The steps are the same in both; only the syntax for setting variables differs.
 
-**1. One-time setup per machine**
-
-The npm scripts use Unix shell syntax (`NODE_ENV=development tsx ...`), so npm has to run them through Git Bash. Adjust the path if Git is installed elsewhere:
+**1. One-time setup per machine: sign in to the workspace**
 
 ```
-npm config set script-shell "C:\Program Files\Git\bin\bash.exe" --location=user
 databricks auth login --host https://<workspace-url> --profile gov
 ```
+
+The npm scripts work the same in Command Prompt, PowerShell and Git Bash, so no shell setting is needed.
 
 **2. Create `.env`** in the folder that has `package.json`, with the profile you logged in with:
 
@@ -128,7 +128,7 @@ DATABRICKS_APP_NAME=jobs-console
 FLASK_RUN_HOST=127.0.0.1
 ```
 
-`FLASK_RUN_HOST=127.0.0.1` makes the server listen on the address your browser uses. `.env` is gitignored, so each machine needs its own.
+`FLASK_RUN_HOST=127.0.0.1` makes the server listen on this machine only. Without it the server listens on `0.0.0.0` and prints `http://0.0.0.0:8000`. That isn't a browsable address, and corporate web filters block it ("Web Page Blocked"). Always open **http://127.0.0.1:8000**. `.env` is gitignored, so each machine needs its own.
 
 **3. Install and run.** Open http://127.0.0.1:8000, and press Ctrl+C to stop.
 
@@ -159,7 +159,7 @@ $env:JOBS_CONSOLE_DATA='live'; npm run dev   # live data from the workspace in .
 - Data source: `JOBS_CONSOLE_DATA=mock` (default) or `live`. Live mode reads the Jobs and Pipelines APIs: in local dev as the `DATABRICKS_CONFIG_PROFILE` from `.env`, and when deployed as the app's service principal (`JOBS_CONSOLE_AUTH=app`; see Deployment). Run it locally with `$env:JOBS_CONSOLE_DATA='live'; npm run dev` (PowerShell) or `JOBS_CONSOLE_DATA=live npm run dev` (Git Bash); on Databricks Apps add `env: [{ name: JOBS_CONSOLE_DATA, value: live }]` to `app.yaml`. Limits, with defaults: `JOBS_CONSOLE_WINDOW_DAYS` (30), `JOBS_CONSOLE_MAX_RUNS` (2000), `JOBS_CONSOLE_TIMEOUT_MS` (12000), `JOBS_CONSOLE_CONCURRENCY` (8). Hitting the cap or the timeout returns what was collected and logs a warning.
 - Replay: `JOBS_CONSOLE_DATA=replay` with `JOBS_CONSOLE_REPLAY=<capture .json.gz>` serves a capture from a live workspace back, frozen at the moment it was taken (badge: "replay"). Shortcut: `npm run replay -- <file> [session id]`. `JOBS_CONSOLE_REPLAY_SESSION=<id>` picks a session; default is the newest sweep, else the newest `/api/runs` session. `npm run capture:summary -- <file>` prints sessions, top diagnostics, errors and client errors: run it first when a file comes back.
 - Press `L` in the app to show the numbered reference rows used in design reviews.
-- The npm scripts are POSIX-style. On Windows, run them through Git Bash with a per-user setting (once per machine): `npm config set script-shell "C:\Program Files\Git\bin\bash.exe" --location=user`. Do not put this in a project `.npmrc`: the bundle uploads it, and `npm install` on the Linux Databricks Apps runtime then fails ("Error installing packages", `spawn C:\Program Files\Git\bin\bash.exe ENOENT`).
+- The npm scripts work in any shell: environment variables are set through `scripts/with-env.mjs`, not `NAME=value` syntax (which fails in Command Prompt with "'NODE_ENV' is not recognized"). Never add a project `.npmrc`: the bundle uploads it, and a Windows-only setting there breaks `npm install` on the Linux Databricks Apps runtime.
 
 ## Code Quality
 

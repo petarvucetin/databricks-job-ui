@@ -71,6 +71,16 @@ export default tseslint.config(
     ...tseslint.configs.disableTypeChecked,
   },
 
+  // scripts/*.mjs: plain Node (they launch tsx, so they can't be TypeScript), outside every tsconfig.
+  {
+    files: ['scripts/*.mjs'],
+    ...tseslint.configs.disableTypeChecked,
+    languageOptions: {
+      ...tseslint.configs.disableTypeChecked.languageOptions,
+      globals: { process: 'readonly', console: 'readonly' },
+    },
+  },
+
   // Prettier config (must be last to override other formatting rules)
   prettier,
 

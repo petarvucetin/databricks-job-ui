@@ -16,6 +16,8 @@ $env:JOBS_CONSOLE_DATA = $Data
 $env:JOBS_CONSOLE_AUTH = 'app'
 $env:DATABRICKS_CONFIG_PROFILE = $Profile
 $env:DATABRICKS_APP_PORT = "$Port"
+# Listen on this machine only. The default, 0.0.0.0, is not browsable (corporate web filters block it) and exposes the app on the network.
+$env:FLASK_RUN_HOST = '127.0.0.1'
 
 Write-Host "jobs-console: $Data data, profile '$Profile', http://127.0.0.1:$Port  (Ctrl+C to stop)"
 Push-Location $deploy   # the server serves the page from public\ under the current folder
