@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { makeRun } from '../test/fixtures';
+import { makeRealRun, makeRun } from '../test/fixtures';
 import { addToStack, compareRows, idsFromSearch, mergeOrder, paramRows, stackRuns } from './compare';
 import { schedule } from './runDetail';
 
@@ -50,5 +50,22 @@ describe('compare', () => {
   it('reads run ids from ?compare=', () => {
     expect(idsFromSearch('?compare=12,5,x,7')).toEqual([12, 5, 7]);
     expect(idsFromSearch('')).toEqual([]);
+  });
+});
+
+describe('compare with real tasks', () => {
+  it('lines up real task names across runs', () => {
+    const a = makeRealRun({ id: 1, startTime: new Date(2026, 8, 20, 5).getTime() });
+    const b = makeRealRun({
+      id: 2, startTime: new Date(2026, 8, 21, 5).getTime(), kind: 'succeeded', result: 'succeeded', failed: [],
+      tasks: [
+        { key: 'setup', startSec: 0, durSec: 60, state: 'ok', deps: [], attempt: 0 },
+        { key: 'transform', startSec: 60, durSec: 90, state: 'ok', deps: [0], attempt: 0 },
+      ],
+    });
+    const rows = compareRows([a, b], [schedule(a), schedule(b)]);
+    expect(rows.map((r) => r.name)).toEqual(['setup', 'extract_a', 'extract_b', 'transform', 'load', 'publish']);
+    expect(rows.find((r) => r.name === 'transform')).toMatchObject({ tone: 'bad', note: 'failed at 20/05:00' });
+    expect(rows.find((r) => r.name === 'extract_a')).toMatchObject({ tone: 'chg', note: 'removed at 21/05:00' });
   });
 });

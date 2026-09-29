@@ -146,3 +146,23 @@ describe('RunRow', () => {
     expect(onSelect).toHaveBeenCalledWith(live.id);
   });
 });
+
+describe('RunRow title link', () => {
+  it('links the title to the run in Databricks only when the run has a url, without selecting the row', () => {
+    const onSelect = vi.fn();
+    const { container } = render(<RunRow run={makeRun({ url: 'https://x.cloud.databricks.us/jobs/2/runs/7' })} nowMs={0} loadedAt={0} asOf={0} onSelect={onSelect} />);
+    const a = container.querySelector<HTMLAnchorElement>('[data-c="3"] a')!;
+    expect(a.getAttribute('href')).toBe('https://x.cloud.databricks.us/jobs/2/runs/7');
+    expect(a.getAttribute('target')).toBe('_blank');
+    expect(a.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(a.getAttribute('title')).toBe('Open in Databricks');
+    expect(a.textContent).toBe('finance_gl_co_gl_journals_v3');
+    a.addEventListener('click', (e) => e.preventDefault()); // jsdom cannot open the tab
+    fireEvent.click(a);
+    expect(onSelect).not.toHaveBeenCalled();
+    cleanup();
+    const plain = render(<RunRow run={makeRun()} nowMs={0} loadedAt={0} asOf={0} />).container;
+    expect(plain.querySelector('[data-c="3"] a')).toBeNull();
+    expect(plain.querySelector('[data-c="3"]')!.textContent).toBe('finance_gl_co_gl_journals_v3');
+  });
+});

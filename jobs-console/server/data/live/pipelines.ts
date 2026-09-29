@@ -1,7 +1,8 @@
 import type { pipelines } from '@databricks/sdk-experimental';
-import type { Cause, RunResult } from '../../../shared/domain/types';
+import type { Cause, RunResult, TaskState } from '../../../shared/domain/types';
 import { failureCause } from './causes';
 import type { Draft } from './kinds';
+import { pipelineUpdateUrl } from './links';
 import { noDiag, type Diag } from './trace';
 
 export interface PipelineInfo {
@@ -62,7 +63,8 @@ function errorCause(errors: pipelines.PipelineEvent[]): { cause: Cause; flow?: s
   return { cause: failureCause(code, message), flow: e.origin?.flow_name };
 }
 
-export function updateDraft(u: pipelines.UpdateInfo, p: PipelineInfo, events: UpdateEvents | undefined, now: number, diag: Diag = noDiag): Draft {
+/** `host`: the workspace the update was read from, for its link. */
+export function updateDraft(u: pipelines.UpdateInfo, p: PipelineInfo, events: UpdateEvents | undefined, now: number, diag: Diag = noDiag, host?: string): Draft {
   const state = u.state ?? '';
   const ref = `update ${u.update_id ?? '?'}`;
   for (const f of ['update_id', 'creation_time'] as const) {
@@ -81,6 +83,8 @@ export function updateDraft(u: pipelines.UpdateInfo, p: PipelineInfo, events: Up
   const secs = Math.max(0, Math.round(durationSec));
   const failure = result === 'failed' ? errorCause(events?.errors ?? []) : undefined;
   const updateId = u.update_id ?? '';
+  const retryAttempt = live && u.cause === 'RETRY_ON_FAILURE' ? 1 : 0;
+  const taskState: TaskState = queued ? 'p' : live ? 'r' : result === 'succeeded' ? 'ok' : result === 'failed' ? 'f' : 's';
   return {
     id: pipelineNumber(updateId),
     runId: 'upd ' + updateId.slice(0, 8),
@@ -97,7 +101,11 @@ export function updateDraft(u: pipelines.UpdateInfo, p: PipelineInfo, events: Up
     continuous: p.continuous,
     result,
     params: {},
-    retryAttempt: live && u.cause === 'RETRY_ON_FAILURE' ? 1 : 0,
+    retryAttempt,
     cause: failure?.cause ?? null,
+    // One update is one task, named after the pipeline, with the update's own times and state.
+    tasks: [{ key: p.name, startSec: queued ? -1 : 0, durSec: secs, state: taskState, deps: [], attempt: u.cause === 'RETRY_ON_FAILURE' ? 1 : 0, ...(failure ? { failIndex: 0 } : {}) }],
+    url: pipelineUpdateUrl(host, p.pipelineId, u.update_id),
+    pipelineId: p.pipelineId,
   };
 }

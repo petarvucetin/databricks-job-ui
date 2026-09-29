@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { jobs } from '@databricks/sdk-experimental';
 import { jobDraft, resultOf } from './jobs';
+import type { DiagNote } from './trace';
 
 const NOW = 1_800_000_000_000;
 const t0 = NOW - 3600_000;
@@ -107,5 +108,87 @@ describe('resultOf', () => {
     expect(resultOf(undefined, { code: 'SUCCESS_WITH_FAILURES' })).toBe('partial');
     expect(resultOf(undefined, { code: 'INTERNAL_ERROR' })).toBe('failed');
     expect(resultOf({ life_cycle_state: 'INTERNAL_ERROR' })).toBe('failed');
+  });
+});
+
+describe('jobDraft tasks', () => {
+  const S = 1000;
+  const task = (key: string, over: Partial<jobs.RunTask> = {}): jobs.RunTask => ({
+    task_key: key, run_id: key.length, attempt_number: 0, status: { state: 'TERMINATED', termination_details: { code: 'SUCCESS' } }, state: { result_state: 'SUCCESS' }, ...over,
+  });
+  const done = (key: string, startS: number, durS: number, over: Partial<jobs.RunTask> = {}) =>
+    task(key, { start_time: t0 + startS * S, end_time: t0 + (startS + durS) * S, run_duration: durS * S, ...over });
+  const failedT = { status: { state: 'TERMINATED' as const, termination_details: { code: 'RUN_EXECUTION_ERROR' as const, message: 'boom' } }, state: { result_state: 'FAILED' as const } };
+  const dep = (...keys: string[]) => ({ depends_on: keys.map((k) => ({ task_key: k })) });
+
+  // API order scrambled on purpose; extract_b was retried; transform failed; load and publish were skipped.
+  const dag = finished({
+    status: { state: 'TERMINATED', termination_details: { code: 'RUN_EXECUTION_ERROR', message: 'Task transform failed' } },
+    state: { life_cycle_state: 'TERMINATED', result_state: 'FAILED' },
+    tasks: [
+      task('load', { ...dep('transform'), status: { state: 'TERMINATED', termination_details: { code: 'SKIPPED' } }, state: { result_state: 'UPSTREAM_FAILED' } }),
+      done('transform', 300, 100, { ...dep('extract_a', 'extract_b'), ...failedT }),
+      done('setup', 0, 60),
+      done('extract_b', 100, 200, { ...dep('setup'), attempt_number: 1 }),
+      done('extract_a', 60, 120, dep('setup')),
+      done('extract_b', 65, 30, { ...dep('setup'), ...failedT }),
+      task('publish', { ...dep('load', 'ghost'), status: { state: 'TERMINATED', termination_details: { code: 'SKIPPED' } }, state: { result_state: 'UPSTREAM_FAILED' } }),
+    ],
+  });
+
+  it('lists each task once, dependencies first then by start, with real times, deps and states', () => {
+    const d = jobDraft(dag, NOW);
+    expect(d.tasks).toEqual([
+      { key: 'setup', startSec: 0, durSec: 60, state: 'ok', deps: [], attempt: 0 },
+      { key: 'extract_a', startSec: 60, durSec: 120, state: 'ok', deps: [0], attempt: 0 },
+      { key: 'extract_b', startSec: 100, durSec: 200, state: 'ok', deps: [0], attempt: 1 },
+      { key: 'transform', startSec: 300, durSec: 100, state: 'f', deps: [1, 2], attempt: 0, failIndex: 0 },
+      { key: 'load', startSec: -1, durSec: 0, state: 's', deps: [3], attempt: 0 },
+      { key: 'publish', startSec: -1, durSec: 0, state: 's', deps: [4], attempt: 0 },
+    ]);
+    expect(d.failed.map((f) => f.name)).toEqual(['transform']);
+    expect(d.ntasks).toBe(d.tasks?.length);
+  });
+
+  it('notes a dependency that is not in the run, and a finished task with no times', () => {
+    const notes: DiagNote[] = [];
+    jobDraft(finished({ tasks: [...(dag.tasks ?? []), task('orphan')] }), NOW, (n) => notes.push(n));
+    expect(notes).toContainEqual(expect.objectContaining({ level: 'warn', code: 'unknown-task-dependency', ref: 'run 630000000000123 task publish', message: expect.stringContaining('ghost') as unknown }));
+    expect(notes).toContainEqual(expect.objectContaining({ level: 'info', code: 'task-times-missing', ref: 'run 630000000000123 task orphan' }));
+    expect(notes.filter((n) => n.code === 'task-times-missing')).toHaveLength(1);
+  });
+
+  it('live run: running tasks count up to now, a task waiting to retry keeps its first start, blocked ones are pending', () => {
+    const d = jobDraft(finished({
+      status: { state: 'RUNNING' }, state: { life_cycle_state: 'RUNNING' }, end_time: 0, run_duration: undefined,
+      tasks: [
+        done('a', 0, 600),
+        task('b', { ...dep('a'), start_time: t0 + 600 * S, status: { state: 'RUNNING' }, state: { life_cycle_state: 'RUNNING' } }),
+        task('c', { ...dep('b'), status: { state: 'BLOCKED' }, state: { life_cycle_state: 'BLOCKED' } }),
+        done('d', 100, 50, failedT),
+        task('d', { attempt_number: 1, start_time: 0, status: { state: 'WAITING' }, state: { life_cycle_state: 'WAITING_FOR_RETRY' } }),
+      ],
+    }), NOW);
+    expect(d.tasks).toEqual([
+      { key: 'a', startSec: 0, durSec: 600, state: 'ok', deps: [], attempt: 0 },
+      { key: 'd', startSec: 100, durSec: 3500, state: 'r', deps: [], attempt: 1 },
+      { key: 'b', startSec: 600, durSec: 3000, state: 'r', deps: [0], attempt: 0 },
+      { key: 'c', startSec: -1, durSec: 0, state: 'p', deps: [2], attempt: 0 },
+    ]);
+    expect(d.failed).toEqual([]);
+  });
+
+  it('breaks a dependency cycle by start time, with a note', () => {
+    const notes: DiagNote[] = [];
+    const d = jobDraft(finished({ tasks: [done('x', 50, 10, dep('y')), done('y', 0, 10, dep('x'))] }), NOW, (n) => notes.push(n));
+    expect(d.tasks?.map((t) => [t.key, t.deps])).toEqual([['y', [1]], ['x', [0]]]);
+    expect(notes.map((n) => n.code)).toContain('task-dependency-cycle');
+  });
+
+  it('links to the run page: run_page_url when given, else built from the host', () => {
+    const host = 'https://x.cloud.databricks.us';
+    expect(jobDraft(finished({ run_page_url: 'https://h/?o=1#job/42/run/1' }), NOW, undefined, host)).toMatchObject({ url: 'https://h/?o=1#job/42/run/1', jobId: 42 });
+    expect(jobDraft(finished(), NOW, undefined, host).url).toBe('https://x.cloud.databricks.us/jobs/42/runs/630000000000123');
+    expect(jobDraft(finished(), NOW).url).toBeUndefined();
   });
 });

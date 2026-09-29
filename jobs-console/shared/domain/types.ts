@@ -16,6 +16,32 @@ export interface FailedTask {
   secs: number;
 }
 
+/**
+ * Task state, one letter-ish code per task: ok = succeeded, f = failed, s = skipped (did not run: an upstream task
+ * failed, or it was cancelled or excluded), r = running (or waiting to retry), p = pending (not started yet).
+ */
+export type TaskState = 'ok' | 'f' | 's' | 'r' | 'p';
+
+/**
+ * One task of a run, as the workspace reported it (the latest attempt of each task key). Kept small: the list response
+ * carries it for every run.
+ */
+export interface RunTask {
+  /** task_key (for a pipeline update, the pipeline name). */
+  key: string;
+  /** Seconds from the run's start; -1 when the task has not started. */
+  startSec: number;
+  /** Seconds it took, or has taken so far when running; 0 when not started. */
+  durSec: number;
+  state: TaskState;
+  /** Indexes into the run's tasks this one waits on. */
+  deps: number[];
+  /** attempt_number of the attempt shown (0 = first try). */
+  attempt: number;
+  /** Index into Run.failed when this task failed. */
+  failIndex?: number;
+}
+
 export interface Run {
   id: number;
   runId: string;
@@ -42,6 +68,17 @@ export interface Run {
   result: RunResult | null;
   /** Job parameters this run used, resolved (name -> value). */
   params: Record<string, string>;
+  /**
+   * The run's real tasks, dependencies first (topological order, ties by start time). Live and replay data only;
+   * absent in mock data, where the client draws synthetic tasks from `ntasks` and `failed`.
+   */
+  tasks?: RunTask[];
+  /** The run's (or update's) own page in the Databricks workspace. Absent in mock data or when the host is unknown. */
+  url?: string;
+  /** Job id of a job run. */
+  jobId?: number;
+  /** Pipeline id of a pipeline update. */
+  pipelineId?: string;
 }
 
 export type DataSource = 'mock' | 'live' | 'replay';

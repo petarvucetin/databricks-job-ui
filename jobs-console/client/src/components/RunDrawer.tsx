@@ -4,6 +4,7 @@ import { dur, durLive, fmtStart } from '../../../shared/domain/format';
 import { elapsedSec, runningIndex, splitName, taskStates } from '../model/rowView';
 import { causeGroups, lastRunSec, schedule, spanSec, tasksHead, ticks, type ScheduledTask } from '../model/runDetail';
 import { useTaskLog } from '../hooks/useTaskLog';
+import { TitleLink } from './TitleLink';
 import './drawer.css';
 
 const RESULT_ROOT = { succeeded: 'Succeeded', failed: 'Failed', cancelled: 'Cancelled', partial: 'Partially succeeded' } as const;
@@ -80,17 +81,19 @@ function Gantt({ run, rows, total, isSel, onPick }: {
     });
     const paths: { d: string; f: boolean }[] = [];
     for (const t of rows) {
-      const a = bars.get(String(t.dep));
       const b = bars.get(String(t.i));
-      if (t.dep < 0 || !a || !b) continue;
-      const ra = a.getBoundingClientRect();
-      const rb = b.getBoundingClientRect();
-      const x1 = ra.left - gr.left + g.scrollLeft + 1;
-      const y1 = ra.bottom - gr.top;
-      const y2 = rb.top - gr.top + rb.height / 2;
-      const bl = rb.left - gr.left + g.scrollLeft;
-      const x2 = bl >= x1 ? bl - 1 : rb.right - gr.left + g.scrollLeft + 1;
-      paths.push({ d: `M${x1},${y1} V${y2} H${x2}`, f: b.classList.contains('f') });
+      for (const dep of t.deps) {
+        const a = bars.get(String(dep));
+        if (!a || !b) continue;
+        const ra = a.getBoundingClientRect();
+        const rb = b.getBoundingClientRect();
+        const x1 = ra.left - gr.left + g.scrollLeft + 1;
+        const y1 = ra.bottom - gr.top;
+        const y2 = rb.top - gr.top + rb.height / 2;
+        const bl = rb.left - gr.left + g.scrollLeft;
+        const x2 = bl >= x1 ? bl - 1 : rb.right - gr.left + g.scrollLeft + 1;
+        paths.push({ d: `M${x1},${y1} V${y2} H${x2}`, f: b.classList.contains('f') });
+      }
     }
     const next = { w: g.scrollWidth, h: g.scrollHeight, paths };
     setLinks((prev) => (JSON.stringify(prev) === JSON.stringify(next) ? prev : next));
@@ -161,6 +164,14 @@ function TaskBody({ run, task, kind, hint, failed, compute = 'ingest_cluster, 15
   run: Run; task: string; kind: string; hint?: string; failed: boolean; compute?: string; ext?: string;
 }) {
   const params = Object.entries(run.params).map(([k, v]) => `${k}=${v}`).join('  ');
+  if (run.tasks) {
+    return (
+      <>
+        {params && <div className="kv"><span>parameters</span><span className="mono">{params}</span></div>}
+        <TaskLog runId={run.id} task={task} hint={hint} failed={failed} />
+      </>
+    );
+  }
   return (
     <>
       <div className="kv">
@@ -201,6 +212,8 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose }: {
   const elapsed = elapsedSec(run, nowMs, loadedAt);
   const total = spanSec(run, elapsed);
   const rows = schedule(run, elapsed);
+  /** Real tasks (live, replay) rather than the prototype's synthetic ones (mock). */
+  const real = run.tasks !== undefined;
   const states = taskStates(run, elapsed);
   const { prefix, rest } = splitName(run.name);
   const last = lastRunSec(run, history);
@@ -229,7 +242,7 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose }: {
   const hintFor = (t: ScheduledTask | undefined) =>
     t?.state === 'f' ? run.failed[t.fail ?? 0]?.cause.label : t?.state === 'r' && run.kind === 'retrying' ? 'retrying' : undefined;
   const taskPanel = (name: string, t: ScheduledTask | undefined, kind = 'Python script', extra: Partial<Parameters<typeof TaskBody>[0]> = {}) => (
-    <Panel key={`task-${name}`} cls="last" k="Task" v={<span className="mono-v">{name}</span>} r={kind} open>
+    <Panel key={`task-${name}`} cls="last" k="Task" v={<span className="mono-v">{name}</span>} r={real ? undefined : kind} open>
       <TaskBody run={run} task={name} kind={kind} hint={hintFor(t)} failed={t?.state === 'f'} {...extra} />
     </Panel>
   );
@@ -243,7 +256,7 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose }: {
         <Panel cls="fail" k="Root" v={failure.cause.label} open>
           <div className="err">
             {failure.cause.detail}<br />
-            <span className="dim">{failure.name}, line 41.{failure.cause.label === 'Table not found' ? ' Same error in 87 other jobs since 07:10.' : ''}</span>
+            <span className="dim">{real ? [failure.name, failure.cause.code].filter(Boolean).join(', ') : `${failure.name}, line 41.${failure.cause.label === 'Table not found' ? ' Same error in 87 other jobs since 07:10.' : ''}`}</span>
           </div>
         </Panel>
         {taskPanel(picked ? picked.name : failure.name, picked ?? failRow)}
@@ -254,6 +267,15 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose }: {
     let task: ReactNode = picked ? taskPanel(picked.name, picked) : null;
     if (isFailed) {
       root = <Panel cls="fail" k="Root" v={run.cause.label} open><div className="err">{run.cause.detail}<br /><span className="dim">{run.cause.code}</span></div></Panel>;
+    } else if (run.kind === 'slow' && real) {
+      // The task to look at: the one still running, else the longest.
+      const slowest = rows.find((t) => t.state === 'r') ?? [...rows].sort((a, b) => b.dur - a.dur)[0];
+      root = (
+        <Panel cls="fail" k="Root" v="Slower than usual" open>
+          <div className="err">{slowest?.name ?? run.name}<br /><span className="dim">{run.live ? `${dur(elapsed)} so far` : `took ${dur(elapsed)}`}, usually {dur(run.usualSec)}.</span></div>
+        </Panel>
+      );
+      if (slowest) task ??= taskPanel(slowest.name, slowest);
     } else if (run.kind === 'slow') {
       root = (
         <Panel cls="fail" k="Root" v="Slower than usual" open>
@@ -267,8 +289,15 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose }: {
           <div className="kv"><span>progress</span><span>{runningIndex(run, elapsed)} of {run.ntasks} tasks done</span><span>elapsed</span><span>{dur(elapsed)}, average {dur(run.usualSec)}</span></div>
         </Panel>
       );
+    } else if (run.kind === 'queued' && real) {
+      root = <Panel cls="fail" k="Root" v="Queued" open><div className="err">{run.cause.code || 'Queued'}{run.cause.detail && <><br /><span className="dim">{run.cause.detail}</span></>}</div></Panel>;
     } else if (run.kind === 'queued') {
       root = <Panel cls="fail" k="Root" v="Queued" open><div className="err">MAX_CONCURRENT_RUNS_REACHED<br /><span className="dim">Job allows 1 concurrent run. The previous run is still going.</span></div></Panel>;
+    } else if (run.kind === 'retrying' && real) {
+      const rt = rows.find((t) => t.state === 'r' && (run.tasks?.[t.i]?.attempt ?? 0) > 0) ?? rows.find((t) => t.state === 'r');
+      const attempt = rt ? (run.tasks?.[rt.i]?.attempt ?? 0) + 1 : undefined;
+      root = <Panel cls="fail" k="Root" v="Retrying" open><div className="err">{rt ? rt.name : run.name}<br /><span className="dim">{attempt ? `attempt ${attempt}` : run.cause.detail}</span></div></Panel>;
+      if (rt) task ??= taskPanel(rt.name, rt);
     } else if (run.kind === 'retrying') {
       root = <Panel cls="fail" k="Root" v="Cluster error, retrying" open><div className="err">spot instances reclaimed<br /><span className="dim">extract_bseg, attempt 1 failed after 48m 22s. Attempt 2 running on on-demand workers.</span></div></Panel>;
       task ??= taskPanel('extract_bseg', rows.find((t) => t.state === 'r'));
@@ -283,13 +312,13 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose }: {
       <div className="dr-scrim" />
       <aside className="dr" role="dialog" aria-modal="true" aria-label={`Run of ${run.name}`} data-c="17">
         <div className="dh">
-          <span className="title"><Glyph type={run.type} /><i>{prefix}</i>{rest}</span>
+          <span className="title"><Glyph type={run.type} /><TitleLink url={run.url}><i>{prefix}</i>{rest}</TitleLink></span>
           <span className="when pill">{when}</span>
           <button ref={closeRef} type="button" className="x" aria-label="Close" onClick={onClose}>×</button>
         </div>
         <div className="trace">
           <div className="route">
-            <Panel k={run.type === 'pipeline' ? 'Pipeline' : 'Job'} v={`${run.ntasks} tasks`} r={`daily 06:00, runs as ${run.runAs}`} />
+            <Panel k={run.type === 'pipeline' ? 'Pipeline' : 'Job'} v={`${run.ntasks} tasks`} r={real ? `runs as ${run.runAs}` : `daily 06:00, runs as ${run.runAs}`} />
             <Panel k="Run" v={elapsed ? dur(elapsed) : 'not started'} r={`usual ${dur(run.usualSec)}`} open>
               <div className="cmp">
                 <span>this run</span><div className="barx"><i className={`now${nowCls}`} style={{ width: pct(elapsed) }} /></div><span className="num">{elapsed ? dur(elapsed) : '0s'}</span>

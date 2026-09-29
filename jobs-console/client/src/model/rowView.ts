@@ -1,7 +1,19 @@
-import type { Run } from '../../../shared/domain/types';
+import type { Run, TaskState } from '../../../shared/domain/types';
 import { dur, durLive, fmtStart } from '../../../shared/domain/format';
 
-export type TaskState = 'ok' | 'f' | 's' | 'r' | 'p';
+export type { TaskState };
+
+/*
+ * Per-task views. Live and replay runs carry their real tasks (run.tasks) and these read them. Mock runs have none, so
+ * the functions fall back to the prototype's synthetic tasks, made up from ntasks and failed.
+ */
+
+/** The task a live run is retrying (its highest attempt), when it carries real tasks. */
+function retryingTask(r: Run) {
+  let best: NonNullable<Run['tasks']>[number] | undefined;
+  for (const t of r.tasks ?? []) if (t.state === 'r' && t.attempt > 0 && (!best || t.attempt > best.attempt)) best = t;
+  return best;
+}
 
 export const TASK_NAMES = ['setup', 'extract_bkpf', 'extract_bseg', 'extract_gl', 'transform', 'dq_checks', 'load_gl', 'load_gl_history', 'load_cost_centers', 'load_profit_centers', 'load_vendors', 'publish', 'notify'] as const;
 
@@ -19,8 +31,11 @@ export function problemText(r: Run): string {
       return `+${dur(r.durationSec - r.usualSec)} over usual`;
     case 'queued':
       return 'queued, concurrency limit';
-    case 'retrying':
-      return 'attempt 2 of 4';
+    case 'retrying': {
+      if (!r.tasks) return 'attempt 2 of 4';
+      const t = retryingTask(r);
+      return t ? `attempt ${t.attempt + 1}` : 'retrying';
+    }
     case 'running':
       return 'running, on track';
     case 'succeeded':
@@ -29,17 +44,23 @@ export function problemText(r: Run): string {
 }
 
 export function taskText(r: Run): string {
+  if (r.tasks) {
+    if (r.failed.length) return r.failed.length > 1 ? `${r.failed[0]?.name ?? ''} +${r.failed.length - 1}` : r.failed[0]?.name ?? '';
+    return r.kind === 'retrying' && r.type === 'job' ? retryingTask(r)?.key ?? '' : '';
+  }
   if (r.type === 'pipeline' && !r.failed.length) return r.continuous ? 'bronze_bkpf' : '';
   if (r.failed.length) return r.failed.length > 1 ? `${r.failed[0].name} +${r.failed.length - 1}` : r.failed[0].name;
   return r.kind === 'retrying' ? 'extract_bseg' : '';
 }
 
-/** Index of the task running now, estimated from elapsed vs average. */
+/** Index of the task running now, estimated from elapsed vs average; with real tasks, how many have finished ok. */
 export function runningIndex(r: Run, elapsed: number = r.durationSec): number {
+  if (r.tasks) return r.tasks.filter((t) => t.state === 'ok').length;
   return Math.min(r.ntasks - 1, Math.floor((r.ntasks * elapsed) / Math.max(1, r.usualSec)));
 }
 
 export function taskStates(r: Run, elapsed: number = r.durationSec): TaskState[] {
+  if (r.tasks) return r.tasks.map((t) => t.state);
   const n = r.ntasks;
   const step = Math.floor(n / (r.failed.length + 1));
   const failAt = new Set(r.failed.map((_, i) => step * (i + 1)));
@@ -62,6 +83,7 @@ const FLOW_NAMES = ['bronze_bkpf', 'bronze_bseg', 'silver_bkpf', 'silver_bseg', 
 
 /** Name of each task (flow, for pipelines) in chain order; failed ones carry the name the run reported. */
 export function taskNames(r: Run): string[] {
+  if (r.tasks) return r.tasks.map((t) => t.key);
   const base: readonly string[] = r.type === 'pipeline' ? FLOW_NAMES : TASK_NAMES;
   const names = Array.from({ length: r.ntasks }, (_, i) => (i < base.length ? base[i] : `${base[i % base.length]}_${Math.floor(i / base.length) + 1}`));
   const step = Math.floor(r.ntasks / (r.failed.length + 1));
@@ -78,6 +100,21 @@ export function taskNames(r: Run): string[] {
 
 export function chainSummary(r: Run, elapsed: number = r.durationSec): string {
   const s = taskStates(r, elapsed);
+  if (r.tasks) {
+    const count = (x: TaskState) => s.filter((v) => v === x).length;
+    if (r.kind === 'queued') return 'waiting to start';
+    if (!s.length) return 'no tasks';
+    if (count('ok') === s.length) return 'all ok';
+    const retrying = r.tasks.filter((t) => t.state === 'r' && t.attempt > 0).length;
+    const running = count('r') - retrying;
+    const parts = [`${count('ok')} ok`];
+    if (running) parts.push(`${running} running`);
+    if (retrying) parts.push(`${retrying} retrying`);
+    if (count('f')) parts.push(`${count('f')} failed`);
+    if (count('s')) parts.push(`${count('s')} skipped`);
+    if (count('p')) parts.push(`${count('p')} to go`);
+    return parts.join(', ');
+  }
   const okc = s.filter((x) => x === 'ok').length;
   const sk = s.filter((x) => x === 's').length;
   if (r.kind === 'running') {

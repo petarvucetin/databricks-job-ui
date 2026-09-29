@@ -130,6 +130,11 @@ export class Session implements Trace {
     for (const method of Object.keys(api) as (keyof LiveApi)[]) {
       const fn = api[method] as (req?: unknown) => Promise<unknown>;
       if (typeof fn !== 'function') continue;
+      // The host is configuration; the capture keeps it once, in workspace.host.
+      if (method === 'host') {
+        out[method] = fn;
+        continue;
+      }
       out[method] = (req?: unknown) => {
         const call: CallRecord = { seq: ++this.seq, method, args: req === undefined ? {} : JSON.parse(JSON.stringify(req)), startedAt: this.clock(), ms: 0, ok: false };
         this.rec.calls.push(call);

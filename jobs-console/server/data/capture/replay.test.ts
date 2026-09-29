@@ -50,6 +50,23 @@ describe('replay round trip', () => {
     expect(JSON.stringify({ ...replayed, source: 'live' })).toBe(JSON.stringify(original));
   });
 
+  it('replays real tasks and workspace links', async () => {
+    const { rec } = await record(richWorkspace);
+    const file = await roundTrip([rec]);
+    const runs = (await (createReplayProvider({}, { file, warn: () => {} }).forRequest({ headers: {} }) as RunSource).listRuns()).runs;
+    const byId = new Map(runs.map((r) => [r.id, r]));
+    expect(byId.get(201)?.tasks).toEqual([
+      { key: 'extract', startSec: 0, durSec: 100, state: 'ok', deps: [], attempt: 0 },
+      { key: 'load', startSec: 120, durSec: 200, state: 'f', deps: [0], attempt: 0, failIndex: 0 },
+    ]);
+    expect(byId.get(401)?.tasks).toEqual([{ key: 'pull', startSec: 300, durSec: 900, state: 'r', deps: [], attempt: 1 }]);
+    expect(byId.get(201)?.url).toBe('https://x.cloud.databricks.us/jobs/2/runs/201');
+    const upd = runs.find((r) => r.type === 'pipeline' && r.failed.length);
+    expect(upd?.tasks).toEqual([expect.objectContaining({ key: '[dev ann] raw_bronze', state: 'f', failIndex: 0 })]);
+    expect(upd?.url).toBe('https://x.cloud.databricks.us/pipelines/p1/updates/aaaa1111-0000-0000-0000-000000000002');
+    expect(runs.every((r) => r.tasks !== undefined)).toBe(true);
+  });
+
   it('replays task logs from any session, job and pipeline', async () => {
     const first = await record(richWorkspace);
     const failedJob = first.original!.runs.find((r) => r.type === 'job' && r.failed.length)!;

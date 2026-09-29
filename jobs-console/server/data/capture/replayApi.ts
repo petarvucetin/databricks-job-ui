@@ -1,8 +1,9 @@
 import type { LiveApi } from '../live/api';
+import { workspaceOrigin } from '../live/links';
 import type { Diag } from '../live/trace';
 import type { CallRecord, RecordedError, SessionRecord } from './recorder';
 
-const METHODS: (keyof LiveApi)[] = ['me', 'listJobRuns', 'getRun', 'getRunOutput', 'listPipelines', 'getPipeline', 'listUpdates', 'listPipelineEvents'];
+const METHODS: Exclude<keyof LiveApi, 'host'>[] = ['me', 'listJobRuns', 'getRun', 'getRunOutput', 'listPipelines', 'getPipeline', 'listUpdates', 'listPipelineEvents'];
 
 /** JSON with object keys sorted and undefined dropped, so equal requests give equal strings. */
 export function canon(v: unknown): string {
@@ -46,7 +47,7 @@ export function sdkError(r: RecordedError): Error {
  * recorded answer served in order (the last one repeats). Otherwise the nearest same-method call, with a diagnostic.
  * A call cut off by the time budget when it was recorded is left unanswered, so the budget cuts it again.
  */
-export function createReplayApi(sessions: SessionRecord[], preferred: SessionRecord | undefined, diag: Diag): LiveApi {
+export function createReplayApi(sessions: SessionRecord[], preferred: SessionRecord | undefined, diag: Diag, host = ''): LiveApi {
   const ordered = preferred ? [preferred, ...[...sessions].reverse().filter((s) => s !== preferred)] : [...sessions].reverse();
   const exact = new Map<string, { calls: CallRecord[]; next: number }>();
   const byMethod = new Map<string, CallRecord[]>();
@@ -88,5 +89,7 @@ export function createReplayApi(sessions: SessionRecord[], preferred: SessionRec
     return answer(best);
   };
 
-  return Object.fromEntries(METHODS.map((m) => [m, (req: unknown) => replay(m, req)])) as unknown as LiveApi;
+  // host() answers with the capture's workspace.host, so links come out as they did live.
+  const origin = workspaceOrigin(host);
+  return { host: () => Promise.resolve(origin), ...Object.fromEntries(METHODS.map((m) => [m, (req: unknown) => replay(m, req)])) } as unknown as LiveApi;
 }

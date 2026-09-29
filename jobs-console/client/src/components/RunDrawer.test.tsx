@@ -2,7 +2,7 @@
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 import { render, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import { RunDrawer } from './RunDrawer';
-import { makeRun } from '../test/fixtures';
+import { makeRealRun, makeRetryingRun, makeRun } from '../test/fixtures';
 
 const fetchMock = vi.fn();
 beforeEach(() => {
@@ -92,5 +92,34 @@ describe('RunDrawer', () => {
     box.remove();
     fireEvent.click(container.querySelector('.dh .x')!);
     expect(onClose).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe('RunDrawer with real tasks', () => {
+  it('draws the real tasks, one arrow per dependency row, and fetches logs by the real task key', async () => {
+    const { container } = render(<RunDrawer run={makeRealRun()} nowMs={0} loadedAt={0} onClose={() => {}} />);
+    expect([...container.querySelectorAll('.gantt .grow .lbl')].map((l) => l.textContent)).toEqual(['setup', 'extract_a', 'extract_b', 'transform', 'load', 'publish']);
+    expect(container.querySelector('.gantt .grow.sel .lbl')!.textContent).toBe('transform');
+    expect(container.querySelector('.route > .panel .hd .v')!.textContent).toBe('6 tasks');
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/api/runs/7/log?task=transform'), expect.anything()));
+    fireEvent.click(container.querySelectorAll('.gantt .grow')[2]);
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('task=extract_b'), expect.anything()));
+    expect(container.textContent).not.toMatch(/line 41|finance-gl|daily 06:00/);
+  });
+
+  it('links the header title when the run has a url, and not otherwise', () => {
+    const { container } = render(<RunDrawer run={makeRealRun()} nowMs={0} loadedAt={0} onClose={() => {}} />);
+    const a = container.querySelector<HTMLAnchorElement>('.dh .title a')!;
+    expect(a.getAttribute('href')).toBe('https://x.cloud.databricks.us/jobs/2/runs/7');
+    expect(a.getAttribute('target')).toBe('_blank');
+    expect(a.textContent).toBe('[prod] finance_gl_co_gl_journals_v3');
+    cleanup();
+    expect(render(<RunDrawer run={makeRun()} nowMs={0} loadedAt={0} onClose={() => {}} />).container.querySelector('.dh .title a')).toBeNull();
+  });
+
+  it('a retrying run names its real retrying task', () => {
+    const { container } = render(<RunDrawer run={makeRetryingRun()} nowMs={0} loadedAt={0} onClose={() => {}} />);
+    expect(container.querySelector('.panel.fail .err')!.textContent).toBe('dattempt 2');
+    expect(container.textContent).not.toContain('extract_bseg');
   });
 });

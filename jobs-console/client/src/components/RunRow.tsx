@@ -5,6 +5,7 @@ import {
   elapsedSec, progress, splitName, statBlock, taskStates,
 } from '../model/rowView';
 import { dayTime, durShort, visibleHistory } from '../model/history';
+import { TitleLink } from './TitleLink';
 import './runrow.css';
 
 const RESULT_LABEL = { succeeded: 'succeeded', failed: 'failed', cancelled: 'cancelled', partial: 'partially succeeded' } as const;
@@ -77,7 +78,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
             <b data-c="9">{stat.value}</b>
           </span>
         )}
-        <span className="rr-name" data-c="3">{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</span>
+        <span className="rr-name" data-c="3"><TitleLink url={run.url}>{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</TitleLink></span>
       </div>
       {run.live && (
         <div className="rr-run" data-c="9">

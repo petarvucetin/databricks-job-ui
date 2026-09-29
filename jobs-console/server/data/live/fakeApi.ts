@@ -4,6 +4,8 @@ import type { LiveApi } from './api';
 /** Test double: serves canned SDK objects page by page. Only used by tests. */
 export interface FakeData {
   user?: string;
+  /** Workspace host host() answers with ('' when absent). */
+  host?: string;
   runs?: jobs.BaseRun[];
   runPageSize?: number;
   pipelines?: pipelines.PipelineStateInfo[];
@@ -28,6 +30,7 @@ export function fakeApi(data: FakeData): LiveApi & { calls: string[] } {
   const size = data.runPageSize ?? 25;
   return {
     calls,
+    host: () => Promise.resolve(data.host ?? ''),
     me: () => reply('me', () => ({ userName: data.user ?? 'me@x.com' })),
     listJobRuns: (req) =>
       reply('listJobRuns', () => {

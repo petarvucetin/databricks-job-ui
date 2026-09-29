@@ -20,7 +20,7 @@ const failedRun: jobs.BaseRun = {
   tasks: [
     { task_key: 'extract', run_id: 2011, attempt_number: 0, start_time: NOW - 90 * MIN, run_duration: 100_000, status: { state: 'TERMINATED', termination_details: { code: 'SUCCESS' } }, state: { result_state: 'SUCCESS' } },
     {
-      task_key: 'load', run_id: 2012, attempt_number: 0, start_time: NOW - 88 * MIN, run_duration: 200_000,
+      task_key: 'load', run_id: 2012, attempt_number: 0, start_time: NOW - 88 * MIN, run_duration: 200_000, depends_on: [{ task_key: 'extract' }],
       status: { state: 'TERMINATED', termination_details: { code: 'RUN_EXECUTION_ERROR', message: '[TABLE_OR_VIEW_NOT_FOUND] The table or view `gl`.`raw` cannot be found.' } },
       state: { result_state: 'FAILED' },
     },
@@ -29,6 +29,7 @@ const failedRun: jobs.BaseRun = {
 
 export const richWorkspace: FakeData = {
   user: 'me@x.com',
+  host: 'https://x.cloud.databricks.us',
   runs: [
     { // running, job 1
       run_id: 105, job_id: 1, run_name: 'nightly_etl', creator_user_name: 'me@x.com', start_time: NOW - 5 * MIN,

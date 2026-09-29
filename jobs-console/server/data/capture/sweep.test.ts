@@ -52,7 +52,7 @@ describe('sweep', () => {
     const { session, run } = sweep();
     const res = await run;
     const rec = session.finish({ status: 200, body: res });
-    const file = readCapture(await gzipCapture(buildCapture({ env: {}, authMode: 'user', user: 'me@x.com', sessions: [rec], clientErrors: [], process: [], app: { version: '1', node: 'v' } })));
+    const file = readCapture(await gzipCapture(buildCapture({ env: {}, host: richWorkspace.host, authMode: 'user', user: 'me@x.com', sessions: [rec], clientErrors: [], process: [], app: { version: '1', node: 'v' } })));
     const src = createReplayProvider({}, { file, warn: () => {} }).forRequest({ headers: {} }) as RunSource;
     const replayed = await src.listRuns();
     expect(JSON.stringify({ ...replayed, source: 'live' })).toBe(JSON.stringify(res));

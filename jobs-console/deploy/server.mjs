@@ -234129,6 +234129,43 @@ function createMockRunSource(clock = Date.now) {
 }
 
 //#endregion
+//#region server/data/live/links.ts
+/**
+* Links to a run's own page in the Databricks workspace.
+* Job run:         <origin>/jobs/<job_id>/runs/<run_id>[?o=<workspace id>]  (runs/list's run_page_url wins when present)
+* Pipeline update: <origin>/pipelines/<pipeline_id>/updates/<update_id>[?o=<workspace id>]
+* ?o= only on Azure, where the adb-<workspace id>.<n>.azuredatabricks.net host carries the id.
+*/
+/** Workspace origin from a host setting: https:// added when missing (Databricks Apps sets a bare host name), any path dropped. '' when unusable. */
+function workspaceOrigin(host) {
+	const h = (host ?? "").trim();
+	if (!h) return "";
+	try {
+		const u = new URL(/^https?:\/\//i.test(h) ? h : `https://${h}`);
+		return u.hostname ? u.origin : "";
+	} catch {
+		return "";
+	}
+}
+const AZURE = /^https:\/\/adb-(\d+)\.\d+\.(?:azuredatabricks\.net|databricks\.azure\.us|databricks\.azure\.cn)$/i;
+/** "?o=<workspace id>" for an Azure per-workspace host, else ''. */
+function workspaceQuery(origin) {
+	const m = AZURE.exec(origin);
+	return m ? `?o=${m[1]}` : "";
+}
+function jobRunUrl(host, run) {
+	if (run.run_page_url) return run.run_page_url;
+	const o = workspaceOrigin(host);
+	if (!o || run.job_id === void 0 || run.run_id === void 0) return void 0;
+	return `${o}/jobs/${run.job_id}/runs/${run.run_id}${workspaceQuery(o)}`;
+}
+function pipelineUpdateUrl(host, pipelineId, updateId) {
+	const o = workspaceOrigin(host);
+	if (!o || !pipelineId || !updateId) return void 0;
+	return `${o}/pipelines/${encodeURIComponent(pipelineId)}/updates/${encodeURIComponent(updateId)}${workspaceQuery(o)}`;
+}
+
+//#endregion
 //#region server/data/live/api.ts
 /** Workspace URL the SDK default auth chain resolves to (local dev: the DATABRICKS_CONFIG_PROFILE host). */
 async function resolveDefaultHost() {
@@ -234155,7 +234192,9 @@ function createSdkApi(opts) {
 			query: q
 		});
 	};
+	let host;
 	return {
+		host: () => host ??= client.config.getHost().then((u) => workspaceOrigin(u.origin), () => ""),
 		me: () => client.currentUser.me(),
 		listJobRuns: (req) => page("/api/2.2/jobs/runs/list", { ...req }),
 		getRun: (req) => client.jobs.getRun(req),
@@ -234676,6 +234715,105 @@ function checkStates(r, ref, diag) {
 		});
 	}
 }
+/** A task's state for the client: TERMINATED by outcome, running or waiting to retry is r, the rest has not started. */
+function taskState(t) {
+	switch (stateOf(t)) {
+		case "TERMINATED": {
+			const r = resultOf(t.state, t.status?.termination_details);
+			return r === "failed" ? "f" : r === "cancelled" ? "s" : "ok";
+		}
+		case "RUNNING":
+		case "TERMINATING":
+		case "WAITING": return "r";
+		case "PENDING": return (t.start_time ?? 0) > 0 ? "r" : "p";
+		default: return "p";
+	}
+}
+/**
+* Order: dependencies first (topological), and among the tasks whose dependencies are all placed, the one that started
+* first (not started last, then API order). The drawer's timeline then reads top to bottom like the run went, and every
+* dependency arrow points down. A cycle (never expected) is broken by start time, with a diagnostic.
+*/
+function taskOrder(keys, deps, starts, ref, diag) {
+	const n = keys.length;
+	const placed = new Array(n).fill(false);
+	const order = [];
+	const before = (a, b) => (starts[a] ?? Infinity) - (starts[b] ?? Infinity) || a - b;
+	while (order.length < n) {
+		let pick = -1;
+		for (let i = 0; i < n; i++) {
+			if (placed[i] || !(deps[i] ?? []).every((d) => placed[d])) continue;
+			if (pick < 0 || before(i, pick) < 0) pick = i;
+		}
+		if (pick < 0) {
+			for (let i = 0; i < n; i++) if (!placed[i] && (pick < 0 || before(i, pick) < 0)) pick = i;
+			diag({
+				level: "warn",
+				code: "task-dependency-cycle",
+				message: `tasks depend on each other in a cycle; ${keys[pick]} placed by start time`,
+				ref
+			});
+		}
+		placed[pick] = true;
+		order.push(pick);
+	}
+	return order;
+}
+/**
+* The run's tasks for the client: the latest attempt of each task key, with times relative to the run's start. A task
+* waiting to retry has no start of its own yet, so it keeps the start of its earlier attempt.
+*/
+function runTasks(run, latest, failed, now, diag = noDiag) {
+	const ref = `run ${run.run_id ?? "?"}`;
+	const all = run.tasks ?? [];
+	const keys = latest.map((t) => t.task_key);
+	const index = new Map(keys.map((k, i) => [k, i]));
+	const firstStart = (key) => Math.min(...all.filter((t) => t.task_key === key && (t.start_time ?? 0) > 0).map((t) => t.start_time ?? 0));
+	const origin = (run.start_time ?? 0) > 0 ? run.start_time ?? 0 : Math.min(Infinity, ...latest.map((t) => firstStart(t.task_key)));
+	const failAt = new Map(failed.map((f, i) => [f.name, i]));
+	const rows = latest.map((t) => {
+		const state = taskState(t);
+		const tref = `${ref} task ${t.task_key}`;
+		const startMs = (t.start_time ?? 0) > 0 ? t.start_time ?? 0 : state === "r" ? firstStart(t.task_key) : Infinity;
+		const started = Number.isFinite(startMs) && Number.isFinite(origin);
+		if ((state === "ok" || state === "f") && !(started && (t.run_duration || t.end_time || t.execution_duration))) diag({
+			level: "info",
+			code: "task-times-missing",
+			message: `task ${t.task_key} finished but has no ${started ? "end time or duration" : "start time"}`,
+			ref: tref
+		});
+		const deps = [];
+		for (const d of t.depends_on ?? []) {
+			const at = index.get(d.task_key);
+			if (at === void 0) diag({
+				level: "warn",
+				code: "unknown-task-dependency",
+				message: `task ${t.task_key} depends on ${d.task_key}, which is not in the run`,
+				ref: tref
+			});
+			else if (at !== index.get(t.task_key) && !deps.includes(at)) deps.push(at);
+		}
+		const fail = state === "f" ? failAt.get(t.task_key) : void 0;
+		return {
+			key: t.task_key,
+			startSec: started ? Math.max(0, Math.round((startMs - origin) / 1e3)) : -1,
+			durSec: state === "p" ? 0 : state === "r" ? started ? Math.max(0, Math.round((now - startMs) / 1e3)) : 0 : finishedSec(t),
+			state,
+			deps,
+			attempt: t.attempt_number ?? 0,
+			...fail !== void 0 ? { failIndex: fail } : {}
+		};
+	});
+	const order = taskOrder(keys, rows.map((r) => r.deps), rows.map((r) => r.startSec < 0 ? Infinity : r.startSec), ref, diag);
+	const moved = new Map(order.map((from, to) => [from, to]));
+	return order.map((from) => {
+		const r = rows[from];
+		return {
+			...r,
+			deps: r.deps.map((d) => moved.get(d) ?? d).sort((a, b) => a - b)
+		};
+	});
+}
 const causeOf = (r) => failureCause(r.status?.termination_details?.code, r.status?.termination_details?.message || r.state?.state_message, r.state?.result_state === "TIMEDOUT");
 /** Run-level codes that only say "something failed"; the first failed task says more. */
 const GENERIC = new Set([
@@ -234683,7 +234821,8 @@ const GENERIC = new Set([
 	"RUN_EXECUTION_ERROR",
 	"SUCCESS_WITH_FAILURES"
 ]);
-function jobDraft(run, now, diag = noDiag) {
+/** `host`: the workspace the run was read from, for its link when runs/list gave no run_page_url. */
+function jobDraft(run, now, diag = noDiag, host) {
 	const tasks = run.tasks ?? [];
 	const ref = `run ${run.run_id ?? "?"}`;
 	for (const f of [
@@ -234705,7 +234844,8 @@ function jobDraft(run, now, diag = noDiag) {
 	const live = !queued && (state === "RUNNING" || state === "TERMINATING" || waiting);
 	const finished = !queued && !live;
 	const start = run.start_time ?? 0;
-	const failed = latestAttempts(tasks).filter((t) => stateOf(t) === "TERMINATED" && resultOf(t.state, t.status?.termination_details) === "failed").map((t) => ({
+	const latest = latestAttempts(tasks);
+	const failed = latest.filter((t) => stateOf(t) === "TERMINATED" && resultOf(t.state, t.status?.termination_details) === "failed").map((t) => ({
 		name: t.task_key,
 		cause: causeOf(t),
 		secs: finishedSec(t)
@@ -234740,7 +234880,10 @@ function jobDraft(run, now, diag = noDiag) {
 		result,
 		params: Object.fromEntries((run.job_parameters ?? []).flatMap((p) => p.name ? [[p.name, p.value ?? p.default ?? ""]] : [])),
 		retryAttempt: live ? Math.max(0, ...tasks.map((t) => t.attempt_number ?? 0)) : 0,
-		cause
+		cause,
+		tasks: runTasks(run, latest, failed, now, diag),
+		url: jobRunUrl(host, run),
+		jobId: run.job_id
 	};
 }
 
@@ -234845,7 +234988,8 @@ function errorCause(errors) {
 		flow: e.origin?.flow_name
 	};
 }
-function updateDraft(u, p, events, now, diag = noDiag) {
+/** `host`: the workspace the update was read from, for its link. */
+function updateDraft(u, p, events, now, diag = noDiag, host) {
 	const state = u.state ?? "";
 	const ref = `update ${u.update_id ?? "?"}`;
 	for (const f of ["update_id", "creation_time"]) if (u[f] === void 0) diag({
@@ -234874,6 +235018,8 @@ function updateDraft(u, p, events, now, diag = noDiag) {
 	const secs = Math.max(0, Math.round(durationSec));
 	const failure = result === "failed" ? errorCause(events?.errors ?? []) : void 0;
 	const updateId = u.update_id ?? "";
+	const retryAttempt = live && u.cause === "RETRY_ON_FAILURE" ? 1 : 0;
+	const taskState = queued ? "p" : live ? "r" : result === "succeeded" ? "ok" : result === "failed" ? "f" : "s";
 	return {
 		id: pipelineNumber(updateId),
 		runId: "upd " + updateId.slice(0, 8),
@@ -234894,8 +235040,19 @@ function updateDraft(u, p, events, now, diag = noDiag) {
 		continuous: p.continuous,
 		result,
 		params: {},
-		retryAttempt: live && u.cause === "RETRY_ON_FAILURE" ? 1 : 0,
-		cause: failure?.cause ?? null
+		retryAttempt,
+		cause: failure?.cause ?? null,
+		tasks: [{
+			key: p.name,
+			startSec: queued ? -1 : 0,
+			durSec: secs,
+			state: taskState,
+			deps: [],
+			attempt: u.cause === "RETRY_ON_FAILURE" ? 1 : 0,
+			...failure ? { failIndex: 0 } : {}
+		}],
+		url: pipelineUpdateUrl(host, p.pipelineId, u.update_id),
+		pipelineId: p.pipelineId
 	};
 }
 
@@ -234999,7 +235156,8 @@ function createLiveRunSource(o) {
 			o.trace?.note({ user: u });
 			return u;
 		});
-		const [me, jobsR, pipesR] = await Promise.all([
+		const [host, me, jobsR, pipesR] = await Promise.all([
+			o.api.host().catch(() => ""),
 			dl.call(user),
 			collectJobRuns(c.api, from, limits.maxRuns, dl),
 			collectPipelines(c.api, from, limits.concurrency, dl, diag)
@@ -235009,11 +235167,11 @@ function createLiveRunSource(o) {
 			code: "pages",
 			message: [...c.counts].map(([k, n]) => `${k} ${n}`).join(", ") || "no calls"
 		});
-		const drafts = jobsR.runs.map((r) => jobDraft(r, now, diag));
+		const drafts = jobsR.runs.map((r) => jobDraft(r, now, diag, host));
 		for (const p of pipesR.pipelines) {
 			const events = indexEvents(p.events ?? []);
 			for (const u of p.updates) {
-				const d = updateDraft(u, p.info, events.get(u.update_id ?? ""), now, diag);
+				const d = updateDraft(u, p.info, events.get(u.update_id ?? ""), now, diag, host);
 				drafts.push(d);
 				remember(state.pipelineRefs, d.id, {
 					pipelineId: p.info.pipelineId,
@@ -235347,7 +235505,7 @@ function sdkError(r) {
 * recorded answer served in order (the last one repeats). Otherwise the nearest same-method call, with a diagnostic.
 * A call cut off by the time budget when it was recorded is left unanswered, so the budget cuts it again.
 */
-function createReplayApi(sessions, preferred, diag) {
+function createReplayApi(sessions, preferred, diag, host = "") {
 	const ordered = preferred ? [preferred, ...[...sessions].reverse().filter((s) => s !== preferred)] : [...sessions].reverse();
 	const exact = /* @__PURE__ */ new Map();
 	const byMethod = /* @__PURE__ */ new Map();
@@ -235401,7 +235559,11 @@ function createReplayApi(sessions, preferred, diag) {
 		});
 		return answer(best);
 	};
-	return Object.fromEntries(METHODS.map((m) => [m, (req) => replay(m, req)]));
+	const origin = workspaceOrigin(host);
+	return {
+		host: () => Promise.resolve(origin),
+		...Object.fromEntries(METHODS.map((m) => [m, (req) => replay(m, req)]))
+	};
 }
 
 //#endregion
@@ -235434,7 +235596,7 @@ function createReplayProvider(env, deps = {}) {
 	}
 	const session = pickSession(file, env.JOBS_CONSOLE_REPLAY_SESSION || void 0);
 	const note = (n) => warn(`[replay] ${n.level} ${n.code}: ${n.message}`);
-	const api = createReplayApi(file.sessions, session, note);
+	const api = createReplayApi(file.sessions, session, note, file.workspace.host);
 	const now = session.now ?? session.startedAt;
 	const user = session.user ?? file.workspace.user ?? "";
 	const source = createLiveRunSource({
@@ -235539,6 +235701,10 @@ var Session = class {
 		for (const method of Object.keys(api)) {
 			const fn = api[method];
 			if (typeof fn !== "function") continue;
+			if (method === "host") {
+				out[method] = fn;
+				continue;
+			}
 			out[method] = (req) => {
 				const call = {
 					seq: ++this.seq,

@@ -43,7 +43,7 @@ export function createReplayProvider(env: Record<string, string | undefined>, de
   }
   const session = pickSession(file, env.JOBS_CONSOLE_REPLAY_SESSION || undefined);
   const note = (n: DiagNote) => warn(`[replay] ${n.level} ${n.code}: ${n.message}`);
-  const api = createReplayApi(file.sessions, session, note);
+  const api = createReplayApi(file.sessions, session, note, file.workspace.host);
   const now = session.now ?? session.startedAt;
   const user = session.user ?? file.workspace.user ?? '';
   const source = createLiveRunSource({

@@ -83,3 +83,26 @@ describe('updateDraft', () => {
     expect(d.failed).toEqual([{ name: info.name, cause: d.cause, secs: 0 }]);
   });
 });
+
+describe('updateDraft tasks and link', () => {
+  it('gives the update one task named after the pipeline, with its real times and state', () => {
+    const done = updateDraft(update(), info, { endTime: t0 + 900_000, errors: [] }, NOW);
+    expect(done.tasks).toEqual([{ key: '[dev mchen] raw_bronze_sap', startSec: 0, durSec: 900, state: 'ok', deps: [], attempt: 0 }]);
+    const running = updateDraft(update({ state: 'RUNNING', cause: 'RETRY_ON_FAILURE' }), info, undefined, NOW);
+    expect(running.tasks).toEqual([{ key: '[dev mchen] raw_bronze_sap', startSec: 0, durSec: 3600, state: 'r', deps: [], attempt: 1 }]);
+    expect(updateDraft(update({ state: 'QUEUED' }), info, undefined, NOW).tasks?.[0]).toMatchObject({ startSec: -1, durSec: 0, state: 'p' });
+    expect(updateDraft(update({ state: 'CANCELED' }), info, { endTime: t0 + 60_000, errors: [] }, NOW).tasks?.[0]).toMatchObject({ state: 's', durSec: 60 });
+  });
+
+  it('links a failed update task to its failure', () => {
+    const d = updateDraft(update({ state: 'FAILED' }), info, { endTime: t0 + 120_000, errors: [ev({ level: 'ERROR', message: 'Update is FAILED' })] }, NOW);
+    expect(d.failed).toHaveLength(1);
+    expect(d.tasks?.[0]).toMatchObject({ state: 'f', durSec: 120, failIndex: 0 });
+  });
+
+  it('carries the pipeline id and the update page, when the host is known', () => {
+    const d = updateDraft(update(), info, { endTime: t0 + 900_000, errors: [] }, NOW, undefined, 'https://x.cloud.databricks.us');
+    expect(d).toMatchObject({ pipelineId: 'p-1', url: `https://x.cloud.databricks.us/pipelines/p-1/updates/${UPD}` });
+    expect(updateDraft(update(), info, undefined, NOW).url).toBeUndefined();
+  });
+});

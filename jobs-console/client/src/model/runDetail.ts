@@ -1,4 +1,4 @@
-import type { FailedTask, Run } from '../../../shared/domain/types';
+import type { FailedTask, Run, RunTask } from '../../../shared/domain/types';
 import { dur } from '../../../shared/domain/format';
 import { taskNames, taskStates, type TaskState } from './rowView';
 
@@ -9,8 +9,10 @@ export interface ScheduledTask {
   start: number;
   dur: number;
   state: TaskState;
-  /** Index of the task this one waits on; -1 for the first. */
+  /** Index of the (first) task this one waits on; -1 when none. */
   dep: number;
+  /** Every task this one waits on (real tasks can wait on several). */
+  deps: number[];
   /** Index into run.failed when the task failed. */
   fail?: number;
 }
@@ -21,10 +23,33 @@ export function spanSec(r: Run, elapsed: number): number {
 }
 
 /**
- * Synthetic per-task start, duration and dependency, ported from the prototype drawer.
- * States come from taskStates so the drawer agrees with the row.
+ * The run's real tasks on the timeline. A running task keeps growing with the client clock; a task that has not started
+ * sits, zero-length, where the tasks it waits on end.
+ */
+function realSchedule(r: Run, tasks: RunTask[], elapsed: number): ScheduledTask[] {
+  const grow = r.live ? Math.max(0, elapsed - r.durationSec) : 0;
+  const out: ScheduledTask[] = [];
+  tasks.forEach((t, i) => {
+    let start = t.startSec;
+    let d = t.state === 'r' ? t.durSec + grow : t.durSec;
+    if (start < 0) {
+      start = Math.max(0, ...t.deps.map((j) => {
+        const p = out[j];
+        return p ? p.start + p.dur : 0;
+      }));
+      d = 0;
+    }
+    out.push({ i, name: t.key, start, dur: d, state: t.state, dep: t.deps[0] ?? -1, deps: t.deps, fail: t.failIndex });
+  });
+  return out;
+}
+
+/**
+ * Per-task start, duration and dependencies: the real tasks when the run has them, else synthetic ones ported from the
+ * prototype drawer (mock data). States come from taskStates so the drawer agrees with the row.
  */
 export function schedule(r: Run, elapsed: number = r.durationSec): ScheduledTask[] {
+  if (r.tasks) return realSchedule(r, r.tasks, elapsed);
   const n = r.ntasks;
   const total = spanSec(r, elapsed);
   const states = taskStates(r, elapsed);
@@ -50,7 +75,7 @@ export function schedule(r: Run, elapsed: number = r.durationSec): ScheduledTask
       const minStart = state === 's' ? pd.start + Math.floor(total * 0.045) : pd.start + pd.dur + Math.floor(total * 0.01);
       start = Math.min(Math.max(start, minStart), Math.floor(total * 0.96));
     }
-    out.push({ i, name: names[i] ?? '', start, dur: d, state, dep, fail });
+    out.push({ i, name: names[i] ?? '', start, dur: d, state, dep, deps: dep < 0 ? [] : [dep], fail });
   }
   return out;
 }
@@ -64,6 +89,12 @@ export function ticks(total: number): string[] {
 export function tasksHead(r: Run, elapsed: number = r.durationSec): string {
   const s = taskStates(r, elapsed);
   const count = (x: TaskState) => s.filter((v) => v === x).length;
+  if (r.tasks) {
+    if (count('f')) return `${count('f')} failed, ${count('ok')} ok, ${count('s')} skipped`;
+    const retrying = r.tasks.filter((t) => t.state === 'r' && t.attempt > 0).length;
+    if (retrying) return `${retrying} retrying, ${count('ok')} ok`;
+    return `${s.length} ${s.length === 1 ? 'task' : 'tasks'}`;
+  }
   if (r.failed.length) return `${count('f')} failed, ${count('ok')} ok, ${count('s')} skipped`;
   if (r.kind === 'retrying') return `1 retrying, ${r.ntasks - 1} ok`;
   return `${r.ntasks} tasks`;

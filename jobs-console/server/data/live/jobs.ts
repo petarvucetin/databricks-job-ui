@@ -1,7 +1,8 @@
 import type { jobs } from '@databricks/sdk-experimental';
-import type { Cause, FailedTask, RunResult } from '../../../shared/domain/types';
+import type { Cause, FailedTask, RunResult, RunTask, TaskState } from '../../../shared/domain/types';
 import { QUEUED, failureCause } from './causes';
 import type { Draft } from './kinds';
+import { jobRunUrl } from './links';
 import { noDiag, type Diag } from './trace';
 
 type V2State = jobs.RunLifecycleStateV2State;
@@ -107,13 +108,105 @@ function checkStates(r: { status?: jobs.RunStatus; state?: jobs.RunState }, ref:
   }
 }
 
+/** A task's state for the client: TERMINATED by outcome, running or waiting to retry is r, the rest has not started. */
+function taskState(t: jobs.RunTask): TaskState {
+  switch (stateOf(t)) {
+    case 'TERMINATED': {
+      const r = resultOf(t.state, t.status?.termination_details);
+      return r === 'failed' ? 'f' : r === 'cancelled' ? 's' : 'ok';
+    }
+    case 'RUNNING':
+    case 'TERMINATING':
+    case 'WAITING':
+      return 'r';
+    case 'PENDING':
+      return (t.start_time ?? 0) > 0 ? 'r' : 'p';
+    default:
+      return 'p';
+  }
+}
+
+/**
+ * Order: dependencies first (topological), and among the tasks whose dependencies are all placed, the one that started
+ * first (not started last, then API order). The drawer's timeline then reads top to bottom like the run went, and every
+ * dependency arrow points down. A cycle (never expected) is broken by start time, with a diagnostic.
+ */
+function taskOrder(keys: string[], deps: number[][], starts: number[], ref: string, diag: Diag): number[] {
+  const n = keys.length;
+  const placed = new Array<boolean>(n).fill(false);
+  const order: number[] = [];
+  const before = (a: number, b: number) => (starts[a] ?? Infinity) - (starts[b] ?? Infinity) || a - b;
+  while (order.length < n) {
+    let pick = -1;
+    for (let i = 0; i < n; i++) {
+      if (placed[i] || !(deps[i] ?? []).every((d) => placed[d])) continue;
+      if (pick < 0 || before(i, pick) < 0) pick = i;
+    }
+    if (pick < 0) {
+      for (let i = 0; i < n; i++) if (!placed[i] && (pick < 0 || before(i, pick) < 0)) pick = i;
+      diag({ level: 'warn', code: 'task-dependency-cycle', message: `tasks depend on each other in a cycle; ${keys[pick]} placed by start time`, ref });
+    }
+    placed[pick] = true;
+    order.push(pick);
+  }
+  return order;
+}
+
+/**
+ * The run's tasks for the client: the latest attempt of each task key, with times relative to the run's start. A task
+ * waiting to retry has no start of its own yet, so it keeps the start of its earlier attempt.
+ */
+export function runTasks(run: jobs.BaseRun, latest: jobs.RunTask[], failed: FailedTask[], now: number, diag: Diag = noDiag): RunTask[] {
+  const ref = `run ${run.run_id ?? '?'}`;
+  const all = run.tasks ?? [];
+  const keys = latest.map((t) => t.task_key);
+  const index = new Map(keys.map((k, i) => [k, i]));
+  const firstStart = (key: string) => Math.min(...all.filter((t) => t.task_key === key && (t.start_time ?? 0) > 0).map((t) => t.start_time ?? 0));
+  const origin = (run.start_time ?? 0) > 0 ? (run.start_time ?? 0) : Math.min(Infinity, ...latest.map((t) => firstStart(t.task_key)));
+  const failAt = new Map(failed.map((f, i) => [f.name, i]));
+
+  const rows = latest.map((t): RunTask => {
+    const state = taskState(t);
+    const tref = `${ref} task ${t.task_key}`;
+    const startMs = (t.start_time ?? 0) > 0 ? (t.start_time ?? 0) : state === 'r' ? firstStart(t.task_key) : Infinity;
+    const started = Number.isFinite(startMs) && Number.isFinite(origin);
+    if ((state === 'ok' || state === 'f') && !(started && (t.run_duration || t.end_time || t.execution_duration))) {
+      diag({ level: 'info', code: 'task-times-missing', message: `task ${t.task_key} finished but has no ${started ? 'end time or duration' : 'start time'}`, ref: tref });
+    }
+    const deps: number[] = [];
+    for (const d of t.depends_on ?? []) {
+      const at = index.get(d.task_key);
+      if (at === undefined) diag({ level: 'warn', code: 'unknown-task-dependency', message: `task ${t.task_key} depends on ${d.task_key}, which is not in the run`, ref: tref });
+      else if (at !== index.get(t.task_key) && !deps.includes(at)) deps.push(at);
+    }
+    const fail = state === 'f' ? failAt.get(t.task_key) : undefined;
+    return {
+      key: t.task_key,
+      startSec: started ? Math.max(0, Math.round((startMs - origin) / 1000)) : -1,
+      durSec: state === 'p' ? 0 : state === 'r' ? (started ? Math.max(0, Math.round((now - startMs) / 1000)) : 0) : finishedSec(t),
+      state,
+      deps,
+      attempt: t.attempt_number ?? 0,
+      ...(fail !== undefined ? { failIndex: fail } : {}),
+    };
+  });
+
+  const order = taskOrder(keys, rows.map((r) => r.deps), rows.map((r) => (r.startSec < 0 ? Infinity : r.startSec)), ref, diag);
+  const moved = new Map(order.map((from, to) => [from, to]));
+  return order.map((from) => {
+    const r = rows[from];
+    return { ...r, deps: r.deps.map((d) => moved.get(d) ?? d).sort((a, b) => a - b) };
+  });
+}
+
 const causeOf = (r: { status?: jobs.RunStatus; state?: jobs.RunState }) =>
   failureCause(r.status?.termination_details?.code, r.status?.termination_details?.message || r.state?.state_message, r.state?.result_state === 'TIMEDOUT');
 
 /** Run-level codes that only say "something failed"; the first failed task says more. */
 const GENERIC = new Set(['', 'RUN_EXECUTION_ERROR', 'SUCCESS_WITH_FAILURES']);
 
-export function jobDraft(run: jobs.BaseRun, now: number, diag: Diag = noDiag): Draft {
+/** `host`: the workspace the run was read from, for its link when runs/list gave no run_page_url. */
+export function jobDraft(run: jobs.BaseRun, now: number, diag: Diag = noDiag, host?: string): Draft {
   const tasks = run.tasks ?? [];
   const ref = `run ${run.run_id ?? '?'}`;
   for (const f of ['run_id', 'start_time', 'run_name'] as const) {
@@ -129,7 +222,8 @@ export function jobDraft(run: jobs.BaseRun, now: number, diag: Diag = noDiag): D
   const finished = !queued && !live;
   const start = run.start_time ?? 0;
 
-  const failed: FailedTask[] = latestAttempts(tasks)
+  const latest = latestAttempts(tasks);
+  const failed: FailedTask[] = latest
     .filter((t) => stateOf(t) === 'TERMINATED' && resultOf(t.state, t.status?.termination_details) === 'failed')
     .map((t) => ({ name: t.task_key, cause: causeOf(t), secs: finishedSec(t) }));
 
@@ -161,5 +255,8 @@ export function jobDraft(run: jobs.BaseRun, now: number, diag: Diag = noDiag): D
     params: Object.fromEntries((run.job_parameters ?? []).flatMap((p): [string, string][] => (p.name ? [[p.name, p.value ?? p.default ?? '']] : []))),
     retryAttempt: live ? Math.max(0, ...tasks.map((t) => t.attempt_number ?? 0)) : 0,
     cause,
+    tasks: runTasks(run, latest, failed, now, diag),
+    url: jobRunUrl(host, run),
+    jobId: run.job_id,
   };
 }

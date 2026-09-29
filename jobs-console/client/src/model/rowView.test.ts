@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { makeRun } from '../test/fixtures';
+import { makeRealRun, makeRetryingRun, makeRun } from '../test/fixtures';
 import {
   problemText, taskText, taskStates, runningIndex, chainSummary, taskNames,
   whenText, elapsedSec, progress, statBlock, splitName,
@@ -88,5 +88,32 @@ describe('rowView', () => {
   it('splits the bundle target prefix off the name', () => {
     expect(splitName('[prod] finance_gl_x')).toEqual({ prefix: '[prod] ', rest: 'finance_gl_x' });
     expect(splitName('plain_name')).toEqual({ prefix: '', rest: 'plain_name' });
+  });
+});
+
+describe('rowView with real tasks', () => {
+  it('names, states and summarises the real tasks, not synthetic ones', () => {
+    const r = makeRealRun();
+    expect(taskNames(r)).toEqual(['setup', 'extract_a', 'extract_b', 'transform', 'load', 'publish']);
+    expect(taskStates(r)).toEqual(['ok', 'ok', 'ok', 'f', 's', 's']);
+    expect(chainSummary(r)).toBe('3 ok, 1 failed, 2 skipped');
+    expect(taskText(r)).toBe('transform');
+    expect(runningIndex(r)).toBe(3);
+    expect(chainSummary(makeRealRun({ kind: 'succeeded', failed: [], tasks: [{ key: 'main', startSec: 0, durSec: 5, state: 'ok', deps: [], attempt: 0 }] }))).toBe('all ok');
+  });
+
+  it('a retried task shows once, with its attempt', () => {
+    const r = makeRetryingRun();
+    expect(taskNames(r)).toEqual(['a', 'd', 'b', 'c']);
+    expect(chainSummary(r)).toBe('1 ok, 1 running, 1 retrying, 1 to go');
+    expect(taskText(r)).toBe('d');
+    expect(problemText(r)).toBe('attempt 2');
+  });
+
+  it('an empty real task list stays empty (no invented tasks)', () => {
+    const r = makeRealRun({ kind: 'succeeded', failed: [], tasks: [], ntasks: 0 });
+    expect(taskNames(r)).toEqual([]);
+    expect(taskStates(r)).toEqual([]);
+    expect(chainSummary(r)).toBe('no tasks');
   });
 });

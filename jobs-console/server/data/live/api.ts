@@ -1,10 +1,13 @@
 import { Config, WorkspaceClient, type iam, type jobs, type pipelines } from '@databricks/sdk-experimental';
+import { workspaceOrigin } from './links';
 
 /**
  * Every Databricks call the live source makes, one page per call, returning the SDK objects unchanged.
  * Mapping lives in pure functions over these objects, so a recorder or replayer can wrap or replace this.
  */
 export interface LiveApi {
+  /** Workspace URL this API reads from ('' when unknown), for links to runs. Configuration, not a call: never recorded. */
+  host: () => Promise<string>;
   me: () => Promise<iam.User>;
   listJobRuns: (req: jobs.ListRunsRequest) => Promise<jobs.ListRunsResponse>;
   getRun: (req: jobs.GetRunRequest) => Promise<jobs.Run>;
@@ -32,7 +35,10 @@ export function createSdkApi(opts: { host?: string; token?: string }): LiveApi {
     const q = Object.fromEntries(Object.entries(query).filter(([k, v]) => v !== undefined && k !== 'pipeline_id'));
     return client.apiClient.request({ path, method: 'GET', headers: new Headers({ Accept: 'application/json' }), raw: false, query: q as never }) as Promise<T>;
   };
+  let host: Promise<string> | undefined;
   return {
+    // The host the client resolved (explicit, or the default chain's profile / DATABRICKS_HOST), once per client.
+    host: () => (host ??= client.config.getHost().then((u) => workspaceOrigin(u.origin), () => '')),
     me: () => client.currentUser.me(),
     listJobRuns: (req) => page('/api/2.2/jobs/runs/list', { ...req }),
     getRun: (req) => client.jobs.getRun(req),

@@ -102,17 +102,19 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
         o.trace?.note({ user: u });
         return u;
       });
-    const [me, jobsR, pipesR] = await Promise.all([
+    // Straight from o.api: the host is configuration, not a counted or recorded call.
+    const [host, me, jobsR, pipesR] = await Promise.all([
+      o.api.host().catch(() => ''),
       dl.call(user),
       collectJobRuns(c.api, from, limits.maxRuns, dl),
       collectPipelines(c.api, from, limits.concurrency, dl, diag),
     ]);
     diag({ level: 'info', code: 'pages', message: [...c.counts].map(([k, n]) => `${k} ${n}`).join(', ') || 'no calls' });
-    const drafts: Draft[] = jobsR.runs.map((r) => jobDraft(r, now, diag));
+    const drafts: Draft[] = jobsR.runs.map((r) => jobDraft(r, now, diag, host));
     for (const p of pipesR.pipelines) {
       const events = indexEvents(p.events ?? []);
       for (const u of p.updates) {
-        const d = updateDraft(u, p.info, events.get(u.update_id ?? ''), now, diag);
+        const d = updateDraft(u, p.info, events.get(u.update_id ?? ''), now, diag, host);
         drafts.push(d);
         remember(state.pipelineRefs, d.id, { pipelineId: p.info.pipelineId, updateId: u.update_id ?? '', startTime: d.startTime }, ID_MAP_MAX);
       }
