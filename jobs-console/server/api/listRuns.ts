@@ -35,5 +35,6 @@ export async function listRuns(source: RunSource, query: Record<string, unknown>
   }
   const tzOffsetMin = parseTzOffset(query.tzOffset);
   if (typeof tzOffsetMin === 'object') return tzOffsetMin;
-  return orSourceError(async () => ({ status: 200, body: await source.listRuns(since, tzOffsetMin) }));
+  const full = query.full === '1' || query.full === 'true';
+  return orSourceError(async () => ({ status: 200, body: await source.listRuns(since, tzOffsetMin, full ? { full } : undefined) }));
 }

@@ -1,4 +1,4 @@
-import type { RunSourceProvider } from '../runSource';
+import type { RunSource, RunSourceProvider } from '../runSource';
 import { createLiveRunSource, createLiveState } from '../live/liveRunSource';
 import { readLimits } from '../live/limits';
 import type { DiagNote } from '../live/trace';
@@ -24,6 +24,25 @@ export function pickSession(file: CaptureFile, id?: string): SessionRecord {
   return s;
 }
 
+/**
+ * The recorded lists a delta session was merged over: the /api/runs sessions of the same user before it, from the
+ * last full load on (deltas in between included), oldest first. Empty for a full load or a capture without modes.
+ */
+export function baseChain(file: CaptureFile, picked: SessionRecord): SessionRecord[] {
+  if (picked.refresh?.mode !== 'delta') return [];
+  const prior = file.sessions
+    .filter((s) => s !== picked && s.route === '/api/runs' && s.refresh && s.startedAt <= picked.startedAt && (s.user ?? '') === (picked.user ?? ''))
+    .sort((a, b) => a.startedAt - b.startedAt);
+  let i = prior.length - 1;
+  while (i >= 0 && prior[i].refresh?.mode !== 'full') i--;
+  return i < 0 ? [] : prior.slice(i);
+}
+
+const sinceOf = (s: SessionRecord): number | undefined => {
+  const raw = s.query.since;
+  return typeof raw === 'string' && /^\d+$/.test(raw) ? Number(raw) : undefined;
+};
+
 export interface ReplayDeps {
   /** The capture itself (tests); default: read JOBS_CONSOLE_REPLAY. */
   file?: CaptureFile;
@@ -43,21 +62,45 @@ export function createReplayProvider(env: Record<string, string | undefined>, de
   }
   const session = pickSession(file, env.JOBS_CONSOLE_REPLAY_SESSION || undefined);
   const note = (n: DiagNote) => warn(`[replay] ${n.level} ${n.code}: ${n.message}`);
-  const api = createReplayApi(file.sessions, session, note, file.workspace.host);
-  const now = session.now ?? session.startedAt;
   const user = session.user ?? file.workspace.user ?? '';
-  const source = createLiveRunSource({
-    api,
-    user: () => Promise.resolve(user),
-    userKey: 'replay',
-    state: createLiveState(),
-    limits: session.limits ?? readLimits(file.config),
-    clock: () => now,
-    timer: Date.now,
-    warn: (m) => warn(`[replay] ${m}`),
-    source: 'replay',
-  });
+  const state = createLiveState();
+  const f = file;
+  // Each recorded list replayed as it ran: its own calls first, frozen at its own asOf, in its own mode.
+  const sourceFor = (s: SessionRecord, mode?: 'full' | 'delta') => {
+    const now = s.now ?? s.startedAt;
+    return createLiveRunSource({
+      api: createReplayApi(f.sessions, s, note, f.workspace.host),
+      user: () => Promise.resolve(user),
+      userKey: 'replay',
+      state,
+      limits: s.limits ?? readLimits(f.config),
+      clock: () => now,
+      timer: Date.now,
+      warn: (m) => warn(`[replay] ${m}`),
+      source: 'replay',
+      mode,
+    });
+  };
+  // A delta session is replayed over the base its recorded predecessors built: replay those first (once, lazily).
+  const chain = baseChain(file, session);
+  if (session.refresh?.mode === 'delta' && !chain.length) warn(`[replay] ${session.id} was a delta but the capture has no full load before it; replaying it as a full load`);
+  let primed: Promise<void> | undefined;
+  const prime = () =>
+    (primed ??= (async () => {
+      for (const s of chain) await sourceFor(s, s.refresh?.mode).listRuns(sinceOf(s), undefined, { full: s.refresh?.mode === 'full' }).catch(() => undefined);
+    })());
+  const inner = sourceFor(session, chain.length ? session.refresh?.mode : undefined);
+  const source: RunSource = {
+    kind: inner.kind,
+    listRuns: (since, tz, opts) => prime().then(() => inner.listRuns(since, tz, opts)),
+    getRun: (id, tz) => prime().then(() => inner.getRun(id, tz)),
+    taskLog: (id, task, hint) => prime().then(() => inner.taskLog(id, task, hint)),
+  };
   const auth = file.config.authMode === 'app' ? 'app' : 'user';
-  warn(`[replay] ${file.sessions.length} sessions in the capture; replaying ${session.id} (${session.route}, asOf ${new Date(now).toISOString()}, user ${user || 'unknown'})`);
+  const now = session.now ?? session.startedAt;
+  warn(
+    `[replay] ${file.sessions.length} sessions in the capture; replaying ${session.id} (${session.route}, asOf ${new Date(now).toISOString()}, user ${user || 'unknown'}` +
+      `${chain.length ? `, a delta over ${chain.map((s) => s.id).join(' -> ')}` : ''})`
+  );
   return { kind: 'replay', auth, session, file, forRequest: () => source };
 }

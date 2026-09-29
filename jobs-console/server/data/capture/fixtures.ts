@@ -1,5 +1,9 @@
 import type { jobs } from '@databricks/sdk-experimental';
+import type { RunsResponse } from '../../../shared/domain/types';
 import type { FakeData } from '../live/fakeApi';
+
+/** A response as JSON for comparing a replay with its recording: source and the refresh's wall-clock ms aside. */
+export const comparable = (r: RunsResponse): string => JSON.stringify({ ...r, source: 'live', ...(r.refresh ? { refresh: { ...r.refresh, ms: 0 } } : {}) });
 
 /** Test fixture: a small workspace with every kind of job run and pipeline update. Only used by tests. */
 export const NOW = 1_800_000_000_000;

@@ -70,30 +70,78 @@ export interface PipelinesCollected {
   /** Pipelines skipped because they vanished or are not visible (404/403). */
   skipped: number;
   timedOut: boolean;
+  /** Every pipeline read completely (with or without updates in the window), with the list entry it was read for. */
+  read: { status: pipelines.PipelineStateInfo; item: PipelineCollected }[];
 }
 
 const statusOf = (e: unknown): number | undefined => (e as { statusCode?: unknown })?.statusCode as number | undefined;
-const FINISHED = new Set<string>(['COMPLETED', 'FAILED', 'CANCELED']);
+export const FINISHED_UPDATE = new Set<string>(['COMPLETED', 'FAILED', 'CANCELED']);
 
-/**
- * All pipelines (100 per page), then per pipeline, `concurrency` at a time: getPipeline + listUpdates back to `from`,
- * and at most one events call (INFO/WARN/ERROR since `from`) for end times and failure causes.
- */
-export async function collectPipelines(api: LiveApi, from: number, concurrency: number, dl: Deadline, diag: Diag = noDiag): Promise<PipelinesCollected> {
-  const listed: pipelines.PipelineStateInfo[] = [];
-  let timedOut = false;
+/** Every pipeline, 100 per page. */
+export async function listAllPipelines(api: LiveApi, dl: Deadline): Promise<{ statuses: pipelines.PipelineStateInfo[]; timedOut: boolean }> {
+  const statuses: pipelines.PipelineStateInfo[] = [];
   let token: string | undefined;
   do {
     const page = await dl.call(() => api.listPipelines({ max_results: 100, page_token: token }));
-    if (page === TIMEOUT) {
-      timedOut = true;
-      break;
-    }
-    listed.push(...(page.statuses ?? []));
+    if (page === TIMEOUT) return { statuses, timedOut: true };
+    statuses.push(...(page.statuses ?? []));
     token = page.next_page_token;
   } while (token);
+  return { statuses, timedOut: false };
+}
 
+/**
+ * What reading one pipeline gave: its info and updates (events too when an update has finished; `partial` when the
+ * budget cut the events call); 'timeout' when the budget cut the update list; 'skipped' when it vanished or is not
+ * visible (with a diagnostic). Sign-in failures (401) throw.
+ */
+export type PipelineRead = { item: PipelineCollected; partial: boolean } | 'timeout' | 'skipped';
+
+/**
+ * One pipeline: getPipeline (unless its info is `known`) + listUpdates back to `from`, and at most one events call
+ * (INFO/WARN/ERROR since `from`) for end times and failure causes.
+ */
+export async function readPipeline(api: LiveApi, p: pipelines.PipelineStateInfo & { pipeline_id: string }, from: number, dl: Deadline, diag: Diag, known?: PipelineInfo): Promise<PipelineRead> {
+  const pipelineId = p.pipeline_id;
+  try {
+    const [spec, updates] = await Promise.all([known ? known : dl.call(() => api.getPipeline({ pipeline_id: pipelineId })), updatesSince(api, pipelineId, from, dl)]);
+    if (spec === TIMEOUT || updates === TIMEOUT) {
+      diag({ level: 'warn', code: 'updates-skipped', message: 'the time budget ran out while reading this pipeline; its updates are left out', ref: `pipeline ${pipelineId}` });
+      return 'timeout';
+    }
+    const info: PipelineInfo =
+      'pipelineId' in spec
+        ? spec
+        : {
+            pipelineId,
+            name: spec.name ?? p.name ?? pipelineId,
+            continuous: !!spec.spec?.continuous,
+            runAs: spec.run_as_user_name ?? p.run_as_user_name ?? spec.creator_user_name ?? p.creator_user_name ?? '',
+          };
+    const item: PipelineCollected = { info, updates };
+    let partial = false;
+    if (updates.some((u) => FINISHED_UPDATE.has(u.state ?? ''))) {
+      const events = await eventsSince(api, pipelineId, from, dl, diag);
+      if (events === TIMEOUT) partial = true;
+      else item.events = events;
+    }
+    return { item, partial };
+  } catch (e) {
+    // One pipeline's failure (permissions, a gone pipeline, an API quirk) skips that pipeline only. Sign-in failures
+    // affect every call, so they still fail the list.
+    const s = statusOf(e);
+    if (s === 401) throw e;
+    diag({ level: 'warn', code: 'pipeline-skipped', message: `skipped (${s ?? 'error'}): ${apiErrorParts(e).message}`, ref: `pipeline ${pipelineId}` });
+    return 'skipped';
+  }
+}
+
+/** All pipelines (100 per page), then readPipeline for each, `concurrency` at a time. */
+export async function collectPipelines(api: LiveApi, from: number, concurrency: number, dl: Deadline, diag: Diag = noDiag): Promise<PipelinesCollected> {
+  const { statuses: listed, timedOut: listTimedOut } = await listAllPipelines(api, dl);
+  let timedOut = listTimedOut;
   const out: PipelineCollected[] = [];
+  const read: PipelinesCollected['read'] = [];
   let skipped = 0;
   let notReached = 0;
   await pool(listed, concurrency, async (p) => {
@@ -107,38 +155,17 @@ export async function collectPipelines(api: LiveApi, from: number, concurrency: 
       notReached++;
       return;
     }
-    try {
-      const [spec, updates] = await Promise.all([dl.call(() => api.getPipeline({ pipeline_id: pipelineId })), updatesSince(api, pipelineId, from, dl)]);
-      if (spec === TIMEOUT || updates === TIMEOUT) {
-        timedOut = true;
-        diag({ level: 'warn', code: 'updates-skipped', message: 'the time budget ran out while reading this pipeline; its updates are left out', ref: `pipeline ${pipelineId}` });
-        return;
-      }
-      if (!updates.length) return;
-      const info: PipelineInfo = {
-        pipelineId,
-        name: spec.name ?? p.name ?? pipelineId,
-        continuous: !!spec.spec?.continuous,
-        runAs: spec.run_as_user_name ?? p.run_as_user_name ?? spec.creator_user_name ?? p.creator_user_name ?? '',
-      };
-      const item: PipelineCollected = { info, updates };
-      if (updates.some((u) => FINISHED.has(u.state ?? ''))) {
-        const events = await eventsSince(api, pipelineId, from, dl, diag);
-        if (events === TIMEOUT) timedOut = true;
-        else item.events = events;
-      }
-      out.push(item);
-    } catch (e) {
-      // One pipeline's failure (permissions, a gone pipeline, an API quirk) skips that pipeline only. Sign-in failures
-      // affect every call, so they still fail the list.
-      const s = statusOf(e);
-      if (s === 401) throw e;
-      skipped++;
-      diag({ level: 'warn', code: 'pipeline-skipped', message: `skipped (${s ?? 'error'}): ${apiErrorParts(e).message}`, ref: `pipeline ${pipelineId}` });
+    const got = await readPipeline(api, { ...p, pipeline_id: pipelineId }, from, dl, diag);
+    if (got === 'skipped') skipped++;
+    else if (got === 'timeout') timedOut = true;
+    else {
+      if (got.partial) timedOut = true;
+      else read.push({ status: p, item: got.item });
+      if (got.item.updates.length) out.push(got.item);
     }
   });
   if (notReached) diag({ level: 'warn', code: 'pipelines-not-reached', message: `${notReached} of ${listed.length} pipelines not read: the time budget ran out` });
-  return { pipelines: out, listed: listed.length, skipped, timedOut: timedOut || dl.expired };
+  return { pipelines: out, listed: listed.length, skipped, timedOut: timedOut || dl.expired, read };
 }
 
 /** The events API rejects max_results above 250 ("Cannot have more than 250 events per page"). */

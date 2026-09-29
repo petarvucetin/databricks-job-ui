@@ -107,4 +107,14 @@ export interface RunsResponse {
   source: DataSource;
   /** Newest first. */
   runs: Run[];
+  /** Live and replay: how the server got this list. The client ignores it (tests and diagnostics read it). */
+  refresh?: RefreshInfo;
+}
+
+/** A full load re-reads the whole window; a delta only what can have changed since the last list. */
+export interface RefreshInfo {
+  mode: 'full' | 'delta';
+  /** Databricks API calls it made. */
+  calls: number;
+  ms: number;
 }

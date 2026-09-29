@@ -8,7 +8,7 @@ import { Session, type SessionRecord } from './recorder';
 import { buildCapture, gzipCapture, readCapture, type CaptureFile } from './captureFile';
 import { canon, createReplayApi } from './replayApi';
 import { createReplayProvider, pickSession } from './replayProvider';
-import { richWorkspace, NOW } from './fixtures';
+import { richWorkspace, NOW, comparable } from './fixtures';
 
 const APP = { version: '1.0.0', node: 'v24' };
 
@@ -47,7 +47,7 @@ describe('replay round trip', () => {
     const provider = createReplayProvider({}, { file, warn: () => {} });
     const replayed = await (provider.forRequest({ headers: {} }) as RunSource).listRuns();
     expect(replayed.source).toBe('replay');
-    expect(JSON.stringify({ ...replayed, source: 'live' })).toBe(JSON.stringify(original));
+    expect(comparable(replayed)).toBe(comparable(original!));
   });
 
   it('replays real tasks and workspace links', async () => {
@@ -87,6 +87,41 @@ describe('replay round trip', () => {
     const file = await roundTrip([rec]);
     const src = createReplayProvider({}, { file, warn: () => {} }).forRequest({ headers: {} }) as RunSource;
     await expect(src.listRuns()).rejects.toMatchObject({ status: 502, message: 'The service is busy.' });
+  });
+});
+
+describe('replaying a delta', () => {
+  it('replays a full load and then a delta over it, each identical to what was served live', async () => {
+    const MIN = 60000;
+    const data: FakeData = structuredClone(richWorkspace);
+    const state = createLiveState();
+    let t = NOW;
+    const recordList = async (id: string) => {
+      const session = new Session({ id, route: '/api/runs', query: {}, authMode: 'user' }, () => t);
+      const src = createLiveRunSource({ api: fakeApi(data), user: () => Promise.resolve('me@x.com'), userKey: 'me', state, limits: DEFAULT_LIMITS, clock: () => t, warn: () => {}, trace: session });
+      const res = await src.listRuns();
+      return { res, rec: session.finish({ status: 200, body: res }) };
+    };
+    const full = await recordList('s-full');
+    t += MIN;
+    // The workspace moves on: a new run starts and the running job run finishes.
+    const running = data.runs!.find((r) => r.run_id === 105)!;
+    const finished = { ...running, run_duration: 6 * MIN, status: { state: 'TERMINATED' as const, termination_details: { code: 'SUCCESS' as const } }, state: { life_cycle_state: 'TERMINATED' as const, result_state: 'SUCCESS' as const } };
+    data.runs = [{ ...finished, run_id: 106, start_time: NOW + 30000 }, ...data.runs!.map((r) => (r.run_id === 105 ? finished : r))];
+    data.runsById = { ...data.runsById, 105: finished };
+    const delta = await recordList('s-delta');
+    expect(full.res.refresh?.mode).toBe('full');
+    expect(delta.res.refresh?.mode).toBe('delta');
+    expect(delta.rec.refresh?.mode).toBe('delta');
+    expect(delta.res.runs.find((r) => r.id === 105)?.kind).not.toBe('running');
+    expect(delta.res.runs[0].id).toBe(106);
+
+    const file = await roundTrip([full.rec, delta.rec]);
+    const replay = async (session: string) => (createReplayProvider({ JOBS_CONSOLE_REPLAY_SESSION: session }, { file, warn: () => {} }).forRequest({ headers: {} }) as RunSource).listRuns();
+    expect(comparable(await replay('s-full'))).toBe(comparable(full.res));
+    expect(comparable(await replay('s-delta'))).toBe(comparable(delta.res));
+    // With no session named, replay picks the newest list: the delta, replayed over the full load before it.
+    expect(comparable(await (createReplayProvider({}, { file, warn: () => {} }).forRequest({ headers: {} }) as RunSource).listRuns())).toBe(comparable(delta.res));
   });
 });
 

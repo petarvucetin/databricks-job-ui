@@ -15,6 +15,31 @@ const ENV: Record<keyof LiveLimits, string> = {
   concurrency: 'JOBS_CONSOLE_CONCURRENCY',
 };
 
+/** How /api/runs refreshes: deltas over a per-user base snapshot, with a full load at least every fullRefreshMs. */
+export interface RefreshSettings {
+  /** JOBS_CONSOLE_INCREMENTAL=0 turns deltas off: every call is a full load. */
+  incremental: boolean;
+  /** JOBS_CONSOLE_FULL_REFRESH_MS: a base older than this is reloaded in full. */
+  fullRefreshMs: number;
+}
+
+export const DEFAULT_REFRESH: RefreshSettings = { incremental: true, fullRefreshMs: 900000 };
+
+export function readRefresh(env: Record<string, string | undefined>): RefreshSettings {
+  const out = { ...DEFAULT_REFRESH };
+  const inc = env.JOBS_CONSOLE_INCREMENTAL;
+  if (inc !== undefined && inc !== '') {
+    if (inc !== '0' && inc !== '1') throw new Error(`JOBS_CONSOLE_INCREMENTAL must be 0 or 1, got "${inc}"`);
+    out.incremental = inc === '1';
+  }
+  const ms = env.JOBS_CONSOLE_FULL_REFRESH_MS;
+  if (ms !== undefined && ms !== '') {
+    if (!/^\d+$/.test(ms) || Number(ms) < 1) throw new Error(`JOBS_CONSOLE_FULL_REFRESH_MS must be a positive integer, got "${ms}"`);
+    out.fullRefreshMs = Number(ms);
+  }
+  return out;
+}
+
 export function readLimits(env: Record<string, string | undefined>): LiveLimits {
   const out = { ...DEFAULT_LIMITS };
   for (const key of Object.keys(ENV) as (keyof LiveLimits)[]) {

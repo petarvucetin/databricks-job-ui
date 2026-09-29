@@ -94,6 +94,24 @@ describe('useRuns', () => {
       await waitFor(() => expect(result.current.state === 'ready' && result.current.data.asOf).toBe(2));
     });
 
+    it('the refresh-now button asks for a full reload; timer refreshes do not', async () => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      const fetchMock = vi.fn().mockResolvedValueOnce(ok(1)).mockResolvedValueOnce(ok(2)).mockResolvedValueOnce(ok(3));
+      vi.stubGlobal('fetch', fetchMock);
+      const { result } = renderHook(() => useRuns(30_000));
+      await waitFor(() => expect(result.current.state).toBe('ready'));
+      await act(() => vi.advanceTimersByTimeAsync(31_000));
+      await waitFor(() => expect(result.current.state === 'ready' && result.current.data.asOf).toBe(2));
+      act(() => {
+        if (result.current.state === 'ready') result.current.refresh();
+      });
+      await waitFor(() => expect(result.current.state === 'ready' && result.current.data.asOf).toBe(3));
+      const urls = fetchMock.mock.calls.map(([u]) => String(u));
+      expect(urls[0]).not.toContain('full=1');
+      expect(urls[1]).not.toContain('full=1');
+      expect(urls[2]).toMatch(/[?&]full=1(&|$)/);
+    });
+
     it('does not refresh when the interval is off', async () => {
       vi.useFakeTimers({ shouldAdvanceTime: true });
       const fetchMock = vi.fn().mockResolvedValue(ok(1));

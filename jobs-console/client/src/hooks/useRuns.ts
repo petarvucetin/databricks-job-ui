@@ -14,11 +14,13 @@ export type RunsState =
       refreshing: boolean;
       /** Why the last background refresh failed (the data shown is from loadedAt); null when it worked. */
       refreshError: string | null;
+      /** Refresh now (the filter bar's ↻): asks the server for a full reload, not a delta. */
       refresh: () => void;
     };
 
-async function fetchRuns(): Promise<RunsResponse> {
-  const res = await fetch(`/api/runs?tzOffset=${new Date().getTimezoneOffset()}`, { signal: AbortSignal.timeout(60000) });
+/** `full`: re-read the whole window (`full=1`) instead of the server's delta over its last list. */
+async function fetchRuns(full = false): Promise<RunsResponse> {
+  const res = await fetch(`/api/runs?tzOffset=${new Date().getTimezoneOffset()}${full ? '&full=1' : ''}`, { signal: AbortSignal.timeout(60000) });
   if (!res.ok) {
     // The server answers errors as { error }: show its message (e.g. the Databricks error), not just the status.
     const body = (await res.json().catch(() => null)) as { error?: unknown } | null;
@@ -73,13 +75,13 @@ export function useRuns(intervalMs = 0): RunsState {
     };
   }, [attempt, retry]);
 
-  const refresh = useCallback(() => {
+  const load = useCallback((full: boolean) => {
     if (inFlight.current) return;
     inFlight.current = true;
     const startedAt = Date.now();
     lastTry.current = startedAt;
     setRefreshing(true);
-    fetchRuns()
+    fetchRuns(full)
       .then((data) => {
         if (!alive.current) return;
         setLatest({ data, loadedAt: Date.now(), startedAt });
@@ -93,6 +95,7 @@ export function useRuns(intervalMs = 0): RunsState {
         if (alive.current) setRefreshing(false);
       });
   }, []);
+  const refresh = useCallback(() => load(true), [load]);
 
   // Background refresh: a timer checked every few seconds, so a hidden tab catches up on return.
   const ready = latest !== null;
@@ -100,7 +103,8 @@ export function useRuns(intervalMs = 0): RunsState {
     if (!intervalMs || !ready) return;
     const tick = () => {
       if (document.visibilityState === 'hidden') return;
-      if (Date.now() - lastTry.current >= intervalMs) refresh();
+      // Timer refreshes let the server send a delta.
+      if (Date.now() - lastTry.current >= intervalMs) load(false);
     };
     const timer = setInterval(tick, Math.min(5000, intervalMs));
     document.addEventListener('visibilitychange', tick);
@@ -108,7 +112,7 @@ export function useRuns(intervalMs = 0): RunsState {
       clearInterval(timer);
       document.removeEventListener('visibilitychange', tick);
     };
-  }, [intervalMs, ready, refresh]);
+  }, [intervalMs, ready, load]);
 
   if (latest) return { state: 'ready', data: latest.data, loadedAt: latest.loadedAt, startedAt: latest.startedAt, refreshing, refreshError, refresh };
   return failed && failed.attempt === attempt ? { state: 'error', message: failed.message, retry } : { state: 'loading' };

@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import type { RequestLike, RunSourceProvider } from '../runSource';
 import { createSdkApi, type LiveApi } from './api';
-import { readLimits, type LiveLimits } from './limits';
+import { readLimits, readRefresh, type LiveLimits, type RefreshSettings } from './limits';
 import { createLiveRunSource, createLiveState, type LiveState } from './liveRunSource';
 
 export interface LiveProviderDeps {
@@ -24,6 +24,7 @@ export interface LiveProvider extends RunSourceProvider {
   readonly kind: 'live';
   readonly auth: AuthMode;
   readonly limits: LiveLimits;
+  readonly refresh: RefreshSettings;
   readonly state: LiveState;
   identify(req: RequestLike): LiveIdentity | { status: number; error: string };
 }
@@ -63,6 +64,7 @@ export function readAuthMode(env: Record<string, string | undefined>): AuthMode 
  */
 export function createLiveProvider(env: Record<string, string | undefined>, deps: LiveProviderDeps = { makeApi: createSdkApi }): LiveProvider {
   const limits = readLimits(env);
+  const refresh = readRefresh(env);
   const auth = readAuthMode(env);
   const state = createLiveState();
   let shared: { api: LiveApi; user: () => Promise<string> } | undefined;
@@ -97,12 +99,13 @@ export function createLiveProvider(env: Record<string, string | undefined>, deps
     kind: 'live',
     auth,
     limits,
+    refresh,
     state,
     identify,
     forRequest(req, trace) {
       const id = identify(req);
       if ('error' in id) return id;
-      return createLiveRunSource({ ...id, state, limits, clock: deps.clock, trace });
+      return createLiveRunSource({ ...id, state, limits, refresh, clock: deps.clock, trace });
     },
   };
 }

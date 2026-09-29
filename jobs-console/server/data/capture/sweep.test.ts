@@ -5,7 +5,7 @@ import { Session } from './recorder';
 import { buildCapture, gzipCapture, readCapture } from './captureFile';
 import { createReplayProvider } from './replayProvider';
 import { parseSweepDays, readSweepLimits, runSweep } from './sweep';
-import { NOW, richWorkspace } from './fixtures';
+import { NOW, comparable, richWorkspace } from './fixtures';
 
 const sweepSession = () => new Session({ id: 'sweep', route: '/api/diag/sweep', query: { days: '90' }, authMode: 'user' }, () => NOW);
 
@@ -55,7 +55,7 @@ describe('sweep', () => {
     const file = readCapture(await gzipCapture(buildCapture({ env: {}, host: richWorkspace.host, authMode: 'user', user: 'me@x.com', sessions: [rec], clientErrors: [], process: [], app: { version: '1', node: 'v' } })));
     const src = createReplayProvider({}, { file, warn: () => {} }).forRequest({ headers: {} }) as RunSource;
     const replayed = await src.listRuns();
-    expect(JSON.stringify({ ...replayed, source: 'live' })).toBe(JSON.stringify(res));
+    expect(comparable(replayed)).toBe(comparable(res));
     const failed = res.runs.find((r) => r.type === 'job' && r.failed.length)!;
     expect(await src.taskLog(failed.id, failed.failed[0].name)).toContain('TABLE_OR_VIEW_NOT_FOUND');
   });

@@ -24,6 +24,9 @@ function stateOf(r: { status?: jobs.RunStatus; state?: jobs.RunState }): V2State
   }
 }
 
+/** The run has ended (TERMINATED): nothing about it changes any more, unless it is repaired (then it is active again). */
+export const isTerminated = (r: { status?: jobs.RunStatus; state?: jobs.RunState }): boolean => stateOf(r) === 'TERMINATED';
+
 /** Outcome of a finished run or task: result_state first, then the termination code. */
 export function resultOf(state?: jobs.RunState, term?: jobs.TerminationDetails): RunResult {
   switch (state?.result_state) {

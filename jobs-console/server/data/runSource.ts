@@ -11,8 +11,9 @@ export interface RunSource {
    * Runs with startTime >= since, newest first. When since is undefined the mock returns every run, the live source its default window.
    * tzOffsetMin is the caller's `Date.getTimezoneOffset()`; the mock source buckets its
    * generated "now" and quiet days by that zone instead of the server's.
+   * `full` (live): re-read the whole window instead of a delta over the last list, bypassing the response cache.
    */
-  listRuns(since?: number, tzOffsetMin?: number): Promise<RunsResponse>;
+  listRuns(since?: number, tzOffsetMin?: number, opts?: { full?: boolean }): Promise<RunsResponse>;
   /**
    * Log text of one task in a run. `hint` is what the client already knows about how the task ended
    * (its failure cause label, or "retrying"); the mock source uses it to write a matching ending, a live one ignores it.

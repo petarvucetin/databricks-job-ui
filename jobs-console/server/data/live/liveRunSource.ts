@@ -1,12 +1,14 @@
-import type { Run, RunsResponse } from '../../../shared/domain/types';
+import type { jobs, pipelines } from '@databricks/sdk-experimental';
+import type { RefreshInfo, Run, RunsResponse } from '../../../shared/domain/types';
 import type { RunSource } from '../runSource';
 import { SourceError } from '../sourceError';
 import type { LiveApi } from './api';
 import { apiErrorParts } from './apiError';
-import { Deadline, EVENTS_PAGE_SIZE, TIMEOUT, collectJobRuns, collectPipelines, eventsSince } from './collect';
+import { Deadline, EVENTS_PAGE_SIZE, FINISHED_UPDATE, TIMEOUT, collectJobRuns, collectPipelines, eventsSince } from './collect';
+import { baseFromFull, fetchDelta, mergeBase, mergeEvents, type Base } from './delta';
 import { jobDraft } from './jobs';
 import { finalize, runKey, usualByKey, type Draft } from './kinds';
-import type { LiveLimits } from './limits';
+import { DEFAULT_REFRESH, type LiveLimits, type RefreshSettings } from './limits';
 import { indexEvents, updateDraft, type PipelineInfo } from './pipelines';
 import { findTask, jobLogText, pipelineLogText } from './taskLog';
 import { noDiag, type Trace } from './trace';
@@ -14,9 +16,39 @@ import { noDiag, type Trace } from './trace';
 const DAY = 86400000;
 const CACHE_TTL_MS = 20000;
 const CACHE_MAX = 50;
+const BASES_MAX = 50;
 const ID_MAP_MAX = 50000;
-const FINISHED_UPDATE = new Set<string>(['COMPLETED', 'FAILED', 'CANCELED']);
 type UpdateEventsInput = Parameters<typeof indexEvents>[0] | undefined;
+
+/** What one list reads and maps: job runs, and each pipeline's updates with the events read for them. */
+interface Collected {
+  runs: Iterable<jobs.BaseRun>;
+  pipelines: Iterable<{ info: PipelineInfo; updates: Iterable<pipelines.UpdateInfo>; events?: pipelines.PipelineEvent[] }>;
+}
+
+const collectedOf = (b: Base): Collected => ({
+  runs: [...b.runs.values()].map((e) => e.value),
+  pipelines: [...b.pipelines.values()].map((p) => ({ info: p.info, updates: [...p.updates.values()].map((e) => e.value), events: p.events })),
+});
+
+/** Entries of `older` fetched later than their copy in `next` (a single-run refresh that raced a list): copied into next. */
+function carryNewer(next: Base, older: Base): void {
+  for (const [id, e] of older.runs) {
+    const n = next.runs.get(id);
+    if (n && e.at > n.at) next.runs.set(id, e);
+  }
+  for (const [pid, p] of older.pipelines) {
+    const n = next.pipelines.get(pid);
+    if (!n) continue;
+    for (const [uid, e] of p.updates) {
+      const u = n.updates.get(uid);
+      if (u && e.at > u.at) {
+        n.updates.set(uid, e);
+        n.events = mergeEvents(n.events, p.events, 0);
+      }
+    }
+  }
+}
 
 export { apiErrorParts };
 
@@ -34,9 +66,16 @@ export interface LiveState {
   pipelineRefs: Map<number, PipelineRef>;
   /** Per user and window, so reloads within the TTL don't fan out again. */
   cache: Map<string, { at: number; data: RunsResponse }>;
+  /** Per user: the collected SDK objects of the last full load, with every delta since merged in. */
+  bases: Map<string, Base>;
 }
 
-export const createLiveState = (): LiveState => ({ pipelineRefs: new Map(), cache: new Map() });
+export const createLiveState = (): LiveState => ({ pipelineRefs: new Map(), cache: new Map(), bases: new Map() });
+
+export interface ListOptions {
+  /** A full load even when a delta would do (the filter bar's refresh-now button: `?full=1`). Skips the response cache. */
+  full?: boolean;
+}
 
 export interface LiveSourceOptions {
   api: LiveApi;
@@ -54,6 +93,13 @@ export interface LiveSourceOptions {
   trace?: Trace;
   /** What the response says it is (default 'live'). */
   source?: 'live' | 'replay';
+  /** Deltas on or off, and how old a base may get (default DEFAULT_REFRESH). */
+  refresh?: RefreshSettings;
+  /**
+   * Replay: the mode the recorded request ran in. 'delta' does a delta whenever there is a base for the same window
+   * (whatever its age); 'full' always loads in full.
+   */
+  mode?: RefreshInfo['mode'];
 }
 
 /** Counts calls per LiveApi method, for the `pages` diagnostic. */
@@ -94,12 +140,56 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
   const diag = o.trace?.diag ?? noDiag;
   const { limits, state } = o;
   const api = o.trace ? o.trace.wrap(o.api) : o.api;
+  const refresh = o.refresh ?? DEFAULT_REFRESH;
 
-  async function fetchRuns(since: number | undefined): Promise<RunsResponse> {
+  /** Maps what was collected (a full load's lists, or a merged base) with the pure mappers; remembers pipeline refs. */
+  function mapCollected(col: Collected, now: number, me: string | undefined, host: string): { all: Run[]; jobRuns: number; withUpdates: number } {
+    const drafts: Draft[] = [];
+    for (const r of col.runs) drafts.push(jobDraft(r, now, diag, host));
+    const jobRuns = drafts.length;
+    let withUpdates = 0;
+    for (const p of col.pipelines) {
+      const events = indexEvents(p.events ?? []);
+      let any = false;
+      for (const u of p.updates) {
+        const d = updateDraft(u, p.info, events.get(u.update_id ?? ''), now, diag, host);
+        drafts.push(d);
+        any = true;
+        remember(state.pipelineRefs, d.id, { pipelineId: p.info.pipelineId, updateId: u.update_id ?? '', startTime: d.startTime, info: p.info }, ID_MAP_MAX);
+      }
+      if (any) withUpdates++;
+    }
+    const all: Run[] = finalize(drafts, me).sort((a, b) => b.startTime - a.startTime || b.id - a.id);
+    return { all, jobRuns, withUpdates };
+  }
+
+  /** Stores `next` as the requester's base unless a newer one landed meanwhile; keeps single-run fetches newer than it. */
+  function commitBase(next: Base): void {
+    const cur = state.bases.get(o.userKey);
+    if (cur && cur !== next) {
+      if (cur.asOf > next.asOf) return;
+      carryNewer(next, cur);
+    }
+    remember(state.bases, o.userKey, next, BASES_MAX);
+  }
+
+  /** Why this list must be a full load, or null when a delta over the base will do. */
+  function fullReason(base: Base | undefined, since: number | undefined, now: number, asked: boolean): string | null {
+    if (o.mode === 'full') return 'replayed as a full load';
+    if (!refresh.incremental) return 'deltas are off (JOBS_CONSOLE_INCREMENTAL=0)';
+    if (!base) return 'no base yet';
+    if (base.since !== since) return 'the window changed';
+    if (o.mode === 'delta') return null;
+    if (asked) return 'asked for (full=1)';
+    if (now - base.fullAt >= refresh.fullRefreshMs) return `the base is older than ${refresh.fullRefreshMs}ms`;
+    return null;
+  }
+
+  async function fetchRuns(since: number | undefined, askedFull: boolean): Promise<RunsResponse> {
+    const started = timer();
     const now = clock();
     o.trace?.note({ now, limits });
     const from = since ?? now - limits.windowDays * DAY;
-    const dl = new Deadline(timer() + limits.timeoutMs, timer);
     const c = counting(api);
     const user = () =>
       o.user().then((u) => {
@@ -107,37 +197,57 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
         return u;
       });
     // Straight from o.api: the host is configuration, not a counted or recorded call.
-    const [host, me, jobsR, pipesR] = await Promise.all([
-      o.api.host().catch(() => ''),
-      dl.call(user),
-      collectJobRuns(c.api, from, limits.maxRuns, dl),
-      collectPipelines(c.api, from, limits.concurrency, dl, diag),
-    ]);
-    diag({ level: 'info', code: 'pages', message: [...c.counts].map(([k, n]) => `${k} ${n}`).join(', ') || 'no calls' });
-    const drafts: Draft[] = jobsR.runs.map((r) => jobDraft(r, now, diag, host));
-    for (const p of pipesR.pipelines) {
-      const events = indexEvents(p.events ?? []);
-      for (const u of p.updates) {
-        const d = updateDraft(u, p.info, events.get(u.update_id ?? ''), now, diag, host);
-        drafts.push(d);
-        remember(state.pipelineRefs, d.id, { pipelineId: p.info.pipelineId, updateId: u.update_id ?? '', startTime: d.startTime, info: p.info }, ID_MAP_MAX);
+    const hostP = o.api.host().catch(() => '');
+    const base = state.bases.get(o.userKey);
+    const reason = fullReason(base, since, now, askedFull);
+
+    let out: { mode: RefreshInfo['mode']; all: Run[]; jobRuns: number; withUpdates: number; listed: number; skipped: number; capped: boolean; timedOut: boolean; me: string | typeof TIMEOUT } | undefined;
+    if (base && !reason) {
+      const dl = new Deadline(timer() + limits.timeoutMs, timer);
+      try {
+        const [host, me, d] = await Promise.all([hostP, dl.call(user), fetchDelta(c.api, base, { now, from, maxRuns: limits.maxRuns, concurrency: limits.concurrency, dl, diag })]);
+        const merged = mergeBase(base, d, from, limits.maxRuns);
+        const k = merged.counts;
+        diag({
+          level: 'info',
+          code: 'delta',
+          message: `active runs ${k.active}, new runs ${k.fresh}, finished via getRun ${k.finished}, deleted ${k.deleted}, pipelines re-read ${k.reread} of ${k.pipelines}, aged out of the window ${k.agedOut}`,
+        });
+        diag({ level: 'info', code: 'pages', message: [...c.counts].map(([key, n]) => `${key} ${n}`).join(', ') || 'no calls' });
+        commitBase(merged.base);
+        const m = mapCollected(collectedOf(merged.base), now, me === TIMEOUT ? undefined : me, host);
+        out = { mode: 'delta', ...m, listed: k.pipelines, skipped: 0, capped: merged.base.capped, timedOut: me === TIMEOUT, me };
+      } catch (e) {
+        // Nothing of the delta is kept: the full load starts from scratch.
+        diag({ level: 'warn', code: 'delta-fallback', message: `delta refresh failed, loading in full: ${apiErrorParts(e).message}` });
       }
+    } else {
+      diag({ level: 'info', code: 'full-load', message: `full load: ${reason ?? 'no base yet'}` });
     }
-    const all: Run[] = finalize(drafts, me === TIMEOUT ? undefined : me).sort((a, b) => b.startTime - a.startTime || b.id - a.id);
+
+    if (!out) {
+      const dl = new Deadline(timer() + limits.timeoutMs, timer);
+      const [host, me, jobsR, pipesR] = await Promise.all([hostP, dl.call(user), collectJobRuns(c.api, from, limits.maxRuns, dl), collectPipelines(c.api, from, limits.concurrency, dl, diag)]);
+      diag({ level: 'info', code: 'pages', message: [...c.counts].map(([k, n]) => `${k} ${n}`).join(', ') || 'no calls' });
+      const timedOut = jobsR.timedOut || pipesR.timedOut || me === TIMEOUT;
+      // A load the time budget cut short is served, but is no base: the next list loads in full again.
+      if (!jobsR.timedOut && !pipesR.timedOut && refresh.incremental) commitBase(baseFromFull(since, now, jobsR, pipesR));
+      const m = mapCollected({ runs: jobsR.runs, pipelines: pipesR.pipelines }, now, me === TIMEOUT ? undefined : me, host);
+      out = { mode: 'full', ...m, listed: pipesR.listed, skipped: pipesR.skipped, capped: jobsR.capped, timedOut, me };
+    }
+
+    const { all, me } = out;
     const runs = all.slice(0, limits.maxRuns);
-    const capped = jobsR.capped || all.length > runs.length;
-    const timedOut = jobsR.timedOut || pipesR.timedOut || me === TIMEOUT;
-    const counts = `returned ${runs.length} of ${all.length} (job runs ${jobsR.runs.length}, pipeline updates ${all.length - jobsR.runs.length}, pipelines ${pipesR.pipelines.length} with updates / ${pipesR.listed} listed, ${pipesR.skipped} skipped)`;
+    const capped = out.capped || all.length > runs.length;
+    const counts = `returned ${runs.length} of ${all.length} (job runs ${out.jobRuns}, pipeline updates ${all.length - out.jobRuns}, pipelines ${out.withUpdates} with updates / ${out.listed} listed, ${out.skipped} skipped)`;
     if (capped) diag({ level: 'warn', code: 'cap-hit', message: `cap ${limits.maxRuns} hit; ${counts}` });
-    if (timedOut) diag({ level: 'warn', code: 'timeout-hit', message: `timeout ${limits.timeoutMs}ms hit${me === TIMEOUT ? ' (user name not resolved)' : ''}; ${counts}` });
-    if (capped || timedOut || pipesR.skipped) {
-      warn(
-        `[live] runs list cut short:${capped ? ` cap ${limits.maxRuns} hit;` : ''}${timedOut ? ` timeout ${limits.timeoutMs}ms hit;` : ''} ` +
-          `returned ${runs.length} of ${all.length} (job runs ${jobsR.runs.length}, pipeline updates ${all.length - jobsR.runs.length}, ` +
-          `pipelines ${pipesR.pipelines.length} with updates / ${pipesR.listed} listed, ${pipesR.skipped} skipped)`
-      );
+    if (out.timedOut) diag({ level: 'warn', code: 'timeout-hit', message: `timeout ${limits.timeoutMs}ms hit${me === TIMEOUT ? ' (user name not resolved)' : ''}; ${counts}` });
+    if (capped || out.timedOut || out.skipped) {
+      warn(`[live] runs list cut short:${capped ? ` cap ${limits.maxRuns} hit;` : ''}${out.timedOut ? ` timeout ${limits.timeoutMs}ms hit;` : ''} ${counts}`);
     }
-    return { asOf: now, source: o.source ?? 'live', runs };
+    const info: RefreshInfo = { mode: out.mode, calls: [...c.counts.values()].reduce((a, b) => a + b, 0), ms: Math.max(0, Math.round(timer() - started)) };
+    o.trace?.note({ refresh: info });
+    return { asOf: now, source: o.source ?? 'live', runs, refresh: info };
   }
 
   async function pipelineLog(ref: PipelineRef): Promise<string> {
@@ -188,7 +298,7 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
   }
 
   /** One pipeline update: getUpdate, plus the pipeline's events since it started (end time and cause) once it has finished. */
-  async function updateDraftOf(ref: PipelineRef, now: number, host: string, dl: Deadline): Promise<Draft> {
+  async function updateDraftOf(ref: PipelineRef, now: number, host: string, dl: Deadline): Promise<{ draft: Draft; commit: () => void }> {
     const got = await api.getUpdate({ pipeline_id: ref.pipelineId, update_id: ref.updateId });
     const u = got.update;
     if (!u) throw new SourceError(404, `Pipeline ${ref.pipelineId} has no update ${ref.updateId}`);
@@ -197,7 +307,23 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
       const got = await eventsSince(api, ref.pipelineId, u.creation_time ?? ref.startTime, dl, diag);
       if (got !== TIMEOUT) events = got;
     }
-    return updateDraft(u, ref.info, indexEvents(events ?? []).get(ref.updateId), now, diag, host);
+    const draft = updateDraft(u, ref.info, indexEvents(events ?? []).get(ref.updateId), now, diag, host);
+    // Into the base too, so the next delta starts from this copy (it only re-reads the pipeline when it has changed).
+    const commit = () => {
+      const p = state.bases.get(o.userKey)?.pipelines.get(ref.pipelineId);
+      const old = p?.updates.get(ref.updateId);
+      if (!p || !old || old.at > now) return;
+      p.updates.set(ref.updateId, { value: u, at: now });
+      if (events?.length) p.events = mergeEvents(p.events, events, 0);
+    };
+    return { draft, commit };
+  }
+
+  /** A job run read on its own, into the base (unless the base holds a later copy or no longer has the run). */
+  function commitJobRun(run: jobs.Run, now: number): void {
+    const runs = state.bases.get(o.userKey)?.runs;
+    const old = run.run_id === undefined ? undefined : runs?.get(run.run_id);
+    if (runs && old && old.at <= now) runs.set(run.run_id!, { value: run, at: now });
   }
 
   return {
@@ -209,9 +335,17 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
       const ref = state.pipelineRefs.get(runId);
       try {
         const host = await o.api.host().catch(() => '');
-        const draft = ref ? await updateDraftOf(ref, now, host, dl) : jobDraft(await api.getRun({ run_id: runId }), now, diag, host);
+        let draft: Draft;
+        let commit: () => void;
+        if (ref) ({ draft, commit } = await updateDraftOf(ref, now, host, dl));
+        else {
+          const got = await api.getRun({ run_id: runId });
+          draft = jobDraft(got, now, diag, host);
+          commit = () => commitJobRun(got, now);
+        }
         // A replayed call answered by a nearby recording can be another run: that is not this one.
         if (draft.id !== runId) throw new SourceError(404, `Run ${runId} does not exist`);
+        commit();
         const cached = cachedRuns();
         // usualSec as the list computes it: this run with the other runs of its job in the list.
         const peers = cached.filter((r) => r.id !== runId && runKey(r) === draft.key).map((r) => ({ key: draft.key, live: r.live, queued: r.kind === 'queued', result: r.result, durationSec: r.durationSec }));
@@ -224,17 +358,17 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
         throw toSourceError(e, true);
       }
     },
-    async listRuns(since) {
+    async listRuns(since, _tzOffsetMin, opts: ListOptions = {}) {
       const key = `${o.userKey}|${since ?? ''}`;
       const hit = state.cache.get(key);
-      if (hit && clock() - hit.at < CACHE_TTL_MS) {
+      if (hit && !opts.full && clock() - hit.at < CACHE_TTL_MS) {
         o.trace?.note({ now: hit.data.asOf });
         diag({ level: 'info', code: 'cache-hit', message: `served from the ${CACHE_TTL_MS / 1000}s cache (asOf ${new Date(hit.data.asOf).toISOString()})` });
         return hit.data;
       }
       let data: RunsResponse;
       try {
-        data = await fetchRuns(since);
+        data = await fetchRuns(since, !!opts.full);
       } catch (e) {
         throw toSourceError(e);
       }

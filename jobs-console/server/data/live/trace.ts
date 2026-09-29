@@ -1,3 +1,4 @@
+import type { RefreshInfo } from '../../../shared/domain/types';
 import type { LiveApi } from './api';
 import type { LiveLimits } from './limits';
 
@@ -19,6 +20,6 @@ export interface Trace {
   diag: Diag;
   /** Wraps the request's LiveApi so every call is recorded. */
   wrap(api: LiveApi): LiveApi;
-  /** What the source settled on: the asOf it used, the requester, the limits in effect. */
-  note(meta: { now?: number; user?: string; limits?: LiveLimits }): void;
+  /** What the source settled on: the asOf it used, the requester, the limits in effect, how it refreshed. */
+  note(meta: { now?: number; user?: string; limits?: LiveLimits; refresh?: RefreshInfo }): void;
 }

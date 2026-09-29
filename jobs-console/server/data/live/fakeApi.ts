@@ -1,5 +1,6 @@
 import type { jobs, pipelines } from '@databricks/sdk-experimental';
 import type { LiveApi } from './api';
+import { isTerminated } from './jobs';
 
 /** Test double: serves canned SDK objects page by page. Only used by tests. */
 export interface FakeData {
@@ -34,7 +35,7 @@ export function fakeApi(data: FakeData): LiveApi & { calls: string[] } {
     me: () => reply('me', () => ({ userName: data.user ?? 'me@x.com' })),
     listJobRuns: (req) =>
       reply('listJobRuns', () => {
-        const all = (data.runs ?? []).filter((r) => (r.start_time ?? 0) >= (req.start_time_from ?? 0));
+        const all = (data.runs ?? []).filter((r) => (r.start_time ?? 0) >= (req.start_time_from ?? 0) && (!req.active_only || !isTerminated(r)));
         const at = Number(req.page_token ?? 0);
         const next = at + size;
         return { runs: all.slice(at, next), next_page_token: next < all.length ? String(next) : undefined };

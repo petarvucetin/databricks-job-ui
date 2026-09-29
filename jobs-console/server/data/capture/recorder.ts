@@ -1,3 +1,4 @@
+import type { RefreshInfo } from '../../../shared/domain/types';
 import type { LiveApi } from '../live/api';
 import { apiErrorParts } from '../live/apiError';
 import type { LiveLimits } from '../live/limits';
@@ -45,6 +46,8 @@ export interface SessionRecord {
   /** The asOf the source used ("now" for kinds, live and durations). */
   now?: number;
   limits?: LiveLimits;
+  /** A list the source computed (not a cache hit): full load or delta. Replay re-runs the same mode. */
+  refresh?: RefreshInfo;
   calls: CallRecord[];
   diagnostics: DiagNote[];
   /** Diagnostics dropped past the per-session cap. */
@@ -119,7 +122,8 @@ export class Session implements Trace {
     else this.rec.droppedDiagnostics = (this.rec.droppedDiagnostics ?? 0) + 1;
   }
 
-  note(meta: { now?: number; user?: string; limits?: LiveLimits }): void {
+  note(meta: { now?: number; user?: string; limits?: LiveLimits; refresh?: RefreshInfo }): void {
+    if (meta.refresh !== undefined) this.rec.refresh = { ...meta.refresh };
     if (meta.now !== undefined) this.rec.now = meta.now;
     if (meta.user !== undefined) this.rec.user = meta.user;
     if (meta.limits !== undefined) this.rec.limits = { ...meta.limits };

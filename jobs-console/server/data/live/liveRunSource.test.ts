@@ -74,12 +74,13 @@ describe('live listRuns', () => {
   it('caches per user and window for 20s', async () => {
     let t = NOW;
     const { src, api } = source({ runs: [jobRun(0)] }, {}, () => t);
-    await src.listRuns();
-    await src.listRuns();
+    const first = await src.listRuns();
+    expect(await src.listRuns()).toBe(first);
     expect(api.calls.filter((c) => c === 'listJobRuns')).toHaveLength(1);
     t += 21000;
-    await src.listRuns();
-    expect(api.calls.filter((c) => c === 'listJobRuns')).toHaveLength(2);
+    const next = await src.listRuns();
+    expect(next).not.toBe(first);
+    expect(next.refresh?.mode).toBe('delta');
   });
 
   it('SDK errors become 502, auth errors keep 401/403', async () => {
@@ -96,6 +97,159 @@ describe('live listRuns', () => {
     });
     expect((await src.listRuns()).runs).toEqual([]);
     expect(warn.mock.calls[0][0]).toMatch(/1 skipped/);
+  });
+});
+
+describe('incremental refresh', () => {
+  const done = (id: number, ago: number, job = 1): jobs.BaseRun => ({
+    run_id: id, job_id: job, run_name: `job${job}`, creator_user_name: 'me@x.com', start_time: NOW - ago * MIN, run_duration: 60000,
+    status: { state: 'TERMINATED', termination_details: { code: 'SUCCESS' } }, state: { result_state: 'SUCCESS' }, tasks: [{ task_key: 'a' }],
+  });
+  const running = (id: number, ago: number): jobs.BaseRun => ({ ...done(id, ago), run_duration: undefined, status: { state: 'RUNNING' }, state: {} });
+  const idlePipelines = (n: number): Pick<FakeData, 'pipelines' | 'updates' | 'specs'> => {
+    const ids = Array.from({ length: n }, (_, i) => `p${i}`);
+    return {
+      pipelines: ids.map((id) => ({ pipeline_id: id, name: id, latest_updates: [{ update_id: `${id}-u1`, state: 'COMPLETED' as const }] })),
+      specs: Object.fromEntries(ids.map((id) => [id, { pipeline_id: id, name: id, run_as_user_name: 'sp' }])),
+      updates: Object.fromEntries(ids.map((id) => [id, [{ update_id: `${id}-u1`, creation_time: NOW - 3 * 60 * MIN, state: 'COMPLETED' as const }]])),
+    };
+  };
+
+  function live(data: FakeData, opts: { refresh?: { incremental: boolean; fullRefreshMs: number } } = {}) {
+    let t = NOW;
+    const api = fakeApi(data);
+    const notes: { code: string; message: string }[] = [];
+    const state = createLiveState();
+    const src = createLiveRunSource({
+      api, user: () => Promise.resolve('me@x.com'), userKey: 'me', state, limits: DEFAULT_LIMITS, clock: () => t, warn: () => {}, refresh: opts.refresh,
+      trace: { diag: (n) => notes.push(n), wrap: (a) => a, note: () => {} },
+    });
+    return { api, src, notes, state, advance: (ms: number) => (t += ms), since: () => api.calls.length };
+  }
+
+  it('an unchanged workspace costs a fixed 3 calls per delta, however long its history', async () => {
+    const callsFor = async (history: number) => {
+      const w = live({ runs: Array.from({ length: history }, (_, i) => done(i + 1, 10 + i)), runPageSize: 25, ...idlePipelines(20) });
+      const full = await w.src.listRuns();
+      expect(full.refresh?.mode).toBe('full');
+      const mark = w.since();
+      w.advance(60000);
+      const delta = await w.src.listRuns();
+      expect(delta.refresh).toMatchObject({ mode: 'delta', calls: 3 });
+      // Same answer as the full load: nothing changed (all finished, so no durations move).
+      expect(delta.runs).toEqual(full.runs);
+      return { full: full.refresh!.calls, delta: w.api.calls.slice(mark) };
+    };
+    const small = await callsFor(50);
+    const big = await callsFor(500);
+    expect(big.delta).toEqual(['listJobRuns', 'listJobRuns', 'listPipelines']);
+    expect(small.delta).toEqual(big.delta);
+    expect(big.full).toBeGreaterThan(40); // 20 runs pages + 1 + 20 x (getPipeline, listUpdates, events)
+  });
+
+  it('merges new, finished and deleted runs and changed pipelines to the same list a full load gives', async () => {
+    const data: FakeData = {
+      runs: [running(2, 30), running(3, 20), done(1, 60)],
+      pipelines: [
+        { pipeline_id: 'p1', name: 'p1', latest_updates: [{ update_id: 'a1', state: 'COMPLETED' }] },
+        { pipeline_id: 'p2', name: 'p2', latest_updates: [{ update_id: 'b1', state: 'COMPLETED' }] },
+      ],
+      specs: { p1: { pipeline_id: 'p1', name: 'p1' }, p2: { pipeline_id: 'p2', name: 'p2' } },
+      updates: { p1: [{ update_id: 'a1', creation_time: NOW - 90 * MIN, state: 'COMPLETED' }], p2: [{ update_id: 'b1', creation_time: NOW - 90 * MIN, state: 'COMPLETED' }] },
+    };
+    const w = live(data);
+    await w.src.listRuns();
+    w.advance(60000);
+    // Meanwhile: run 4 started (and finished), run 2 finished, run 3 was deleted, p1 started a new update.
+    const finished2 = { ...done(2, 30), run_duration: 29 * MIN };
+    data.runs = [{ ...done(4, 0), start_time: NOW + 30000 }, finished2, done(1, 60)];
+    data.runsById = { 2: finished2 };
+    data.pipelines = [{ pipeline_id: 'p1', name: 'p1', latest_updates: [{ update_id: 'a2', state: 'RUNNING' }] }, data.pipelines![1]];
+    data.updates = { ...data.updates, p1: [{ update_id: 'a2', creation_time: NOW + 10000, state: 'RUNNING' }, ...data.updates!.p1] };
+    const mark = w.since();
+    const delta = await w.src.listRuns();
+    expect(delta.refresh?.mode).toBe('delta');
+    // No getPipeline: p1 is known. p2 is idle, so not re-read.
+    expect(w.api.calls.slice(mark).sort()).toEqual(['getRun', 'getRun', 'listJobRuns', 'listJobRuns', 'listPipelineEvents', 'listPipelines', 'listUpdates']);
+    expect(w.notes.find((n) => n.code === 'delta')?.message).toBe('active runs 0, new runs 1, finished via getRun 1, deleted 1, pipelines re-read 1 of 2, aged out of the window 0');
+    const fresh = live(data);
+    fresh.advance(60000);
+    const full = await fresh.src.listRuns();
+    expect(delta.runs).toEqual(full.runs);
+    expect(delta.runs.map((r) => r.runId)).toEqual(['4', 'upd a2', '2', '1', 'upd a1', 'upd b1']);
+  });
+
+  it('falls back to a full load when a delta step fails, with a delta-fallback diagnostic', async () => {
+    const data: FakeData = { runs: [running(2, 30), done(1, 60)] };
+    const w = live(data);
+    await w.src.listRuns();
+    w.advance(60000);
+    data.runs = [done(1, 60)]; // run 2 left both lists, and getRun fails
+    data.fail = { getRun: Object.assign(new Error('busy'), { statusCode: 503 }) };
+    const res = await w.src.listRuns();
+    expect(res.refresh?.mode).toBe('full');
+    expect(res.runs.map((r) => r.id)).toEqual([1]);
+    expect(w.notes.find((n) => n.code === 'delta-fallback')?.message).toMatch(/busy/);
+    // The full load became the base: the next list is a delta again.
+    data.fail = {};
+    w.advance(60000);
+    expect((await w.src.listRuns()).refresh?.mode).toBe('delta');
+  });
+
+  it('never keeps a half-merged base: a failed delta and a failed full load leave the old base', async () => {
+    const data: FakeData = { runs: [done(1, 60)] };
+    const w = live(data);
+    await w.src.listRuns();
+    const before = w.state.bases.get('me');
+    w.advance(60000);
+    data.fail = { listPipelines: Object.assign(new Error('down'), { statusCode: 500 }) };
+    await expect(w.src.listRuns()).rejects.toMatchObject({ status: 502 });
+    expect(w.state.bases.get('me')).toBe(before);
+  });
+
+  it('full=1 loads in full and skips the response cache', async () => {
+    const w = live({ runs: [done(1, 60)] });
+    await w.src.listRuns();
+    w.advance(1000);
+    const res = await w.src.listRuns(undefined, undefined, { full: true });
+    expect(res.refresh?.mode).toBe('full');
+    expect(w.notes.filter((n) => n.code === 'full-load').map((n) => n.message)).toEqual(['full load: no base yet', 'full load: asked for (full=1)']);
+  });
+
+  it('loads in full again once the base is older than JOBS_CONSOLE_FULL_REFRESH_MS, and when the window changes', async () => {
+    const w = live({ runs: [done(1, 60)] }, { refresh: { incremental: true, fullRefreshMs: 90000 } });
+    await w.src.listRuns();
+    w.advance(60000);
+    expect((await w.src.listRuns()).refresh?.mode).toBe('delta');
+    w.advance(40000);
+    expect((await w.src.listRuns()).refresh?.mode).toBe('full');
+    w.advance(30000);
+    expect((await w.src.listRuns(NOW - 60 * MIN)).refresh?.mode).toBe('full');
+  });
+
+  it('JOBS_CONSOLE_INCREMENTAL=0: every list is a full load', async () => {
+    const w = live({ runs: [done(1, 60)] }, { refresh: { incremental: false, fullRefreshMs: 900000 } });
+    await w.src.listRuns();
+    w.advance(60000);
+    expect((await w.src.listRuns()).refresh?.mode).toBe('full');
+    expect(w.state.bases.size).toBe(0);
+  });
+
+  it('a single-run refresh updates the base, so the next delta neither re-reads nor rewinds that run', async () => {
+    const data: FakeData = { runs: [running(2, 30), done(1, 60)] };
+    const w = live(data);
+    await w.src.listRuns();
+    const finished2 = { ...done(2, 30), run_duration: 29 * MIN };
+    data.runs = [finished2, done(1, 60)];
+    data.runsById = { 2: finished2 };
+    w.advance(30000);
+    expect(await w.src.getRun(2)).toMatchObject({ live: false, result: 'succeeded' });
+    w.advance(30000);
+    const mark = w.since();
+    const delta = await w.src.listRuns();
+    expect(delta.refresh?.mode).toBe('delta');
+    expect(w.api.calls.slice(mark)).not.toContain('getRun');
+    expect(delta.runs.find((r) => r.id === 2)).toMatchObject({ live: false, result: 'succeeded', durationSec: 29 * 60 });
   });
 });
 
