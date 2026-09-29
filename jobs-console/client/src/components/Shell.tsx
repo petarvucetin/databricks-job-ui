@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { DataMode } from '../../../shared/domain/types';
+import appVersion from 'virtual:app-version';
 import { CaptureMenu } from './CaptureMenu';
 import './shell.css';
 
@@ -49,6 +50,9 @@ export function Shell({ mode, children }: { mode?: DataMode; children: ReactNode
         {mode && <Workspace mode={mode} />}
         {mode && <Identity mode={mode} />}
         {mode?.capture && <CaptureMenu />}
+        <span className="shell-ver" title={appVersion.commit ? `Built from commit ${appVersion.commit}, ${appVersion.date.slice(0, 16).replace('T', ' ')}` : undefined}>
+          v{appVersion.version}{appVersion.commit && ` · ${appVersion.commit}`}
+        </span>
       </header>
       <main className="shell-body">{children}</main>
     </div>

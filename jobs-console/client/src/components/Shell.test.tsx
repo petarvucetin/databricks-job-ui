@@ -16,6 +16,13 @@ describe('Shell', () => {
     expect(screen.getByText('body')).toBeTruthy();
   });
 
+  it('shows the version, bumped by every commit, with the commit it was built from', () => {
+    const { container } = render(<Shell><p /></Shell>);
+    const v = container.querySelector('.shell-ver')!;
+    expect(v.textContent).toMatch(/^v\d+\.\d+\.\d+ · [0-9a-f]{7,}$/);
+    expect(v.getAttribute('title')).toMatch(/^Built from commit [0-9a-f]{7,}, /);
+  });
+
   it('names the monitored workspace and links to it', () => {
     render(<Shell mode={{ source: 'live', auth: 'app', capture: true, workspace: 'https://adb-1.2.azuredatabricks.net', profile: 'gov' }}><p /></Shell>);
     const link = screen.getByRole('link', { name: /adb-1\.2\.azuredatabricks\.net/ });
