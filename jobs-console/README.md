@@ -150,7 +150,7 @@ databricks bundle run app -t gov --profile gov
     value: app
 ```
 
-then deploy again. The app then shows only what the service principal was granted (Can View on the jobs and pipelines), and the badge says "live data Â· as app".
+then deploy again. The app then shows only what the service principal was granted (Can View on the jobs and pipelines), and the badge says "live data · as app".
 
 ### Bringing problems home: the Capture menu
 
