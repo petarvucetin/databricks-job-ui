@@ -14,6 +14,11 @@ export interface FailedTask {
   name: string;
   cause: Cause;
   secs: number;
+  /**
+   * A job's pipeline task. Its own message only says to see the pipeline's logs: 'unread' until the run's own refresh
+   * has taken the cause from the pipeline's events ('read').
+   */
+  pipeline?: 'unread' | 'read';
 }
 
 /**

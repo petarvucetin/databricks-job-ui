@@ -268,7 +268,7 @@ describe('live getRun', () => {
   it("a failed pipeline task takes its cause from the pipeline's events, not the task's 'refer to the logs'", async () => {
     const { src, api } = source({ runsById: { 7: pipeRun }, outputs: { 70: probe.output as jobs.RunOutput }, updates: { [PID]: probe.updates as pipelines.UpdateInfo[] }, events: { [PID]: probe.events as pipelines.PipelineEvent[] } });
     const run = await src.getRun(7);
-    expect(run.failed[0]).toMatchObject({ name: 'run_etl_pipeline', cause: { label: 'Table not found', code: 'TABLE_OR_VIEW_NOT_FOUND' } });
+    expect(run.failed[0]).toMatchObject({ name: 'run_etl_pipeline', cause: { label: 'Table not found', code: 'TABLE_OR_VIEW_NOT_FOUND' }, pipeline: 'read' });
     expect(run.cause).toEqual(run.failed[0].cause);
     expect(api.calls).toEqual(['getRun', 'getRunOutput', 'listUpdates', 'listPipelineEvents', 'me']);
   });
@@ -276,7 +276,7 @@ describe('live getRun', () => {
   it('keeps the task cause when the pipeline cannot be read', async () => {
     const { src } = source({ runsById: { 7: pipeRun }, outputs: { 70: probe.output as jobs.RunOutput }, fail: { listPipelineEvents: new Error('nope') } });
     const run = await src.getRun(7);
-    expect(run.failed[0].cause.detail).toBe(probe.output.error);
+    expect(run.failed[0]).toMatchObject({ cause: { detail: probe.output.error }, pipeline: 'unread' });
   });
 });
 

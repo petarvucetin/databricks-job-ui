@@ -312,7 +312,7 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
         .catch(() => undefined);
       if (!got || got === TIMEOUT) continue;
       if (draft.cause === f.cause) draft.cause = got.cause;
-      draft.failed[i] = { ...f, cause: got.cause };
+      draft.failed[i] = { ...f, cause: got.cause, pipeline: 'read' };
     }
   }
 

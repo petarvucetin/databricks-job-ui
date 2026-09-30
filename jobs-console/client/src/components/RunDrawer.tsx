@@ -237,9 +237,6 @@ export interface DrawerRefresh {
   updatedAt: number;
 }
 
-/** What a job's failed pipeline task says for itself (see server/data/live/pipelineTask.ts). */
-const PIPELINE_LOGS_ONLY = /refer to the logs for this pipeline/i;
-
 const agoText = (sec: number) => (sec < 60 ? `updated ${sec}s ago` : `updated ${Math.floor(sec / 60)}m ago`);
 
 /**
@@ -263,10 +260,10 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose, refresh }: {
   const refreshNow = () => {
     if (onRefresh) void onRefresh().finally(() => setManual((n) => n + 1));
   };
-  // A failed pipeline task in the list only says to see the pipeline's logs; the run's own refresh reads the pipeline's
+  // A failed pipeline task in the list only says to see the pipeline's logs (FailedTask.pipeline 'unread'); the run's own refresh reads the pipeline's
   // events for the real cause. Once per run opened, so a pipeline that cannot be read is not asked again and again.
   const pipelineAsked = useRef<number | null>(null);
-  const needsPipelineCause = run.failed.some((f) => PIPELINE_LOGS_ONLY.test(f.cause.detail));
+  const needsPipelineCause = run.failed.some((f) => f.pipeline === 'unread');
   useEffect(() => {
     if (!needsPipelineCause || pipelineAsked.current === run.id) return;
     pipelineAsked.current = run.id;

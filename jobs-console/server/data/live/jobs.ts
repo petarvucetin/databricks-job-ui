@@ -228,7 +228,7 @@ export function jobDraft(run: jobs.BaseRun, now: number, diag: Diag = noDiag, ho
   const latest = latestAttempts(tasks);
   const failed: FailedTask[] = latest
     .filter((t) => stateOf(t) === 'TERMINATED' && resultOf(t.state, t.status?.termination_details) === 'failed')
-    .map((t) => ({ name: t.task_key, cause: causeOf(t), secs: finishedSec(t) }));
+    .map((t) => ({ name: t.task_key, cause: causeOf(t), secs: finishedSec(t), ...(t.pipeline_task ? { pipeline: 'unread' as const } : {}) }));
 
   const result = finished ? resultOf(run.state, run.status?.termination_details) : null;
   let cause: Cause | null = null;

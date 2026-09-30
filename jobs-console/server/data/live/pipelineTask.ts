@@ -29,8 +29,8 @@ export function attemptChain(updates: pipelines.UpdateInfo[], requestId: string,
   return chain;
 }
 
-/** The task's own error when it says more than "see the pipeline's logs". */
-const GENERIC_TASK_ERROR = /refer to the logs for this pipeline/i;
+/** The task's own error when it says more than "see the pipeline's logs" (cancelled) or "see run output" (failed). */
+const GENERIC_TASK_ERROR = /refer to the logs for this pipeline|see run output for details/i;
 
 /** Every attempt under its own heading with its ERROR and WARN events, oldest first, so the last attempt ends the log. */
 export function pipelineTaskLogText(events: pipelines.PipelineEvent[], chain: string[], taskError?: string): string {

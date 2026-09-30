@@ -55,6 +55,10 @@ describe('pipelineTaskLogText', () => {
     expect(text).not.toContain('Please refer to the logs');
   });
 
+  it('leaves out the generic error of a failed task too', () => {
+    expect(pipelineTaskLogText([], ['u1'], 'Workload failed, see run output for details')).not.toContain('Workload failed');
+  });
+
   it('keeps a task error that says something', () => {
     const text = pipelineTaskLogText([], ['u1'], 'Pipeline is not in a valid state');
     expect(text.split('\n')).toEqual(['Pipeline update u1, attempt 1 of 1 (started by this task)', 'No warnings or errors recorded for this update.', 'ERROR Pipeline is not in a valid state']);
