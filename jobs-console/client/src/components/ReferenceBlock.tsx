@@ -4,7 +4,7 @@ import './reference.css';
 
 const LEGEND: [string, string, string][] = [
   ['2', 'Type tag', 'Job or Pipeline, as a word.'],
-  ['12', 'Run history', "Hidden until you click the Run history title (▸, with how many runs); click again to hide. This job's finished runs in the timeline window, oldest to newest: runtime on top, start day/time (e.g. 18/06:00) under it; green succeeded, red failed, grey struck cancelled, split partially succeeded; outlined boxes are the runs open in the drawer."],
+  ['12', 'Run history', "Hidden until you click the Run history title (▸, with how many runs); click again to hide. This job's finished runs in the timeline window, oldest to newest, on one line that scrolls sideways (opens at the newest): runtime on top, start day/time (e.g. 18/06:00) under it; green succeeded, red failed, grey struck cancelled, split partially succeeded; outlined boxes are the runs open in the drawer."],
   ['3', 'Name', 'Job or pipeline name, without the bundle target prefix.'],
   ['19', 'Target', 'Pill under the name for development deployments: the bundle target and whose it is, e.g. dev john smith. Prod has none.'],
   ['13', 'Run as', 'Pill between the type tag and the name: the identity the run executes as.'],

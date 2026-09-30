@@ -2,8 +2,10 @@ import type { Run } from '../../../shared/domain/types';
 import type { TimeWindow } from './filters';
 import { pad } from '../../../shared/domain/format';
 
-/** Most boxes a row shows; older runs in the window collapse into an "+N earlier" chip. */
+/** Most boxes a strip shows; older runs in the window collapse into an "+N earlier" chip. */
 export const HISTORY_MAX = 24;
+/** A run row's history scrolls sideways, so it shows far more; the cap only bounds a busy job over a long window. */
+export const ROW_HISTORY_MAX = 200;
 
 /** Finished runs (with a result) of each job, keyed by full name, that started inside the timeline window, oldest first. */
 export function historyByJob(runs: Run[], w: TimeWindow): Map<string, Run[]> {
@@ -18,8 +20,8 @@ export function historyByJob(runs: Run[], w: TimeWindow): Map<string, Run[]> {
   return out;
 }
 
-export function visibleHistory(runs: Run[]): { shown: Run[]; earlier: number } {
-  const earlier = Math.max(0, runs.length - HISTORY_MAX);
+export function visibleHistory(runs: Run[], max = HISTORY_MAX): { shown: Run[]; earlier: number } {
+  const earlier = Math.max(0, runs.length - max);
   return { shown: earlier ? runs.slice(earlier) : runs, earlier };
 }
 

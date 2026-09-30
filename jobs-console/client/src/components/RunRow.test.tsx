@@ -83,10 +83,10 @@ describe('RunRow', () => {
     expect(prod.container.querySelector('.rr-tgt')).toBeNull();
   });
 
-  it('collapses runs beyond the box limit into an "earlier" chip', () => {
-    const many = Array.from({ length: 30 }, (_, i) => makeRun({ id: 100 + i, kind: 'succeeded', failed: [], result: 'succeeded', startTime: i }));
-    const { container } = render(<RunRow historyOpen run={many[29]} history={many} nowMs={0} loadedAt={0} asOf={0} />);
-    expect(container.querySelectorAll('.rr-hist .rh')).toHaveLength(24);
+  it('shows up to 200 runs on one scrolling line, the rest in an "earlier" chip', () => {
+    const many = Array.from({ length: 206 }, (_, i) => makeRun({ id: 100 + i, kind: 'succeeded', failed: [], result: 'succeeded', startTime: i }));
+    const { container } = render(<RunRow historyOpen run={many[205]} history={many} nowMs={0} loadedAt={0} asOf={0} />);
+    expect(container.querySelectorAll('.rr-hist .rh')).toHaveLength(200);
     expect(container.querySelector('.rr-hist .rh-more')!.textContent).toBe('+6 earlier');
   });
 

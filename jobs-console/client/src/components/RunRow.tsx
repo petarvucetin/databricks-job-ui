@@ -1,10 +1,10 @@
-import { Fragment, useState, type MouseEvent } from 'react';
+import { Fragment, useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
 import type { Run } from '../../../shared/domain/types';
 import { dur, fmtStart } from '../../../shared/domain/format';
 import {
   elapsedSec, progress, splitName, statBlock, taskStates,
 } from '../model/rowView';
-import { dayTime, durShort, historyStats, visibleHistory } from '../model/history';
+import { ROW_HISTORY_MAX, dayTime, durShort, historyStats, visibleHistory } from '../model/history';
 import { TitleLink } from './TitleLink';
 import './runrow.css';
 
@@ -41,6 +41,12 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   historyOpen?: boolean;
 }) {
   const [showHist, setShowHist] = useState(historyOpen);
+  const boxesRef = useRef<HTMLDivElement>(null);
+  // Newest runs are on the right: open the history scrolled to them. Only on opening, so a live row's ticks don't jump it back.
+  useLayoutEffect(() => {
+    const el = boxesRef.current;
+    if (showHist && el) el.scrollLeft = el.scrollWidth;
+  }, [showHist]);
   const elapsed = elapsedSec(run, nowMs, loadedAt);
   const { over } = progress(run, elapsed);
   const stat = statBlock(run, elapsed, asOf);
@@ -49,7 +55,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   const inner = prefix.trim().slice(1, -1);
   const target = inner ? { kind: inner.split(' ')[0], who: inner.split(' ').slice(1).join(' ') } : null;
   const allHist = history ?? (run.result ? [run] : []);
-  const hist = visibleHistory(allHist);
+  const hist = visibleHistory(allHist, ROW_HISTORY_MAX);
   const stats = historyStats(allHist, run.live);
   const openDrawer = (id: number) => (e: MouseEvent) => {
     e.stopPropagation();
@@ -112,7 +118,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
             {stats.map((s) => <span key={s.key} className={`rs ${s.key}`}><b>{s.n}</b> {s.key}</span>)}
           </div>
         )}
-        {showHist && <div className="rr-hist-boxes">
+        {showHist && <div className="rr-hist-boxes" ref={boxesRef}>
           {hist.earlier > 0 && <span className="rh-more">+{hist.earlier} earlier</span>}
           {hist.shown.map((h) => (
             <span key={h.id} className="rh-wrap">
