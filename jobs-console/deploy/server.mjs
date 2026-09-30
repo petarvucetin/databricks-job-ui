@@ -234912,7 +234912,8 @@ function jobDraft(run, now, diag = noDiag, host) {
 	const failed = latest.filter((t) => stateOf(t) === "TERMINATED" && resultOf(t.state, t.status?.termination_details) === "failed").map((t) => ({
 		name: t.task_key,
 		cause: causeOf(t),
-		secs: finishedSec(t)
+		secs: finishedSec(t),
+		...t.pipeline_task ? { pipeline: "unread" } : {}
 	}));
 	const result = finished ? resultOf(run.state, run.status?.termination_details) : null;
 	let cause = null;
@@ -235376,6 +235377,56 @@ function pipelineLogText(events, updateId) {
 }
 
 //#endregion
+//#region server/data/live/pipelineTask.ts
+/**
+* A job's pipeline task and the pipeline updates it ran. runs/get-output for the task returns a `pipeline_output` block
+* the SDK types leave out: `pipeline_request_id` is the update the task started, `pipeline_update_id` the latest one.
+* They differ when the update failed and the pipeline retried it on its own (cause RETRY_ON_FAILURE, up to
+* pipelines.numUpdateRetryAttempts times, 5 by default), all inside the one task.
+*/
+function pipelineOutputOf(out) {
+	const po = out?.pipeline_output;
+	const requestId = po?.pipeline_request_id || po?.pipeline_update_id;
+	return requestId ? {
+		requestId,
+		updateId: po?.pipeline_update_id || requestId
+	} : void 0;
+}
+/** The update the task started, then the pipeline's retries of it up to `lastId`, oldest first. */
+function attemptChain(updates, requestId, lastId) {
+	const sorted = [...updates].sort((a, b) => (a.creation_time ?? 0) - (b.creation_time ?? 0));
+	const at = sorted.findIndex((u) => u.update_id === requestId);
+	if (at < 0 || !sorted.some((u) => u.update_id === lastId)) return requestId === lastId ? [requestId] : [requestId, lastId];
+	const chain = [requestId];
+	for (const u of sorted.slice(at + 1)) {
+		if (chain[chain.length - 1] === lastId) break;
+		if (u.cause === "RETRY_ON_FAILURE" && u.update_id) chain.push(u.update_id);
+	}
+	return chain;
+}
+/** The task's own error when it says more than "see the pipeline's logs" (cancelled) or "see run output" (failed). */
+const GENERIC_TASK_ERROR = /refer to the logs for this pipeline|see run output for details/i;
+/** Every attempt under its own heading with its ERROR and WARN events, oldest first, so the last attempt ends the log. */
+function pipelineTaskLogText(events, chain, taskError) {
+	const lines = [];
+	chain.forEach((id, i) => {
+		lines.push(`Pipeline update ${id.slice(0, 8)}, attempt ${i + 1} of ${chain.length} (${i ? "the pipeline retried" : "started by this task"})`);
+		lines.push(pipelineLogText(events, id));
+	});
+	if (taskError && !GENERIC_TASK_ERROR.test(taskError)) lines.push(`ERROR ${taskError}`);
+	return lines.join("\n");
+}
+/** Cause from the latest attempt that logged an error: its exception, preferring the event that names the failing flow. */
+function pipelineTaskCause(events, chain) {
+	for (const id of [...chain].reverse()) {
+		const errors = events.filter((e) => e.origin?.update_id === id && e.level === "ERROR").sort((a, b) => (a.timestamp ?? "").localeCompare(b.timestamp ?? ""));
+		if (!errors.length) continue;
+		const named = errors.filter((e) => e.origin?.flow_name && e.error?.exceptions?.length);
+		return errorCause(named.length ? named : errors);
+	}
+}
+
+//#endregion
 //#region server/data/live/liveRunSource.ts
 const DAY = 864e5;
 const CACHE_TTL_MS = 2e4;
@@ -235622,31 +235673,76 @@ function createLiveRunSource(o) {
 			refresh: info
 		};
 	}
-	async function pipelineLog(ref) {
+	/** A pipeline's WARN and ERROR events since `from`, oldest first, up to 8 pages. */
+	async function warnErrorEvents(pipelineId, from) {
 		const events = [];
 		let token;
 		for (let pages = 0; pages < 8; pages++) {
 			const page = await api.listPipelineEvents(token ? {
-				pipeline_id: ref.pipelineId,
+				pipeline_id: pipelineId,
 				page_token: token,
 				max_results: EVENTS_PAGE_SIZE
 			} : {
-				pipeline_id: ref.pipelineId,
+				pipeline_id: pipelineId,
 				max_results: EVENTS_PAGE_SIZE,
 				order_by: ["timestamp asc"],
-				filter: `level in ('WARN', 'ERROR') AND timestamp >= '${new Date(ref.startTime).toISOString()}'`
+				filter: `level in ('WARN', 'ERROR') AND timestamp >= '${new Date(from).toISOString()}'`
 			});
 			events.push(...page.events ?? []);
 			token = page.next_page_token;
 			if (!token) break;
 		}
-		return pipelineLogText(events, ref.updateId);
+		return events;
+	}
+	async function pipelineLog(ref) {
+		return pipelineLogText(await warnErrorEvents(ref.pipelineId, ref.startTime), ref.updateId);
+	}
+	/**
+	* The updates a job's pipeline task ran (the one it started and the pipeline's retries) and their WARN/ERROR events;
+	* undefined for other tasks. A failing update list only costs the retries in between.
+	*/
+	async function pipelineTaskRead(task, output) {
+		const pipelineId = task.pipeline_task?.pipeline_id;
+		const po = pipelineOutputOf(output);
+		if (!pipelineId || !po) return void 0;
+		const updates = await api.listUpdates({
+			pipeline_id: pipelineId,
+			max_results: 25
+		}).then((r) => r.updates ?? [], () => []);
+		const events = await warnErrorEvents(pipelineId, task.start_time ?? 0);
+		return {
+			chain: attemptChain(updates, po.requestId, po.updateId),
+			events
+		};
 	}
 	async function jobLog(runId, taskKey) {
 		const task = findTask(await api.getRun({ run_id: runId }), taskKey);
 		if (!task) throw new SourceError(404, `Run ${runId} has no task "${taskKey}"`);
 		const state = task.status?.state ?? task.state?.life_cycle_state;
-		return jobLogText(task, (state === "RUNNING" || state === "TERMINATING" || state === "TERMINATED") && task.run_id ? await api.getRunOutput({ run_id: task.run_id }) : void 0);
+		const output = (state === "RUNNING" || state === "TERMINATING" || state === "TERMINATED") && task.run_id ? await api.getRunOutput({ run_id: task.run_id }) : void 0;
+		const pipe = await pipelineTaskRead(task, output);
+		return pipe ? pipelineTaskLogText(pipe.events, pipe.chain, output?.error) : jobLogText(task, output);
+	}
+	/**
+	* A failed pipeline task says only "refer to the logs for this pipeline": its cause comes from the pipeline's events
+	* instead (the run's too when it was taken from that task). Best effort: a failed read keeps the task's cause.
+	*/
+	async function withPipelineCauses(run, draft, dl) {
+		for (const [i, f] of draft.failed.entries()) {
+			const task = findTask(run, f.name);
+			if (!task?.pipeline_task || !task.run_id) continue;
+			const got = await dl.call(async () => {
+				const pipe = await pipelineTaskRead(task, await api.getRunOutput({ run_id: task.run_id }));
+				return pipe && pipelineTaskCause(pipe.events, pipe.chain);
+			}).catch(() => void 0);
+			if (!got || got === TIMEOUT) continue;
+			if (draft.cause === f.cause) draft.cause = got.cause;
+			draft.failed[i] = {
+				...f,
+				cause: got.cause,
+				pipeline: "read"
+			};
+		}
 	}
 	const mineKey = `${o.userKey}|`;
 	/** The requester's newest cached list (any window): the runs a single refreshed run is averaged with. */
@@ -235727,6 +235823,7 @@ function createLiveRunSource(o) {
 				else {
 					const got = await api.getRun({ run_id: runId });
 					draft = jobDraft(got, now, diag, host);
+					await withPipelineCauses(got, draft, dl);
 					commit = () => commitJobRun(got, now);
 				}
 				if (draft.id !== runId) throw new SourceError(404, `Run ${runId} does not exist`);
