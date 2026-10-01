@@ -63,6 +63,12 @@ describe('RunRow', () => {
     expect(boxes.map((b) => b.querySelector('.rh-w')!.textContent)).toEqual(['19/05:00', '20/05:00', '21/05:00', '22/05:00']);
     expect(boxes.map((b) => b.className)).toEqual(['rh succeeded', 'rh cancelled', 'rh partial', 'rh failed']);
     expect(container.querySelector('.rr-hist .rh-more')).toBeNull();
+    expect(container.querySelector('.rr-hist-t .rr-range')!.textContent).toBe('min 1h 05m max 1h 05m');
+  });
+
+  it('leaves out min and max when no run in the window succeeded', () => {
+    const { container } = render(<RunRow run={makeRun()} nowMs={0} loadedAt={0} asOf={0} />);
+    expect(container.querySelector('.rr-range')).toBeNull();
   });
 
   it('shows only the current-run box for a run still going when the job has no finished runs in the window', () => {

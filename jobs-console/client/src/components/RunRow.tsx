@@ -4,7 +4,7 @@ import { dur, fmtStart } from '../../../shared/domain/format';
 import {
   elapsedSec, progress, splitName, statBlock, taskStates,
 } from '../model/rowView';
-import { ROW_HISTORY_MAX, dayTime, durShort, historyStats, visibleHistory } from '../model/history';
+import { ROW_HISTORY_MAX, dayTime, durShort, durationRange, historyStats, visibleHistory } from '../model/history';
 import { TitleLink } from './TitleLink';
 import './runrow.css';
 
@@ -57,6 +57,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   const allHist = history ?? (run.result ? [run] : []);
   const hist = visibleHistory(allHist, ROW_HISTORY_MAX);
   const stats = historyStats(allHist, run.live);
+  const range = durationRange(allHist);
   const openDrawer = (id: number) => (e: MouseEvent) => {
     e.stopPropagation();
     const how: OpenHow = e.ctrlKey || e.metaKey ? (e.shiftKey ? 'tab' : 'stack') : 'open';
@@ -112,6 +113,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
           <span>Run history</span>
           <span className="rr-n">{nRuns}</span>
           <span className="rr-avg-t" data-c="14">average <em>{stat.average}</em></span>
+          {range && <span className="rr-avg-t rr-range">min <em>{dur(range.min)}</em> max <em>{dur(range.max)}</em></span>}
         </button>
         {!showHist && stats.length > 0 && (
           <div className="rr-stats" data-c="20">

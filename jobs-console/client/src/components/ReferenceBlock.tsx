@@ -14,7 +14,7 @@ const LEGEND: [string, string, string][] = [
   ['11', 'Waiting pill', 'Queued only: pill on the top line with the time spent waiting.'],
   ['9', 'Runtime', 'Running only: a split badge in its own column before the name, so every running row lines up. Solid block with a turning spinner, current runtime beside it. Green while under the average; amber past it, with how far over underneath.'],
   ['20', 'Run stats', 'How those runs went, as coloured chips under the Run history title while it is collapsed: failed, slow (finished over the average), ok, cancelled, partial, running. Outcomes with none are left out; opening the history swaps them for the boxes.'],
-  ['14', 'Average', 'Average duration for this job, next to the Run history title.'],
+  ['14', 'Average', 'Average duration for this job, next to the Run history title, then the shortest (min) and longest (max) succeeded run in the window.'],
 ];
 
 export function ReferenceBlock({ rows, history, nowMs, loadedAt, asOf, openRuns, onOpenRun }: { rows: Run[]; history: Map<string, Run[]>; nowMs: number; loadedAt: number; asOf: number; openRuns?: readonly number[]; onOpenRun?: (runId: number, rowId: number, how: OpenHow) => void }) {

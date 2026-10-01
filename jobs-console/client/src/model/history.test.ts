@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { makeRun } from '../test/fixtures';
-import { historyByJob, visibleHistory, durShort, dayTime, historyStats, HISTORY_MAX } from './history';
+import { historyByJob, visibleHistory, durShort, dayTime, historyStats, durationRange, HISTORY_MAX } from './history';
 
 const day = 86400000;
 const end = new Date(2026, 8, 23).getTime();
@@ -68,5 +68,18 @@ describe('historyStats', () => {
     ]);
     expect(historyStats([makeRun({ id: 7, kind: 'succeeded', result: 'partial' })], false)).toEqual([{ key: 'partial', n: 1 }]);
     expect(historyStats([], false)).toEqual([]);
+  });
+});
+
+describe('durationRange', () => {
+  it('takes the shortest and longest succeeded run, ignoring failed, cancelled and partial ones', () => {
+    const runs = [
+      makeRun({ id: 1, result: 'failed', durationSec: 5 }),
+      makeRun({ id: 2, kind: 'succeeded', result: 'succeeded', durationSec: 1200 }),
+      makeRun({ id: 3, kind: 'slow', result: 'succeeded', durationSec: 3900 }),
+      makeRun({ id: 4, kind: 'succeeded', result: 'cancelled', durationSec: 9999 }),
+    ];
+    expect(durationRange(runs)).toEqual({ min: 1200, max: 3900 });
+    expect(durationRange([makeRun({ id: 5, result: 'failed' })])).toBeNull();
   });
 });

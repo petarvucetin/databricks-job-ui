@@ -40,7 +40,13 @@ export function dayTime(ms: number): string {
   return `${d.getDate()}/${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-export type HistoryStat = { key: 'failed' | 'slow' | 'ok' | 'cancelled' | 'partial' | 'running'; n: number };
+/** Shortest and longest succeeded run in the window, the same runs the average is taken over; null when none succeeded. */
+export function durationRange(runs: Run[]): { min: number; max: number } | null {
+  const ds = runs.filter((r) => r.result === 'succeeded').map((r) => r.durationSec);
+  return ds.length ? { min: Math.min(...ds), max: Math.max(...ds) } : null;
+}
+
+export type HistoryStat ={ key: 'failed' | 'slow' | 'ok' | 'cancelled' | 'partial' | 'running'; n: number };
 
 /** How a job's runs in the window went, for the Run history title: failed, slow (finished over its average), ok, cancelled, partial, running; zero counts left out. */
 export function historyStats(runs: Run[], live: boolean): HistoryStat[] {
