@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { makeRun } from '../test/fixtures';
-import { columnText, countByColumn, dragRuntimeHandle, inRuntime, normalise, rangeText, runtimeColumns } from './runtime';
+import { dragRuntime, handlePositions, histogram, inRuntime, nearestEdge, rangeText, runtimeScale } from './runtime';
 
 const m = 60;
 const h = 3600;
@@ -10,21 +10,14 @@ const runs = [
   makeRun({ id: 3, kind: 'running', live: true, durationSec: 2.5 * h }),
 ];
 
-describe('runtime slider', () => {
-  it('spans round columns from the shortest run to the longest', () => {
-    const cols = runtimeColumns(runs, null);
-    expect(cols[0]).toEqual({ min: 2 * m, max: 5 * m });
-    expect(cols[cols.length - 1]).toEqual({ min: 2 * h, max: 3 * h });
-    expect(cols.map((c) => columnText(c).num)).toEqual(['2–5', '5–10', '10–15', '15–30', '30–45', '45–60', '1–1.5', '1.5–2', '2–3']);
-    expect(runtimeColumns([], null)).toEqual([]);
-  });
-
-  it('counts runs per column by status; a running run counts its time so far', () => {
-    const cols = runtimeColumns(runs, null);
-    const counts = countByColumn(runs, cols);
-    expect(counts[0].succeeded).toBe(1);
-    expect(counts[4].failed).toBe(1);
-    expect(counts[cols.length - 1].running).toBe(1);
+describe('runtime filter', () => {
+  it('snaps to round runtimes under the longest run, then the longest itself', () => {
+    const sc = runtimeScale(runs);
+    expect(sc.longest).toBe(2.5 * h);
+    expect(sc.edges).toEqual([0, m, 2 * m, 5 * m, 10 * m, 15 * m, 30 * m, 45 * m, h, 1.5 * h, 2 * h, 2.5 * h]);
+    expect(sc.x(0)).toBe(0);
+    expect(sc.x(2.5 * h)).toBe(1);
+    expect(sc.x(10 * m)).toBeGreaterThan(0.5); // logarithmic: minutes get room next to hours
   });
 
   it('filters by range, min inclusive and max exclusive; queued runs (0s) drop out once the range starts above 0', () => {
@@ -34,20 +27,23 @@ describe('runtime slider', () => {
     expect(inRuntime(runs[0], null)).toBe(true);
   });
 
-  it('keeps the outer edges open, so covering every column means any runtime', () => {
-    const cols = runtimeColumns(runs, null);
-    expect(normalise({ min: 2 * m, max: 3 * h }, cols)).toBeNull();
-    expect(normalise({ min: 30 * m, max: 3 * h }, cols)).toEqual({ min: 30 * m, max: Infinity });
-    expect(normalise({ min: 2 * m, max: 15 * m }, cols)).toEqual({ min: 0, max: 15 * m });
+  it('drags one handle at a time; the ends stay open and a range open at both ends is no filter', () => {
+    const sc = runtimeScale(runs);
+    const thirty = sc.edges.indexOf(30 * m);
+    const longer = dragRuntime(sc, null, 'min', thirty);
+    expect(longer).toEqual({ min: 30 * m, max: Infinity });
+    expect(handlePositions(sc, longer)).toEqual([sc.x(30 * m), 1]);
+    expect(dragRuntime(sc, longer, 'max', sc.edges.indexOf(h))).toEqual({ min: 30 * m, max: h });
+    expect(dragRuntime(sc, longer, 'max', 0)).toEqual({ min: 30 * m, max: 45 * m });
+    expect(dragRuntime(sc, longer, 'min', 0)).toBeNull();
+    expect(nearestEdge(sc, sc.x(31 * m))).toBe(thirty);
   });
 
-  it('drags one handle at a time and never closes the range', () => {
-    const cols = runtimeColumns(runs, null);
-    const fromLong = dragRuntimeHandle(cols, null, 'min', 4);
-    expect(fromLong).toEqual({ min: 30 * m, max: Infinity });
-    expect(dragRuntimeHandle(cols, fromLong, 'max', 6)).toEqual({ min: 30 * m, max: h });
-    expect(dragRuntimeHandle(cols, fromLong, 'max', 0)).toEqual({ min: 30 * m, max: 45 * m });
-    expect(dragRuntimeHandle(cols, fromLong, 'min', 0)).toBeNull();
+  it('counts runs along the track for the small bars', () => {
+    const sc = runtimeScale(runs);
+    const bars = histogram(runs, sc, 40);
+    expect(bars.reduce((s, n) => s + n, 0)).toBe(3);
+    expect(bars[39]).toBe(1);
   });
 
   it('reads the range in words', () => {
@@ -55,7 +51,5 @@ describe('runtime slider', () => {
     expect(rangeText({ min: 30 * m, max: Infinity })).toBe('30m and longer');
     expect(rangeText({ min: 0, max: 5 * m })).toBe('under 5m');
     expect(rangeText({ min: h, max: 1.5 * h })).toBe('1h to 1.5h');
-    expect(columnText({ min: 0, max: m }).num).toBe('<1');
-    expect(columnText({ min: 24 * h, max: Infinity })).toMatchObject({ num: '24+', unit: 'h' });
   });
 });

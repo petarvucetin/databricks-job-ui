@@ -8,8 +8,8 @@ import { useNow } from '../hooks/useNow';
 import { useCompactRows, useReferenceLabels, useTimelineCollapsed } from '../hooks/useKeyToggle';
 import { FilterBar } from '../components/FilterBar';
 import { Timeline } from '../components/Timeline';
-import { RuntimeSlider } from '../components/RuntimeSlider';
 import { StatusTiles } from '../components/StatusTiles';
+import { RuntimeTile } from '../components/RuntimeTile';
 import { RunList } from '../components/RunList';
 import { RunDrawer } from '../components/RunDrawer';
 import { CompareDrawer } from '../components/CompareView';
@@ -110,10 +110,10 @@ export function AttentionView({ data, loadedAt, refresh, runRefresh }: { data: R
         refresh={refresh}
         dispatch={dispatch}
       />
-      <Timeline runs={data.runs} end={ctx.end} scale={state.scale} window={f.window} cube={state.cube} collapsed={timelineCollapsed} dispatch={dispatch}>
-        <RuntimeSlider runs={runtimeRuns} range={f.runtime} collapsed={timelineCollapsed} dispatch={dispatch} />
-      </Timeline>
-      <StatusTiles tiles={tiles} statuses={f.statuses} asOf={data.asOf} dispatch={dispatch} />
+      <Timeline runs={data.runs} end={ctx.end} scale={state.scale} window={f.window} cube={state.cube} collapsed={timelineCollapsed} dispatch={dispatch} />
+      <StatusTiles tiles={tiles} statuses={f.statuses} asOf={data.asOf} dispatch={dispatch}>
+        <RuntimeTile runs={runtimeRuns} range={f.runtime} dispatch={dispatch} />
+      </StatusTiles>
       {labels && rows.length > 0 && <ReferenceBlock rows={rows} history={history} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} openRuns={openIds} onOpenRun={onOpenRun} />}
       <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} openRuns={openIds} onOpenRun={onOpenRun} dispatch={dispatch} compact={compactRows} sort={sort} onSort={setSort} />
       {drawerRun && <RunDrawer key={drawerRun.id} run={drawerRun} history={history.get(drawerRun.name)} nowMs={nowMs} loadedAt={loadedAt} onClose={closeDrawer} refresh={drawerRefresh} />}

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { Run, RunKind } from '../../../shared/domain/types';
 import { KIND_TITLES, STATUS_GROUPS, tileSubtitle } from '../model/filters';
 import type { Action } from '../model/viewState';
@@ -5,11 +6,13 @@ import './tiles.css';
 
 const TONE: Record<RunKind, string> = { failed: 'red', retrying: 'amber', slow: 'amber', running: 'blue', queued: '', succeeded: 'green' };
 
-export function StatusTiles({ tiles, statuses, asOf, dispatch }: {
+export function StatusTiles({ tiles, statuses, asOf, dispatch, children }: {
   tiles: Record<RunKind, Run[]>;
   statuses: RunKind[];
   asOf: number;
   dispatch: (a: Action) => void;
+  /** More groups at the end of the row (the Runtime tile). */
+  children?: ReactNode;
 }) {
   return (
     <div className="tiles">
@@ -29,6 +32,7 @@ export function StatusTiles({ tiles, statuses, asOf, dispatch }: {
           })}
         </section>
       ))}
+      {children}
     </div>
   );
 }

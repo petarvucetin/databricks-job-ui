@@ -10,3 +10,17 @@
 .tile.red::before { background: var(--red); } .tile.amber::before { background: var(--amber); } .tile.blue::before { background: var(--blue); } .tile.green::before { background: var(--green); }
 .tile.on { border-color: var(--amber); box-shadow: inset 0 0 0 1px var(--amber); background: #fffaf0; }
 .tile.dim { opacity: .45; }
+/* Runtime: last group in the row, small bars of where the runs fall and two handles */
+.rt-grp { flex-grow: 1.4; grid-template-columns: 1fr; }
+.tile.rt-tile { display: block; cursor: default; padding: 7px 14px 8px 16px; }
+.rt-top { display: flex; align-items: baseline; gap: 8px; white-space: nowrap; min-height: 20px; }
+.rt-top b { font-size: 13.5px; font-weight: 600; }
+.rt-top span { color: var(--ink-3); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; }
+.rt-top button { margin-left: auto; font-size: 11px; padding: 0 8px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink-2); cursor: pointer; }
+.rt-track { position: relative; height: 26px; margin-top: 2px; user-select: none; touch-action: none; }
+.rt-track::before { content: ""; position: absolute; left: 0; right: 0; bottom: 4px; height: 2px; background: #cfc3b3; }
+.rt-bars { position: absolute; left: 0; right: 0; bottom: 9px; height: 14px; }
+.rt-bars i { position: absolute; bottom: 0; width: 1.9%; border-radius: 1px 1px 0 0; background: #d9cfc2; }
+.rt-bars i.in { background: var(--amber); }
+.rt-sel { position: absolute; bottom: 3px; height: 4px; background: var(--amber); border-radius: 2px; }
+.rt-h { position: absolute; bottom: 0; width: 10px; height: 11px; margin-left: -5px; border-radius: 3px; background: var(--sheet); border: 1.5px solid var(--amber); cursor: ew-resize; z-index: 1; }

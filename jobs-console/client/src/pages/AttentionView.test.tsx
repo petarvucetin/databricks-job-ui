@@ -27,7 +27,7 @@ const data: RunsResponse = {
 describe('AttentionView', () => {
   it('shows the default view: last 2 days, tiles with counts, rows sorted by status', () => {
     const { container } = render(<AttentionView data={data} loadedAt={Date.now()} />);
-    expect(container.querySelectorAll('.tile')).toHaveLength(6);
+    expect(container.querySelectorAll('.tile:not(.rt-tile)')).toHaveLength(6);
     expect(screen.getByRole('button', { name: /^1\s*Failed/ })).toBeTruthy();
     expect([...container.querySelectorAll('.rl .rr')].map((r) => r.getAttribute('data-id'))).toEqual(['3', '1', '2']);
   });
@@ -45,7 +45,7 @@ describe('AttentionView', () => {
     fireEvent.change(screen.getByPlaceholderText('search job, task, run id, cause, error'), { target: { value: 'zzzz-no-match' } });
     expect(screen.getByText('Nothing matches these filters.')).toBeTruthy();
     expect(container.querySelector('.ref')).toBeNull();
-    for (const b of container.querySelectorAll('.tile b')) expect(b.textContent).toBe('0');
+    for (const b of container.querySelectorAll('.tile:not(.rt-tile) b')) expect(b.textContent).toBe('0');
   });
 
   it('shows reference labels by default and toggles them with the L key', () => {

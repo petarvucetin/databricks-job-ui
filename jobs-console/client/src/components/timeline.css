@@ -40,6 +40,3 @@
 .tl-sel:hover::before { top: 3px; height: 6px; }
 .tl-handle { position: absolute; top: 0; width: 10px; height: 12px; margin-left: -5px; border-radius: 3px; background: var(--sheet); border: 1.5px solid var(--amber); cursor: ew-resize; z-index: 2; }
 .tl-lab { position: absolute; top: 12px; font-size: 11px; white-space: nowrap; font-variant-numeric: tabular-nums; }
-/* runtime slider: second row of the timeline card */
-.rt { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--rule); }
-.rt .tl-span b { color: var(--ink); font-weight: 500; }
