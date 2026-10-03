@@ -26,7 +26,7 @@ export function RunList({ rows, history, cap, nowMs, loadedAt, asOf, selected, o
     <div className="rl">
       {onSort && (
         <div className="rl-head">
-          <span className="rl-n">{rows.length} {rows.length === 1 ? 'run' : 'runs'}</span>
+          <span className="rl-n">{rows.length} {rows.length === 1 ? 'job' : 'jobs'}</span>
           <span className="rl-sort-t">Sort</span>
           <span className="rl-sort">
             <button type="button" className={sort === 'status' ? 'on' : ''} onClick={() => onSort('status')}>Status</button>

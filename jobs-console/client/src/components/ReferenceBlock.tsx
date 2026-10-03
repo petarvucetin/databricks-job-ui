@@ -12,7 +12,7 @@ const LEGEND: [string, string, string][] = [
   ['18', 'Compare runs', "Two or more runs of one job side by side: totals, parameters, every task on one time scale with what differs and in which run, and each run's cause. × on a run drops it; a run of another job starts a new comparison."],
   ['16', 'Current run', "Last box in a running row's history: tasks done of total, and when it started."],
   ['11', 'Waiting pill', 'Queued only: pill on the top line with the time spent waiting.'],
-  ['9', 'Runtime', 'Running only: a split badge in its own column before the name, so every running row lines up. Solid block with a turning spinner, current runtime beside it. Green while under the average; amber past it, with how far over underneath.'],
+  ['9', 'Runtime', "A split badge in its own column before the name, so rows line up. Running: solid block with a turning spinner and the runtime so far, green while under the average, amber past it. Finished: the result in the block (✓ succeeded, ✕ failed, – cancelled, ! partial) and how long the run took. How far over the average shows underneath. Each row is a job and shows its newest run that the filters let through."],
   ['20', 'Run stats', 'How those runs went, as coloured chips under the Run history title while it is collapsed: failed, slow (finished over the average), ok, cancelled, partial, running. Outcomes with none are left out; opening the history swaps them for the boxes.'],
   ['14', 'Average', 'Average duration for this job, next to the Run history title, then the shortest (min) and longest (max) succeeded run in the window.'],
 ];

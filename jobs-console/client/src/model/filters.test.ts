@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { makeRun } from '../test/fixtures';
 import type { Filters } from './filters';
-import { passes, passesExceptStatus, matchesQuery, autoStatuses, sortRuns, scopeCounts, menuCounts, liveCount, tileCounts, tileSubtitle, codeOf } from './filters';
+import { latestPerJob, passes, passesExceptStatus, matchesQuery, autoStatuses, sortRuns, scopeCounts, menuCounts, liveCount, tileCounts, tileSubtitle, codeOf } from './filters';
 
 const day = 86400000;
 const end = new Date(2026, 8, 23).getTime();
@@ -103,6 +103,18 @@ describe('filters', () => {
     const startsAfter = makeRun({ id: 14, kind: 'running', live: true, startTime: at(11, 5) });
     const inside = [since4am, since0954, endedIn, endedBefore, startsAfter].filter((r) => passesExceptStatus(r, w)).map((r) => r.id);
     expect(inside).toEqual([10, 11, 12]);
+  });
+});
+
+describe('one row per job', () => {
+  it("keeps each job's latest run among the runs given (the ones the filters let through)", () => {
+    const old = makeRun({ id: 50, name: 'a', startTime: 1000, durationSec: 2000 });
+    const recent = makeRun({ id: 51, name: 'a', startTime: 2000, durationSec: 60 });
+    const other = makeRun({ id: 52, name: 'b', startTime: 1500 });
+    expect(latestPerJob([old, recent, other]).map((r) => r.id).sort()).toEqual([51, 52]);
+    // With a runtime filter that drops the recent short run, the job shows its older long run instead.
+    const f = { ...base, window: { from: 0, to: end }, statuses: [], runtime: { min: 1800, max: Infinity } };
+    expect(latestPerJob([old, recent, other].filter((r) => passes(r, f))).map((r) => r.id)).toEqual([50]);
   });
 });
 

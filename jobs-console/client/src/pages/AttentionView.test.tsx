@@ -17,9 +17,9 @@ const data: RunsResponse = {
   asOf,
   source: 'mock',
   runs: [
-    makeRun({ id: 1, startTime: new Date(2026, 8, 22, 5).getTime() }),
-    makeRun({ id: 2, kind: 'succeeded', failed: [], cause: { label: 'Succeeded', code: '', detail: '' }, startTime: new Date(2026, 8, 21, 5).getTime() }),
-    makeRun({ id: 3, kind: 'running', failed: [], live: true, cause: { label: 'Running', code: '', detail: '' }, startTime: new Date(2026, 8, 22, 7).getTime(), durationSec: 600, usualSec: 1200 }),
+    makeRun({ id: 1, name: 'gl_load', startTime: new Date(2026, 8, 22, 5).getTime() }),
+    makeRun({ id: 2, name: 'raw_bronze', kind: 'succeeded', failed: [], cause: { label: 'Succeeded', code: '', detail: '' }, startTime: new Date(2026, 8, 21, 5).getTime() }),
+    makeRun({ id: 3, name: 'nightly_etl', kind: 'running', failed: [], live: true, cause: { label: 'Running', code: '', detail: '' }, startTime: new Date(2026, 8, 22, 7).getTime(), durationSec: 600, usualSec: 1200 }),
     makeRun({ id: 4, startTime: new Date(2026, 7, 30, 5).getTime() }),
   ],
 };
@@ -30,6 +30,15 @@ describe('AttentionView', () => {
     expect(container.querySelectorAll('.tile:not(.rt-tile)')).toHaveLength(6);
     expect(screen.getByRole('button', { name: /^1\s*Failed/ })).toBeTruthy();
     expect([...container.querySelectorAll('.rl .rr')].map((r) => r.getAttribute('data-id'))).toEqual(['3', '1', '2']);
+  });
+
+  it('shows one row per job: its newest run the filters let through', () => {
+    const job = (id: number, hour: number, durationSec: number) =>
+      makeRun({ id, name: 'nightly_etl', kind: 'succeeded', result: 'succeeded', failed: [], startTime: new Date(2026, 8, 22, hour).getTime(), durationSec });
+    const runs = { ...data, runs: [job(10, 1, 2400), job(11, 3, 300)] };
+    const { container } = render(<AttentionView data={runs} loadedAt={Date.now()} />);
+    expect([...container.querySelectorAll('.rl .rr')].map((r) => r.getAttribute('data-id'))).toEqual(['11']);
+    expect(container.querySelector('.rl-n')!.textContent).toBe('1 job');
   });
 
   it('filters to running runs with the Running now toggle', () => {

@@ -112,6 +112,19 @@ export function autoStatuses(runs: Run[], f: Filters): RunKind[] {
   return RUN_KINDS.filter((k) => present.has(k));
 }
 
+/**
+ * One row per job: the job's latest run among `runs` (the runs that passed the filters). So the filters, runtime
+ * included, decide which jobs show, and each job shows the newest run they let through, running or finished.
+ */
+export function latestPerJob(runs: Run[]): Run[] {
+  const latest = new Map<string, Run>();
+  for (const r of runs) {
+    const cur = latest.get(r.name);
+    if (!cur || r.startTime > cur.startTime) latest.set(r.name, r);
+  }
+  return [...latest.values()];
+}
+
 /** Row order: by status (needs attention first), by job name A–Z / Z–A, or longest runtime first. */
 export type RowSort = 'status' | 'name-asc' | 'name-desc' | 'runtime';
 

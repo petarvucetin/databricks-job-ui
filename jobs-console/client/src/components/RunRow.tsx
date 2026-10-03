@@ -10,6 +10,8 @@ import './runrow.css';
 
 const RESULT_LABEL = { succeeded: 'succeeded', failed: 'failed', cancelled: 'cancelled', partial: 'partially succeeded' } as const;
 
+const RESULT_MARK = { succeeded: '✓', failed: '✕', cancelled: '–', partial: '!' } as const;
+
 /** Two chasing arrows, turning while the run is going. */
 function Spinner() {
   return (
@@ -65,7 +67,9 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
   };
   const isOpen = (id: number) => openRuns?.includes(id) ?? false;
   const nowDone = run.live ? taskStates(run, elapsed).filter((s) => s === 'ok').length : 0;
-  const cls = ['rr', run.live && 'live', run.live && over && 'over', showHist && 'hist-open', selected && 'on'].filter(Boolean).join(' ');
+  // Runtime badge: running runs, and finished ones (with their result mark). Queued runs have none.
+  const hasRun = run.live || run.result !== null;
+  const cls = ['rr', hasRun && 'has-run', run.live && 'live', run.live && over && 'over', showHist && 'hist-open', selected && 'on'].filter(Boolean).join(' ');
   const nRuns = hist.shown.length + hist.earlier + (run.live ? 1 : 0);
 
   if (compact) {
@@ -95,7 +99,13 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
           <b>{stat.value}</b>
         </div>
       )}
-      {run.live && over && <span className="rr-run-avg"><em>+{dur(elapsed - run.usualSec)}</em> over</span>}
+      {!run.live && run.result !== null && (
+        <div className={`rr-run done ${run.result}`} data-c="9">
+          <span className="rr-run-s" aria-label={RESULT_LABEL[run.result]}>{RESULT_MARK[run.result]}</span>
+          <b>{dur(run.durationSec)}</b>
+        </div>
+      )}
+      {hasRun && over && <span className="rr-run-avg"><em>+{dur(elapsed - run.usualSec)}</em> over</span>}
       <div className="rr-main">
         {target && <span className="rr-tgt" data-c="19">{target.kind} <b>{target.who}</b></span>}
       </div>

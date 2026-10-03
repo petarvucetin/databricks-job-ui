@@ -16,7 +16,8 @@ export function RuntimeTile({ runs, range, dispatch }: { runs: Run[]; range: Run
   const bars = useMemo(() => histogram(runs, scale, BARS), [runs, scale]);
   const trackRef = useRef<HTMLDivElement>(null);
   const [a, b] = handlePositions(scale, range);
-  const shown = range ? runs.filter((r) => inRuntime(r, range)).length : runs.length;
+  // Rows are jobs: how many jobs have a run in the range.
+  const shown = new Set(runs.filter((r) => inRuntime(r, range)).map((r) => r.name)).size;
   const top = Math.max(1, ...bars);
   const set = (next: RuntimeRange | null) => dispatch({ type: 'runtime', runtime: next });
 
@@ -51,7 +52,7 @@ export function RuntimeTile({ runs, range, dispatch }: { runs: Run[]; range: Run
       <div className={`tile rt-tile${range ? ' amber on' : ''}`}>
         <div className="rt-top">
           <b>{rangeText(range)}</b>
-          <span>{range ? `${shown} ${shown === 1 ? 'run' : 'runs'}` : runs.length ? `shortest ${dur(Math.min(...runs.map(runtimeOf)))} · longest ${dur(scale.longest)}` : 'no runs'}</span>
+          <span>{range ? `${shown} ${shown === 1 ? 'job' : 'jobs'}` : runs.length ? `shortest ${dur(Math.min(...runs.map(runtimeOf)))} · longest ${dur(scale.longest)}` : 'no runs'}</span>
           {range && <button type="button" onClick={() => set(null)}>any</button>}
         </div>
         <div className="rt-track" ref={trackRef}>

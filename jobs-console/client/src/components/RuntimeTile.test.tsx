@@ -24,7 +24,7 @@ describe('RuntimeTile', () => {
     const dispatch = vi.fn();
     const { container } = render(<RuntimeTile runs={runs} range={{ min: 1800, max: Infinity }} dispatch={dispatch} />);
     expect(container.querySelector('.rt-top b')!.textContent).toBe('30m and longer');
-    expect(container.querySelector('.rt-top span')!.textContent).toBe('1 run');
+    expect(container.querySelector('.rt-top span')!.textContent).toBe('1 job');
     expect(container.querySelector('.rt-tile.on')).not.toBeNull();
     expect(container.querySelectorAll('.rt-bars i.in')).toHaveLength(1);
     fireEvent.click(screen.getByRole('button', { name: 'any' }));

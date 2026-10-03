@@ -9,10 +9,10 @@ afterEach(cleanup);
 const live = makeRun({ id: 40, kind: 'running', failed: [], live: true, result: null, ntasks: 10, durationSec: 600, usualSec: 1200, cause: { label: 'Running', code: '', detail: '' } });
 
 describe('RunRow', () => {
-  it('renders a finished failed run: full name, run as, average only, red border, no running parts', () => {
+  it('renders a finished failed run: full name, run as, runtime badge with ✕, no running parts', () => {
     const { container } = render(<RunRow run={makeRun()} nowMs={0} loadedAt={0} asOf={0} />);
     const row = container.querySelector('.rr')!;
-    expect(row.className).toBe('rr');
+    expect(row.className).toBe('rr has-run');
     expect(container.querySelector('.rr-hist-boxes')).toBeNull();
     const toggle = container.querySelector('.rr-hist-t')!;
     expect(toggle.getAttribute('aria-expanded')).toBe('false');
@@ -32,7 +32,8 @@ describe('RunRow', () => {
     expect(main).toEqual([]);
     expect(container.querySelector('[data-c="13"]')!.className).toContain('rr-ra');
     expect(container.querySelector('[data-c="13"]')!.textContent).toBe('run as sp-finance');
-    expect(container.querySelector('[data-c="9"]')).toBeNull();
+    expect(container.querySelector('[data-c="9"]')!.textContent).toBe('✕23m 24s'); // finished runtime badge, result mark first
+    expect(container.querySelector('.rr-spin')).toBeNull();
     expect(container.textContent).not.toContain('took');
     expect(container.querySelector('[data-c="11"]')).toBeNull();
     expect(container.querySelector('.rr-hist-t [data-c="14"]')!.textContent).toBe('average 25m 52s');
@@ -42,7 +43,7 @@ describe('RunRow', () => {
     expect(container.querySelector('[data-c="5"]')).toBeNull();
     expect(container.querySelector('.rr-park')).toBeNull();
     const cols = [...container.querySelector('.rr')!.children].map((c) => c.className);
-    expect(cols).toEqual(['rr-l1', 'rr-main', 'rr-hist']);
+    expect(cols).toEqual(['rr-l1', 'rr-run done failed', 'rr-main', 'rr-hist']); // under the average, so no "over" line
     expect(container.querySelector('[data-c="10"]')).toBeNull();
     expect(container.textContent).not.toContain('failed 22 Sep');
     expect(container.querySelector('.rr-hist')!.textContent).toContain('Run history');
@@ -110,6 +111,19 @@ describe('RunRow', () => {
     expect(now.textContent).toContain('5 of 10');
     expect(now.className).not.toContain('pick');
     expect(row.className).not.toContain('over');
+  });
+
+  it('a finished run gets the runtime badge with its result mark; a queued one gets none', () => {
+    const done = makeRun({ kind: 'failed', result: 'failed', durationSec: 2000, usualSec: 950 });
+    const { container } = render(<RunRow run={done} nowMs={0} loadedAt={0} asOf={0} />);
+    expect(container.querySelector('.rr')!.className).toContain('has-run');
+    expect(container.querySelector('.rr-run.done.failed')!.textContent).toBe('✕33m 20s');
+    expect(container.querySelector('.rr-run-avg')!.textContent).toBe('+17m 30s over');
+    cleanup();
+    const queued = makeRun({ kind: 'queued', result: null, durationSec: 0, failed: [] });
+    const q = render(<RunRow run={queued} nowMs={0} loadedAt={0} asOf={0} />);
+    expect(q.container.querySelector('.rr-run')).toBeNull();
+    expect(q.container.querySelector('.rr')!.className).not.toContain('has-run');
   });
 
   it('marks an over-average live run and says how far past the average it is', () => {
