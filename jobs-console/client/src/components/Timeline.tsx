@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react';
 import { RUN_KINDS, type Run, type RunKind } from '../../../shared/domain/types';
 import { fmtEdge, fmtEdgeEnd } from '../../../shared/domain/format';
 import type { TimeWindow } from '../model/filters';
@@ -16,7 +16,7 @@ const PRESETS: { id: Preset; label: string }[] = [
   { id: 'today', label: 'today' },
 ];
 
-export function Timeline({ runs, end, scale, window, cube, collapsed, dispatch }: {
+export function Timeline({ runs, end, scale, window, cube, collapsed, dispatch, children }: {
   runs: Run[];
   end: number;
   scale: ScaleId;
@@ -25,6 +25,8 @@ export function Timeline({ runs, end, scale, window, cube, collapsed, dispatch }
   /** One line with just the selected date range (T toggles). */
   collapsed?: boolean;
   dispatch: (a: Action) => void;
+  /** More of the card under the time slider (the runtime slider); also rendered when collapsed, inside the range text. */
+  children?: ReactNode;
 }) {
   const bks = useMemo(() => buckets(scale, end), [scale, end]);
   const counts = useMemo(() => countByBucket(runs, bks), [runs, bks]);
@@ -103,7 +105,7 @@ export function Timeline({ runs, end, scale, window, cube, collapsed, dispatch }
   if (collapsed) {
     return (
       <section className="tl tl-min" aria-label="Timeline, collapsed">
-        <span className="tl-span">{rangeText}</span>
+        <span className="tl-span">{rangeText}{children}</span>
         <span className="tl-key">T to expand</span>
       </section>
     );
@@ -164,6 +166,7 @@ export function Timeline({ runs, end, scale, window, cube, collapsed, dispatch }
         {showStartLabel && <span className="tl-lab" style={{ left: `${a * 100}%`, transform: a === 0 ? 'none' : 'translateX(-50%)' }}>{fmtEdge(window.from)}</span>}
         <span className="tl-lab" style={{ left: `${b * 100}%`, transform: b >= 1 ? 'translateX(-100%)' : 'translateX(-50%)' }}>{fmtEdgeEnd(window.to)}</span>
       </div>
+      {children}
     </section>
   );
 }

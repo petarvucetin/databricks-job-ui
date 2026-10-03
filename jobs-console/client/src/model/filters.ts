@@ -1,6 +1,7 @@
 import { RUN_KINDS, type Run, type RunKind } from '../../../shared/domain/types';
 import { dur, fmtStart } from '../../../shared/domain/format';
 import { problemText, taskText } from './rowView';
+import { inRuntime, type RuntimeRange } from './runtime';
 
 export type Scope = 'mine' | 'all';
 
@@ -23,6 +24,8 @@ export interface Filters {
   live: boolean;
   query: string;
   window: TimeWindow;
+  /** Runtime slider; null = any runtime. */
+  runtime: RuntimeRange | null;
 }
 
 /** Statuses grouped by where the run is: still going, waiting to start, or finished. Tiles and row order follow it. */
@@ -61,6 +64,11 @@ export function overlapsWindow(r: Run, w: TimeWindow): boolean {
 
 /** Everything except status and search. The status tiles and auto-selection build on this. */
 export function passesExceptStatus(r: Run, f: Filters): boolean {
+  return passesExceptStatusAndRuntime(r, f) && inRuntime(r, f.runtime);
+}
+
+/** What the runtime slider counts: every filter but status, search and the slider itself. */
+export function passesExceptStatusAndRuntime(r: Run, f: Filters): boolean {
   if (f.scope === 'mine' && !r.mine) return false;
   if (f.live && !r.live) return false;
   if (!overlapsWindow(r, f.window)) return false;
@@ -104,8 +112,8 @@ export function autoStatuses(runs: Run[], f: Filters): RunKind[] {
   return RUN_KINDS.filter((k) => present.has(k));
 }
 
-/** Row order: by status (needs attention first), or by job name A–Z / Z–A. */
-export type RowSort = 'status' | 'name-asc' | 'name-desc';
+/** Row order: by status (needs attention first), by job name A–Z / Z–A, or longest runtime first. */
+export type RowSort = 'status' | 'name-asc' | 'name-desc' | 'runtime';
 
 /** The job name without its bundle target prefix, e.g. "[dev mchen] finance_gl_x" → "finance_gl_x". */
 export const bareName = (name: string): string => name.replace(/^\[[^\]]+\] /, '');
@@ -116,6 +124,7 @@ export function sortRuns(runs: Run[], sort: RowSort = 'status'): Run[] {
   const liveFirst = (a: Run, b: Run) => Number(b.live) - Number(a.live);
   const byStatus = (a: Run, b: Run) => order(a.kind) - order(b.kind) || b.startTime - a.startTime;
   if (sort === 'status') return [...runs].sort((a, b) => liveFirst(a, b) || byStatus(a, b));
+  if (sort === 'runtime') return [...runs].sort((a, b) => liveFirst(a, b) || b.durationSec - a.durationSec || byStatus(a, b));
   const dir = sort === 'name-asc' ? 1 : -1;
   return [...runs].sort((a, b) => liveFirst(a, b) || dir * bareName(a.name).localeCompare(bareName(b.name), undefined, { sensitivity: 'base', numeric: true }) || byStatus(a, b));
 }

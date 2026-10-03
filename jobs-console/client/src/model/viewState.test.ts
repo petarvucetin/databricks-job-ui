@@ -128,3 +128,15 @@ describe('viewState', () => {
     });
   });
 });
+
+describe('runtime filter', () => {
+  it('sets the range, re-picks the statuses present, and clear filters resets it', () => {
+    const s0 = initialState(ctx);
+    expect(s0.filters.runtime).toBeNull();
+    const s1 = applyAction(s0, { type: 'runtime', runtime: { min: 3600, max: Infinity } }, ctx);
+    expect(s1.filters.runtime).toEqual({ min: 3600, max: Infinity });
+    expect(s1.filters.statuses).toEqual([]);
+    const s2 = applyAction(s1, { type: 'clear' }, ctx);
+    expect(s2.filters.runtime).toBeNull();
+  });
+});

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { RunsResponse } from '../../../shared/domain/types';
-import { liveCount, menuCounts, passes, scopeCounts, sortRuns, tileCounts, type RowSort } from '../model/filters';
+import { liveCount, matchesQuery, menuCounts, passes, passesExceptStatusAndRuntime, scopeCounts, sortRuns, tileCounts, type RowSort } from '../model/filters';
 import { timelineEnd } from '../model/timeline';
 import { historyByJob } from '../model/history';
 import { applyAction, initialState, type Action, type MenuKey, type ViewCtx } from '../model/viewState';
@@ -8,6 +8,7 @@ import { useNow } from '../hooks/useNow';
 import { useCompactRows, useReferenceLabels, useTimelineCollapsed } from '../hooks/useKeyToggle';
 import { FilterBar } from '../components/FilterBar';
 import { Timeline } from '../components/Timeline';
+import { RuntimeSlider } from '../components/RuntimeSlider';
 import { StatusTiles } from '../components/StatusTiles';
 import { RunList } from '../components/RunList';
 import { RunDrawer } from '../components/RunDrawer';
@@ -71,7 +72,7 @@ export function AttentionView({ data, loadedAt, refresh, runRefresh }: { data: R
 
   const [sort, setSortState] = useState<RowSort>(() => {
     const saved = localStorage.getItem('jobs-console:sort');
-    return saved === 'name-asc' || saved === 'name-desc' ? saved : 'status';
+    return saved === 'name-asc' || saved === 'name-desc' || saved === 'runtime' ? saved : 'status';
   });
   const setSort = useCallback((s: RowSort) => {
     localStorage.setItem('jobs-console:sort', s);
@@ -79,6 +80,7 @@ export function AttentionView({ data, loadedAt, refresh, runRefresh }: { data: R
   }, []);
   const rows = useMemo(() => sortRuns(data.runs.filter((r) => passes(r, f)), sort), [data.runs, f, sort]);
   const tiles = useMemo(() => tileCounts(data.runs, f), [data.runs, f]);
+  const runtimeRuns = useMemo(() => data.runs.filter((r) => passesExceptStatusAndRuntime(r, f) && matchesQuery(r, f.query)), [data.runs, f]);
   const history = useMemo(() => historyByJob(data.runs, f.window), [data.runs, f.window]);
   const jobName = open[0]?.name;
   // The job's runs the comparison can pick from: finished ones in the window, plus any still going.
@@ -108,7 +110,9 @@ export function AttentionView({ data, loadedAt, refresh, runRefresh }: { data: R
         refresh={refresh}
         dispatch={dispatch}
       />
-      <Timeline runs={data.runs} end={ctx.end} scale={state.scale} window={f.window} cube={state.cube} collapsed={timelineCollapsed} dispatch={dispatch} />
+      <Timeline runs={data.runs} end={ctx.end} scale={state.scale} window={f.window} cube={state.cube} collapsed={timelineCollapsed} dispatch={dispatch}>
+        <RuntimeSlider runs={runtimeRuns} range={f.runtime} collapsed={timelineCollapsed} dispatch={dispatch} />
+      </Timeline>
       <StatusTiles tiles={tiles} statuses={f.statuses} asOf={data.asOf} dispatch={dispatch} />
       {labels && rows.length > 0 && <ReferenceBlock rows={rows} history={history} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} openRuns={openIds} onOpenRun={onOpenRun} />}
       <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} openRuns={openIds} onOpenRun={onOpenRun} dispatch={dispatch} compact={compactRows} sort={sort} onSort={setSort} />

@@ -5,7 +5,7 @@ import { passes, passesExceptStatus, matchesQuery, autoStatuses, sortRuns, scope
 
 const day = 86400000;
 const end = new Date(2026, 8, 23).getTime();
-const base: Filters = { scope: 'all', types: [], runAs: [], codes: [], statuses: [], live: false, query: '', window: { from: end - 2 * day, to: end } };
+const base: Filters = { scope: 'all', types: [], runAs: [], codes: [], statuses: [], live: false, query: '', window: { from: end - 2 * day, to: end }, runtime: null };
 const t = new Date(2026, 8, 22, 5).getTime();
 const failed = makeRun({ id: 1, startTime: t });
 const ok = makeRun({ id: 2, kind: 'succeeded', failed: [], cause: { label: 'Succeeded', code: '', detail: '' }, startTime: t - 1000 });
@@ -103,5 +103,21 @@ describe('filters', () => {
     const startsAfter = makeRun({ id: 14, kind: 'running', live: true, startTime: at(11, 5) });
     const inside = [since4am, since0954, endedIn, endedBefore, startsAfter].filter((r) => passesExceptStatus(r, w)).map((r) => r.id);
     expect(inside).toEqual([10, 11, 12]);
+  });
+});
+
+describe('runtime filter and longest-first sort', () => {
+  const short = makeRun({ id: 40, kind: 'failed', durationSec: 120, startTime: end - day / 2 });
+  const long = makeRun({ id: 41, kind: 'failed', durationSec: 7200, startTime: end - day / 2 });
+  const going = makeRun({ id: 42, kind: 'running', live: true, durationSec: 60, startTime: end - day / 4 });
+
+  it('keeps only runs inside the runtime range, for rows and tiles alike', () => {
+    const f = { ...base, runtime: { min: 1800, max: Infinity } };
+    expect([short, long].filter((r) => passes(r, f)).map((r) => r.id)).toEqual([41]);
+    expect(tileCounts([short, long], f).failed.map((r) => r.id)).toEqual([41]);
+  });
+
+  it('sorts longest first, with runs still going on top', () => {
+    expect(sortRuns([short, long, going], 'runtime').map((r) => r.id)).toEqual([42, 41, 40]);
   });
 });

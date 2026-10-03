@@ -1,5 +1,6 @@
 import type { Run, RunKind } from '../../../shared/domain/types';
 import { autoStatuses, type Filters, type Scope, type TimeWindow } from './filters';
+import type { RuntimeRange } from './runtime';
 import { buckets, clampWindow, domainStart, fitScale, moveWindowTo, presetWindow, sameWindow, type Preset, type ScaleId } from './timeline';
 
 export const PAGE = 120;
@@ -32,6 +33,8 @@ export type Action =
   | { type: 'moveWindow'; col: number; window: TimeWindow }
   | { type: 'cube'; col: number; kind: RunKind }
   | { type: 'window'; window: TimeWindow }
+  /** Runtime slider: a range, or null for any runtime. */
+  | { type: 'runtime'; runtime: RuntimeRange | null }
   | { type: 'clear' }
   | { type: 'more' }
   /** New data arrived (auto refresh): `prevAsOf` was the data's "now" before, `asOf` is it now. See followNow. */
@@ -47,7 +50,7 @@ function setWindow(s: ViewState, window: TimeWindow, ctx: ViewCtx): ViewState {
 }
 
 export function initialState(ctx: ViewCtx): ViewState {
-  const filters: Filters = { scope: 'all', types: [], runAs: [], codes: [], statuses: [], live: false, query: '', window: presetWindow('last2', '30d', ctx.end) };
+  const filters: Filters = { scope: 'all', types: [], runAs: [], codes: [], statuses: [], live: false, query: '', window: presetWindow('last2', '30d', ctx.end), runtime: null };
   return withAuto({ filters, scale: '30d', cube: null, cap: PAGE }, ctx);
 }
 
@@ -79,6 +82,8 @@ export function applyAction(s: ViewState, a: Action, ctx: ViewCtx): ViewState {
       return setWindow(s, presetWindow(a.preset, s.scale, ctx.end), ctx);
     case 'window':
       return setWindow(s, a.window, ctx);
+    case 'runtime':
+      return withAuto({ ...s, filters: { ...f, runtime: a.runtime }, cube: null }, ctx);
     case 'column': {
       const b = buckets(s.scale, ctx.end)[a.col];
       if (!b) return s;
@@ -100,7 +105,7 @@ export function applyAction(s: ViewState, a: Action, ctx: ViewCtx): ViewState {
       return { ...s, cube: { col: a.col, kind: a.kind }, filters: { ...f, window: { from: b.start, to: b.end }, statuses: [a.kind] } };
     }
     case 'clear': {
-      const filters: Filters = { scope: f.scope, types: [], runAs: [], codes: [], statuses: [], live: false, query: '', window: presetWindow('last2', '30d', ctx.end) };
+      const filters: Filters = { scope: f.scope, types: [], runAs: [], codes: [], statuses: [], live: false, query: '', window: presetWindow('last2', '30d', ctx.end), runtime: null };
       return withAuto({ filters, scale: fitScale(s.scale, filters.window, ctx.end), cube: null, cap: PAGE }, ctx);
     }
     case 'more':

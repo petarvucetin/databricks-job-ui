@@ -21,7 +21,7 @@ export function RunList({ rows, history, cap, nowMs, loadedAt, asOf, selected, o
   onSort?: (s: RowSort) => void;
 }) {
   if (!rows.length) return <div className="rl"><p className="rl-empty">Nothing matches these filters.</p></div>;
-  const byName = sort !== 'status';
+  const byName = sort === 'name-asc' || sort === 'name-desc';
   return (
     <div className="rl">
       {onSort && (
@@ -29,7 +29,7 @@ export function RunList({ rows, history, cap, nowMs, loadedAt, asOf, selected, o
           <span className="rl-n">{rows.length} {rows.length === 1 ? 'run' : 'runs'}</span>
           <span className="rl-sort-t">Sort</span>
           <span className="rl-sort">
-            <button type="button" className={byName ? '' : 'on'} onClick={() => onSort('status')}>Status</button>
+            <button type="button" className={sort === 'status' ? 'on' : ''} onClick={() => onSort('status')}>Status</button>
             <button
               type="button"
               className={byName ? 'on' : ''}
@@ -37,6 +37,9 @@ export function RunList({ rows, history, cap, nowMs, loadedAt, asOf, selected, o
               onClick={() => onSort(sort === 'name-asc' ? 'name-desc' : 'name-asc')}
             >
               Name {sort === 'name-desc' ? 'Z–A' : 'A–Z'}
+            </button>
+            <button type="button" className={sort === 'runtime' ? 'on' : ''} title="Longest runtime first; runs still going stay on top" onClick={() => onSort('runtime')}>
+              Longest first
             </button>
           </span>
         </div>
