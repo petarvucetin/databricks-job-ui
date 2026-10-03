@@ -5,7 +5,7 @@ import { latestPerJob, passes, passesExceptStatus, matchesQuery, autoStatuses, s
 
 const day = 86400000;
 const end = new Date(2026, 8, 23).getTime();
-const base: Filters = { scope: 'all', types: [], runAs: [], codes: [], statuses: [], live: false, query: '', window: { from: end - 2 * day, to: end }, runtime: null };
+const base: Filters = { scope: 'all', types: [], runAs: [], codes: [], statuses: [], live: false, query: '', window: { from: end - 2 * day, to: end }, runtime: null, runtimeBar: null };
 const t = new Date(2026, 8, 22, 5).getTime();
 const failed = makeRun({ id: 1, startTime: t });
 const ok = makeRun({ id: 2, kind: 'succeeded', failed: [], cause: { label: 'Succeeded', code: '', detail: '' }, startTime: t - 1000 });

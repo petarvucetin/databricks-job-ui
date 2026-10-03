@@ -6,7 +6,7 @@ import type { Filters } from '../model/filters';
 
 afterEach(cleanup);
 
-const filters: Filters = { scope: 'all', types: [], runAs: ['sp-ingest'], codes: [], statuses: [], live: false, query: '', window: { from: 0, to: 1 }, runtime: null };
+const filters: Filters = { scope: 'all', types: [], runAs: ['sp-ingest'], codes: [], statuses: [], live: false, query: '', window: { from: 0, to: 1 }, runtime: null, runtimeBar: null };
 const menus = {
   types: [{ value: 'job', label: 'Job', count: 70 }, { value: 'pipeline', label: 'Pipeline', count: 30 }],
   runAs: [{ value: 'sp-finance', label: 'sp-finance', count: 40 }, { value: 'sp-ingest', label: 'sp-ingest', count: 60 }],

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { makeRun } from '../test/fixtures';
-import { dragRuntime, handlePositions, histogram, inRuntime, nearestEdge, rangeText, runtimeScale } from './runtime';
+import { barIndex, barRange, dragRuntime, handlePositions, histogram, inRuntime, nearestEdge, rangeText, runtimeScale } from './runtime';
 
 const m = 60;
 const h = 3600;
@@ -44,6 +44,18 @@ describe('runtime filter', () => {
     const bars = histogram(runs, sc, 40);
     expect(bars.reduce((s, n) => s + n, 0)).toBe(3);
     expect(bars[39]).toBe(1);
+  });
+
+  it('a bar as seconds holds exactly the runs drawn in it, and maps back to the same bar', () => {
+    const sc = runtimeScale(runs);
+    const bars = histogram(runs, sc, 40);
+    bars.forEach((n, i) => {
+      const range = barRange(sc, i, 40);
+      expect(runs.filter((r) => inRuntime(r, range))).toHaveLength(n);
+      expect(barIndex(sc, range, 40)).toBe(i);
+    });
+    expect(barRange(sc, 39, 40).max).toBe(Infinity);
+    expect(barIndex(sc, null, 40)).toBe(-1);
   });
 
   it('reads the range in words', () => {

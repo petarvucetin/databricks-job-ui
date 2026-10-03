@@ -20,7 +20,12 @@
 .rt-track { position: relative; height: 26px; margin-top: 2px; user-select: none; touch-action: none; }
 .rt-track::before { content: ""; position: absolute; left: 0; right: 0; bottom: 4px; height: 2px; background: #cfc3b3; }
 .rt-bars { position: absolute; left: 0; right: 0; bottom: 9px; height: 14px; }
-.rt-bars i { position: absolute; bottom: 0; width: 1.9%; border-radius: 1px 1px 0 0; background: #d9cfc2; }
+.rt-bar { position: absolute; top: -4px; bottom: 0; padding: 0; border: 0; border-radius: 2px; background: none; cursor: pointer; }
+.rt-bar:hover { background: rgba(217, 138, 18, .15); }
+.rt-bar.sel { background: rgba(217, 138, 18, .22); box-shadow: inset 0 0 0 1px var(--amber); }
+.rt-bars i { position: absolute; bottom: 0; left: 20%; width: 60%; border-radius: 1px 1px 0 0; background: #d9cfc2; }
+.rt-bar:hover i { filter: brightness(.85); }
+.rt-bar.sel i { background: #a8640a; }
 .rt-bars i.in { background: var(--amber); }
 .rt-sel { position: absolute; bottom: 3px; height: 4px; background: var(--amber); border-radius: 2px; }
 .rt-h { position: absolute; bottom: 0; width: 10px; height: 11px; margin-left: -5px; border-radius: 3px; background: var(--sheet); border: 1.5px solid var(--amber); cursor: ew-resize; z-index: 1; }

@@ -112,7 +112,7 @@ export function AttentionView({ data, loadedAt, refresh, runRefresh }: { data: R
       />
       <Timeline runs={data.runs} end={ctx.end} scale={state.scale} window={f.window} cube={state.cube} collapsed={timelineCollapsed} dispatch={dispatch} />
       <StatusTiles tiles={tiles} statuses={f.statuses} asOf={data.asOf} dispatch={dispatch}>
-        <RuntimeTile runs={runtimeRuns} range={f.runtime} dispatch={dispatch} />
+        <RuntimeTile runs={runtimeRuns} range={f.runtime} bar={f.runtimeBar} dispatch={dispatch} />
       </StatusTiles>
       {labels && rows.length > 0 && <ReferenceBlock rows={rows} history={history} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} openRuns={openIds} onOpenRun={onOpenRun} />}
       <RunList rows={rows} history={history} cap={state.cap} nowMs={nowMs} loadedAt={loadedAt} asOf={data.asOf} selected={selected} onSelect={setSelected} openRuns={openIds} onOpenRun={onOpenRun} dispatch={dispatch} compact={compactRows} sort={sort} onSort={setSort} />

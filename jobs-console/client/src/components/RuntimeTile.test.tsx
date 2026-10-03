@@ -12,6 +12,24 @@ const runs = [
 ];
 
 describe('RuntimeTile', () => {
+  it('clicking a bar filters to its runs without moving the handles; clicking it again clears', () => {
+    const dispatch = vi.fn();
+    const { container, rerender } = render(<RuntimeTile runs={runs} range={null} dispatch={dispatch} />);
+    fireEvent.click(container.querySelectorAll('.rt-bar')[1]);
+    const call = dispatch.mock.calls[0][0];
+    expect(call.runtime).toBeNull();
+    expect(call.bar.min).toBeLessThanOrEqual(2400);
+    expect(call.bar.max).toBe(Infinity);
+    rerender(<RuntimeTile runs={runs} range={null} bar={call.bar} dispatch={dispatch} />);
+    expect(container.querySelector('.rt-top b')!.textContent).toBe('runs of 40m 00s');
+    expect(container.querySelector('.rt-top span')!.textContent).toBe('1 job');
+    expect(container.querySelector('.rt-bar.sel')).toBe(container.querySelectorAll('.rt-bar')[1]);
+    expect(container.querySelector('.rt-tile.on')).not.toBeNull();
+    expect(container.querySelector('.rt-sel')).toBeNull(); // handles untouched
+    fireEvent.click(container.querySelectorAll('.rt-bar')[1]);
+    expect(dispatch).toHaveBeenLastCalledWith({ type: 'runtime', runtime: null, bar: null });
+  });
+
   it('at rest reads any runtime with the shortest and longest run, and is not highlighted', () => {
     const { container } = render(<RuntimeTile runs={runs} range={null} dispatch={vi.fn()} />);
     expect(container.querySelector('.rt-top')!.textContent).toBe('any runtimeshortest 3m 00s · longest 40m 00s');
@@ -28,6 +46,6 @@ describe('RuntimeTile', () => {
     expect(container.querySelector('.rt-tile.on')).not.toBeNull();
     expect(container.querySelectorAll('.rt-bars i.in')).toHaveLength(1);
     fireEvent.click(screen.getByRole('button', { name: 'any' }));
-    expect(dispatch).toHaveBeenCalledWith({ type: 'runtime', runtime: null });
+    expect(dispatch).toHaveBeenCalledWith({ type: 'runtime', runtime: null, bar: null });
   });
 });

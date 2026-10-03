@@ -78,6 +78,22 @@ export function histogram(runs: Run[], scale: RuntimeScale, n: number): number[]
   return out;
 }
 
+/**
+ * Bar `i` of `n` as seconds: its slice of the track. The last bar is open, so a run still going stays in it.
+ * Bars split the track evenly, so a slice is the inverse of the log scale at its two edges.
+ */
+export function barRange(scale: RuntimeScale, i: number, n: number): RuntimeRange {
+  const log = Math.log10(1 + scale.longest);
+  const at = (pos: number) => 10 ** (pos * log) - 1;
+  return { min: i === 0 ? 0 : at(i / n), max: i === n - 1 ? Infinity : at((i + 1) / n) };
+}
+
+/** Which bar a selected slice is now (the scale moves when the longest run changes), or -1. */
+export function barIndex(scale: RuntimeScale, bar: RuntimeRange | null, n: number): number {
+  if (!bar) return -1;
+  return bar.max === Infinity ? n - 1 : Math.min(n - 1, Math.floor(scale.x((bar.min + bar.max) / 2) * n));
+}
+
 /** Short edge text: "0", "5m", "1h", "1.5h". */
 export function edgeText(sec: number): string {
   if (sec === 0) return '0';

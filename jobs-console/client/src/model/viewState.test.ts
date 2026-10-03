@@ -138,5 +138,11 @@ describe('runtime filter', () => {
     expect(s1.filters.statuses).toEqual([]);
     const s2 = applyAction(s1, { type: 'clear' }, ctx);
     expect(s2.filters.runtime).toBeNull();
+    // A clicked bar stays while the handles move, and goes with an explicit null.
+    const bar = { min: 100, max: 200 };
+    const s3 = applyAction(s0, { type: 'runtime', runtime: null, bar }, ctx);
+    expect(applyAction(s3, { type: 'runtime', runtime: { min: 60, max: Infinity } }, ctx).filters.runtimeBar).toEqual(bar);
+    expect(applyAction(s3, { type: 'runtime', runtime: null, bar: null }, ctx).filters.runtimeBar).toBeNull();
+    expect(applyAction(s3, { type: 'clear' }, ctx).filters.runtimeBar).toBeNull();
   });
 });

@@ -26,6 +26,8 @@ export interface Filters {
   window: TimeWindow;
   /** Runtime slider; null = any runtime. */
   runtime: RuntimeRange | null;
+  /** One bar of the runtime tile, clicked: its slice of the track in seconds; null = none. */
+  runtimeBar: RuntimeRange | null;
 }
 
 /** Statuses grouped by where the run is: still going, waiting to start, or finished. Tiles and row order follow it. */
@@ -64,7 +66,7 @@ export function overlapsWindow(r: Run, w: TimeWindow): boolean {
 
 /** Everything except status and search. The status tiles and auto-selection build on this. */
 export function passesExceptStatus(r: Run, f: Filters): boolean {
-  return passesExceptStatusAndRuntime(r, f) && inRuntime(r, f.runtime);
+  return passesExceptStatusAndRuntime(r, f) && inRuntime(r, f.runtime) && inRuntime(r, f.runtimeBar);
 }
 
 /** What the runtime slider counts: every filter but status, search and the slider itself. */
