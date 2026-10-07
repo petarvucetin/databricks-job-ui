@@ -101,7 +101,28 @@ describe('runSql', () => {
     const p = runSql(api, 'wh1', 'SELECT 1', {}, new Deadline(Date.now() + 2_500));
     await vi.advanceTimersByTimeAsync(3_000);
     expect(await p).toBe(TIMEOUT);
-    expect(api.calls).toEqual(['executeStatement', 'getStatement', 'getStatement']);
+    // The statement is cancelled on the warehouse, best effort (finding 9).
+    expect(api.calls).toEqual(['executeStatement', 'getStatement', 'getStatement', 'cancelStatement']);
+    expect(api.cancelled).toEqual(['s1']);
+  });
+
+  it('cancels a statement whose execute call the deadline cut off, once its id is known', async () => {
+    const api = fakeApi({ statements: { responses: [{ statement_id: 's9', status: { state: 'RUNNING' } }] }, delay: 50 });
+    expect(await runSql(api, 'wh1', 'SELECT 1', {}, new Deadline(Date.now() + 10))).toBe(TIMEOUT);
+    expect(api.cancelled).toEqual([]);
+    await vi.waitFor(() => expect(api.cancelled).toEqual(['s9']));
+  });
+
+  it('a failing cancel is swallowed; a finished statement is not cancelled', async () => {
+    vi.useFakeTimers();
+    const api = fakeApi({ statements: { responses: [{ statement_id: 's1', status: { state: 'PENDING' } }] }, fail: { cancelStatement: new Error('gone') } });
+    const p = runSql(api, 'wh1', 'SELECT 1', {}, new Deadline(Date.now() + 1_500));
+    await vi.advanceTimersByTimeAsync(2_000);
+    expect(await p).toBe(TIMEOUT);
+    expect(api.calls).toContain('cancelStatement');
+    const done = fakeApi({ statements: { responses: [ok([])] } });
+    await runSql(done, 'wh1', 'SELECT 1', {}, later());
+    expect(done.calls).not.toContain('cancelStatement');
   });
 
   it('answers TIMEOUT at once when the deadline has already passed', async () => {

@@ -28,6 +28,8 @@ export interface LiveApi {
   getStatement: (req: { statement_id: string }) => Promise<sql.StatementResponse>;
   /** One further result chunk of a statement. */
   getStatementChunk: (req: { statement_id: string; chunk_index: number }) => Promise<sql.ResultData>;
+  /** Cancel a statement the time budget gave up on (POST /api/2.0/sql/statements/{id}/cancel). Best effort. */
+  cancelStatement: (req: { statement_id: string }) => Promise<unknown>;
   /** The workspace id from the x-databricks-org-id header of SCIM Me ('' when absent). Recorded, unlike host. */
   workspaceId: () => Promise<string>;
 }
@@ -67,6 +69,7 @@ export function createSdkApi(opts: { host?: string; token?: string }): LiveApi {
     executeStatement: (req) => client.statementExecution.executeStatement(req),
     getStatement: (req) => client.statementExecution.getStatement(req),
     getStatementChunk: (req) => client.statementExecution.getStatementResultChunkN(req),
+    cancelStatement: (req) => client.statementExecution.cancelExecution(req),
     workspaceId: async () => {
       const res = (await client.apiClient.request({
         path: '/api/2.0/preview/scim/v2/Me',

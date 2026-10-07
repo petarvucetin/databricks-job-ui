@@ -16,26 +16,36 @@ function statementError(s: sql.StatementResponse): Error & { code: string } {
 /**
  * Runs one SQL statement on a warehouse and answers its rows as objects keyed by column name (values as the API's
  * JSON_ARRAY strings). Polls every second while the statement is PENDING or RUNNING and pages through result chunks,
- * all within `dl`: TIMEOUT when the budget runs out. HTTP errors from the API pass through unchanged.
+ * all within `dl`: TIMEOUT when the budget runs out, and the statement is cancelled (best effort). HTTP errors from the
+ * API pass through unchanged.
  */
 export async function runSql(api: LiveApi, warehouseId: string, statement: string, params: Record<string, string>, dl: Deadline): Promise<SqlRow[] | typeof TIMEOUT> {
-  let s = await dl.call(() =>
-    api.executeStatement({
-      warehouse_id: warehouseId,
-      statement,
-      parameters: Object.entries(params).map(([name, value]) => ({ name, value })),
-      wait_timeout: '30s',
-      on_wait_timeout: 'CONTINUE',
-      disposition: 'INLINE',
-      format: 'JSON_ARRAY',
-    })
-  );
-  if (s === TIMEOUT) return TIMEOUT;
-  while (s.status?.state === 'PENDING' || s.status?.state === 'RUNNING') {
-    if ((await dl.call(() => sleep(POLL_MS))) === TIMEOUT) return TIMEOUT;
+  // Best effort: a statement the budget gave up on is cancelled, so it stops using the warehouse (finding 9).
+  const cancel = (id: string | undefined) => {
+    if (id) api.cancelStatement({ statement_id: id }).catch(() => undefined);
+  };
+  const running = (r: sql.StatementResponse) => r.status?.state === 'PENDING' || r.status?.state === 'RUNNING';
+  if (dl.expired) return TIMEOUT;
+  const exec = api.executeStatement({
+    warehouse_id: warehouseId,
+    statement,
+    parameters: Object.entries(params).map(([name, value]) => ({ name, value })),
+    wait_timeout: '30s',
+    on_wait_timeout: 'CONTINUE',
+    disposition: 'INLINE',
+    format: 'JSON_ARRAY',
+  });
+  let s = await dl.call(() => exec);
+  if (s === TIMEOUT) {
+    // Cut off before its id was known: cancel it once the call answers.
+    exec.then((late) => running(late) && cancel(late.statement_id), () => undefined);
+    return TIMEOUT;
+  }
+  while (running(s)) {
     const id: string = s.statement_id ?? '';
+    if ((await dl.call(() => sleep(POLL_MS))) === TIMEOUT) return (cancel(id), TIMEOUT);
     const polled: sql.StatementResponse | typeof TIMEOUT = await dl.call(() => api.getStatement({ statement_id: id }));
-    if (polled === TIMEOUT) return TIMEOUT;
+    if (polled === TIMEOUT) return (cancel(id), TIMEOUT);
     s = polled;
   }
   if (s.status?.state !== 'SUCCEEDED') throw statementError(s);

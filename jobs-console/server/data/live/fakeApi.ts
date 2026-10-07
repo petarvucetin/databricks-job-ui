@@ -35,8 +35,9 @@ export interface FakeData {
   fail?: Partial<Record<keyof LiveApi, Error>>;
 }
 
-export function fakeApi(data: FakeData): LiveApi & { calls: string[] } {
+export function fakeApi(data: FakeData): LiveApi & { calls: string[]; cancelled: string[] } {
   const calls: string[] = [];
+  const cancelled: string[] = [];
   const reply = async <T>(name: keyof LiveApi, value: () => T): Promise<T> => {
     calls.push(name);
     if (data.delay) await new Promise((r) => setTimeout(r, data.delay));
@@ -52,6 +53,7 @@ export function fakeApi(data: FakeData): LiveApi & { calls: string[] } {
   };
   return {
     calls,
+    cancelled,
     host: () => Promise.resolve(data.host ?? ''),
     me: () => reply('me', () => ({ userName: data.user ?? 'me@x.com' })),
     listJobs: (req) =>
@@ -114,6 +116,10 @@ export function fakeApi(data: FakeData): LiveApi & { calls: string[] } {
       }),
     getStatement: (req) => reply('getStatement', () => (data.statements ? next() : { statement_id: req.statement_id, status: { state: 'SUCCEEDED' } })),
     getStatementChunk: (req) => reply('getStatementChunk', () => data.statements?.chunks?.[req.chunk_index] ?? { data_array: [] }),
+    cancelStatement: (req) => {
+      cancelled.push(req.statement_id);
+      return reply('cancelStatement', () => ({}));
+    },
     workspaceId: () => reply('workspaceId', () => data.workspaceId ?? ''),
   };
 }
