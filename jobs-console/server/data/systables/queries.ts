@@ -4,15 +4,22 @@
  * bounding the run start, :max_runs the history cap. Timestamps come back as epoch ms (start_ms, end_ms).
  *
  * The timeline tables slice long runs into hourly rows; result_state and termination_code are only set on the final
- * slice. Each run is aggregated over its slices, and a run whose final slice is not written yet (still running) is left
- * out: the API's active_only read covers it. Slices are read from a day before :from_ts so a run that started in range
- * keeps all of them.
+ * slice. Each run is aggregated over its slices and kept by its START: [from_ts, to_ts), even when it ended after
+ * to_ts (ruling R8). A run whose final slice is not written yet (still running) is left out: the API's active_only read
+ * covers it. Slices are read from a day before :from_ts to a day after :to_ts, which prunes the scan and keeps every
+ * slice of a run that started in range (up to a day past the cutoff).
  */
 
 const WINDOW = `WHERE workspace_id = :ws
-  AND period_start_time >= CAST(:from_ts AS TIMESTAMP) - INTERVAL 1 DAY`;
+  AND period_start_time >= CAST(:from_ts AS TIMESTAMP) - INTERVAL 1 DAY
+  AND period_start_time < CAST(:to_ts AS TIMESTAMP) + INTERVAL 1 DAY`;
 
 const FINAL = `MAX_BY(result_state, period_end_time) IS NOT NULL`;
+
+/** Kept by start only: no bound on the end, so a run that crossed the cutoff and finished stays in history. */
+const STARTED_IN_RANGE = `HAVING MIN(period_start_time) >= CAST(:from_ts AS TIMESTAMP)
+  AND MIN(period_start_time) < CAST(:to_ts AS TIMESTAMP)
+  AND ${FINAL}`;
 
 const TIMES = `UNIX_MILLIS(MIN(period_start_time)) AS start_ms,
   UNIX_MILLIS(MAX(period_end_time)) AS end_ms,
@@ -20,27 +27,26 @@ const TIMES = `UNIX_MILLIS(MIN(period_start_time)) AS start_ms,
 
 export const JOB_RUNS_SQL = `SELECT job_id, run_id,
   ${TIMES},
-  MAX_BY(termination_code, period_end_time) AS termination_code,
-  MAX(run_type) AS run_type
+  MAX_BY(termination_code, period_end_time) AS termination_code
 FROM system.lakeflow.job_run_timeline
 ${WINDOW}
 GROUP BY job_id, run_id
-HAVING MIN(period_start_time) >= CAST(:from_ts AS TIMESTAMP)
-  AND MIN(period_start_time) < CAST(:to_ts AS TIMESTAMP)
-  AND ${FINAL}
+${STARTED_IN_RANGE}
 ORDER BY start_ms DESC
 LIMIT CAST(:max_runs AS INT)`;
 
-/** Task runs (each retry is its own run_id) of runs in the window; a task can start after its run's start, so up to a day past :to_ts. */
-export const TASK_RUNS_SQL = `SELECT job_id, job_run_id, run_id, task_key,
+/** Task runs (each retry is its own run_id) of exactly the runs JOB_RUNS_SQL keeps (same parameters). */
+export const TASK_RUNS_SQL = `WITH kept_runs AS (
+${JOB_RUNS_SQL}
+)
+SELECT job_id, job_run_id, run_id, task_key,
   ${TIMES},
   MAX_BY(termination_code, period_end_time) AS termination_code
 FROM system.lakeflow.job_task_run_timeline
 ${WINDOW}
+  AND (job_id, job_run_id) IN (SELECT job_id, run_id FROM kept_runs)
 GROUP BY job_id, job_run_id, run_id, task_key
-HAVING MIN(period_start_time) >= CAST(:from_ts AS TIMESTAMP)
-  AND MIN(period_start_time) < CAST(:to_ts AS TIMESTAMP) + INTERVAL 1 DAY
-  AND ${FINAL}`;
+HAVING ${FINAL}`;
 
 /** job_tasks is SCD2: the latest row per (job_id, task_key), dropped when that row records a deletion. */
 export const TASK_DEPS_SQL = `SELECT job_id, task_key, depends_on_keys
@@ -58,8 +64,6 @@ export const PIPELINE_UPDATES_SQL = `SELECT pipeline_id, update_id,
 FROM system.lakeflow.pipeline_update_timeline
 ${WINDOW}
 GROUP BY pipeline_id, update_id
-HAVING MIN(period_start_time) >= CAST(:from_ts AS TIMESTAMP)
-  AND MIN(period_start_time) < CAST(:to_ts AS TIMESTAMP)
-  AND ${FINAL}
+${STARTED_IN_RANGE}
 ORDER BY start_ms DESC
 LIMIT CAST(:max_runs AS INT)`;

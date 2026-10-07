@@ -16,7 +16,7 @@ const ITEMS: Item[] = [
   item({ type: 'pipeline', id: 'p-1', name: 'bronze_pipe', runAs: 'svc-dlt', trigger: 'continuous' }),
 ];
 
-const run = (o: SqlRow): SqlRow => ({ job_id: '11', run_id: '100', start_ms: ms(T0), end_ms: ms(T0 + 10 * MIN), result_state: 'SUCCEEDED', termination_code: 'SUCCESS', run_type: 'JOB_RUN', ...o });
+const run = (o: SqlRow): SqlRow => ({ job_id: '11', run_id: '100', start_ms: ms(T0), end_ms: ms(T0 + 10 * MIN), result_state: 'SUCCEEDED', termination_code: 'SUCCESS', ...o });
 const task = (o: SqlRow): SqlRow => ({ job_id: '11', job_run_id: '100', run_id: '1000', task_key: 'a', start_ms: ms(T0), end_ms: ms(T0 + MIN), result_state: 'SUCCEEDED', termination_code: 'SUCCESS', ...o });
 const map = (rows: Partial<Parameters<typeof historyDrafts>[0]>, items = ITEMS) => historyDrafts({ runs: [], tasks: [], deps: [], updates: [], ...rows }, items, HOST, 'me@x.com');
 
@@ -60,6 +60,24 @@ describe('historyDrafts: job runs', () => {
 
   it('drops a run whose final slice has not been written yet (every result_state still NULL)', () => {
     expect(map({ runs: [run({ result_state: null, termination_code: null })] })).toEqual([]);
+  });
+
+  describe('ruling R8: a run that crossed the cutoff (started 23:00, slices to 01:00)', () => {
+    const CUT = Date.UTC(2026, 8, 21, 0, 0, 0);
+    const slices = (final: string | null) => [
+      run({ run_id: '500', start_ms: ms(CUT - HOUR), end_ms: ms(CUT), result_state: null, termination_code: null }),
+      run({ run_id: '500', start_ms: ms(CUT), end_ms: ms(CUT + HOUR), result_state: final, termination_code: final ? 'SUCCESS' : null }),
+    ];
+
+    it('is kept as one run once its final slice is SUCCEEDED, ending after the cutoff', () => {
+      const ds = map({ runs: slices('SUCCEEDED') });
+      expect(ds).toHaveLength(1);
+      expect(ds[0]).toMatchObject({ id: 500, startTime: CUT - HOUR, durationSec: 2 * 3600, result: 'succeeded' });
+    });
+
+    it('is left out while its final slice has no result yet (the API active_only read covers it)', () => {
+      expect(map({ runs: slices(null) })).toEqual([]);
+    });
   });
 
   it('reads ISO timestamps too (space or T, with an offset)', () => {
@@ -137,6 +155,20 @@ describe('historyDrafts: tasks', () => {
     ]);
     expect(d.failed).toEqual([{ name: 'c', cause: { label: 'Cluster error', code: 'DRIVER_ERROR', detail: '' }, secs: 60 }]);
     expect(d.cause).toEqual(d.failed[0].cause);
+  });
+
+  it('builds failed[] in task start order (not row order), so the run cause is the first task that failed', () => {
+    const tasks = [
+      task({ task_key: 'late', run_id: '2', start_ms: ms(T0 + 5 * MIN), end_ms: ms(T0 + 6 * MIN), result_state: 'FAILED', termination_code: 'DRIVER_ERROR' }),
+      task({ task_key: 'early', run_id: '1', start_ms: ms(T0), end_ms: ms(T0 + MIN), result_state: 'FAILED', termination_code: 'LIBRARY_INSTALLATION_ERROR' }),
+    ];
+    const [d] = map({ runs: [run({ result_state: 'FAILED', termination_code: 'RUN_EXECUTION_ERROR' })], tasks });
+    expect(d.failed.map((f) => f.name)).toEqual(['early', 'late']);
+    expect(d.cause).toMatchObject({ code: 'LIBRARY_INSTALLATION_ERROR' });
+    expect(d.tasks?.map((t) => [t.key, t.failIndex])).toEqual([
+      ['early', 0],
+      ['late', 1],
+    ]);
   });
 
   it('orders tasks dependencies first, so a dependency that started later still comes before its dependant', () => {

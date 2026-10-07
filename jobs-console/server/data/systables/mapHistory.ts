@@ -81,16 +81,22 @@ function parseKeys(v: string | null | undefined): string[] {
 }
 
 /** A run's tasks as the API path gives them: the latest attempt per task key, dependencies first, times from the run's start. */
-function runTasks(runStart: number, attempts: Agg[], deps: Map<string, string[]>, jobId: string): { tasks: RunTask[]; failed: FailedTask[] } {
+function runTasks(runStart: number, attempts: Agg[], deps: Map<string, string[]>, jobId: string, runId: string): { tasks: RunTask[]; failed: FailedTask[] } {
   const byKey = new Map<string, Agg[]>();
   for (const a of attempts) {
     const k = a.first.task_key ?? '';
     byKey.set(k, [...(byKey.get(k) ?? []), a]);
   }
-  const keys = [...byKey.keys()];
+  for (const all of byKey.values()) all.sort((x, y) => x.start - y.start);
+  const latestStart = (k: string) => {
+    const all = byKey.get(k) ?? [];
+    return all[all.length - 1]?.start ?? Infinity;
+  };
+  // Task start order (of the attempt shown), so failed[] and the first-failed cause follow when tasks ran, not row order.
+  const keys = [...byKey.keys()].sort((x, y) => latestStart(x) - latestStart(y));
   const index = new Map(keys.map((k, i) => [k, i]));
   const latest = keys.map((k) => {
-    const all = (byKey.get(k) ?? []).sort((x, y) => x.start - y.start);
+    const all = byKey.get(k) ?? [];
     return { a: all[all.length - 1], attempt: all.length - 1 };
   });
   const failed: FailedTask[] = [];
@@ -110,7 +116,7 @@ function runTasks(runStart: number, attempts: Agg[], deps: Map<string, string[]>
     }
     return { key: keys[i], startSec: secs(runStart, a.start), durSec: dur, state, deps: on, attempt, ...(failIndex !== undefined ? { failIndex } : {}) };
   });
-  const order = taskOrder(keys, rows.map((r) => r.deps), rows.map((r) => r.startSec), `run ${jobId}`, noDiag);
+  const order = taskOrder(keys, rows.map((r) => r.deps), rows.map((r) => r.startSec), `run ${runId}`, noDiag);
   const moved = new Map(order.map((from, to) => [from, to]));
   const tasks = order.map((from) => {
     const r = rows[from];
@@ -143,7 +149,7 @@ export function historyDrafts(rows: HistoryRows, items: Item[], host: string, _m
     const item = byId.get(`job:${jobId}`);
     if (!item || !a.final) continue;
     const result = JOB_RESULTS[a.final.result_state ?? ''] ?? 'failed';
-    const { tasks, failed } = runTasks(a.start, tasksOf.get(`${jobId}|${runId}`) ?? [], deps, jobId);
+    const { tasks, failed } = runTasks(a.start, tasksOf.get(`${jobId}|${runId}`) ?? [], deps, jobId, runId);
     let cause: Cause | null = null;
     if (result === 'failed') {
       cause = causeOf(a.final);
