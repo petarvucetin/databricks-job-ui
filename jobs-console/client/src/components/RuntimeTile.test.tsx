@@ -48,4 +48,12 @@ describe('RuntimeTile', () => {
     fireEvent.click(screen.getByRole('button', { name: 'any' }));
     expect(dispatch).toHaveBeenCalledWith({ type: 'runtime', runtime: null, bar: null });
   });
+
+  it('reads a time scale under the track and each handle shows its value', () => {
+    const { container, rerender } = render(<RuntimeTile runs={runs} range={null} dispatch={vi.fn()} />);
+    expect([...container.querySelectorAll('.rt-tk')].map((t) => t.textContent)).toEqual(['10s', '1m', '5m', '40m']);
+    expect([...container.querySelectorAll('[role="slider"]')].map((h) => h.textContent)).toEqual(['0', 'max']);
+    rerender(<RuntimeTile runs={runs} range={{ min: 300, max: 1800 }} dispatch={vi.fn()} />);
+    expect([...container.querySelectorAll('[role="slider"]')].map((h) => h.textContent)).toEqual(['5m', '30m']);
+  });
 });

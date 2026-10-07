@@ -71,6 +71,23 @@ export function dragRuntime(scale: RuntimeScale, range: RuntimeRange | null, whi
   return next.min === 0 && next.max === Infinity ? null : next;
 }
 
+const TICKS = [10, M, 5 * M, 15 * M, H, 4 * H, 12 * H, 24 * H];
+
+/**
+ * Time-scale labels under the track: round runtimes under the longest run, then the longest run itself (right-aligned).
+ * A tick closer than `gap` (track share) to the previous one or to the longest is dropped.
+ */
+export function scaleTicks(scale: RuntimeScale, gap = 0.09): { sec: number; x: number }[] {
+  const end = { sec: scale.longest, x: 1 };
+  const out: { sec: number; x: number }[] = [];
+  for (const sec of TICKS) {
+    const x = scale.x(sec);
+    if (sec >= scale.longest || 1 - x < gap * 1.5 || (out.length && x - out[out.length - 1].x < gap)) continue;
+    out.push({ sec, x });
+  }
+  return [...out, end];
+}
+
 /** Runs per slice of the track, for the small bars above it. */
 export function histogram(runs: Run[], scale: RuntimeScale, n: number): number[] {
   const out = new Array<number>(n).fill(0);

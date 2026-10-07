@@ -17,9 +17,9 @@
 .rt-top b { font-size: 13.5px; font-weight: 600; }
 .rt-top span { min-width: 0; color: var(--ink-3); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; }
 .rt-top button { margin-left: auto; font-size: 11px; padding: 0 8px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink-2); cursor: pointer; }
-.rt-track { position: relative; height: 32px; margin-top: 2px; user-select: none; touch-action: none; }
-.rt-track::before { content: ""; position: absolute; left: 0; right: 0; bottom: 4px; height: 2px; background: #cfc3b3; }
-.rt-bars { position: absolute; left: 0; right: 0; bottom: 16px; height: 14px; }
+.rt-track { position: relative; height: 46px; margin-top: 2px; user-select: none; touch-action: none; }
+.rt-track::before { content: ""; position: absolute; left: 0; right: 0; bottom: 18px; height: 2px; background: #cfc3b3; }
+.rt-bars { position: absolute; left: 0; right: 0; bottom: 30px; height: 14px; }
 .rt-bar { position: absolute; top: -4px; bottom: 0; padding: 0; border: 0; border-radius: 2px; background: none; cursor: pointer; }
 .rt-bar:hover { background: rgba(217, 138, 18, .15); }
 .rt-bar.sel { background: rgba(217, 138, 18, .22); box-shadow: inset 0 0 0 1px var(--amber); }
@@ -27,5 +27,8 @@
 .rt-bar:hover i { filter: brightness(.85); }
 .rt-bar.sel i { background: #a8640a; }
 .rt-bars i.in { background: var(--amber); }
-.rt-sel { position: absolute; bottom: 3px; height: 4px; background: var(--amber); border-radius: 2px; }
-.rt-h { position: absolute; bottom: 0; width: 10px; height: 11px; margin-left: -5px; border-radius: 3px; background: var(--sheet); border: 1.5px solid var(--amber); cursor: ew-resize; z-index: 1; }
+.rt-sel { position: absolute; bottom: 17px; height: 4px; background: var(--amber); border-radius: 2px; }
+.rt-h { position: absolute; bottom: 11px; height: 15px; padding: 0 5px; border-radius: 3px; background: var(--sheet); border: 1.5px solid var(--amber); cursor: ew-resize; z-index: 1; font-size: 10px; font-weight: 600; line-height: 15px; color: var(--amber-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* time scale under the track */
+.rt-tk { position: absolute; bottom: 0; font-size: 10px; line-height: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; pointer-events: none; }
+.rt-tk::before { content: ""; position: absolute; left: 50%; top: -5px; height: 4px; border-left: 1px solid #cfc3b3; }

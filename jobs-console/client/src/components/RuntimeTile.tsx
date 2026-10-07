@@ -2,7 +2,8 @@ import { useMemo, useRef, type PointerEvent as ReactPointerEvent } from 'react';
 import type { Run } from '../../../shared/domain/types';
 import { dur } from '../../../shared/domain/format';
 import type { Action } from '../model/viewState';
-import { barIndex, barRange, dragRuntime, handlePositions, histogram, inRuntime, nearestEdge, rangeText, runtimeOf, runtimeScale, sameRange, type RuntimeRange } from '../model/runtime';
+import { durShort } from '../model/history';
+import { barIndex, barRange, dragRuntime, handlePositions, histogram, inRuntime, nearestEdge, rangeText, runtimeOf, runtimeScale, sameRange, scaleTicks, type RuntimeRange } from '../model/runtime';
 
 const BARS = 40;
 
@@ -14,6 +15,7 @@ const BARS = 40;
 export function RuntimeTile({ runs, range, bar = null, dispatch }: { runs: Run[]; range: RuntimeRange | null; bar?: RuntimeRange | null; dispatch: (a: Action) => void }) {
   const scale = useMemo(() => runtimeScale(runs), [runs]);
   const bars = useMemo(() => histogram(runs, scale, BARS), [runs, scale]);
+  const ticks = useMemo(() => scaleTicks(scale), [scale]);
   const trackRef = useRef<HTMLDivElement>(null);
   const [a, b] = handlePositions(scale, range);
   const sel = barIndex(scale, bar, BARS);
@@ -80,8 +82,16 @@ export function RuntimeTile({ runs, range, bar = null, dispatch }: { runs: Run[]
             )}
           </span>
           {range && <span className="rt-sel" style={{ left: `${a * 100}%`, width: `${(b - a) * 100}%` }} />}
-          <span className="rt-h" style={{ left: `${a * 100}%` }} onPointerDown={startDrag('min')} role="slider" aria-label="shortest runtime" aria-valuenow={range?.min ?? 0} />
-          <span className="rt-h" style={{ left: `${b * 100}%` }} onPointerDown={startDrag('max')} role="slider" aria-label="longest runtime" aria-valuenow={range?.max ?? scale.longest} />
+          {ticks.map((t) => (
+            <span key={t.sec} className="rt-tk" style={{ left: `${t.x * 100}%`, transform: `translateX(-${t.x === 1 ? 100 : 50}%)` }}>{durShort(t.sec)}</span>
+          ))}
+          {/* Each handle reads its value; shifted by its own position so the end handles stay inside the tile. */}
+          <span className="rt-h" style={{ left: `${a * 100}%`, transform: `translateX(-${a * 100}%)` }} onPointerDown={startDrag('min')} role="slider" aria-label="shortest runtime" aria-valuenow={range?.min ?? 0}>
+            {range?.min ? durShort(range.min) : '0'}
+          </span>
+          <span className="rt-h" style={{ left: `${b * 100}%`, transform: `translateX(-${b * 100}%)` }} onPointerDown={startDrag('max')} role="slider" aria-label="longest runtime" aria-valuenow={range?.max ?? scale.longest}>
+            {range && range.max !== Infinity ? durShort(range.max) : 'max'}
+          </span>
         </div>
       </div>
     </section>
