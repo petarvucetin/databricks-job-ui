@@ -7,6 +7,7 @@ import { causeGroups, lastRunSec, schedule, spanSec, tasksHead, ticks, type Sche
 import { useTaskLog } from '../hooks/useTaskLog';
 import { useTabActiveRef } from '../hooks/useTabActive';
 import { TitleLink } from './TitleLink';
+import { CopyButton } from './CopyButton';
 import './drawer.css';
 
 const RESULT_ROOT = { succeeded: 'Succeeded', failed: 'Failed', cancelled: 'Cancelled', partial: 'Partially succeeded' } as const;
@@ -26,7 +27,7 @@ function Glyph({ type }: { type: Run['type'] }) {
 
 /** One stop on the route: a pill, a value, an optional right-hand pill; the header toggles the body. */
 function Panel({ k, v, r, cls = '', mono, open: initial = false, children }: {
-  k: string; v: ReactNode; r?: string; cls?: '' | 'fail' | 'last'; mono?: boolean; open?: boolean; children?: ReactNode;
+  k: string; v: ReactNode; r?: ReactNode; cls?: '' | 'fail' | 'last'; mono?: boolean; open?: boolean; children?: ReactNode;
 }) {
   const [open, setOpen] = useState(initial);
   const hasBody = children !== undefined && children !== null && children !== false;
@@ -35,10 +36,20 @@ function Panel({ k, v, r, cls = '', mono, open: initial = false, children }: {
       <div className="hd" onClick={hasBody ? () => setOpen((o) => !o) : undefined}>
         <span className={`k pill${cls === 'fail' ? ' red' : ''}`}>{k}</span>
         <span className={`v${mono ? ' mono' : ''}`}>{v}</span>
-        {r && <span className={`r pill${/cause/.test(r) ? ' amber' : ''}`}>{r}</span>}
+        {r && <span className={`r pill${typeof r === 'string' && /cause/.test(r) ? ' amber' : ''}`}>{r}</span>}
         <span className="chev">{open && hasBody ? '▾' : '▸'}</span>
       </div>
       {hasBody && <div className="bd">{children}</div>}
+    </div>
+  );
+}
+
+/** A Root panel's error box: the message, a dim line under it, and a copy icon for both as plain text. */
+function Err({ main, dim }: { main: string; dim?: string }) {
+  return (
+    <div className="err">
+      {main}{dim ? <><br /><span className="dim">{dim}</span></> : null}
+      <CopyButton value={dim ? `${main}\n${dim}` : main} label="error" />
     </div>
   );
 }
@@ -198,6 +209,7 @@ function TaskLog({ runId, task, hint, failed, nonce, url }: { runId: number; tas
       <div className="logh">
         <b>Log</b>
         <span>{log.state === 'loading' ? 'loading' : log.state === 'error' ? 'not available' : `${lines.length} lines${failed ? ', ends at the error' : ''}`}</span>
+        {text && <CopyButton value={stripAnsi(text.replace(/\r/g, ''))} label="log" />}
         {url && <a className="r" href={url} target="_blank" rel="noopener noreferrer" title="Open this run in Databricks for the full output and driver logs">open full log ↗</a>}
       </div>
       <div className="log" ref={ref}>
@@ -214,7 +226,7 @@ function TaskBody({ run, task, kind, compute = 'ingest_cluster, 15.4 LTS, i4i.2x
   if (run.tasks) {
     return (
       <>
-        {params ? <div className="kv"><span>parameters</span><span className="mono">{params}</span></div> : null}
+        {params ? <div className="kv"><span>parameters</span><span className="mono">{params}<CopyButton value={params} label="parameters" /></span></div> : null}
       </>
     );
   }
@@ -222,7 +234,7 @@ function TaskBody({ run, task, kind, compute = 'ingest_cluster, 15.4 LTS, i4i.2x
     <>
       <div className="kv">
         <span>source</span><a href="#" className="path" onClick={(e) => e.preventDefault()}>/Workspace/Repos/finance-gl/src/gl/{task}{ext}</a>
-        <span>parameters</span><span className="mono">{params}</span>
+        <span>parameters</span><span className="mono">{params}{params && <CopyButton value={params} label="parameters" />}</span>
         <span>compute</span><span>{compute}</span>
         {kind === 'Python script' && <><span>cluster</span><span className="mono">0918-0600-gl4x</span></>}
       </div>
@@ -326,7 +338,7 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose, refresh }: {
   const taskPanel = (name: string, t: ScheduledTask | undefined, kind = 'Python script', extra: Partial<Parameters<typeof TaskBody>[0]> = {}) => {
     logFor = { task: name, hint: hintFor(t), failed: t?.state === 'f' };
     return (
-      <Panel key={`task-${name}`} cls="last" k="Task" v={<span className="mono-v">{name}</span>} r={real ? undefined : kind} open>
+      <Panel key={`task-${name}`} cls="last" k="Task" v={<span className="vc"><span className="mono-v">{name}</span><CopyButton value={name} label="task name" /></span>} r={real ? undefined : kind} open>
         {real && !Object.keys(run.params).length ? undefined : <TaskBody run={run} task={name} kind={kind} {...extra} />}
       </Panel>
     );
@@ -339,10 +351,7 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose, refresh }: {
     tail = (
       <>
         <Panel cls="fail" k="Root" v={failure.cause.label} open>
-          <div className="err">
-            {failure.cause.detail}<br />
-            <span className="dim">{real ? [failure.name, failure.cause.code].filter(Boolean).join(', ') : `${failure.name}, line 41.${failure.cause.label === 'Table not found' ? ' Same error in 87 other jobs since 07:10.' : ''}`}</span>
-          </div>
+          <Err main={failure.cause.detail} dim={real ? [failure.name, failure.cause.code].filter(Boolean).join(', ') : `${failure.name}, line 41.${failure.cause.label === 'Table not found' ? ' Same error in 87 other jobs since 07:10.' : ''}`} />
         </Panel>
         {taskPanel(picked ? picked.name : failure.name, picked ?? failRow)}
       </>
@@ -351,20 +360,20 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose, refresh }: {
     let root: ReactNode;
     let task: ReactNode = picked ? taskPanel(picked.name, picked) : null;
     if (isFailed) {
-      root = <Panel cls="fail" k="Root" v={run.cause.label} open><div className="err">{run.cause.detail}<br /><span className="dim">{run.cause.code}</span></div></Panel>;
+      root = <Panel cls="fail" k="Root" v={run.cause.label} open><Err main={run.cause.detail} dim={run.cause.code} /></Panel>;
     } else if (run.kind === 'slow' && real) {
       // The task to look at: the one still running, else the longest.
       const slowest = rows.find((t) => t.state === 'r') ?? [...rows].sort((a, b) => b.dur - a.dur)[0];
       root = (
         <Panel cls="fail" k="Root" v="Slower than usual" open>
-          <div className="err">{slowest?.name ?? run.name}<br /><span className="dim">{run.live ? `${dur(elapsed)} so far` : `took ${dur(elapsed)}`}, usually {dur(run.usualSec)}.</span></div>
+          <Err main={slowest?.name ?? run.name} dim={`${run.live ? `${dur(elapsed)} so far` : `took ${dur(elapsed)}`}, usually ${dur(run.usualSec)}.`} />
         </Panel>
       );
       if (slowest) task ??= taskPanel(slowest.name, slowest);
     } else if (run.kind === 'slow') {
       root = (
         <Panel cls="fail" k="Root" v="Slower than usual" open>
-          <div className="err">transform<br /><span className="dim">{run.live ? `${dur(elapsed)} so far` : `took ${dur(elapsed)}`}, usually {dur(run.usualSec)}. Same parameters, code and cluster as the last run.</span></div>
+          <Err main="transform" dim={`${run.live ? `${dur(elapsed)} so far` : `took ${dur(elapsed)}`}, usually ${dur(run.usualSec)}. Same parameters, code and cluster as the last run.`} />
         </Panel>
       );
       task ??= taskPanel('transform', rows.find((t) => t.name === 'transform'), 'Notebook', { compute: 'serverless', ext: '' });
@@ -375,16 +384,16 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose, refresh }: {
         </Panel>
       );
     } else if (run.kind === 'queued' && real) {
-      root = <Panel cls="fail" k="Root" v="Queued" open><div className="err">{run.cause.code || 'Queued'}{run.cause.detail && <><br /><span className="dim">{run.cause.detail}</span></>}</div></Panel>;
+      root = <Panel cls="fail" k="Root" v="Queued" open><Err main={run.cause.code || 'Queued'} dim={run.cause.detail} /></Panel>;
     } else if (run.kind === 'queued') {
-      root = <Panel cls="fail" k="Root" v="Queued" open><div className="err">MAX_CONCURRENT_RUNS_REACHED<br /><span className="dim">Job allows 1 concurrent run. The previous run is still going.</span></div></Panel>;
+      root = <Panel cls="fail" k="Root" v="Queued" open><Err main="MAX_CONCURRENT_RUNS_REACHED" dim="Job allows 1 concurrent run. The previous run is still going." /></Panel>;
     } else if (run.kind === 'retrying' && real) {
       const rt = rows.find((t) => t.state === 'r' && (run.tasks?.[t.i]?.attempt ?? 0) > 0) ?? rows.find((t) => t.state === 'r');
       const attempt = rt ? (run.tasks?.[rt.i]?.attempt ?? 0) + 1 : undefined;
-      root = <Panel cls="fail" k="Root" v="Retrying" open><div className="err">{rt ? rt.name : run.name}<br /><span className="dim">{attempt ? `attempt ${attempt}` : run.cause.detail}</span></div></Panel>;
+      root = <Panel cls="fail" k="Root" v="Retrying" open><Err main={rt ? rt.name : run.name} dim={attempt ? `attempt ${attempt}` : run.cause.detail} /></Panel>;
       if (rt) task ??= taskPanel(rt.name, rt);
     } else if (run.kind === 'retrying') {
-      root = <Panel cls="fail" k="Root" v="Cluster error, retrying" open><div className="err">spot instances reclaimed<br /><span className="dim">extract_bseg, attempt 1 failed after 48m 22s. Attempt 2 running on on-demand workers.</span></div></Panel>;
+      root = <Panel cls="fail" k="Root" v="Cluster error, retrying" open><Err main="spot instances reclaimed" dim="extract_bseg, attempt 1 failed after 48m 22s. Attempt 2 running on on-demand workers." /></Panel>;
       task ??= taskPanel('extract_bseg', rows.find((t) => t.state === 'r'));
     } else {
       root = <Panel cls="last" k="Root" v={RESULT_ROOT[run.result ?? 'succeeded']} />;
@@ -397,8 +406,9 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose, refresh }: {
       <div className="dr-scrim" />
       <aside className={`dr${logFor ? ' wide' : ''}`} role="dialog" aria-modal="true" aria-label={`Run of ${run.name}`} data-c="17">
         <div className="dh">
-          <span className="title"><Glyph type={run.type} /><TitleLink url={run.url}><i>{prefix}</i>{rest}</TitleLink></span>
+          <span className="title"><Glyph type={run.type} /><TitleLink url={run.url}><i>{prefix}</i>{rest}</TitleLink><CopyButton value={run.name} label="run name" /></span>
           <span className="when pill">{when}</span>
+          <span className="rid">run {run.id}<CopyButton value={String(run.id)} label="run ID" /></span>
           <span className="rf">
             <span className="upd">{updated}</span>
             {refresh && (
@@ -411,7 +421,7 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose, refresh }: {
         <div className="dbody">
         <div className="trace">
           <div className="route">
-            <Panel k={run.type === 'pipeline' ? 'Pipeline' : 'Job'} v={`${run.ntasks} tasks`} r={real ? `runs as ${run.runAs}` : `daily 06:00, runs as ${run.runAs}`} />
+            <Panel k={run.type === 'pipeline' ? 'Pipeline' : 'Job'} v={`${run.ntasks} tasks`} r={<>{real ? `runs as ${run.runAs}` : `daily 06:00, runs as ${run.runAs}`}{run.runAs && <CopyButton value={run.runAs} label="run as" />}</>} />
             <Panel k="Run" v={elapsed ? dur(elapsed) : 'not started'} r={`usual ${dur(run.usualSec)}`} open>
               <div className="cmp">
                 <span>this run</span><div className="barx"><i className={`now${nowCls}`} style={{ width: pct(elapsed) }} /></div><span className="num">{elapsed ? dur(elapsed) : '0s'}</span>

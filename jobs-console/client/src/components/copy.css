@@ -1,0 +1,6 @@
+/* CopyButton: a 20x20 clipboard icon, always visible; a check and a dark "Copied" tip after a click */
+.cp { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border: 0; background: none; color: var(--ink-3); border-radius: 4px; cursor: pointer; vertical-align: middle; padding: 0; margin: -3px 0 -3px 4px; position: relative; font: inherit; line-height: 1; direction: ltr; }
+.cp:hover { color: var(--ink); background: var(--wash-sand); }
+.cp svg { width: 14px; height: 14px; }
+.cp.ok { color: var(--green); }
+.cp .cp-tip { position: absolute; top: 50%; left: calc(100% + 4px); transform: translateY(-50%); background: var(--ink); color: #fff; font: 11px var(--sans); padding: 2px 6px; border-radius: 3px; white-space: nowrap; pointer-events: none; z-index: 5; }

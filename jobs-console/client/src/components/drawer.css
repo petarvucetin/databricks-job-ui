@@ -32,6 +32,11 @@
 .dr .ty { display: inline-flex; width: 16px; height: 16px; color: var(--ink-3); vertical-align: -2px; margin-right: 8px; }
 .dr .ty svg { width: 16px; height: 16px; }
 .dr .dh .when { white-space: nowrap; }
+.dr .dh .rid { display: inline-flex; align-items: center; white-space: nowrap; font-family: var(--mono); font-size: 12px; line-height: 18px; color: var(--ink-3); }
+.dr .bd > .err { position: relative; padding-right: 34px; }
+.dr .bd > .err > .cp { position: absolute; top: 6px; right: 6px; margin: 0; }
+.dr .hd .v .vc { display: flex; align-items: center; min-width: 0; }
+.dr .hd .v .vc .mono-v { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .dr .dh .x { margin-left: auto; border: 0; background: none; color: var(--ink-3); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 2px; }
 .dr .dh .x:hover { color: var(--ink); }
 .dr .dh .rf { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; color: var(--ink-3); font-size: 12px; line-height: 18px; }

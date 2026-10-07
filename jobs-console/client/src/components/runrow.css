@@ -87,5 +87,5 @@
 .rr-run-avg em { font-style: normal; font-weight: 500; color: var(--amber-ink); }
 
 /* compact rows (C): just the name, one line */
-.rr.compact { display: block; padding: 5px 16px; margin-bottom: 4px; }
+.rr.compact { display: flex; align-items: center; padding: 5px 16px; margin-bottom: 4px; }
 .rr.compact .rr-name { margin: 0; font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

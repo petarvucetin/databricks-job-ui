@@ -6,6 +6,7 @@ import {
 } from '../model/rowView';
 import { ROW_HISTORY_MAX, dayTime, durShort, durationRange, historyStats, visibleHistory } from '../model/history';
 import { TitleLink } from './TitleLink';
+import { CopyButton } from './CopyButton';
 import './runrow.css';
 
 const RESULT_LABEL = { succeeded: 'succeeded', failed: 'failed', cancelled: 'cancelled', partial: 'partially succeeded' } as const;
@@ -76,6 +77,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
     return (
       <div className={`rr compact${selected ? ' on' : ''}`} data-id={run.id} onClick={onSelect ? () => onSelect(run.id) : undefined}>
         <span className="rr-name"><i>{prefix}</i>{rest}</span>
+        <CopyButton value={run.name} label="run name" />
       </div>
     );
   }
@@ -84,14 +86,14 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
     <div className={cls} data-id={run.id} onClick={onSelect ? () => onSelect(run.id) : undefined}>
       <div className="rr-l1">
         <span className={`rr-tag ${run.type}`} data-c="2">{run.type === 'pipeline' ? 'Pipeline' : 'Job'}</span>
-        <span className="rr-ra" data-c="13">run as <b>{run.runAs}</b></span>
+        <span className="rr-ra" data-c="13">run as <b>{run.runAs}</b>{run.runAs && <CopyButton value={run.runAs} label="run as" />}</span>
         {stat.label === 'waiting' && (
           <span className="rr-st" data-c="11">
             <span>{stat.label}</span>
             <b data-c="9">{stat.value}</b>
           </span>
         )}
-        <span className="rr-name" data-c="3"><TitleLink url={run.url}>{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</TitleLink></span>
+        <span className="rr-name" data-c="3"><TitleLink url={run.url}>{rest.split('_').map((part, i) => (i ? <Fragment key={i}>_<wbr />{part}</Fragment> : part))}</TitleLink><CopyButton value={run.name} label="run name" /></span>
       </div>
       {run.live && (
         <div className="rr-run" data-c="9">
@@ -107,7 +109,7 @@ export function RunRow({ run, history, nowMs, loadedAt, asOf, selected, onSelect
       )}
       {hasRun && over && <span className="rr-run-avg"><em>+{dur(elapsed - run.usualSec)}</em> over</span>}
       <div className="rr-main">
-        {target && <span className="rr-tgt" data-c="19">{target.kind} <b>{target.who}</b></span>}
+        {target && <span className="rr-tgt" data-c="19">{target.kind} <b>{target.who}</b>{target.who && <CopyButton value={target.who} label="target" />}</span>}
       </div>
       <div className="rr-hist" data-c="12">
         <button

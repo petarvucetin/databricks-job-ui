@@ -163,7 +163,7 @@ describe('RunRow', () => {
     const { container } = render(<RunRow historyOpen run={live} nowMs={5000} loadedAt={0} asOf={0} onSelect={onSelect} compact />);
     const row = container.querySelector('.rr')!;
     expect(row.className).toBe('rr compact');
-    expect(row.children).toHaveLength(1);
+    expect([...row.children].map((c) => c.className)).toEqual(['rr-name', 'cp']); // the name and its copy icon
     expect(row.textContent).toBe(live.name);
     fireEvent.click(row);
     expect(onSelect).toHaveBeenCalledWith(live.id);

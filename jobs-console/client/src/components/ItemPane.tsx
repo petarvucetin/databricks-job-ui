@@ -6,6 +6,7 @@ import { pillOf, runsFor, startsOf } from '../model/items';
 import { dayTime, durShort } from '../model/history';
 import { dayName, hhmm } from '../model/schedule';
 import { splitName } from '../model/rowView';
+import { CopyButton } from './CopyButton';
 import './runrow.css';
 
 const RECENT = 30;
@@ -35,7 +36,7 @@ function Structure({ item }: { item: Item }) {
             <ul className="tasks">
               {tasks.map((t) => (
                 <li key={t.key}>
-                  <span className="tk">{t.key}{t.dependsOn.length > 0 && <span className="dep">after {t.dependsOn.join(', ')}</span>}</span>
+                  <span className="tk">{t.key}<CopyButton value={t.key} label="task key" />{t.dependsOn.length > 0 && <span className="dep">after {t.dependsOn.join(', ')}</span>}</span>
                   <span className="tt">{t.type}</span>
                 </li>
               ))}
@@ -49,7 +50,7 @@ function Structure({ item }: { item: Item }) {
             <dl className="facts">
               <dt>Kind</dt><dd>{pl.kind}</dd>
               <dt>Mode</dt><dd>{pl.continuous ? 'Continuous' : 'Triggered'}</dd>
-              <dt>Target</dt><dd>{pl.target ? <code>{pl.target}</code> : '—'}</dd>
+              <dt>Target</dt><dd>{pl.target ? <><code>{pl.target}</code><CopyButton value={pl.target} label="target" /></> : '—'}</dd>
               <dt>Compute</dt><dd>{pl.serverless ? 'Serverless' : 'Classic cluster'}{pl.channel ? ` · channel ${pl.channel}` : ''}</dd>
             </dl>
           )
@@ -89,13 +90,13 @@ export function ItemPane({ item, runs, now, onClose, onSeeRuns, onOpenRun }: {
           {item.url && <a className="p-open" href={item.url} target="_blank" rel="noreferrer">open in Databricks ↗</a>}
           <button type="button" className="p-x" title="Close" aria-label="Close" onClick={onClose}>✕</button>
         </div>
-        <div className="p-name"><i>{prefix}</i>{bare}</div>
+        <div className="p-name"><i>{prefix}</i>{bare}<CopyButton value={item.name} label="name" /></div>
         {item.description && <p className="p-desc">{item.description}</p>}
       </div>
       <div className="p-sec">
         <dl className="facts">
-          <dt>Run as</dt><dd>{isSP(item.runAs) ? <>service principal <code>{item.runAs!.slice(0, 8)}…</code></> : (item.runAs ?? '—')}</dd>
-          <dt>Creator</dt><dd>{item.creator ?? '—'}</dd>
+          <dt>Run as</dt><dd>{isSP(item.runAs) ? <>service principal <code>{item.runAs!.slice(0, 8)}…</code></> : (item.runAs ?? '—')}{item.runAs && <CopyButton value={item.runAs} label="run as" />}</dd>
+          <dt>Creator</dt><dd>{item.creator ?? '—'}{item.creator && <CopyButton value={item.creator} label="creator" />}</dd>
           <dt>Trigger</dt>
           <dd title={pill.title}>
             {pill.text}
@@ -104,7 +105,7 @@ export function ItemPane({ item, runs, now, onClose, onSeeRuns, onOpenRun }: {
           </dd>
           <dt>Bundle</dt><dd>{item.bundle ? 'from a bundle' : 'not from a bundle'}</dd>
           <dt>Tags</dt><dd>{tags.length ? tags.map(([k, v]) => <span key={k} className="chip"><b>{k}:</b>{v}</span>) : '—'}</dd>
-          <dt>{item.type === 'job' ? 'Job ID' : 'Pipeline ID'}</dt><dd><code>{item.id}</code></dd>
+          <dt>{item.type === 'job' ? 'Job ID' : 'Pipeline ID'}</dt><dd><code>{item.id}</code><CopyButton value={String(item.id)} label={item.type === 'job' ? 'job ID' : 'pipeline ID'} /></dd>
         </dl>
       </div>
       <div className="p-sec">

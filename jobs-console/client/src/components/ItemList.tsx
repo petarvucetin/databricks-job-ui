@@ -6,6 +6,7 @@ import { itemKey, lastRun, pillOf, startsOf, type ItemFilters } from '../model/i
 import { splitName } from '../model/rowView';
 import { fmtN } from '../model/load';
 import { when, type SchedScale } from '../model/schedule';
+import { CopyButton } from './CopyButton';
 
 export type ItemsView = 'list' | 'load';
 type Range = { from: number; to: number; type?: 'job' | 'pipeline' };
@@ -58,7 +59,7 @@ export const ItemRow = memo(function ItemRow({ item, now, selected, onSelect, ri
   return (
     <div className={`ir${selected === key ? ' on' : ''}`} data-id={item.id} title={item.name} onClick={() => onSelect(selected === key ? null : key)}>
       <span className={`tag ${item.type}`}>{item.type === 'job' ? 'Job' : 'Pipeline'}</span>
-      <span className="nm"><span><i>{prefix}</i>{bare}</span></span>
+      <span className="nmc"><span className="nm"><span><i>{prefix}</i>{bare}</span></span><CopyButton value={item.name} label="name" /></span>
       <span className={`trg ${pill.cls}`} title={pill.title}>{pill.cls === 'sched' ? '⏱ ' : ''}{pill.text}</span>
       {right}
     </div>
