@@ -123,3 +123,57 @@ export interface RefreshInfo {
   calls: number;
   ms: number;
 }
+
+export type TriggerKind = 'schedule' | 'periodic' | 'file_arrival' | 'table_update' | 'continuous' | 'manual';
+
+export interface Schedule {
+  /** Quartz cron as the Jobs API returns it (settings.schedule.quartz_cron_expression). */
+  cron: string;
+  /** settings.schedule.timezone_id, e.g. "UTC", "America/Los_Angeles". */
+  tz: string;
+  paused: boolean;
+}
+
+export interface Item {
+  type: 'job' | 'pipeline';
+  /** job_id as a string, or pipeline_id. */
+  id: string;
+  /** Full name including the bundle target prefix. */
+  name: string;
+  description?: string;
+  creator?: string;
+  /** Who it runs as: settings.run_as.service_principal_name ?? .user_name ?? creator (jobs); run_as_user_name ?? creator (pipelines). */
+  runAs?: string;
+  /** Runs as a service principal (decision #11 "Deployed"). */
+  deployed: boolean;
+  /** Created or runs as the signed-in user (decision #11 "Mine"). */
+  mine: boolean;
+  tags: Record<string, string>;
+  trigger: TriggerKind;
+  /** Present when trigger = 'schedule'. */
+  schedule?: Schedule;
+  /** Present when trigger = 'periodic': trigger.periodic {interval, unit}. */
+  periodic?: { interval: number; unit: 'HOURS' | 'DAYS' | 'WEEKS' };
+  /** Trigger paused (schedule, periodic, file arrival, table update or continuous). */
+  paused: boolean;
+  /** settings.deployment.kind === 'BUNDLE' (jobs) / spec.deployment.kind (pipelines). */
+  bundle: boolean;
+  /** Item page in the workspace; absent in mock data. */
+  url?: string;
+}
+
+export interface ItemsResponse {
+  asOf: number;
+  source: DataSource;
+  items: Item[];
+  /** The list was cut short (time budget or page cap): it shows what was read. */
+  partial?: { reason: string };
+}
+
+export interface ItemDetail {
+  item: Item;
+  /** Jobs: tasks from jobs/get, dependencies first. */
+  tasks?: { key: string; type: string; dependsOn: string[] }[];
+  /** Pipelines: from pipelines/{id} spec. */
+  pipeline?: { kind: 'ETL' | 'Ingestion'; continuous: boolean; target?: string; serverless: boolean; channel?: string };
+}
