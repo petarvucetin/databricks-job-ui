@@ -11,6 +11,7 @@ import { listItems } from './api/listItems';
 import { getItem } from './api/getItem';
 import { newSessionId, registerDiag, registerNoDiag } from './api/diag';
 import { createSdkApi, resolveDefaultHost } from './data/live/api';
+import { sendJson } from './api/gzip';
 
 const provider = selectRunSource(process.env);
 const live = provider.kind === 'live' ? (provider as LiveProvider) : undefined;
@@ -34,8 +35,11 @@ const header = (req: Request, name: string): string | undefined => {
   return (Array.isArray(v) ? v[0] : v) || undefined;
 };
 
-/** Resolves the request's RunSource (live: as the signed-in user, recorded) and sends the handler's result. */
-function serve(req: Request, res: Response, next: NextFunction, route: string, handle: (source: RunSource) => Promise<HandlerResult>): void {
+/**
+ * Resolves the request's RunSource (live: as the signed-in user, recorded) and sends the handler's result; `gzipped`:
+ * compressed when the browser accepts it (the runs and items lists, megabytes at 10k items and 90 days of history).
+ */
+function serve(req: Request, res: Response, next: NextFunction, route: string, handle: (source: RunSource) => Promise<HandlerResult>, gzipped = false): void {
   const session = live && store ? new Session({ id: newSessionId(), route, query: { ...req.query, ...req.params }, authMode: live.auth, user: header(req, 'x-forwarded-email') }) : undefined;
   const source = provider.forRequest(req, session);
   if ('error' in source) {
@@ -49,7 +53,8 @@ function serve(req: Request, res: Response, next: NextFunction, route: string, h
         const error = result.status >= 500 ? (result.body as { error?: string } | undefined)?.error ?? `HTTP ${result.status}` : undefined;
         store?.add(session.finish({ status: result.status, body: result.body, error }));
       }
-      res.status(result.status).json(result.body);
+      if (gzipped) sendJson(req, res, result.status, result.body);
+      else res.status(result.status).json(result.body);
     })
     .catch((e: unknown) => {
       if (session) store?.add(session.finish({ status: 500, error: e }));
@@ -106,7 +111,7 @@ createApp({
           .catch(next);
       });
       app.get('/api/runs', (req, res, next) => {
-        serve(req, res, next, '/api/runs', (source) => listRuns(source, req.query));
+        serve(req, res, next, '/api/runs', (source) => listRuns(source, req.query), true);
       });
       app.get('/api/runs/:id', (req, res, next) => {
         serve(req, res, next, '/api/runs/:id', (source) => getRun(source, req.params.id, req.query));
@@ -115,7 +120,7 @@ createApp({
         serve(req, res, next, '/api/runs/:id/log', (source) => taskLog(source, req.params.id, req.query));
       });
       app.get('/api/items', (req, res, next) => {
-        serve(req, res, next, '/api/items', (source) => listItems(source, req.query));
+        serve(req, res, next, '/api/items', (source) => listItems(source, req.query), true);
       });
       app.get('/api/items/:type/:id', (req, res, next) => {
         serve(req, res, next, '/api/items/:type/:id', (source) => getItem(source, req.params.type, req.params.id));
