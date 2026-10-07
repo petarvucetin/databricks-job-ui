@@ -97,7 +97,11 @@ export function ItemPane({ item, runs, now, onClose, onSeeRuns, onOpenRun }: {
           <dt>Run as</dt><dd>{isSP(item.runAs) ? <>service principal <code>{item.runAs!.slice(0, 8)}…</code></> : (item.runAs ?? '—')}</dd>
           <dt>Creator</dt><dd>{item.creator ?? '—'}</dd>
           <dt>Trigger</dt>
-          <dd>{pill.title}{next !== undefined && <span className="h-none"> · next {dayName(next)} {hhmm(next)}, in {spanIn(next - now)}</span>}</dd>
+          <dd title={pill.title}>
+            {pill.text}
+            {pill.cls === 'sched' && item.schedule && <span className="h-none"> · {item.schedule.tz} schedule</span>}
+            {next !== undefined && <span className="h-none"> · next {dayName(next)} {hhmm(next)}, in {spanIn(next - now)}</span>}
+          </dd>
           <dt>Bundle</dt><dd>{item.bundle ? 'from a bundle' : 'not from a bundle'}</dd>
           <dt>Tags</dt><dd>{tags.length ? tags.map(([k, v]) => <span key={k} className="chip"><b>{k}:</b>{v}</span>) : '—'}</dd>
           <dt>{item.type === 'job' ? 'Job ID' : 'Pipeline ID'}</dt><dd><code>{item.id}</code></dd>

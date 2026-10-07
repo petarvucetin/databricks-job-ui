@@ -180,7 +180,10 @@ describe('JobsPage', () => {
     await waitFor(() => expect(rows()).toHaveLength(3));
     fireEvent.click(byId('2'));
     const pane = document.querySelector('.pane')!;
-    expect(pane.textContent).toContain('cron 0 0 2 * * ? (UTC) · next Wed 02:00, in 9h 44m');
+    // readable trigger text, the schedule's zone quietly, the next start; the raw cron only as the tooltip
+    const trigger = [...pane.querySelectorAll('.facts dt')].find((dt) => dt.textContent === 'Trigger')!.nextElementSibling!;
+    expect(trigger.textContent).toBe('daily 02:00 · UTC schedule · next Wed 02:00, in 9h 44m');
+    expect(trigger.getAttribute('title')).toBe('cron 0 0 2 * * ? (UTC)');
     expect(pane.textContent).toContain('not from a bundle');
     expect(pane.textContent).toContain('Job ID2');
     await waitFor(() => expect(pane.querySelectorAll('.tasks li')).toHaveLength(2));
