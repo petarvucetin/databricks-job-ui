@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Jobs console — Jobs & ETL (mockup)</title>
+<style>
+@font-face { font-family: "IBM Plex Sans"; font-weight: 400; src: url("fonts/IBMPlexSans-400.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 500; src: url("fonts/IBMPlexSans-500.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 600; src: url("fonts/IBMPlexSans-600.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 400; src: url("fonts/IBMPlexMono-400.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; src: url("fonts/IBMPlexMono-500.woff2") format("woff2"); }
+:root {
+  --paper: #f6f0e7; --sheet: #fffdf9; --ink: #27211c; --ink-2: #5b524a; --ink-3: #948a80; --rule: #e6ddd2;
+  --red: #d6452f; --amber: #d98a12; --green: #2c8c6a; --blue: #2f6fb3; --purple: #6a4fb0;
+  --wash-red: #fbe7e1; --wash-amber: #fdf0d8; --wash-green: #e3f2ea; --wash-sand: #f4ece1; --wash-blue: #e3ecf7; --wash-purple: #eee8f8;
+  --amber-ink: #9a5f05;
+  --sans: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+html, body { margin: 0; background: var(--sheet); color: var(--ink); font-family: var(--sans); font-size: 13.5px; line-height: 1.45; }
+button { font: inherit; color: inherit; }
+
+/* Shell */
+.shell-top { display: flex; align-items: center; gap: 12px; padding: 10px 24px 0; background: var(--paper); border-bottom: 1px solid var(--rule); }
+.shell-top h1 { margin: 0 0 10px; font-size: 15px; font-weight: 600; }
+.shell-badge { margin-bottom: 10px; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); background: var(--wash-sand); border: 1px solid #e3d7c6; border-radius: 4px; padding: 1px 7px; }
+.shell-ws { margin-bottom: 10px; font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
+.shell-user { margin-bottom: 10px; font-size: 12px; color: var(--ink-2); padding-left: 10px; border-left: 1px solid var(--rule); }
+.shell-ver { margin: 0 0 10px auto; font-size: 11.5px; color: var(--ink-3); }
+/* S1 tabs */
+.tabs { display: flex; gap: 4px; margin-left: 18px; align-self: flex-end; }
+.tabs button { border: 0; background: none; padding: 6px 14px 9px; font-size: 13.5px; color: var(--ink-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tabs button:hover { color: var(--ink); }
+.tabs button.on { color: var(--ink); font-weight: 600; border-bottom-color: var(--ink); }
+
+/* Filter bar (same parts as the Runs screen) */
+.fbar { margin: 12px 24px 8px; padding: 9px 14px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.vr { width: 1px; height: 20px; background: var(--rule); margin: 0 6px; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; }
+.seg button { padding: 5px 12px; border: 0; background: var(--sheet); color: var(--ink-2); cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button.on { background: var(--wash-amber); color: var(--ink); font-weight: 500; }
+.seg i { font-style: normal; color: var(--ink-3); margin-left: 8px; font-variant-numeric: tabular-nums; }
+.seg button.on i { color: var(--amber-ink); }
+.search { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border: 1px solid var(--rule); border-radius: 999px; color: var(--ink-3); }
+.search input { border: 0; outline: 0; background: transparent; font: inherit; color: var(--ink); width: 300px; }
+.fm { position: relative; display: inline-flex; }
+.fm-btn { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border: 1px solid var(--rule); border-radius: 999px; background: var(--sheet); color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+.fm-btn.on { border-color: #e8c98a; background: var(--wash-amber); color: var(--ink); }
+.fm-btn .chev { color: var(--ink-3); font-size: 10px; }
+.fm-menu { position: absolute; top: 34px; left: 0; z-index: 6; min-width: 230px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 10px 28px rgba(60,40,20,.14); padding: 6px 0; display: none; }
+.fm-menu.open { display: block; }
+.fm-menu label { display: flex; align-items: center; gap: 10px; padding: 6px 14px; cursor: pointer; font-size: 13px; }
+.fm-menu label:hover { background: #faf5ec; }
+.fm-menu label .n { margin-left: auto; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.fm-menu input { accent-color: var(--amber); }
+.fm-menu .k { font-family: var(--mono); font-size: 12px; }
+.fm-menu .k b { font-weight: 400; color: var(--ink-3); }
+.sortsel { margin-left: auto; color: var(--ink-3); font-size: 12.5px; display: inline-flex; gap: 6px; align-items: center; }
+.sortsel select { border: 0; background: none; font: inherit; color: var(--ink-2); cursor: pointer; }
+
+/* Schedule timeline (same parts as the Runs timeline) */
+.tl { margin: 0 24px 8px; padding: 10px 14px 12px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; }
+.tl-head-row { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+.tl-t { font-size: 12.5px; font-weight: 500; }
+.tl-scale { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; }
+.tl-scale button { padding: 2px 10px; font-size: 12px; border: 0; background: var(--sheet); color: var(--ink-2); cursor: pointer; }
+.tl-scale button + button { border-left: 1px solid var(--rule); }
+.tl-scale button.on { background: var(--wash-amber); color: var(--ink); font-weight: 500; }
+.tl-span { font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.tl-span b { font-weight: 500; color: var(--ink-2); }
+.tl-presets { display: flex; gap: 6px; margin-left: auto; }
+.tl-presets button { font-size: 12px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); color: var(--ink-2); cursor: pointer; }
+.tl-presets button.on { background: var(--wash-amber); border-color: #e8c98a; color: var(--ink); }
+.tl-grid { display: grid; gap: 3px; align-items: start; position: relative; isolation: isolate; margin-top: 18px; }
+.tl-win { position: relative; z-index: -1; align-self: stretch; border: 1px solid var(--amber); box-shadow: inset 0 0 0 1px var(--amber); border-radius: 6px; background: #fffaf0; margin: 0 -2px; }
+.tl-win-n { position: absolute; top: -17px; left: 50%; transform: translateX(-50%); font-size: 11px; line-height: 14px; font-weight: 600; color: #b7791f; background: var(--sheet); padding: 0 6px; white-space: nowrap; }
+.tl-col { border: 1px solid transparent; border-radius: 5px; padding: 3px 2px 4px; min-width: 0; cursor: default; }
+.tl-col:hover { border-color: var(--rule); background: #fdfaf5; }
+.tl-col.dim .tl-head, .tl-col.dim .cube { opacity: .45; }
+.tl-head { display: block; width: 100%; text-align: center; font-size: 11.5px; font-weight: 500; line-height: 1.25; border: 0; background: none; cursor: pointer; padding: 0; }
+.tl-head:hover { color: var(--amber); }
+.tl-head small { display: block; font-weight: 400; color: var(--ink-3); font-size: 9.5px; min-height: 12px; }
+.tl-head small.now { color: var(--blue); font-weight: 600; }
+.tl-cubes { display: flex; flex-direction: column; gap: 2px; margin-top: 3px; }
+.tl-empty { height: 15px; }
+.cube { display: flex; align-items: center; justify-content: center; width: 100%; max-width: 80px; margin: 0 auto; height: 15px; padding: 0; border-radius: 3px; border: 1px solid; font-size: 10px; font-variant-numeric: tabular-nums; cursor: pointer; }
+.cube:hover { box-shadow: 0 0 0 1px currentColor inset; }
+.cube.sel { outline: 2px solid var(--ink); outline-offset: 1px; }
+.cube.job { background: var(--wash-sand); border-color: #c9b79f; color: var(--ink-2); }
+.cube.pipeline { background: var(--wash-purple); border-color: #b9a8e3; color: var(--purple); }
+.tl-line { position: relative; height: 22px; margin-top: 5px; user-select: none; touch-action: none; }
+.tl-line::before { content: ""; position: absolute; left: 0; right: 0; top: 5px; height: 2px; background: #cfc3b3; }
+.tl-sel { position: absolute; top: 0; height: 12px; z-index: 1; }
+.tl-sel::before { content: ""; position: absolute; left: 0; right: 0; top: 4px; height: 4px; background: var(--amber); border-radius: 2px; }
+.tl-handle { position: absolute; top: 0; width: 10px; height: 12px; margin-left: -5px; border-radius: 3px; background: var(--sheet); border: 1.5px solid var(--amber); cursor: ew-resize; z-index: 2; }
+.tl-lab { position: absolute; top: 12px; font-size: 11px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.tl-foot { display: flex; gap: 14px; margin-top: 2px; font-size: 11.5px; color: var(--ink-3); }
+.tl-foot .k { display: inline-flex; align-items: center; gap: 5px; }
+.tl-foot .k i { width: 10px; height: 10px; border-radius: 2px; border: 1px solid; }
+.tl-foot .k.job i { background: var(--wash-sand); border-color: #c9b79f; }
+.tl-foot .k.pipeline i { background: var(--wash-purple); border-color: #b9a8e3; }
+.tl-foot .x { margin-left: auto; }
+/* row cell when the schedule window is narrowed: the starts inside it */
+.starts { justify-self: end; font-size: 12px; color: var(--amber-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.starts b { font-weight: 500; }
+
+/* Split: list + detail pane */
+.split { display: grid; grid-template-columns: minmax(0, 1fr); margin: 0 24px 24px; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; height: max(440px, calc(100vh - 300px)); }
+.split.sel { grid-template-columns: minmax(0, 1fr) clamp(360px, 36vw, 560px); }
+.list { overflow-y: auto; }
+.list-meta { position: sticky; top: 0; z-index: 2; padding: 6px 16px; font-size: 12px; color: var(--ink-3); background: var(--paper); border-bottom: 1px solid var(--rule); }
+
+/* Row: one line */
+/* Trigger pill (inline in the row) */
+.trg { justify-self: end; display: inline-flex; align-items: center; gap: 5px; padding: 0 9px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); font-size: 11.5px; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; line-height: 1.6; }
+.trg.sched { background: var(--wash-amber); border-color: #e8c98a; color: var(--amber-ink); }
+.trg.cont { background: var(--wash-blue); border-color: #c5d6ec; color: var(--blue); }
+.trg.none { color: var(--ink-3); border-style: dashed; }
+/* List / Gantt switch, in the list header */
+.list-meta { display: flex; align-items: center; gap: 10px; }
+.vsw { flex: none; margin-left: auto; display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; }
+.vsw button { padding: 1px 12px; font-size: 12px; border: 0; background: var(--sheet); color: var(--ink-2); cursor: pointer; }
+.vsw button + button { border-left: 1px solid var(--rule); }
+.vsw button.on { background: var(--wash-amber); color: var(--ink); font-weight: 500; }
+/* Gantt */
+.gt { --lab: clamp(300px, 32vw, 470px); }
+.gt-axis, .gt-row { display: grid; grid-template-columns: var(--lab) minmax(0, 1fr); }
+.gt-axis { position: sticky; top: 31px; z-index: 2; background: var(--sheet); border-bottom: 1px solid var(--rule); height: 30px; }
+.gt-axis .gt-lab { padding: 7px 16px; font-size: 11px; color: var(--ink-3); }
+.gt-track { position: relative; }
+.gt-tick { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--rule); }
+.gt-tick.q { border-left: 1px dotted #efe7dc; }
+.gt-tick.day { border-left: 1px solid #cfc3b3; }
+.gt-axis .gt-tick span { position: absolute; top: 7px; left: 3px; font-size: 11px; color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.gt-axis .gt-tick span small { color: var(--ink-3); margin-left: 3px; }
+.gt-row { border-bottom: 1px solid var(--rule); cursor: pointer; min-height: 34px; }
+.gt-row:hover { background: #f6efe3; }
+.gt-row.on { background: #f8ebd0; }
+.gt-row .gt-lab { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 0 10px 0 16px; border-right: 1px solid var(--rule); min-width: 0; }
+.gt-row .nm { font-size: 12.5px; }
+.bar { position: absolute; top: 9px; height: 16px; border-radius: 3px; border: 1px solid; min-width: 3px; box-sizing: border-box; }
+.bar.job { background: #eadfce; border-color: #b9a586; }
+.bar.pipeline { background: #ddd3f3; border-color: #9f8bd6; }
+.bar.lastfail { box-shadow: inset 0 -3px 0 var(--red); }
+.bar:hover { filter: brightness(.94); z-index: 1; }
+.gt-now { position: absolute; top: 0; bottom: 0; border-left: 2px solid var(--blue); z-index: 1; pointer-events: none; }
+.gt-axis .gt-now span { position: absolute; top: -1px; left: 3px; font-size: 9.5px; font-weight: 600; color: var(--blue); }
+.gt-note { padding: 8px 16px; font-size: 11.5px; color: var(--ink-3); }
+
+.ir { display: grid; grid-template-columns: 86px minmax(0, 1fr) auto 170px; align-items: center; gap: 12px; padding: 8px 16px; border-bottom: 1px solid var(--rule); cursor: pointer; }
+.ir:hover { background: #f6efe3; }
+.ir.on { background: #f8ebd0; }
+.tag { justify-self: start; display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; line-height: 1.5; }
+.tag.job { background: var(--wash-sand); color: var(--ink-2); border: 1px solid #e3d7c6; }
+.tag.pipeline { background: var(--wash-purple); color: var(--purple); border: 1px solid #d6cbee; }
+.nm { font-family: var(--mono); font-size: 13.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; direction: rtl; text-align: left; }
+.nm span { direction: ltr; unicode-bidi: plaintext; }
+.nm i { font-style: normal; font-weight: 400; color: var(--ink-3); }
+.last { justify-self: end; display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mk { width: 16px; height: 16px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 10px; font-weight: 700; }
+.mk.succeeded { background: var(--wash-green); color: var(--green); }
+.mk.failed { background: var(--wash-red); color: var(--red); }
+.mk.cancelled { background: #f1ede7; color: var(--ink-3); }
+.mk.running { background: var(--wash-blue); color: var(--blue); animation: blink 1.4s ease-in-out infinite; }
+.mk.none { color: var(--ink-3); }
+@keyframes blink { 50% { opacity: .35; } }
+
+/* Detail pane */
+.pane { display: none; border-left: 1px solid var(--rule); background: var(--sheet); overflow-y: auto; }
+.split.sel .pane { display: block; }
+.p-head { padding: 16px 20px 14px; border-bottom: 1px solid var(--rule); background: var(--paper); }
+.p-top { display: flex; align-items: center; gap: 10px; }
+.p-x { margin-left: auto; border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 16px; }
+.p-x:hover { color: var(--ink); }
+.p-open { font-size: 12px; color: var(--blue); text-decoration: none; }
+.p-open:hover { text-decoration: underline; }
+.p-name { margin: 8px 0 4px; font-family: var(--mono); font-size: 15px; font-weight: 500; overflow-wrap: anywhere; line-height: 1.4; }
+.p-name i { font-style: normal; font-weight: 400; color: var(--ink-3); }
+.p-desc { margin: 0; color: var(--ink-2); font-size: 13px; }
+.p-sec { padding: 14px 20px; border-bottom: 1px solid var(--rule); }
+.p-sec h3 { margin: 0 0 8px; font-size: 10.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); display: flex; align-items: baseline; gap: 8px; }
+.facts { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 5px 12px; margin: 0; }
+.facts dt { color: var(--ink-3); font-size: 12.5px; }
+.facts dd { margin: 0; font-size: 13px; overflow-wrap: anywhere; }
+.facts code { font-family: var(--mono); font-size: 12.5px; }
+.chip { display: inline-block; padding: 0 8px; margin: 0 4px 3px 0; border-radius: 999px; background: var(--wash-sand); border: 1px solid #e3d7c6; font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); }
+.chip b { font-weight: 400; color: var(--ink-3); }
+/* Run history boxes, as in the Runs screen */
+.boxes { display: flex; gap: 3px; overflow-x: auto; padding: 3px 3px 6px; margin: -3px -3px 0; }
+.rh { flex: none; font: inherit; background: var(--sheet); cursor: pointer; min-width: 50px; padding: 3px 6px 2px; display: inline-flex; flex-direction: column; align-items: center; gap: 1px; border-radius: 4px; border: 1px solid; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.rh-t { font-size: 11.5px; font-weight: 500; }
+.rh-w { font-size: 9.5px; opacity: .8; }
+.rh.succeeded { background: var(--wash-green); border-color: #9fd1b8; color: var(--green); }
+.rh.failed { background: var(--wash-red); border-color: var(--red); color: var(--red); }
+.rh.cancelled { background: #f1ede7; border-color: #c9bfb2; border-style: dashed; color: var(--ink-3); }
+.rh.running { background: var(--wash-amber); border-color: #d9a21b; color: var(--amber-ink); }
+.rh:hover { filter: brightness(.96); }
+.h-none { color: var(--ink-3); font-size: 12.5px; }
+/* Structure */
+.tasks { margin: 0; padding: 0; list-style: none; }
+.tasks li { display: grid; grid-template-columns: minmax(0, 1fr) 90px; gap: 10px; padding: 4px 0; border-bottom: 1px dashed var(--rule); font-size: 12.5px; }
+.tasks li:last-child { border-bottom: 0; }
+.tasks .tk { font-family: var(--mono); overflow-wrap: anywhere; }
+.tasks .dep { display: block; font-family: var(--sans); font-size: 11.5px; color: var(--ink-3); }
+.tasks .tt { color: var(--ink-3); text-align: right; }
+.see { display: flex; justify-content: flex-end; padding: 14px 20px 20px; }
+.see button { border: 1px solid var(--ink); background: var(--ink); color: var(--sheet); padding: 6px 16px; border-radius: 999px; cursor: pointer; font-weight: 500; }
+.see button:hover { background: #3d342d; }
+
+/* States */
+.state { padding: 60px 24px; text-align: center; color: var(--ink-2); }
+.state p { margin: 4px 0; }
+.state .sub { color: var(--ink-3); font-size: 12.5px; }
+.state button { margin-top: 10px; border: 1px solid var(--rule); background: var(--sheet); border-radius: 999px; padding: 4px 14px; cursor: pointer; }
+.skel { height: 14px; margin: 11px 16px; border-radius: 4px; background: linear-gradient(90deg, #f1e9de, #f8f2ea, #f1e9de); background-size: 200% 100%; animation: sh 1.4s linear infinite; }
+@keyframes sh { to { background-position: -200% 0; } }
+
+/* Runs tab stand-in */
+.runs-stub { margin: 60px auto; max-width: 560px; text-align: center; color: var(--ink-2); }
+.runs-stub b { color: var(--ink); }
+.runs-stub .flt { display: inline-block; margin-top: 12px; padding: 4px 12px; border-radius: 999px; background: var(--wash-amber); border: 1px solid #e8c98a; font-family: var(--mono); font-size: 12.5px; color: var(--ink); }
+
+/* Mockup-only state switch */
+.mock-sw { position: fixed; right: 14px; bottom: 12px; z-index: 50; font-size: 11.5px; color: var(--ink-3); background: var(--paper); border: 1px solid var(--rule); border-radius: 999px; padding: 4px 6px 4px 12px; display: flex; gap: 4px; align-items: center; }
+.mock-sw button { border: 0; background: none; padding: 2px 8px; border-radius: 999px; cursor: pointer; color: var(--ink-2); }
+.mock-sw button.on { background: var(--ink); color: var(--sheet); }
+
+/* Density candidates */
+.dn { padding: 4px 16px 24px; }
+.dn-c { padding: 14px 0 16px; border-bottom: 1px solid var(--rule); }
+.dn-h { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+.dn-h b { font-size: 13px; font-weight: 600; }
+.dn-h span { font-size: 12px; color: var(--ink-3); }
+.dn-h .leg { margin-left: auto; display: inline-flex; align-items: center; gap: 2px; font-size: 11px; color: var(--ink-3); }
+.dn-h .leg i { width: 14px; height: 10px; border-radius: 2px; }
+.hs { display: grid; gap: 2px; }
+.hs i { height: 24px; border-radius: 2px; }
+.hs i:hover, .wg i:hover { outline: 2px solid var(--ink); outline-offset: 0; }
+.axis { position: relative; height: 16px; margin-top: 3px; }
+.axis span { position: absolute; font-size: 11px; color: var(--ink-3); transform: translateX(-50%); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.axis span.d { color: var(--ink-2); font-weight: 600; }
+.lc { position: relative; }
+.lc svg { display: block; width: 100%; height: 84px; overflow: visible; }
+.lc .hit { fill: transparent; }
+.lc .hit:hover { fill: rgba(39,33,28,.06); }
+.lc .ymax { position: absolute; left: -2px; top: -6px; font-size: 10.5px; color: var(--ink-3); }
+.wg { display: grid; grid-template-columns: 40px repeat(24, minmax(0, 1fr)); gap: 2px; align-items: center; }
+.wg i { height: 18px; border-radius: 2px; }
+.wg .rl { font-size: 11px; color: var(--ink-2); }
+.wg .cl { font-size: 10px; color: var(--ink-3); text-align: center; }
+.pl { position: relative; }
+.pl .ln { position: relative; height: 10px; margin-bottom: 2px; }
+.pl .pb { position: absolute; top: 0; height: 10px; border-radius: 2px; }
+.pl .pb.job { background: #c9b79f; }
+.pl .pb.pipeline { background: #9f8bd6; }
+.pl .pb:hover { outline: 2px solid var(--ink); z-index: 1; }
+.pl .grid { position: absolute; inset: 0; pointer-events: none; }
+.pl .grid div { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--rule); }
+.tip { position: fixed; z-index: 100; pointer-events: none; max-width: 420px; padding: 7px 10px; background: var(--ink); color: var(--sheet); border-radius: 6px; font-size: 12px; line-height: 1.45; box-shadow: 0 6px 18px rgba(0,0,0,.18); display: none; white-space: pre-line; }
+.tip b { font-weight: 600; }
+
+/* Load view */
+.ld { padding: 14px 16px 8px; border-bottom: 1px solid var(--rule); background: var(--sheet); }
+.ld-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.ld-head > b { font-size: 13px; font-weight: 600; }
+.ld-head > span { font-size: 12px; color: var(--ink-3); }
+.ld-head > span b { color: var(--ink); font-weight: 600; }
+.ld-hint { margin-left: auto; }
+.ld-clear { margin-left: auto; border: 1px solid #e8c98a; background: var(--wash-amber); color: var(--ink); border-radius: 999px; padding: 1px 10px; font-size: 12px; cursor: pointer; }
+.ld-body { display: grid; grid-template-columns: 44px minmax(0, 1fr); }
+.ld-y { position: relative; height: 200px; }
+.ld-y span { position: absolute; right: 8px; transform: translateY(50%); font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.ld-plot { position: relative; height: 200px; cursor: crosshair; user-select: none; touch-action: none; }
+.ld-plot svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ld-grid { position: absolute; left: 0; right: 0; border-top: 1px solid #efe7dc; }
+.ld-grid:first-child { border-top-color: #cfc3b3; }
+.ld-vgrid { position: absolute; top: 0; bottom: 0; border-left: 1px dotted #efe7dc; }
+.ld-now { position: absolute; top: -6px; bottom: 0; border-left: 2px solid var(--blue); z-index: 2; pointer-events: none; }
+.ld-now span { position: absolute; top: -10px; left: 3px; font-size: 9.5px; font-weight: 600; color: var(--blue); }
+.ld-sel { position: absolute; top: 0; bottom: 0; background: rgba(217, 138, 18, .16); border-left: 1.5px solid var(--amber); border-right: 1.5px solid var(--amber); z-index: 1; pointer-events: none; }
+.ld-drag { position: absolute; top: 0; bottom: 0; background: rgba(39, 33, 28, .08); display: none; pointer-events: none; z-index: 1; }
+.ld-x { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--ink); display: none; pointer-events: none; z-index: 3; }
+.ld-x i { position: absolute; left: -5px; width: 8px; height: 8px; margin-bottom: -5px; border-radius: 50%; background: #c07a0c; border: 2px solid var(--sheet); }
+.ld-xa { position: relative; height: 18px; margin: 4px 0 0 44px; }
+.ld-xa span { position: absolute; transform: translateX(-50%); font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ld-xa span.d { color: var(--ink-2); font-weight: 600; }
+.ld-list .starts { color: var(--ink-2); }
+.mock-sw .sep { width: 1px; height: 14px; background: var(--rule); margin: 0 4px; }
+
+.hc { display: block; width: 100%; height: 22px; margin-top: 4px; padding: 0; border: 0; border-radius: 3px; cursor: pointer; }
+.hc:hover { outline: 2px solid var(--ink); }
+.hc.sel { outline: 2px solid var(--ink); outline-offset: 1px; }
+.tl-foot .leg { display: inline-flex; align-items: center; gap: 2px; }
+.tl-foot .leg i { width: 14px; height: 10px; border-radius: 2px; }
+</style>
+</head>
+<body>
+<header class="shell-top">
+  <h1>Jobs console</h1>
+  <nav class="tabs" id="tabs">
+    <button data-tab="jobs" class="on">Jobs &amp; ETL</button>
+    <button data-tab="runs">Runs</button>
+  </nav>
+  <span class="shell-badge">mock data</span>
+  <span class="shell-ws">adb-7405612029409959.19.azuredatabricks.net</span>
+  <span class="shell-user">petar@station5solutions.com</span>
+  <span class="shell-ver">v1.0.160 · 3c79030</span>
+</header>
+
+<section id="jobsTab">
+  <div class="fbar">
+    <label class="search">⌕ <input id="q" placeholder="Name tokens or job / pipeline ID — e.g. coretables mfg"></label>
+    <div class="vr"></div>
+    <div class="seg" id="typeSeg"></div>
+    <div class="vr"></div>
+    <div class="seg" id="scopeSeg"></div>
+    <div class="fm">
+      <button class="fm-btn" id="tagBtn">Tags <span class="chev">▾</span></button>
+      <div class="fm-menu" id="tagMenu"></div>
+    </div>
+    <label class="sortsel">Sort
+      <select id="sort"><option value="name">Name</option><option value="last">Last run</option><option value="failed">Recently failed</option><option value="next">Next start</option></select>
+    </label>
+  </div>
+  <section class="tl" id="sched"></section>
+  <div class="split" id="split">
+    <div class="list" id="list"></div>
+    <aside class="pane" id="pane"></aside>
+  </div>
+</section>
+
+<section id="runsTab" hidden>
+  <div class="runs-stub">
+    <p><b>Runs</b> is today's screen, unchanged: status tiles, timeline, runtime tile and one row per job.</p>
+    <p id="runsFilter"></p>
+  </div>
+</section>
+
+<div class="tip" id="tip"></div>
+<div class="mock-sw">mockup state
+  <button data-st="ok" class="on">list</button><button data-st="loading">loading</button><button data-st="empty">no match</button><button data-st="error">can't load</button><span class="sep"></span>data <button data-scale="89" class="on" id="sc89">89 jobs</button><button data-scale="10k" id="sc10k">10,000 jobs</button>
+</div>
+
+<script>
+const ME = 'petar@station5solutions.com';
+const SP = '7c1e9a40-2b3d-4f6e-9a1c-0d5e8b7f2a91';
+const H = 3600e3, NOW = Date.now();
+const mk = (o) => o;
+const suffixes = ['ca_cvg_ct_ecc_stxl_stxh','coretables_mfg_cvg_ct_ecc_td_afvc','coretables_mfg_cvg_ct_ecc_td_afvv','coretables_mfg_cvg_ct_ecc_td_jcds','coretables_sc_cvg_ct_ecc_td_equz','coretables_sc_cvg_ct_ecc_td_stas','project_databricks_cds_zvcatslbraccum'];
+const items = [];
+let id = 471186177;
+suffixes.forEach((s, i) => items.push(mk({ type: 'job', id: String(id + i * 9173), prefix: '[dev venkata_nagula] ', name: `aiges_ingest_sap_backfill_sys_bic_ngc_dwh_edw_${s}_dev`, runAs: i < 5 ? ME : SP, creator: i < 5 ? ME : 'venkata.nagula@agency.gov', tags: { owner: i < 5 ? 'petar' : 'venkata_nagula', env: 'dev', project: 'aiges', deployed: '2026-09-18' }, bundle: 'dev', trigger: i === 0 ? 'Every day at 02:00 UTC' : 'Manual (launched by Run All Backfill Jobs Sequentially)', desc: `History walk for ${s.split('_').slice(-2).join('_')}`, hist: hist(i), tasks: [['extract_sap', 'Notebook', ''], ['stage_bronze', 'Notebook', 'extract_sap'], ['merge_silver', 'Python wheel', 'stage_bronze'], ['refresh_gold', 'Pipeline', 'merge_silver']] })));
+['ca0','fin0','hr0','jsto','md0','mfg_op','mfg0','mfg1','sc0'].forEach((s, i) => items.push(mk({ type: 'job', id: String(168001576 + i * 4421), prefix: '[dev venkata_nagula] ', name: `aiges_ingest_sap_sap_erp1_edw_core_tables_${s}_dev`, runAs: SP, creator: 'venkata.nagula@agency.gov', tags: { owner: 'venkata_nagula', env: 'dev', project: 'aiges' }, bundle: 'dev', trigger: 'Every 6 hours', desc: `ERP1 core tables, ${s}`, hist: hist(i + 3), tasks: [['ingest', 'Notebook', ''], ['raw_bronze', 'Pipeline', 'ingest'], ['validate', 'SQL', 'raw_bronze']] })));
+['mfg_op','md0','ca0','sc0','fin0'].forEach((s, i) => items.push(mk({ type: 'pipeline', id: ['8f2a', 'c41d', '19be', '77a0', 'e5c3'][i] + '0b7e-3c51-4d2a-9f80-1a2b3c4d5e6f', prefix: '[dev venkata_nagula] ', name: `raw_bronze_sap_sap_erp1_edw_core_tables_${s}_dev`, runAs: SP, creator: 'venkata.nagula@agency.gov', tags: { owner: 'venkata_nagula', env: 'dev', project: 'aiges' }, bundle: 'dev', trigger: i === 3 ? 'Continuous' : 'Triggered (by a job pipeline task)', desc: '', kind: 'ETL', continuous: i === 3, target: 'aiges_dev.raw_bronze', serverless: true, channel: 'CURRENT', hist: hist(i + 7) })));
+items.push(mk({ type: 'pipeline', id: 'a9d40c11-6e2f-4b8a-8c3e-55f1d2e0b7a4', prefix: '', name: 'salesforce_ingest_accounts_opportunities', runAs: SP, creator: 'data.platform@agency.gov', tags: { project: 'crm', env: 'prod' }, bundle: null, trigger: 'Every hour', desc: 'Lakeflow Connect, Salesforce → crm_prod.raw', kind: 'Ingestion', continuous: false, target: 'crm_prod.raw', serverless: true, channel: 'CURRENT', hist: hist(2) }));
+items.push(mk({ type: 'job', id: '902114558', prefix: '', name: 'Run All Backfill Jobs Sequentially', runAs: ME, creator: ME, tags: { owner: 'petar', project: 'aiges' }, bundle: 'dev', trigger: 'Every day at 16:25 UTC', desc: 'Launches every owned backfill job in order, backfill last', hist: hist(0, true), tasks: suffixes.map((s, i) => [`t0${i + 1}_${s.slice(0, 18)}`, 'Run job', i ? `t0${i}_${suffixes[i - 1].slice(0, 18)}` : '']) }));
+items.push(mk({ type: 'job', id: '553201987', prefix: '', name: 'nightly_unity_catalog_audit_export', runAs: SP, creator: 'data.platform@agency.gov', tags: { project: 'platform', env: 'prod' }, bundle: null, trigger: 'Every day at 00:30 UTC', desc: '', hist: [], tasks: [['export_audit', 'SQL', '']] }));
+
+items.push(mk({ type: 'job', id: '610447802', prefix: '', name: 'sap_delta_cdc_poll', runAs: SP, creator: 'data.platform@agency.gov', tags: { project: 'aiges', env: 'prod' }, bundle: 'prod', desc: 'Polls SAP change tables', hist: hist(4), tasks: [['poll', 'Python wheel', '']] }));
+items.push(mk({ type: 'job', id: '610448190', prefix: '', name: 'ops_cluster_cost_rollup', runAs: SP, creator: 'data.platform@agency.gov', tags: { project: 'platform', env: 'prod' }, bundle: 'prod', desc: 'Hourly cost rollup from system.billing', hist: hist(5), tasks: [['rollup', 'SQL', '']] }));
+items.push(mk({ type: 'job', id: '610449033', prefix: '', name: 'weekly_vacuum_optimize_aiges', runAs: SP, creator: 'data.platform@agency.gov', tags: { project: 'aiges', env: 'prod' }, bundle: 'prod', desc: 'VACUUM + OPTIMIZE on aiges schemas', hist: hist(6), tasks: [['optimize', 'SQL', ''], ['vacuum', 'SQL', 'optimize']] }));
+
+// Schedules (Quartz cron in the real data: settings.schedule.quartz_cron_expression + timezone_id; mock uses three shapes).
+const SCHED = {
+  'aiges_ingest_sap_backfill_sys_bic_ngc_dwh_edw_ca_cvg_ct_ecc_stxl_stxh_dev': { daily: [2, 0] },
+  'Run All Backfill Jobs Sequentially': { daily: [16, 25] },
+  'nightly_unity_catalog_audit_export': { daily: [0, 30] },
+  'salesforce_ingest_accounts_opportunities': { every: 60, at: 5 },
+  'sap_delta_cdc_poll': { every: 15, at: 0 },
+  'ops_cluster_cost_rollup': { every: 60, at: 45 },
+  'weekly_vacuum_optimize_aiges': { weekly: [0, 3, 0] },
+};
+['ca0','fin0','hr0','jsto','md0','mfg_op','mfg0','mfg1','sc0'].forEach((s, i) => { SCHED[`aiges_ingest_sap_sap_erp1_edw_core_tables_${s}_dev`] = { every: 360, at: (i % 6) * 60 + 15 }; });
+
+// ~60 more scheduled jobs, bunched at popular times the way real workspaces are
+(() => {
+  const areas = ['finance', 'hr', 'supply', 'mfg', 'sales', 'ops', 'quality', 'procure'];
+  const kinds = ['daily_report', 'snapshot', 'kpi_refresh', 'extract', 'reconcile', 'export', 'dq_checks', 'aggregate'];
+  const shapes = [
+    { daily: [0, 0] }, { daily: [0, 0] }, { daily: [0, 30] }, { daily: [1, 0] }, { daily: [2, 0] }, { daily: [2, 0] }, { daily: [2, 15] }, { daily: [3, 0] },
+    { daily: [5, 0] }, { daily: [6, 0] }, { daily: [6, 0] }, { daily: [6, 0] }, { daily: [6, 30] }, { daily: [7, 0] }, { daily: [7, 30] }, { daily: [8, 0] },
+    { daily: [12, 0] }, { daily: [12, 0] }, { daily: [13, 0] }, { daily: [18, 0] }, { daily: [18, 0] }, { daily: [20, 0] }, { daily: [22, 0] }, { daily: [23, 0] },
+    { every: 60, at: 0 }, { every: 60, at: 0 }, { every: 60, at: 30 }, { every: 240, at: 0 }, { every: 240, at: 60 }, { every: 120, at: 0 }, { every: 720, at: 360 }, { every: 30, at: 0 },
+    { weekly: [0, 4, 0] }, { weekly: [0, 4, 0] }, { weekly: [6, 1, 0] },
+  ];
+  for (let i = 0; i < 62; i++) {
+    const nm = `aiges_${areas[i % 8]}_${kinds[(i * 3) % 8]}_${String(i).padStart(2, '0')}_prod`;
+    const it = { type: i % 9 === 4 ? 'pipeline' : 'job', id: String(700100000 + i * 137), prefix: '', name: nm, runAs: SP, creator: 'data.platform@agency.gov', tags: { project: 'aiges', env: 'prod', area: areas[i % 8] }, bundle: 'prod', desc: '', hist: hist(i + 11), tasks: [['run', 'Notebook', '']], kind: 'ETL', continuous: false, target: 'aiges_prod.gold', serverless: true, channel: 'CURRENT' };
+    items.push(it);
+    SCHED[nm] = shapes[(i * 7) % shapes.length];
+  }
+})();
+const pad = (n) => String(n).padStart(2, '0');
+items.forEach((it) => {
+  it.sched = SCHED[it.name] || null;
+  const s = it.sched;
+  if (s?.daily) it.trigger = `Every day at ${pad(s.daily[0])}:${pad(s.daily[1])}`;
+  else if (s?.weekly) it.trigger = `Every Sunday at ${pad(s.weekly[1])}:${pad(s.weekly[2])}`;
+  else if (s?.every) it.trigger = s.every < 60 ? `Every ${s.every} minutes` : s.every === 60 ? `Every hour at :${pad(s.at)}` : `Every ${s.every / 60} hours from ${pad(Math.floor(s.at / 60))}:${pad(s.at % 60)}`;
+  else if (it.continuous) it.trigger = 'Continuous (always on, no scheduled starts)';
+});
+/** Scheduled start times in [from, to), local time. */
+function firesRaw(it, from, to) {
+  const s = it.sched, out = [];
+  if (!s) return out;
+  const d = new Date(from); d.setHours(0, 0, 0, 0);
+  for (let day = d.getTime(); day < to; day += 864e5) {
+    const dd = new Date(day);
+    if (s.daily) out.push(new Date(dd.getFullYear(), dd.getMonth(), dd.getDate(), s.daily[0], s.daily[1]).getTime());
+    if (s.weekly && dd.getDay() === s.weekly[0]) out.push(new Date(dd.getFullYear(), dd.getMonth(), dd.getDate(), s.weekly[1], s.weekly[2]).getTime());
+    if (s.every) for (let m = s.at % s.every; m < 1440; m += s.every) out.push(day + m * 60e3);
+  }
+  return out.filter((t) => t >= from && t < to);
+}
+
+function hist(seed, running) {
+  const out = [], n = 6 + (seed * 7) % 14;
+  for (let k = 0; k < n; k++) {
+    const r = (seed * 31 + k * 17) % 23;
+    out.push({ res: r === 0 ? 'failed' : r === 5 ? 'cancelled' : (seed % 5 === 2 && k === n - 1) ? 'failed' : 'succeeded', dur: 40 + ((seed + 1) * (k + 3) * 37) % 700, at: NOW - (n - k) * (5 + seed % 4) * H });
+  }
+  if (running || seed % 6 === 1) out.push({ res: 'running', dur: 1500 + seed * 60, at: NOW - 0.4 * H });
+  return out;
+}
+const fmtDur = (s) => s >= 3600 ? `${Math.floor(s / 3600)}h ${Math.round(s % 3600 / 60)}m` : s >= 60 ? `${Math.floor(s / 60)}m ${s % 60}s` : `${s}s`;
+const ago = (t) => { const m = Math.round((NOW - t) / 60e3); return m < 60 ? `${m}m ago` : m < 1440 ? `${Math.round(m / 60)}h ago` : `${Math.round(m / 1440)}d ago`; };
+const last = (it) => it.hist[it.hist.length - 1];
+const isSP = (s) => /^[0-9a-f-]{36}$/.test(s);
+
+const st = { tab: 'jobs', q: '', type: 'all', scope: 'all', tags: new Set(), sort: 'name', sel: null, view: 'ok', lv: 'list', lsel: null, scale: 'hour', win: null, cube: null };
+
+/* ---- schedule timeline ---- */
+function buckets() {
+  const n = st.scale === 'hour' ? 24 : 7, step = st.scale === 'hour' ? H : 24 * H;
+  const s = new Date(NOW); st.scale === 'hour' ? s.setMinutes(0, 0, 0) : s.setHours(0, 0, 0, 0);
+  return Array.from({ length: n }, (_, i) => ({ start: s.getTime() + i * step, end: s.getTime() + (i + 1) * step }));
+}
+const fullWin = (bks) => ({ a: 0, b: bks.length });
+const winOf = (bks) => st.win ?? fullWin(bks);
+const narrowed = (bks) => { const w = winOf(bks); return !!st.cube || w.a > 0 || w.b < bks.length; };
+/** [from, to) the list is filtered to, or null when the whole range is selected. */
+function schedRange() {
+  const bks = buckets();
+  if (st.cube) return { from: bks[st.cube.col].start, to: bks[st.cube.col].end, type: st.cube.type };
+  if (!narrowed(bks)) return null;
+  const w = winOf(bks);
+  return { from: bks[w.a].start, to: bks[w.b - 1].end };
+}
+const hhmm = (t) => { const d = new Date(t); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const dayName = (t) => new Date(t).toLocaleDateString(undefined, { weekday: 'short' });
+const when = (t) => st.scale === 'day' ? `${dayName(t)} ${hhmm(t)}` : hhmm(t);
+const spanIn = (ms) => { const m = Math.round(ms / 60e3); return m < 60 ? `${m}m` : m < 1440 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${Math.round(m / 1440)}d`; };
+function spanText(ms) { const h = Math.round(ms / H); return h < 24 ? `${h} hour${h > 1 ? 's' : ''}` : `${Math.round(h / 24)} day${h > 24 ? 's' : ''}`; }
+
+function renderSched() {
+  if (st.view !== 'ok') { sched.innerHTML = ''; sched.hidden = true; return; }
+  sched.hidden = false;
+  const bks = buckets(), w = winOf(bks);
+  // counts use the other filters (type, scope, tags, search) but not the schedule window itself
+  const pool = filtered(true);
+  const counts = bks.map((bk) => ({ job: 0, pipeline: 0, ...pool.reduce((c, it) => { c[it.type] = (c[it.type] || 0) + fires(it, bk.start, bk.end).length; return c; }, {}) }));
+  const used = ['job', 'pipeline'].filter((k) => counts.some((c) => c[k]));
+  const presets = st.scale === 'hour' ? [['all', 'next 24h', 0, 24], ['6', 'next 6 hours', 0, 6], ['1', 'next hour', 0, 1]] : [['all', 'next 7 days', 0, 7], ['tom', 'tomorrow', 1, 2], ['tod', 'today', 0, 1]];
+  const from = bks[w.a].start, to = bks[w.b - 1].end;
+  const a = w.a / bks.length, b = w.b / bks.length;
+  const unsched = pool.filter((it) => !it.sched).length;
+  sched.innerHTML = `
+    <div class="tl-head-row">
+      <span class="tl-t">Scheduled starts by ${st.scale}</span>
+      <span class="tl-scale">${['hour', 'day'].map((s) => `<button data-scale="${s}" class="${st.scale === s ? 'on' : ''}">${s}</button>`).join('')}</span>
+      <span class="tl-span"><b>${new Date(from).getDate() !== new Date(to).getDate() && st.scale === 'hour' ? dayName(from) + ' ' : ''}${when(from)}</b> to <b>${new Date(from).getDate() !== new Date(to).getDate() && st.scale === 'hour' ? dayName(to) + ' ' : ''}${when(to)}</b>, ${spanText(to - from)} · your local time</span>
+      <span class="tl-presets">${presets.map(([k, l, pa, pb]) => `<button data-pa="${pa}" data-pb="${pb}" class="${!st.cube && w.a === pa && w.b === pb ? 'on' : ''}">${l}</button>`).join('')}</span>
+    </div>
+    <div class="tl-grid" style="grid-template-columns: repeat(${bks.length}, 1fr)">
+      ${narrowed(bks) && !st.cube ? `<div class="tl-win" style="grid-column: ${w.a + 1} / ${w.b + 1}; grid-row: 1">${w.b - w.a > 1 ? `<span class="tl-win-n">${spanText(to - from)}</span>` : ''}</div>` : ''}
+      ${bks.map((bk, i) => {
+        const d = new Date(bk.start);
+        const num = st.scale === 'hour' ? pad(d.getHours()) : d.getDate();
+        const small = i === 0 ? '<small class="now">now</small>' : st.scale === 'hour' ? (d.getHours() === 0 ? `<small>${dayName(bk.start)}</small>` : '<small> </small>') : `<small>${dayName(bk.start)}</small>`;
+        const inside = i >= w.a && i < w.b;
+        return `<div class="tl-col${inside || st.cube ? '' : ' dim'}" style="grid-column: ${i + 1}; grid-row: 1" title="${when(bk.start)}: ${counts[i].job} job starts, ${counts[i].pipeline} pipeline starts">
+          <button class="tl-head" data-col="${i}">${num}${small}</button>
+          <div class="tl-cubes">${used.map((k) => counts[i][k] ? `<button class="cube ${k}${st.cube && st.cube.col === i && st.cube.type === k ? ' sel' : ''}" data-cc="${i}" data-ct="${k}" title="${when(bk.start)}: ${counts[i][k]} ${k} starts">${counts[i][k]}</button>` : '<span class="tl-empty"></span>').join('')}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="tl-line" id="tlLine">
+      <div class="tl-sel" style="left:${a * 100}%; width:${(b - a) * 100}%"></div>
+      <div class="tl-handle" data-h="a" style="left:${a * 100}%"></div>
+      <div class="tl-handle" data-h="b" style="left:${b * 100}%"></div>
+      ${(b - a) > .12 ? `<span class="tl-lab" style="left:${a * 100}%; transform:${a === 0 ? 'none' : 'translateX(-50%)'}">${when(from)}</span>` : ''}
+      <span class="tl-lab" style="left:${b * 100}%; transform:${b >= 1 ? 'translateX(-100%)' : 'translateX(-50%)'}">${when(to)}</span>
+    </div>
+    <div class="tl-foot">
+      <span class="k job"><i></i>job starts</span><span class="k pipeline"><i></i>pipeline starts</span>
+      <span>${narrowed(bks) ? `${unsched} without a schedule hidden (manual, triggered by a job, continuous)` : `${unsched} have no schedule (manual, triggered by a job, continuous)`}</span>
+      ${narrowed(bks) ? '<button class="x tl-presets" style="margin-left:auto;border:0;background:none;color:var(--ink-3);cursor:pointer" id="tlClear">clear schedule filter ✕</button>' : ''}
+    </div>`;
+}
+
+function filtered(ignoreSched) {
+  const toks = st.q.toLowerCase().split(/\s+/).filter(Boolean);
+  const sr = ignoreSched ? null : schedRange();
+  let out = items.filter((it) => {
+    if (sr && (sr.type && it.type !== sr.type || !fires(it, sr.from, sr.to).length)) return false;
+    if (st.type !== 'all' && it.type !== st.type) return false;
+    if (st.scope === 'mine' && it.runAs !== ME && it.creator !== ME) return false;
+    if (st.scope === 'deployed' && !isSP(it.runAs)) return false;
+    for (const t of st.tags) { const [k, v] = t.split(':'); if (it.tags[k] !== v) return false; }
+    const hay = (it.prefix + it.name + ' ' + it.id).toLowerCase();
+    return toks.every((t) => hay.includes(t));
+  });
+  const lt = (it) => last(it)?.at ?? 0;
+  if (st.sort === 'name') out.sort((a, b) => a.name.localeCompare(b.name));
+  if (st.sort === 'last') out.sort((a, b) => lt(b) - lt(a));
+  if (st.sort === 'next') { const nx = (it) => fires(it, sr ? sr.from : NOW, (sr ? sr.to : NOW) + 8 * 24 * H)[0] ?? Infinity; out.sort((a, b) => nx(a) - nx(b) || a.name.localeCompare(b.name)); }
+  if (st.sort === 'failed') { const lf = (it) => Math.max(0, ...it.hist.filter((h) => h.res === 'failed').map((h) => h.at)); out.sort((a, b) => lf(b) - lf(a) || lt(b) - lt(a)); }
+  return out;
+}
+const count = (pred) => items.filter(pred).length;
+
+function renderBar() {
+  const types = [['all', 'All', items.length], ['job', 'Jobs', count((i) => i.type === 'job')], ['pipeline', 'Pipelines', count((i) => i.type === 'pipeline')]];
+  typeSeg.innerHTML = types.map(([k, l, n]) => `<button data-k="${k}" class="${st.type === k ? 'on' : ''}">${l}<i>${n}</i></button>`).join('');
+  const scopes = [['mine', 'Mine', count((i) => i.runAs === ME || i.creator === ME)], ['deployed', 'Deployed', count((i) => isSP(i.runAs))], ['all', 'All', items.length]];
+  scopeSeg.innerHTML = scopes.map(([k, l, n]) => `<button data-k="${k}" class="${st.scope === k ? 'on' : ''}">${l}<i>${n}</i></button>`).join('');
+  const pairs = {};
+  items.forEach((i) => Object.entries(i.tags).forEach(([k, v]) => { pairs[`${k}:${v}`] = (pairs[`${k}:${v}`] || 0) + 1; }));
+  tagMenu.innerHTML = Object.entries(pairs).sort().map(([p, n]) => { const [k, v] = p.split(':'); return `<label><input type="checkbox" value="${p}" ${st.tags.has(p) ? 'checked' : ''}><span class="k"><b>${k}:</b>${v}</span><span class="n">${n}</span></label>`; }).join('');
+  tagBtn.className = 'fm-btn' + (st.tags.size ? ' on' : '');
+  tagBtn.innerHTML = st.tags.size ? `Tags · ${[...st.tags].join(', ')} <span class="chev">▾</span>` : 'Tags <span class="chev">▾</span>';
+}
+
+function lastCell(it) {
+  const l = last(it);
+  if (!l) return `<span class="last"><span class="mk none">—</span>no runs in window</span>`;
+  const sym = { succeeded: '✓', failed: '✕', cancelled: '–', running: '' }[l.res];
+  const txt = l.res === 'running' ? `running ${fmtDur(Math.round((NOW - l.at) / 1e3))}` : ago(l.at);
+  return `<span class="last"><span class="mk ${l.res}">${sym}</span>${txt}</span>`;
+}
+
+/* ---- Density candidates (A–D) ---- */
+// one hue (amber), light -> dark; 0 = empty well
+const RAMP = ['#f3ede4', '#f8e4bd', '#f0c779', '#e0a033', '#c07a0c', '#8a5604'];
+// steps spread between the quietest and the busiest non-empty slot, so a constant background (an every-15-minutes job) doesn't paint everything dark
+const shade = (n, max, min = 1) => n === 0 ? RAMP[0] : RAMP[Math.min(5, 1 + Math.floor(((n - min) / Math.max(1, max - min + 1)) * 5))];
+const minOf = (arr) => Math.min(...arr.filter((n) => n > 0), Infinity);
+const legend = (max, unit, min = 1) => `<span class="leg">${min > 1 ? `≤${min}` : '0'} ${RAMP.map((c) => `<i style="background:${c}"></i>`).join('')} ${max} ${unit}</span>`;
+const esc = (x) => String(x).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const tipHtml = (head, lines) => esc(`<b>${head}</b>`) + (lines.length ? esc('\n') + lines.map(esc).join(esc('\n')) : '');
+function axisHtml(from, to, every) {
+  const out = [];
+  for (let t = Math.ceil(from / H) * H; t <= to; t += H) {
+    const d = new Date(t);
+    if (d.getHours() % every) continue;
+    out.push(`<span class="${d.getHours() === 0 ? 'd' : ''}" style="left:${(t - from) / (to - from) * 100}%">${d.getHours() === 0 ? dayName(t) : pad(d.getHours()) + ':00'}</span>`);
+  }
+  return `<div class="axis">${out.join('')}</div>`;
+}
+const more = (arr, n, f) => arr.slice(0, n).map(f).concat(arr.length > n ? [`+${arr.length - n} more`] : []);
+function renderDensity(vsw) {
+  const pool = filtered(true).filter((it) => it.sched);
+  const s0 = new Date(NOW); s0.setMinutes(0, 0, 0);
+  const from = s0.getTime(), to = from + 24 * H, Q = 15 * 60e3;
+  const starts = pool.flatMap((it) => fires(it, from, to).map((t) => ({ it, t, end: t + typical(it) * 1e3 })));
+
+  // A: heat strip, 96 quarter-hour cells
+  const cells = Array.from({ length: 96 }, (_, i) => starts.filter((x) => x.t >= from + i * Q && x.t < from + (i + 1) * Q));
+  const maxA = Math.max(1, ...cells.map((c) => c.length)), minA = minOf(cells.map((c) => c.length));
+  const A = `<div class="dn-c"><div class="dn-h"><b>A · Heat strip</b><span>starts per 15 minutes, next 24 hours · one row, 24px tall</span>${legend(maxA, 'starts', minA)}</div>
+    <div class="hs" style="grid-template-columns:repeat(96,minmax(0,1fr))">${cells.map((c, i) => `<i style="background:${shade(c.length, maxA, minA)}" data-tip="${tipHtml(`${hhmm(from + i * Q)}–${hhmm(from + (i + 1) * Q)} · ${c.length} start${c.length === 1 ? '' : 's'}`, more(c, 8, (x) => `${hhmm(x.t)}  ${x.it.name}`))}"></i>`).join('')}</div>${axisHtml(from, to, 2)}</div>`;
+
+  // B: load curve, expected concurrency sampled every 5 minutes
+  const step = 5 * 60e3, N = 288;
+  const conc = Array.from({ length: N }, (_, i) => { const t = from + i * step; return starts.filter((x) => x.t <= t && x.end > t); });
+  const maxB = Math.max(1, ...conc.map((c) => c.length));
+  const W = 1000, Ht = 84, y = (n) => Ht - (n / maxB) * (Ht - 6);
+  const pts = conc.map((c, i) => `${(i / (N - 1)) * W},${y(c.length)}`).join(' ');
+  const peak = conc.reduce((b, c, i) => (c.length > conc[b].length ? i : b), 0);
+  const B = `<div class="dn-c"><div class="dn-h"><b>B · Load curve</b><span>scheduled jobs expected to be running at the same time (from typical runtimes) · peak ${maxB} at ${hhmm(from + peak * step)}</span></div>
+    <div class="lc"><span class="ymax">${maxB}</span><svg viewBox="0 0 ${W} ${Ht}" preserveAspectRatio="none">
+      <line x1="0" x2="${W}" y1="${Ht}" y2="${Ht}" stroke="#d9cfc2" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <line x1="0" x2="${W}" y1="${y(maxB)}" y2="${y(maxB)}" stroke="#ece4d8" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/>
+      <polygon points="0,${Ht} ${pts} ${W},${Ht}" fill="#f8e4bd"/>
+      <polyline points="${pts}" fill="none" stroke="#c07a0c" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+      ${conc.map((c, i) => `<rect class="hit" x="${(i / N) * W}" y="0" width="${W / N}" height="${Ht}" data-tip="${tipHtml(`${hhmm(from + i * step)} · ${c.length} running`, more(c, 8, (x) => `${x.it.name}  (since ${hhmm(x.t)})`))}"/>`).join('')}
+    </svg></div>${axisHtml(from, to, 2)}</div>`;
+
+  // C: week grid, 7 days x 24 hours of starts
+  const d0 = new Date(NOW); d0.setHours(0, 0, 0, 0);
+  const wk = Array.from({ length: 7 }, (_, d) => Array.from({ length: 24 }, (_, h) => { const a = d0.getTime() + d * 24 * H + h * H; return pool.flatMap((it) => fires(it, a, a + H).map((t) => ({ it, t }))); }));
+  const maxC = Math.max(1, ...wk.flat().map((c) => c.length)), minC = minOf(wk.flat().map((c) => c.length));
+  const C = `<div class="dn-c"><div class="dn-h"><b>C · Week grid</b><span>starts per hour, next 7 days · 7 rows</span>${legend(maxC, 'starts', minC)}</div>
+    <div class="wg"><span></span>${Array.from({ length: 24 }, (_, h) => `<span class="cl">${h % 3 ? '' : pad(h)}</span>`).join('')}
+    ${wk.map((row, d) => { const day = d0.getTime() + d * 24 * H; return `<span class="rl">${d === 0 ? 'Today' : dayName(day)}</span>` + row.map((c, h) => `<i style="background:${shade(c.length, maxC, minC)}" data-tip="${tipHtml(`${dayName(day)} ${pad(h)}:00 · ${c.length} start${c.length === 1 ? '' : 's'}`, more([...new Set(c.map((x) => x.it.name))], 8, (n) => n))}"></i>`).join(''); }).join('')}</div></div>`;
+
+  // D: packed lanes, the Gantt bars packed greedily into as few lanes as possible
+  const bars = starts.map((x) => { const a = Math.floor(x.t / Q) * Q; return { ...x, a, b: a + Math.max(Q, Math.ceil((x.end - x.t) / Q) * Q) }; }).sort((u, v) => u.a - v.a);
+  const lanes = [];
+  for (const br of bars) { const l = lanes.find((ln) => ln.endAt <= br.a); if (l) { l.bars.push(br); l.endAt = br.b; } else lanes.push({ endAt: br.b, bars: [br] }); }
+  const pc = (t) => Math.max(0, Math.min(100, (t - from) / (to - from) * 100));
+  const D = `<div class="dn-c"><div class="dn-h"><b>D · Packed lanes</b><span>every scheduled run as a bar, packed into ${lanes.length} lanes (names on hover) · height = most overlap</span></div>
+    <div class="pl"><div class="grid">${Array.from({ length: 11 }, (_, i) => `<div style="left:${(i + 1) / 12 * 100}%"></div>`).join('')}</div>
+    ${lanes.map((ln) => `<div class="ln">${ln.bars.map((br) => `<div class="pb ${br.it.type}" style="left:${pc(br.a)}%;width:calc(${pc(br.b) - pc(br.a)}% - 1px)" data-tip="${tipHtml(br.it.name, [`starts ${hhmm(br.t)} · typically ${fmtDur(Math.round((br.end - br.t) / 1e3))}`])}"></div>`).join('')}</div>`).join('')}
+    </div>${axisHtml(from, to, 2)}</div>`;
+
+  return `<div class="list-meta"><span>${pool.length} scheduled items · four compact ways to show how busy the schedule is · hover any mark for the jobs behind it</span>${vsw}</div><div class="dn">${A}${B}${C}${D}</div>`;
+}
+document.addEventListener('mousemove', (e) => {
+  const el = e.target.closest && e.target.closest('[data-tip]');
+  if (!el) { tip.style.display = 'none'; return; }
+  tip.innerHTML = el.dataset.tip; tip.style.display = 'block';
+  const r = tip.getBoundingClientRect();
+  tip.style.left = Math.min(e.clientX + 14, window.innerWidth - r.width - 8) + 'px';
+  tip.style.top = Math.min(e.clientY + 16, window.innerHeight - r.height - 8) + 'px';
+});
+
+/* ---- Load view: scheduled jobs expected to be running at once ---- */
+// starts cached per item over a fixed horizon, so 10k items stay fast
+const D0 = (() => { const d = new Date(NOW); d.setHours(0, 0, 0, 0); return d.getTime() - 24 * H; })();
+const HORIZON = D0 + 11 * 24 * H;
+const FC = new Map();
+function fires(it, from, to) {
+  let a = FC.get(it);
+  if (!a) { a = firesRaw(it, D0, HORIZON); FC.set(it, a); }
+  let lo = 0, hi = a.length;
+  while (lo < hi) { const m = (lo + hi) >> 1; if (a[m] < from) lo = m + 1; else hi = m; }
+  const out = [];
+  for (let i = lo; i < a.length && a[i] < to; i++) out.push(a[i]);
+  return out;
+}
+const countLE = (arr, t) => { let lo = 0, hi = arr.length; while (lo < hi) { const m = (lo + hi) >> 1; if (arr[m] <= t) lo = m + 1; else hi = m; } return lo; };
+function niceStep(raw) { const p = Math.pow(10, Math.floor(Math.log10(raw))); const f = raw / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
+const fmtN = (n) => n >= 1000 ? (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'k' : String(n);
+const groupOf = (it) => it.tags.area || it.tags.project || 'other';
+
+function loadRange() {
+  const bks = buckets(), w = winOf(bks), sr = schedRange();
+  return sr ? { from: sr.from, to: sr.to } : { from: bks[w.a].start, to: bks[w.b - 1].end };
+}
+
+function renderLoad(vsw) {
+  const { from, to } = loadRange(), span = to - from;
+  const pool = filtered(true).filter((it) => it.sched);
+  const runs = [];
+  for (const it of pool) { const d = typical(it) * 1e3; for (const t of fires(it, from - 24 * H, to)) if (t + d > from) runs.push({ it, t, end: t + d }); }
+  const S = runs.map((r) => r.t).sort((a, b) => a - b), E = runs.map((r) => r.end).sort((a, b) => a - b);
+  const step = span <= 26 * H ? 5 * 60e3 : 30 * 60e3, N = Math.round(span / step);
+  const running = Array.from({ length: N + 1 }, (_, i) => { const t = from + i * step; return countLE(S, t) - countLE(E, t); });
+  const startsIn = Array.from({ length: N }, (_, i) => countLE(S, from + (i + 1) * step - 1) - countLE(S, from + i * step - 1));
+  const maxR = Math.max(1, ...running);
+  const tick = niceStep(maxR / 4), yMax = Math.ceil(maxR / tick) * tick;
+  const peakI = running.indexOf(maxR);
+  window._ld = { from, to, step, N, running, startsIn, runs, yMax };
+
+  const W = 1000, Ht = 200, x = (i) => (i / N) * W, y = (n) => Ht - (n / yMax) * Ht;
+  const pts = running.map((n, i) => `${x(i)},${y(n)}`).join(' ');
+  const yt = []; for (let v = 0; v <= yMax; v += tick) yt.push(v);
+  const pc = (t) => ((t - from) / span) * 100;
+  const xt = [];
+  const every = span <= 7 * H ? 1 : span <= 26 * H ? 2 : 24;
+  for (let t = Math.ceil(from / H) * H; t <= to; t += H) { const d = new Date(t); if (d.getHours() % every === 0 || (every === 24 && d.getHours() === 0)) xt.push(t); }
+  const sel = st.lsel;
+  const chart = `
+    <div class="ld">
+      <div class="ld-head"><b>Scheduled jobs running at once</b><span>from each job's schedule and its typical runtime · peak <b>${fmtN(maxR)}</b> at ${when(from + peakI * step)} · ${fmtN(pool.length)} scheduled items · ${fmtN(runs.length)} runs in range</span>
+        ${sel ? `<button class="ld-clear" id="ldClear">clear selection ✕</button>` : '<span class="ld-hint">drag across the chart to list the jobs running then</span>'}</div>
+      <div class="ld-body">
+        <div class="ld-y">${yt.map((v) => `<span style="bottom:${(v / yMax) * 100}%">${fmtN(v)}</span>`).join('')}</div>
+        <div class="ld-plot" id="ldPlot">
+          ${yt.map((v) => `<div class="ld-grid" style="bottom:${(v / yMax) * 100}%"></div>`).join('')}
+          ${xt.map((t) => `<div class="ld-vgrid" style="left:${pc(t)}%"></div>`).join('')}
+          <svg viewBox="0 0 ${W} ${Ht}" preserveAspectRatio="none">
+            <polygon points="0,${Ht} ${pts} ${W},${Ht}" fill="#f8e4bd"/>
+            <polyline points="${pts}" fill="none" stroke="#c07a0c" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+          </svg>
+          ${NOW >= from && NOW < to ? `<div class="ld-now" style="left:${pc(NOW)}%"><span>now</span></div>` : ''}
+          ${sel ? `<div class="ld-sel" style="left:${pc(sel.a)}%;width:${pc(sel.b) - pc(sel.a)}%"></div>` : ''}
+          <div class="ld-drag" id="ldDrag"></div>
+          <div class="ld-x" id="ldX"><i></i></div>
+        </div>
+      </div>
+      <div class="ld-xa">${xt.map((t) => { const d = new Date(t); return `<span class="${d.getHours() === 0 ? 'd' : ''}" style="left:${pc(t)}%">${d.getHours() === 0 ? dayName(t) : pad(d.getHours()) + ':00'}</span>`; }).join('')}</div>
+    </div>`;
+
+  // list under the chart: jobs running in the selection, or everything scheduled in range by first start
+  let rowsHtml, meta;
+  const CAP = 200;
+  if (sel) {
+    const hit = runs.filter((r) => r.t < sel.b && r.end > sel.a).sort((a, b) => a.t - b.t);
+    const by = new Map(); for (const r of hit) { if (!by.has(r.it)) by.set(r.it, []); by.get(r.it).push(r); }
+    const list = [...by.entries()];
+    meta = `<b>${fmtN(list.length)}</b> jobs running between ${when(sel.a)} and ${when(sel.b)}`;
+    rowsHtml = list.slice(0, CAP).map(([it, rs]) => loadRow(it, `${rs.slice(0, 2).map((r) => `${when(r.t)}–${hhmm(r.end)}`).join(' · ')}${rs.length > 2 ? ` +${rs.length - 2}` : ''}`)).join('')
+      + (list.length > CAP ? `<div class="gt-note">+${fmtN(list.length - CAP)} more — narrow the selection or filter by type, scope, tags or name</div>` : '');
+  } else {
+    const list = pool.map((it) => ({ it, f: fires(it, from, to) })).filter((x) => x.f.length).sort((a, b) => a.f[0] - b.f[0]);
+    meta = `${fmtN(list.length)} scheduled to start in range, by first start`;
+    rowsHtml = list.slice(0, CAP).map(({ it, f }) => loadRow(it, `⏱ ${f.slice(0, 3).map(when).join(' · ')}${f.length > 3 ? ` +${f.length - 3}` : ''}`)).join('')
+      + (list.length > CAP ? `<div class="gt-note">+${fmtN(list.length - CAP)} more — drag across the chart or filter to narrow</div>` : '');
+  }
+  return `<div class="list-meta"><span>${meta}</span>${vsw}</div>${chart}<div class="ld-list">${rowsHtml}</div>`;
+}
+function loadRow(it, right) {
+  return `<div class="ir ${st.sel === it.id ? 'on' : ''}" data-id="${it.id}" title="${it.prefix}${it.name}">
+      <span class="tag ${it.type}">${it.type === 'job' ? 'Job' : 'Pipeline'}</span>
+      <span class="nm"><span><i>${it.prefix}</i>${it.name}</span></span>
+      ${trgPill(it)}
+      <span class="starts">${right}</span>
+    </div>`;
+}
+
+// hover crosshair + tooltip, drag to select a time range
+function ldIndex(clientX) {
+  const p = document.getElementById('ldPlot'), r = p.getBoundingClientRect(), L = window._ld;
+  const f = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+  return { f, i: Math.round(f * L.N), t: L.from + f * (L.to - L.from) };
+}
+document.addEventListener('mousemove', (e) => {
+  const p = e.target.closest && e.target.closest('#ldPlot');
+  const X = document.getElementById('ldX');
+  if (!p || !window._ld) { if (X) X.style.display = 'none'; return; }
+  const L = window._ld, { f, i } = ldIndex(e.clientX), t = L.from + i * L.step, n = L.running[i];
+  X.style.display = 'block'; X.style.left = `${(i / L.N) * 100}%`;
+  X.querySelector('i').style.bottom = `${(n / L.yMax) * 100}%`;
+  const now = L.runs.filter((r) => r.t <= t && r.end > t);
+  const g = new Map(); for (const r of now) g.set(groupOf(r.it), (g.get(groupOf(r.it)) || 0) + 1);
+  const top = [...g.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+  tip.innerHTML = `<b>${when(t)}</b> · ${fmtN(n)} running · ${fmtN(L.startsIn[Math.min(i, L.N - 1)] || 0)} start in the next ${L.step / 60e3} min` +
+    (top.length ? `\n${top.map(([k, v]) => `${k}  ${fmtN(v)}`).join('\n')}${g.size > 5 ? `\n+${g.size - 5} more groups` : ''}` : '');
+  tip.style.display = 'block';
+  const r = tip.getBoundingClientRect();
+  tip.style.left = Math.min(e.clientX + 14, window.innerWidth - r.width - 8) + 'px';
+  tip.style.top = Math.min(e.clientY + 16, window.innerHeight - r.height - 8) + 'px';
+});
+document.addEventListener('pointerdown', (e) => {
+  const p = e.target.closest && e.target.closest('#ldPlot'); if (!p) return;
+  e.preventDefault();
+  const L = window._ld, a = ldIndex(e.clientX), drag = document.getElementById('ldDrag');
+  let b = a;
+  const move = (ev) => { b = ldIndex(ev.clientX); const lo = Math.min(a.f, b.f), hi = Math.max(a.f, b.f); drag.style.display = 'block'; drag.style.left = `${lo * 100}%`; drag.style.width = `${(hi - lo) * 100}%`; };
+  const up = () => {
+    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+    const snap = (t) => Math.round((t - L.from) / L.step) * L.step + L.from;
+    let lo = snap(Math.min(a.t, b.t)), hi = snap(Math.max(a.t, b.t));
+    if (hi - lo < L.step) { lo = snap(a.t); hi = lo + L.step; }
+    st.lsel = { a: lo, b: hi }; render();
+  };
+  window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+});
+document.addEventListener('click', (e) => { if (e.target.id === 'ldClear') { st.lsel = null; render(); } });
+
+// mockup-only: 10,000 synthetic scheduled jobs, to see the chart at scale
+const BASE_N = items.length;
+function synth(n) {
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const pick = (arr) => arr[Math.floor(rnd() * arr.length)];
+  const areas = ['finance', 'hr', 'supply', 'mfg', 'sales', 'ops', 'quality', 'procure', 'logistics', 'crm', 'risk', 'audit'];
+  const kinds = ['daily_report', 'snapshot', 'kpi_refresh', 'extract', 'reconcile', 'export', 'dq_checks', 'aggregate', 'ingest', 'merge'];
+  const hourW = [9, 6, 8, 5, 4, 5, 9, 7, 6, 3, 2, 2, 4, 2, 2, 2, 2, 2, 5, 3, 3, 2, 3, 4];
+  const wHour = () => { let r = rnd() * hourW.reduce((a, b) => a + b, 0); for (let h = 0; h < 24; h++) { r -= hourW[h]; if (r < 0) return h; } return 0; };
+  const wMin = () => { const r = rnd(); return r < .6 ? 0 : r < .75 ? 30 : r < .85 ? 15 : r < .9 ? 45 : Math.floor(rnd() * 60); };
+  for (let i = 0; i < n; i++) {
+    const r = rnd();
+    const sched = r < .55 ? { daily: [wHour(), wMin()] } : r < .75 ? { every: 60, at: wMin() } : r < .82 ? { every: pick([15, 30]), at: 0 } : r < .9 ? { every: pick([120, 240, 360, 720]), at: wHour() % 4 * 60 + wMin() } : { weekly: [pick([0, 6, 1]), wHour(), wMin()] };
+    const typ = Math.round(Math.exp(Math.log(360) + (rnd() + rnd() + rnd() - 1.5) * 1.6));
+    const area = pick(areas);
+    items.push({ type: rnd() < .15 ? 'pipeline' : 'job', id: String(800000000 + i), prefix: '', name: `${area}_${pick(kinds)}_${String(i).padStart(5, '0')}_prod`, runAs: SP, creator: 'data.platform@agency.gov', tags: { area, env: 'prod' }, bundle: 'prod', desc: '', hist: [], typ: Math.max(30, Math.min(typ, 3 * 3600)), sched, trigger: 'Scheduled', tasks: [['run', 'Notebook', '']], kind: 'ETL', continuous: false, target: `${area}_prod.gold`, serverless: true, channel: 'CURRENT' });
+  }
+}
+function setScale(big) {
+  items.length = BASE_N; FC.clear();
+  if (big) synth(10000 - BASE_N);
+  st.sel = null; st.lsel = null; render();
+}
+
+/** Short trigger, inline in the row. Scheduled ones keep the exact minute. */
+function trgPill(it) {
+  const s = it.sched;
+  let cls = 'none', txt = 'manual';
+  if (s?.daily) { cls = 'sched'; txt = `daily ${pad(s.daily[0])}:${pad(s.daily[1])}`; }
+  else if (s?.weekly) { cls = 'sched'; txt = `Sun ${pad(s.weekly[1])}:${pad(s.weekly[2])}`; }
+  else if (s?.every) { cls = 'sched'; txt = s.every < 60 ? `every ${s.every}m` : s.every === 60 ? `hourly · :${pad(s.at)}` : `every ${s.every / 60}h · ${pad(Math.floor(s.at / 60))}:${pad(s.at % 60)}`; }
+  else if (it.continuous) { cls = 'cont'; txt = 'continuous'; }
+  else if (/launched by|by a job/i.test(it.trigger)) txt = 'by a job';
+  return `<span class="trg ${cls}" title="${it.trigger}">${cls === 'sched' ? '⏱ ' : ''}${txt}</span>`;
+}
+
+/** Typical runtime: average of succeeded runs, seconds. */
+const typical = (it) => { if (it.typ) return it.typ; const ok = it.hist.filter((h) => h.res === 'succeeded'); return ok.length ? ok.reduce((s, h) => s + h.dur, 0) / ok.length : 300; };
+
+/** Gantt: scheduled items only; starts snap to 15-minute cells (1-hour cells on the day scale), bars as long as the typical runtime. */
+function renderGantt(rows, vsw) {
+  const bks = buckets(), w = winOf(bks);
+  const sr = schedRange();
+  const from = sr ? sr.from : bks[w.a].start, to = sr ? sr.to : bks[w.b - 1].end, span = to - from;
+  const cell = st.scale === 'hour' ? 15 * 60e3 : H;
+  const snap = (t) => Math.floor(t / cell) * cell;
+  const pct = (t) => ((t - from) / span) * 100;
+  const sched = rows.filter((it) => fires(it, from, to).length);
+  const hidden = filtered(true).length - sched.length;
+  const first = (it) => fires(it, from, to)[0];
+  sched.sort((a, b) => first(a) - first(b) || a.name.localeCompare(b.name));
+  // axis ticks: every hour (labelled when they fit), quarter lines when there's room, day lines on the day scale
+  const hours = span / H, ticks = [];
+  // label spacing from the real track width, so labels never touch
+  const labPx = Math.min(470, Math.max(300, window.innerWidth * .32));
+  const trackPx = Math.max(200, list.clientWidth - labPx);
+  const labelEvery = [1, 2, 3, 4, 6, 12, 24].find((e) => (trackPx / hours) * e >= 46) ?? 24;
+  for (let t = Math.ceil(from / H) * H; t < to; t += H) {
+    const d = new Date(t);
+    const isDay = d.getHours() === 0;
+    if (st.scale === 'day' && !isDay && hours > 48) { if (d.getHours() % 6) continue; }
+    const lab = st.scale === 'day' ? (isDay ? `${dayName(t)} ${d.getDate()}` : '') : (d.getHours() % labelEvery === 0 ? (isDay ? `<b>${dayName(t)}</b>` : `${pad(d.getHours())}:00`) : '');
+    ticks.push({ t, cls: isDay ? 'day' : '', lab });
+  }
+  const quarters = st.scale === 'hour' && hours <= 12 ? (() => { const q = []; for (let t = Math.ceil(from / cell) * cell; t < to; t += cell) if (new Date(t).getMinutes()) q.push(t); return q; })() : [];
+  const grid = (withLabels) => quarters.map((t) => `<div class="gt-tick q" style="left:${pct(t)}%"></div>`).join('') + ticks.map((k) => `<div class="gt-tick ${k.cls}" style="left:${pct(k.t)}%">${withLabels && k.lab ? `<span>${k.lab}</span>` : ''}</div>`).join('') + (NOW >= from && NOW < to ? `<div class="gt-now" style="left:${pct(NOW)}%">${withLabels ? '<span>now</span>' : ''}</div>` : '');
+  const head = `<div class="list-meta"><span>${sched.length} scheduled to start ${when(from)}–${when(to)} · ${hidden} without a start in this range not shown · starts rounded to ${st.scale === 'hour' ? '15 minutes' : 'the hour'}, exact time on hover</span>${vsw}</div>`;
+  const axis = `<div class="gt-axis"><div class="gt-lab">by first start</div><div class="gt-track">${grid(true)}</div></div>`;
+  const lastFail = (it) => last(it)?.res === 'failed';
+  const body = sched.map((it) => {
+    const dur = typical(it) * 1e3;
+    const bars = fires(it, from, to).map((t) => {
+      const s = snap(t), len = Math.max(cell, Math.ceil(dur / cell) * cell);
+      const right = Math.min(pct(s + len), 100);
+      return `<div class="bar ${it.type}${lastFail(it) ? ' lastfail' : ''}" style="left:${Math.max(pct(s), 0)}%; width:calc(${right - Math.max(pct(s), 0)}% - 1px)" title="${it.name}\nstarts ${st.scale === 'day' ? dayName(t) + ' ' : ''}${hhmm(t)} (exact) · typically ${fmtDur(Math.round(dur / 1e3))}${lastFail(it) ? '\nlast run failed' : ''}"></div>`;
+    }).join('');
+    return `<div class="gt-row ${st.sel === it.id ? 'on' : ''}" data-id="${it.id}"><div class="gt-lab"><span class="tag ${it.type}">${it.type === 'job' ? 'Job' : 'Pipeline'}</span><span class="nm" title="${it.prefix}${it.name}"><span><i>${it.prefix}</i>${it.name}</span></span>${trgPill(it)}</div><div class="gt-track">${grid(false)}${bars}</div></div>`;
+  }).join('');
+  return `<div class="gt">${head}${axis}${body || '<div class="state"><p>Nothing is scheduled to start in this range.</p></div>'}<div class="gt-note">Bar length = typical runtime (average of succeeded runs), rounded up to whole cells. Red underline = last run failed.</div></div>`;
+}
+
+/** With the schedule window narrowed, a row shows its starts inside it instead of the last run. */
+function startsCell(it) {
+  const sr = schedRange(); if (!sr) return null;
+  const f = fires(it, sr.from, sr.to);
+  const shown = f.slice(0, 3).map(when).join(' · ');
+  return `<span class="starts" title="${f.map(when).join(', ')}">⏱ <b>${shown}</b>${f.length > 3 ? ` +${f.length - 3}` : ''}</span>`;
+}
+
+function renderList() {
+  if (st.view === 'loading') { list.innerHTML = `<div class="list-meta">Loading jobs and pipelines…</div>` + Array.from({ length: 12 }, () => '<div class="skel"></div>').join(''); return; }
+  if (st.view === 'error') { list.innerHTML = `<div class="state"><p>Can't load jobs and pipelines.</p><p class="sub">The app wasn't granted the <code>pipelines</code> scope (403 from GET /api/2.0/pipelines). Jobs loaded; pipelines are missing.</p><button>Try again</button></div>`; return; }
+  const rows = st.view === 'empty' ? [] : filtered();
+  if (!rows.length) { list.innerHTML = `<div class="state"><p>No job or pipeline matches.</p><p class="sub">“${st.q || 'zz_nothing'}” · ${st.type === 'all' ? 'all types' : st.type + 's'} · ${st.scope}</p><button id="clr">Clear filters</button></div>`; return; }
+  const sr = schedRange();
+  const vsw = `<span class="vsw">${['list', 'load'].map((v) => `<button data-lv="${v}" class="${st.lv === v ? 'on' : ''}">${{ list: 'List', load: 'Load' }[v]}</button>`).join('')}</span>`;
+  if (st.lv === 'load') { list.innerHTML = renderLoad(vsw); return; }
+  list.innerHTML = `<div class="list-meta"><span>${rows.length} of ${items.length} · ${sr ? `scheduled to start ${when(sr.from)}–${when(sr.to)}${sr.type ? ` (${sr.type}s)` : ''}` : 'last-run marks use the Runs window (last 7 days)'}</span>${vsw}</div>` + rows.slice(0, 300).map((it) => `
+    <div class="ir ${st.sel === it.id ? 'on' : ''}" data-id="${it.id}" title="${it.prefix}${it.name}">
+      <span class="tag ${it.type}">${it.type === 'job' ? 'Job' : 'Pipeline'}</span>
+      <span class="nm"><span><i>${it.prefix}</i>${it.name}</span></span>
+      ${trgPill(it)}
+      ${startsCell(it) ?? lastCell(it)}
+    </div>`).join('') + (rows.length > 300 ? `<div class="gt-note">+${fmtN(rows.length - 300)} more — narrow with search, type, scope, tags or the schedule window</div>` : '');
+}
+
+function renderPane() {
+  const it = items.find((i) => i.id === st.sel);
+  split.classList.toggle('sel', !!it && st.view === 'ok');
+  if (!it) { pane.innerHTML = ''; return; }
+  const tags = Object.entries(it.tags).map(([k, v]) => `<span class="chip"><b>${k}:</b>${v}</span>`).join('');
+  const boxes = it.hist.length ? `<div class="boxes">${it.hist.slice(-30).map((h) => `<button class="rh ${h.res}" title="${h.res} · ${new Date(h.at).toLocaleString()} — opens this run in Runs"><span class="rh-t">${h.res === 'running' ? fmtDur(Math.round((NOW - h.at) / 1e3)) : fmtDur(h.dur)}</span><span class="rh-w">${new Date(h.at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span></button>`).join('')}</div>` : `<span class="h-none">No runs in the last 7 days.</span>`;
+  const structure = it.type === 'job'
+    ? `<h3>Tasks <span class="h-none" style="text-transform:none;letter-spacing:0">${it.tasks.length}</span></h3><ul class="tasks">${it.tasks.map(([k, t, d]) => `<li><span class="tk">${k}${d ? `<span class="dep">after ${d}</span>` : ''}</span><span class="tt">${t}</span></li>`).join('')}</ul>`
+    : `<h3>Pipeline</h3><dl class="facts"><dt>Kind</dt><dd>${it.kind}</dd><dt>Mode</dt><dd>${it.continuous ? 'Continuous' : 'Triggered'}</dd><dt>Target</dt><dd><code>${it.target}</code></dd><dt>Compute</dt><dd>${it.serverless ? 'Serverless' : 'Classic cluster'} · channel ${it.channel}</dd></dl>`;
+  pane.innerHTML = `
+    <div class="p-head">
+      <div class="p-top"><span class="tag ${it.type}">${it.type === 'job' ? 'Job' : 'Pipeline'}</span><a class="p-open" href="#" onclick="return false">open in Databricks ↗</a><button class="p-x" id="px" title="Close">✕</button></div>
+      <div class="p-name"><i>${it.prefix}</i>${it.name}</div>
+      ${it.desc ? `<p class="p-desc">${it.desc}</p>` : ''}
+    </div>
+    <div class="p-sec"><dl class="facts">
+      <dt>Run as</dt><dd>${isSP(it.runAs) ? `service principal <code>${it.runAs.slice(0, 8)}…</code>` : it.runAs}</dd>
+      <dt>Creator</dt><dd>${it.creator}</dd>
+      <dt>Trigger</dt><dd>${it.trigger}${(() => { const n = fires(it, NOW, NOW + 8 * 24 * H)[0]; return n ? ` <span class="h-none">· next ${dayName(n)} ${hhmm(n)}, in ${spanIn(n - NOW)}</span>` : ''; })()}</dd>
+      <dt>Bundle</dt><dd>${it.bundle ? `target <code>${it.bundle}</code>` : 'not from a bundle'}</dd>
+      <dt>Tags</dt><dd>${tags}</dd>
+      <dt>${it.type === 'job' ? 'Job ID' : 'Pipeline ID'}</dt><dd><code>${it.id}</code></dd>
+    </dl></div>
+    <div class="p-sec"><h3>Recent runs <span class="h-none" style="text-transform:none;letter-spacing:0">click one to open it in Runs</span></h3>${boxes}</div>
+    <div class="p-sec">${structure}</div>
+    <div class="see"><button id="see">See runs →</button></div>`;
+  const bx = pane.querySelector('.boxes'); if (bx) bx.scrollLeft = bx.scrollWidth;
+}
+
+function render() {
+  jobsTab.hidden = st.tab !== 'jobs'; runsTab.hidden = st.tab !== 'runs';
+  document.querySelectorAll('#tabs button').forEach((b) => b.classList.toggle('on', b.dataset.tab === st.tab));
+  split.classList.toggle('sel', !!st.sel && st.view === 'ok');
+  renderBar(); renderSched(); renderList(); renderPane();
+}
+
+sched.onclick = (e) => {
+  const t = e.target.closest('button'); if (!t) return;
+  const bks = buckets();
+  if (t.dataset.scale) { st.scale = t.dataset.scale; st.win = null; st.cube = null; }
+  else if (t.dataset.pa !== undefined) { st.win = { a: +t.dataset.pa, b: +t.dataset.pb }; st.cube = null; }
+  else if (t.dataset.col !== undefined) { const i = +t.dataset.col; const w = winOf(bks); st.win = (w.a === i && w.b === i + 1) ? null : { a: i, b: i + 1 }; st.cube = null; }
+  else if (t.dataset.cc !== undefined) { const c = { col: +t.dataset.cc, type: t.dataset.ct }; st.cube = st.cube && st.cube.col === c.col && st.cube.type === c.type ? null : c; }
+  else if (t.id === 'tlClear') { st.win = null; st.cube = null; }
+  else return;
+  render();
+};
+sched.onpointerdown = (e) => {
+  const h = e.target.closest('.tl-handle'); if (!h) return;
+  e.preventDefault();
+  const line = document.getElementById('tlLine'), which = h.dataset.h;
+  const move = (ev) => {
+    const bks = buckets(), r = line.getBoundingClientRect();
+    const col = Math.round(Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width)) * bks.length);
+    const w = { ...winOf(bks) };
+    if (which === 'a') w.a = Math.min(col, w.b - 1); else w.b = Math.max(col, w.a + 1);
+    if (w.a !== winOf(bks).a || w.b !== winOf(bks).b) { st.win = w; st.cube = null; render(); }
+  };
+  const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
+  window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+};
+function goRuns(it) {
+  st.tab = 'runs';
+  runsFilter.innerHTML = it ? `Opened filtered to <span class="flt">${it.type}: …${it.name.slice(-38)} ✕</span>` : '';
+  history.replaceState(null, '', '?tab=runs');
+  render();
+}
+
+tabs.onclick = (e) => { const t = e.target.closest('button')?.dataset.tab; if (t) { st.tab = t; runsFilter.innerHTML = ''; history.replaceState(null, '', t === 'jobs' ? '?tab=jobs' : '?tab=runs'); render(); } };
+typeSeg.onclick = (e) => { const k = e.target.closest('button')?.dataset.k; if (k) { st.type = k; render(); } };
+scopeSeg.onclick = (e) => { const k = e.target.closest('button')?.dataset.k; if (k) { st.scope = k; render(); } };
+q.oninput = () => { st.q = q.value; render(); };
+sort.onchange = () => { st.sort = sort.value; render(); };
+tagBtn.onclick = (e) => { e.stopPropagation(); tagMenu.classList.toggle('open'); };
+tagMenu.onchange = (e) => { const v = e.target.value; st.tags.has(v) ? st.tags.delete(v) : st.tags.add(v); renderBar(); renderList(); renderPane(); tagMenu.classList.add('open'); };
+tagMenu.onclick = (e) => e.stopPropagation();
+document.onclick = () => tagMenu.classList.remove('open');
+list.onclick = (e) => {
+  if (e.target.id === 'clr') { st.q = ''; q.value = ''; st.type = 'all'; st.scope = 'all'; st.tags.clear(); st.view = 'ok'; syncSw(); render(); return; }
+  const lv = e.target.closest('[data-lv]'); if (lv) { st.lv = lv.dataset.lv; syncHash(); render(); return; }
+  const r = e.target.closest('.ir, .gt-row'); if (r) { st.sel = st.sel === r.dataset.id ? null : r.dataset.id; render(); }
+};
+pane.onclick = (e) => {
+  if (e.target.id === 'px') { st.sel = null; render(); }
+  if (e.target.id === 'see' || e.target.closest('.rh')) goRuns(items.find((i) => i.id === st.sel));
+};
+document.querySelector('.mock-sw').onclick = (e) => { const s = e.target.dataset.st; if (s) { st.view = s; syncSw(); render(); } const sc = e.target.dataset.scale; if (sc) { sc89.classList.toggle('on', sc === '89'); sc10k.classList.toggle('on', sc === '10k'); setScale(sc === '10k'); syncHash(); } };
+/** View and data scale survive a refresh. */
+function syncHash() { const h = [st.lv !== 'list' ? st.lv : '', sc10k.classList.contains('on') ? '10k' : ''].filter(Boolean).join(','); history.replaceState(null, '', location.pathname + (h ? '#' + h : '')); }
+function syncSw() { document.querySelectorAll('.mock-sw button[data-st]').forEach((b) => b.classList.toggle('on', b.dataset.st === st.view)); }
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { st.sel = null; render(); } });
+
+const hw = location.hash.match(/w=(\d+)-(\d+)/); if (hw) { st.win = { a: +hw[1], b: +hw[2] }; st.sel = null; }
+if (/gantt/.test(location.hash)) { st.lv = 'gantt'; st.sel = null; }
+if (/load/.test(location.hash)) { st.lv = 'load'; st.sel = null; }
+if (/10k/.test(location.hash)) { sc89.classList.remove('on'); sc10k.classList.add('on'); synth(10000 - BASE_N); }
+render();
+</script>
+</body>
+</html>
