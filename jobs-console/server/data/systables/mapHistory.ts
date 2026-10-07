@@ -9,11 +9,14 @@ import type { SqlRow } from './sql';
 
 export type { SqlRow } from './sql';
 
-/** The four history queries' answers (queries.ts), as runSql returns them. */
+/**
+ * The four history queries' answers (queries.ts), as runSql returns them. `tasks` / `deps` absent: that query failed, and
+ * the job runs come without task detail (no `tasks`; ntasks from whichever of the two was read, else 0).
+ */
 export interface HistoryRows {
   runs: SqlRow[];
-  tasks: SqlRow[];
-  deps: SqlRow[];
+  tasks?: SqlRow[];
+  deps?: SqlRow[];
   updates: SqlRow[];
 }
 
@@ -133,14 +136,20 @@ function runTasks(runStart: number, attempts: Agg[], deps: Map<string, string[]>
  */
 export function historyDrafts(rows: HistoryRows, items: Item[], host: string, _me: string): Draft[] {
   const byId = new Map(items.map((i) => [`${i.type}:${i.id}`, i]));
-  const deps = new Map(rows.deps.map((d) => [`${d.job_id ?? ''}|${d.task_key ?? ''}`, parseKeys(d.depends_on_keys)]));
-  const taskRuns = aggregate(rows.tasks, (r) => `${r.job_id ?? ''}|${r.job_run_id ?? ''}|${r.run_id ?? ''}|${r.task_key ?? ''}`);
+  const deps = new Map((rows.deps ?? []).map((d) => [`${d.job_id ?? ''}|${d.task_key ?? ''}`, parseKeys(d.depends_on_keys)]));
+  const taskRuns = aggregate(rows.tasks ?? [], (r) => `${r.job_id ?? ''}|${r.job_run_id ?? ''}|${r.run_id ?? ''}|${r.task_key ?? ''}`);
   const tasksOf = new Map<string, Agg[]>();
   for (const t of taskRuns.values()) {
     if (!t.final) continue;
     const k = `${t.first.job_id ?? ''}|${t.first.job_run_id ?? ''}`;
     tasksOf.set(k, [...(tasksOf.get(k) ?? []), t]);
   }
+  const detail = !!rows.tasks && !!rows.deps;
+  // Without task detail, how many tasks is known from the task runs (per run) or the job's tasks (per job), if either was read.
+  const jobTaskCount = new Map<string, number>();
+  if (!rows.tasks) for (const d of rows.deps ?? []) jobTaskCount.set(d.job_id ?? '', (jobTaskCount.get(d.job_id ?? '') ?? 0) + 1);
+  const ntasksOf = (jobId: string, runId: string) =>
+    rows.tasks ? new Set((tasksOf.get(`${jobId}|${runId}`) ?? []).map((t) => t.first.task_key ?? '')).size : (jobTaskCount.get(jobId) ?? 0);
 
   const out: Draft[] = [];
   for (const a of aggregate(rows.runs, (r) => `${r.job_id ?? ''}|${r.run_id ?? ''}`).values()) {
@@ -149,7 +158,7 @@ export function historyDrafts(rows: HistoryRows, items: Item[], host: string, _m
     const item = byId.get(`job:${jobId}`);
     if (!item || !a.final) continue;
     const result = JOB_RESULTS[a.final.result_state ?? ''] ?? 'failed';
-    const { tasks, failed } = runTasks(a.start, tasksOf.get(`${jobId}|${runId}`) ?? [], deps, jobId, runId);
+    const { tasks, failed } = detail ? runTasks(a.start, tasksOf.get(`${jobId}|${runId}`) ?? [], deps, jobId, runId) : { tasks: undefined, failed: [] as FailedTask[] };
     let cause: Cause | null = null;
     if (result === 'failed') {
       cause = causeOf(a.final);
@@ -163,7 +172,7 @@ export function historyDrafts(rows: HistoryRows, items: Item[], host: string, _m
       key: `j:${jobId}`,
       startTime: a.start,
       durationSec: secs(a.start, a.end),
-      ntasks: tasks.length,
+      ntasks: tasks ? tasks.length : ntasksOf(jobId, runId),
       failed,
       runAs: item.runAs ?? '',
       live: false,
@@ -173,7 +182,7 @@ export function historyDrafts(rows: HistoryRows, items: Item[], host: string, _m
       params: {},
       retryAttempt: 0,
       cause,
-      tasks,
+      ...(tasks ? { tasks } : {}),
       url: jobRunUrl(host, { job_id: Number(jobId), run_id: Number(runId) }),
       jobId: Number(jobId),
     });

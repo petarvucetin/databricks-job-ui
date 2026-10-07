@@ -48,13 +48,20 @@ ${WINDOW}
 GROUP BY job_id, job_run_id, run_id, task_key
 HAVING ${FINAL}`;
 
-/** job_tasks is SCD2: the latest row per (job_id, task_key), dropped when that row records a deletion. */
-export const TASK_DEPS_SQL = `SELECT job_id, task_key, depends_on_keys
+/**
+ * job_tasks is SCD2: the latest row per (job_id, task_key), dropped when that row records a deletion. Only the jobs of
+ * the runs JOB_RUNS_SQL keeps (same parameters), so the result stays bounded by the history window and cap.
+ */
+export const TASK_DEPS_SQL = `WITH kept_runs AS (
+${JOB_RUNS_SQL}
+)
+SELECT job_id, task_key, depends_on_keys
 FROM (
   SELECT job_id, task_key, TO_JSON(depends_on_keys) AS depends_on_keys, delete_time,
     ROW_NUMBER() OVER (PARTITION BY job_id, task_key ORDER BY change_time DESC) AS rn
   FROM system.lakeflow.job_tasks
   WHERE workspace_id = :ws
+    AND job_id IN (SELECT job_id FROM kept_runs)
 )
 WHERE rn = 1 AND delete_time IS NULL`;
 

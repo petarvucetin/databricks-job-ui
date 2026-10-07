@@ -27,12 +27,30 @@ function failure(e: unknown): { code: string; message: string } {
 
 /** Why a failed system-table read falls back to the API: no access (with the code), or the warehouse's error. */
 export function sqlFailureReason(e: unknown): string {
-  const { code, message } = failure(e);
-  return NO_ACCESS.has(code) ? `no access to system.lakeflow (${code})` : `warehouse error: ${message}`;
+  return sqlFailure(e).reason;
 }
 
-/** Each user's probe answer and when it was asked. */
-export type ProbeCache = Map<string, { at: number; result: Promise<ProbeResult> }>;
+/** A result over the INLINE disposition's limit (25 MiB): the same query fails the same way all day. */
+const TOO_LARGE = /INLINE|BYTE_LIMIT|too large|too big|\bsize\b/i;
+
+/**
+ * Why a system-table read failed, and whether that lasts (finding 2c): no access, a missing table, or a result too
+ * large fail the same way on every retry today; anything else (the warehouse starting, a network error) may not.
+ */
+export function sqlFailure(e: unknown): { reason: string; lasting: boolean } {
+  const { code, message } = failure(e);
+  if (NO_ACCESS.has(code)) return { reason: `no access to system.lakeflow (${code})`, lasting: true };
+  return { reason: `warehouse error: ${message}`, lasting: TOO_LARGE.test(code) || TOO_LARGE.test(message) };
+}
+
+/** Each reading identity's probe answer and when it was asked; `value` once it has answered. */
+export type ProbeCache = Map<string, { at: number; result: Promise<ProbeResult>; value?: ProbeResult }>;
+
+/** The answer `cache` already has for `key` (not one still being asked), while it is kept (10 minutes). */
+export function knownProbe(cache: ProbeCache, key: string, now: number): ProbeResult | undefined {
+  const hit = cache.get(key);
+  return hit && now - hit.at < TTL_MS ? hit.value : undefined;
+}
 
 /**
  * Can this reading identity read the system tables? Answers ok with the workspace id to filter by, or the reason the
@@ -72,7 +90,12 @@ export function createHistoryProbe(o: { api: LiveApi; config: HistoryConfig; clo
       const hit = cache.get(userKey);
       if (hit && now - hit.at < TTL_MS) return hit.result;
       const result = probe();
-      cache.set(userKey, { at: now, result });
+      const entry: { at: number; result: Promise<ProbeResult>; value?: ProbeResult } = { at: now, result };
+      void result.then(
+        (v) => (entry.value = v),
+        () => undefined
+      );
+      cache.set(userKey, entry);
       return result;
     },
   };

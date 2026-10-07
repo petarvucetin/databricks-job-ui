@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import type { jobs } from '@databricks/sdk-experimental';
 import type { RunsResponse } from '../../../shared/domain/types';
-import { createLiveRunSource, createLiveState, type LiveState } from './liveRunSource';
+import { createLiveRunSource, createLiveState, type LiveSourceOptions, type LiveState } from './liveRunSource';
 import { createLiveProvider } from './liveProvider';
 import { DEFAULT_LIMITS, type LiveLimits, type RefreshSettings } from './limits';
 import { fakeApi, type FakeData } from './fakeApi';
@@ -39,7 +39,7 @@ interface Hist {
   tasks?: SqlRow[];
   updates?: SqlRow[];
   /** Answers instead of the rows for these statements. */
-  fail?: Partial<Record<'probe' | 'runs', Error>>;
+  fail?: Partial<Record<'probe' | 'runs' | 'tasks', Error>>;
 }
 
 /** Answers the probe and the four history queries; records every statement with its parameters. */
@@ -49,14 +49,14 @@ function sqlFake(h: () => Hist, seen: { statement: string; params: Record<string
     const cur = h();
     if (statement === PROBE_SQL) return cur.fail?.probe ?? [{ ok: '1' }];
     if (statement === JOB_RUNS_SQL) return cur.fail?.runs ?? cur.runs ?? [];
-    if (statement === TASK_RUNS_SQL) return cur.tasks ?? [];
+    if (statement === TASK_RUNS_SQL) return cur.fail?.tasks ?? cur.tasks ?? [];
     if (statement === TASK_DEPS_SQL) return [];
     if (statement === PIPELINE_UPDATES_SQL) return cur.updates ?? [];
     return new Error(`unexpected statement ${statement}`);
   };
 }
 
-function setup(o: { data?: FakeData; hist?: Hist; config?: HistoryConfig; limits?: Partial<LiveLimits>; refresh?: RefreshSettings; now: number; state?: LiveState }) {
+function setup(o: { data?: FakeData; hist?: Hist; config?: HistoryConfig; limits?: Partial<LiveLimits>; refresh?: RefreshSettings; now: number; state?: LiveState; opts?: Partial<LiveSourceOptions> }) {
   const seen: { statement: string; params: Record<string, string> }[] = [];
   let hist = o.hist ?? {};
   let now = o.now;
@@ -75,7 +75,7 @@ function setup(o: { data?: FakeData; hist?: Hist; config?: HistoryConfig; limits
   api.listJobRuns = (req) => (runReqs.push(req), listJobRuns(req));
   const state = o.state ?? createLiveState();
   const src = () =>
-    createLiveRunSource({ api, user: () => Promise.resolve('me@x.com'), userKey: 'me', state, limits: { ...DEFAULT_LIMITS, ...o.limits }, refresh: o.refresh, clock: () => now, warn: vi.fn(), history: o.config ?? ON });
+    createLiveRunSource({ api, user: () => Promise.resolve('me@x.com'), userKey: 'me', state, limits: { ...DEFAULT_LIMITS, ...o.limits }, refresh: o.refresh, clock: () => now, warn: vi.fn(), history: o.config ?? ON, ...o.opts });
   return {
     api,
     data,
@@ -109,7 +109,8 @@ describe('run history from system tables, today from the API', () => {
     expect(res.history).toEqual({ source: 'system-tables', days: 90 });
     // History is everything before local midnight, back historyDays; parameters are strings.
     expect(t.historyCalls()[0].params).toEqual({ ws: '42', from_ts: new Date(now - 90 * DAY).toISOString(), to_ts: new Date(DAY2).toISOString(), max_runs: '20000' });
-    expect(t.seen.find((s) => s.statement === TASK_DEPS_SQL)?.params).toEqual({ ws: '42' });
+    // The dependencies of the kept runs' jobs only: the same parameters (finding 2a).
+    expect(t.seen.find((s) => s.statement === TASK_DEPS_SQL)?.params).toEqual(t.historyCalls()[0].params);
     // The API reads today, plus whatever is still running.
     expect(t.runReqs.some((r) => r.start_time_from === DAY2)).toBe(true);
     expect(t.runReqs.some((r) => r.active_only)).toBe(true);
@@ -170,7 +171,7 @@ describe('run history from system tables, today from the API', () => {
     expect(ids(res)).toEqual([500, 400]);
   });
 
-  it('PERMISSION_DENIED reading history: API only with that reason, never an error; the fallback is kept 5 minutes', async () => {
+  it('PERMISSION_DENIED reading history: API only with that reason, never an error; a lasting failure is kept until the day ends (finding 2c)', async () => {
     const now = DAY2 + 14 * HOUR;
     const denied = Object.assign(new Error('User does not have USE SCHEMA on Schema system.lakeflow'), { statusCode: 403, errorCode: 'PERMISSION_DENIED' });
     const t = setup({ now, data: { runs: [ok(500, 1, now - HOUR, 600), ok(400, 1, now - 20 * DAY, 600)] }, hist: { fail: { runs: denied } } });
@@ -178,7 +179,27 @@ describe('run history from system tables, today from the API', () => {
     const fallback = { source: 'api', days: 30, reason: 'no access to system.lakeflow (PERMISSION_DENIED)' };
     expect(res.history).toEqual(fallback);
     expect(ids(res)).toEqual([500, 400]);
-    // Granted meanwhile: within 5 minutes the failure is still served (no SQL), after it history is read again (R11).
+    // Granted meanwhile: a deterministic failure is not retried at +6 min, nor hours later (no SQL at all)...
+    t.setHist({ runs: [hRun(300, 1, DAY1 + 10 * HOUR, 600)] });
+    const statements = t.seen.length;
+    for (const later of [MIN, 6 * MIN, 9 * HOUR]) {
+      t.setNow(now + later);
+      expect((await t.list()).history).toEqual(fallback);
+    }
+    expect(t.seen).toHaveLength(statements);
+    // ...but the next local day reads history again.
+    t.setNow(DAY2 + DAY + HOUR);
+    const next = await t.list();
+    expect(next.history).toEqual({ source: 'system-tables', days: 90 });
+    expect(ids(next)).toContain(300);
+  });
+
+  it('a transient failure (the warehouse starting) is served for 5 minutes, then history is read again (R11)', async () => {
+    const now = DAY2 + 14 * HOUR;
+    const busy = Object.assign(new Error('The warehouse is starting'), { statusCode: 503, errorCode: 'TEMPORARILY_UNAVAILABLE' });
+    const t = setup({ now, data: { runs: [ok(500, 1, now - HOUR, 600)] }, hist: { fail: { runs: busy } } });
+    const fallback = { source: 'api', days: 30, reason: 'warehouse error: The warehouse is starting' };
+    expect((await t.list()).history).toEqual(fallback);
     t.setHist({ runs: [hRun(300, 1, DAY1 + 10 * HOUR, 600)] });
     t.setNow(now + MIN);
     const statements = t.seen.length;
@@ -188,6 +209,117 @@ describe('run history from system tables, today from the API', () => {
     const next = await t.list();
     expect(next.history).toEqual({ source: 'system-tables', days: 90 });
     expect(ids(next)).toContain(300);
+  });
+
+  it('a failing task-runs query still serves the history runs, without task detail (finding 2b)', async () => {
+    const tooLarge = Object.assign(new Error('Inline byte limit exceeded'), { code: 'BAD_REQUEST' });
+    const t = setup({ now: DAY2 + 14 * HOUR, hist: { runs: [hRun(300, 1, DAY1 + 10 * HOUR, 600)], fail: { tasks: tooLarge } } });
+    const res = await t.list();
+    expect(res.history).toEqual({ source: 'system-tables', days: 90 });
+    const run = res.runs.find((r) => r.id === 300);
+    expect(run).toMatchObject({ name: 'etl', kind: 'succeeded', ntasks: 0 });
+    expect(run?.tasks).toBeUndefined();
+    // A result too large lasts the day: the history (without tasks) is not read again.
+    t.setNow(DAY2 + 14 * HOUR + 10 * MIN);
+    await t.list();
+    expect(t.historyCalls()).toHaveLength(1);
+  });
+
+  it('a slow warehouse: the response comes at the API\'s pace, the API part served with "timed out", the failure kept 5 minutes (finding 3)', async () => {
+    const now = DAY2 + 14 * HOUR;
+    const t = setup({ now, data: { runs: [ok(500, 1, now - HOUR, 600), ok(400, 1, now - 20 * DAY, 600)] }, hist: { runs: [hRun(300, 1, DAY1 + 10 * HOUR, 600)] }, opts: { timer: Date.now, historyBudgetMs: 150 } });
+    const exec = t.api.executeStatement;
+    t.api.executeStatement = (req) => new Promise((r) => setTimeout(r, 700)).then(() => exec(req));
+    const t0 = Date.now();
+    const res = await t.list();
+    expect(Date.now() - t0).toBeLessThan(600);
+    expect(res.history).toEqual({ source: 'api', days: 1, reason: 'timed out' });
+    expect(ids(res)).toEqual([500]); // today's API part
+    // Within 5 minutes: the API alone over 30 days, no SQL; after them, history is tried again.
+    t.api.executeStatement = exec;
+    t.setNow(now + MIN);
+    const statements = t.seen.length;
+    const next = await t.list();
+    expect(next.history).toEqual({ source: 'api', days: 30, reason: 'timed out' });
+    expect(ids(next)).toEqual([500, 400]);
+    expect(t.seen).toHaveLength(statements);
+    await new Promise((r) => setTimeout(r, 800)); // the first read's statements land meanwhile
+    t.setNow(now + 6 * MIN);
+    expect((await t.list()).history).toEqual({ source: 'system-tables', days: 90 });
+  });
+
+  it('the probe, the history read and the API run side by side: about the slower of the two, not their sum (finding 3)', async () => {
+    const now = DAY2 + 14 * HOUR;
+    const t = setup({ now, data: { runs: [ok(500, 1, now - HOUR, 600)] }, hist: { runs: [hRun(300, 1, DAY1 + 10 * HOUR, 600)] }, opts: { timer: Date.now } });
+    const slow = <A, R>(fn: (a: A) => Promise<R>) => (a: A) => new Promise((r) => setTimeout(r, 300)).then(() => fn(a));
+    t.api.executeStatement = slow(t.api.executeStatement);
+    t.api.listJobRuns = slow(t.api.listJobRuns);
+    const t0 = Date.now();
+    const res = await t.list();
+    // In sequence: probe 300 + queries 300 + runs list 300 + active runs 300 = 1200 ms.
+    expect(Date.now() - t0).toBeLessThan(1000);
+    expect(res.history).toEqual({ source: 'system-tables', days: 90 });
+    expect(ids(res)).toEqual([500, 300]);
+  });
+
+  it('concurrent first lists share one history read (finding 10)', async () => {
+    const t = setup({ now: DAY2 + 14 * HOUR, hist: { runs: [hRun(300, 1, DAY1 + 10 * HOUR, 600)] } });
+    const other = () => createLiveRunSource({ api: t.api, user: () => Promise.resolve('me@x.com'), userKey: 'me', state: t.state, limits: DEFAULT_LIMITS, clock: () => DAY2 + 14 * HOUR, warn: vi.fn(), history: ON });
+    const [a, b] = await Promise.all([t.list(), other().listRuns(undefined, TZ, { full: true })]);
+    expect(ids(a)).toContain(300);
+    expect(ids(b)).toContain(300);
+    expect(t.historyCalls()).toHaveLength(1);
+  });
+
+  it('a job or pipeline gone from the item list leaves history on the next list, without reading SQL again (finding 5)', async () => {
+    const now = DAY2 + 14 * HOUR;
+    const t = setup({ now, hist: { runs: [hRun(300, 1, DAY1 + 10 * HOUR, 600), hRun(200, 2, DAY1 + 9 * HOUR, 600)], updates: [hUpdate('aaaabbbb-0000-0000-0000-000000000009', DAY1 + 12 * HOUR, 60)] } });
+    const upd = pipelineNumber('aaaabbbb-0000-0000-0000-000000000009');
+    expect(ids(await t.list())).toEqual([upd, 300, 200]);
+    // Job 2 and the pipeline are deleted (or no longer visible); the item list is read again (its 5 minutes are up).
+    t.data.jobs = t.data.jobs!.filter((j) => j.job_id !== 2);
+    t.data.pipelines = [];
+    t.setNow(now + 6 * MIN);
+    const src = createLiveRunSource({ api: t.api, user: () => Promise.resolve('me@x.com'), userKey: 'me', state: t.state, limits: DEFAULT_LIMITS, clock: () => now + 6 * MIN, warn: vi.fn(), history: ON });
+    await src.listItems();
+    expect(ids(await t.list())).toEqual([300]);
+    expect(t.historyCalls()).toHaveLength(1);
+    expect(t.state.pipelineRefs.has(upd)).toBe(true); // remembered from the first list; no longer refreshed from history
+  });
+
+  it('an incomplete job list still gives history for the listed jobs, capped "job list incomplete"; read again once the list is complete (finding 6)', async () => {
+    const now = DAY2 + 14 * HOUR;
+    const t = setup({ now, limits: { itemsTimeoutMs: 60 }, data: { jobPageSize: 1 }, hist: { runs: [hRun(300, 1, DAY1 + 10 * HOUR, 600), hRun(200, 2, DAY1 + 9 * HOUR, 600)] }, opts: { timer: Date.now } });
+    const listJobs = t.api.listJobs;
+    let slowPage2 = true;
+    t.api.listJobs = (req) => (req.page_token && slowPage2 ? new Promise((r) => setTimeout(r, 200)).then(() => listJobs(req)) : listJobs(req));
+    const res = await t.list();
+    expect(res.history).toEqual({ source: 'system-tables', days: 90, capped: true, reason: 'job list incomplete' });
+    expect(ids(res)).toEqual([300]);
+    // Not kept for the day: a complete list (read for the Jobs & ETL tab) brings a fresh read.
+    slowPage2 = false;
+    t.setNow(now + MIN);
+    const src = createLiveRunSource({ api: t.api, user: () => Promise.resolve('me@x.com'), userKey: 'me', state: t.state, limits: DEFAULT_LIMITS, clock: () => now + MIN, warn: vi.fn(), history: ON });
+    expect((await src.listItems()).partial).toBeUndefined();
+    t.setNow(now + 2 * MIN);
+    const next = await t.list();
+    expect(t.historyCalls()).toHaveLength(2);
+    expect(next.history).toEqual({ source: 'system-tables', days: 90 });
+    expect(ids(next)).toEqual([300, 200]);
+  });
+
+  it('an incomplete job list is read again after 5 minutes even without a complete list', async () => {
+    const now = DAY2 + 14 * HOUR;
+    const t = setup({ now, limits: { itemsTimeoutMs: 60 }, data: { jobPageSize: 1 }, hist: { runs: [hRun(300, 1, DAY1 + 10 * HOUR, 600)] }, opts: { timer: Date.now } });
+    const listJobs = t.api.listJobs;
+    t.api.listJobs = (req) => (req.page_token ? new Promise((r) => setTimeout(r, 200)).then(() => listJobs(req)) : listJobs(req));
+    await t.list();
+    t.setNow(now + 4 * MIN);
+    await t.list();
+    expect(t.historyCalls()).toHaveLength(1);
+    t.setNow(now + 6 * MIN);
+    await t.list();
+    expect(t.historyCalls()).toHaveLength(2);
   });
 
   it('a cached day skips the probe: later lists make no SQL calls at all (R11)', async () => {
@@ -275,25 +407,77 @@ describe('run history from system tables, today from the API', () => {
     const src = createLiveRunSource({ api: t.api, user: () => Promise.resolve('me@x.com'), userKey: 'me', state: t.state, limits: DEFAULT_LIMITS, clock: () => now, warn: vi.fn(), history: ON });
     await src.listRuns(undefined, -60);
     expect(t.historyCalls()).toHaveLength(2); // another local day start
+    // Two time zones alternating keep their own entries: no re-read either way (finding 4a).
+    for (const [tz, m] of [[TZ, 1], [-60, 2], [TZ, 3]]) {
+      const later = createLiveRunSource({ api: t.api, user: () => Promise.resolve('me@x.com'), userKey: 'me', state: t.state, limits: DEFAULT_LIMITS, clock: () => now + m * MIN, warn: vi.fn(), history: ON });
+      await later.listRuns(undefined, tz, { full: true });
+    }
+    expect(t.historyCalls()).toHaveLength(2);
   });
 });
 
 describe('/api/mode history', () => {
-  it('is the probe answer for the requesting identity', async () => {
+  const NOW = DAY2 + 14 * HOUR;
+  const list = (p: ReturnType<typeof createLiveProvider>, headers: Record<string, string> = {}) => {
+    const src = p.forRequest({ headers });
+    if ('error' in src) throw new Error(src.error);
+    return src.listRuns(undefined, TZ);
+  };
+
+  it('never waits for a cold probe: nothing until a list has probed, then that answer (finding 11)', async () => {
     const env = { NODE_ENV: 'development', DATABRICKS_WAREHOUSE_ID: 'wh1' };
-    const makeApi = () => fakeApi({ workspaceId: '42', sql: () => [{ ok: '1' }] });
-    expect(await createLiveProvider(env, { makeApi }).history({ headers: {} })).toEqual({ source: 'system-tables', days: 90 });
-    const denied = () => fakeApi({ workspaceId: '42', sql: () => Object.assign(new Error('denied'), { statusCode: 403, errorCode: 'PERMISSION_DENIED' }) });
-    expect(await createLiveProvider(env, { makeApi: denied }).history({ headers: {} })).toEqual({ source: 'api', days: 30, reason: 'no access to system.lakeflow (PERMISSION_DENIED)' });
-    expect(await createLiveProvider({ NODE_ENV: 'development' }, { makeApi }).history({ headers: {} })).toEqual({ source: 'api', days: 30, reason: 'no SQL warehouse configured' });
-    expect(await createLiveProvider({ NODE_ENV: 'production' }, { makeApi }).history({ headers: {} })).toBeUndefined(); // not signed in
+    const api = fakeApi({ workspaceId: '42', sql: () => [{ ok: '1' }] });
+    const provider = createLiveProvider(env, { makeApi: () => api, clock: () => NOW });
+    expect(await provider.history({ headers: {} })).toBeUndefined();
+    expect(api.calls).toEqual([]);
+    await list(provider);
+    expect(await provider.history({ headers: {} })).toEqual({ source: 'system-tables', days: 90 });
+    const denied = fakeApi({ workspaceId: '42', sql: () => Object.assign(new Error('denied'), { statusCode: 403, errorCode: 'PERMISSION_DENIED' }) });
+    const no = createLiveProvider(env, { makeApi: () => denied, clock: () => NOW });
+    await list(no);
+    expect(await no.history({ headers: {} })).toEqual({ source: 'api', days: 30, reason: 'no access to system.lakeflow (PERMISSION_DENIED)' });
+    // Known without a call: no warehouse. Not signed in: nothing.
+    expect(await createLiveProvider({ NODE_ENV: 'development' }, { makeApi: () => api }).history({ headers: {} })).toEqual({ source: 'api', days: 30, reason: 'no SQL warehouse configured' });
+    expect(await createLiveProvider({ NODE_ENV: 'production' }, { makeApi: () => api }).history({ headers: {} })).toBeUndefined();
+  });
+
+  it('says capped when today\'s history read hit its cap', async () => {
+    const api = fakeApi({ workspaceId: '42', jobs: [{ job_id: 1, settings: { name: 'etl' } }], sql: (st) => (st === JOB_RUNS_SQL ? [hRun(1, 1, DAY1, 60)] : st === PROBE_SQL ? [{ ok: '1' }] : []) });
+    const provider = createLiveProvider({ NODE_ENV: 'development', DATABRICKS_WAREHOUSE_ID: 'wh1', JOBS_CONSOLE_HISTORY_MAX_RUNS: '1' }, { makeApi: () => api, clock: () => NOW });
+    expect((await list(provider)).history).toEqual({ source: 'system-tables', days: 90, capped: true });
+    expect(await provider.history({ headers: {} })).toEqual({ source: 'system-tables', days: 90, capped: true });
   });
 
   it('reads the workspace id from the SCIM header once per process when DATABRICKS_WORKSPACE_ID is not set', async () => {
     const api = fakeApi({ workspaceId: '42', sql: () => [{ ok: '1' }] });
-    const provider = createLiveProvider({ NODE_ENV: 'development', DATABRICKS_WAREHOUSE_ID: 'wh1' }, { makeApi: () => api });
-    await provider.history({ headers: {} });
-    await provider.history({ headers: { 'x-forwarded-access-token': 't', 'x-forwarded-email': 'b@x.com' } });
+    const provider = createLiveProvider({ NODE_ENV: 'development', DATABRICKS_WAREHOUSE_ID: 'wh1' }, { makeApi: () => api, clock: () => NOW });
+    await list(provider);
+    await list(provider, { 'x-forwarded-access-token': 't', 'x-forwarded-email': 'b@x.com' });
     expect(api.calls.filter((c) => c === 'workspaceId')).toHaveLength(1);
+  });
+});
+
+describe('JOBS_CONSOLE_AUTH=app: one history for every viewer (finding 4a)', () => {
+  it('viewers share the app\'s probe and history read; each still gets their own `mine`', async () => {
+    const NOW = DAY2 + 14 * HOUR;
+    const seen: { statement: string; params: Record<string, string> }[] = [];
+    const api = fakeApi({
+      workspaceId: '42',
+      jobs: [{ job_id: 1, creator_user_name: 'a@x.com', settings: { name: 'etl' } }],
+      sql: sqlFake(() => ({ runs: [hRun(300, 1, DAY1 + 10 * HOUR, 600)] }), seen),
+    });
+    const provider = createLiveProvider({ NODE_ENV: 'production', JOBS_CONSOLE_AUTH: 'app', DATABRICKS_WAREHOUSE_ID: 'wh1' }, { makeApi: () => api, clock: () => NOW });
+    const as = (email: string) => {
+      const src = provider.forRequest({ headers: { 'x-forwarded-email': email } });
+      if ('error' in src) throw new Error(src.error);
+      return src.listRuns(undefined, TZ);
+    };
+    const a = await as('a@x.com');
+    const b = await as('b@x.com');
+    expect(seen.filter((x) => x.statement === JOB_RUNS_SQL)).toHaveLength(1);
+    expect(seen.filter((x) => x.statement === PROBE_SQL)).toHaveLength(1);
+    expect(a.runs.find((r) => r.id === 300)?.mine).toBe(true);
+    expect(b.runs.find((r) => r.id === 300)?.mine).toBe(false);
+    expect(provider.state.history.size).toBe(1);
   });
 });

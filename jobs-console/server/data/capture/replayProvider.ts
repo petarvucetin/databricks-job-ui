@@ -1,5 +1,5 @@
 import type { RunSource, RunSourceProvider } from '../runSource';
-import { createLiveRunSource, createLiveState, historyInfoOf } from '../live/liveRunSource';
+import { createLiveRunSource, createLiveState, historyInfoOf, historyKey } from '../live/liveRunSource';
 import { readHistoryConfig } from '../systables/config';
 import { readLimits } from '../live/limits';
 import type { DiagNote } from '../live/trace';
@@ -79,7 +79,10 @@ export function createReplayProvider(env: Record<string, string | undefined>, de
    */
   const seed = (s: SessionRecord) => {
     const probe = s.probe ?? (s.historyPlan ? { ok: true as const, workspaceId: s.historyPlan.workspaceId } : undefined);
-    if (probe) state.probes.set('replay', { at: s.now ?? s.startedAt, result: Promise.resolve(probe) });
+    if (probe) state.probes.set('replay', { at: s.now ?? s.startedAt, result: Promise.resolve(probe), value: probe });
+    // A list answered with a remembered history failure (no probe, no SQL) is answered the same way (finding 14).
+    const f = s.historyFailure;
+    if (f) state.historyFailures.set(historyKey('replay', tzOf(s), f.cutoff), { at: s.now ?? s.startedAt, until: f.until, reason: f.reason });
   };
   // Each recorded list replayed as it ran: its own calls first, frozen at its own asOf, in its own mode.
   const sourceFor = (s: SessionRecord, mode?: 'full' | 'delta') => {

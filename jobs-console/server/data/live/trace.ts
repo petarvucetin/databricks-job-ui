@@ -35,4 +35,13 @@ export interface TraceMeta {
   probe?: ProbeResult;
   /** The history window a list next to history used (its SQL parameters and API start). */
   historyPlan?: HistoryPlan;
+  /** A remembered history failure this list was answered with (no probe, no SQL), so a replay answers it the same way. */
+  historyFailure?: HistoryFailureNote;
+}
+
+/** A remembered history failure: the local day it is for, why, and until when it is served. */
+export interface HistoryFailureNote {
+  cutoff: number;
+  reason: string;
+  until: number;
 }

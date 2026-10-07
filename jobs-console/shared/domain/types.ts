@@ -120,8 +120,12 @@ export interface RunsResponse {
   history?: HistoryInfo;
 }
 
+/**
+ * `capped`: runs may be missing (a cap was hit, or, with `reason` "job list incomplete", history was read for part of
+ * the job list). `reason` on 'api': why system tables are not used.
+ */
 export type HistoryInfo =
-  | { source: 'system-tables'; days: number; capped?: boolean }
+  | { source: 'system-tables'; days: number; capped?: boolean; reason?: string }
   | { source: 'api'; days: number; reason?: string; capped?: boolean };
 
 /** A full load re-reads the whole window; a delta only what can have changed since the last list. */

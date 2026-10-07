@@ -84,6 +84,8 @@ export async function runSweep(o: SweepOptions): Promise<RunsResponse> {
     // Calls are already recorded (inside the getRun de-dup); the source only adds diagnostics and notes.
     trace: { diag: (n) => session.diag(n), note: (m) => session.note(m), wrap: (a) => a },
     history: o.history,
+    // The sweep's own budget for the history read too, not the 25 s a list waits next to the API.
+    historyBudgetMs: o.timeoutMs,
   });
   const res = await source.listRuns();
   await source.listItems().catch(() => undefined);

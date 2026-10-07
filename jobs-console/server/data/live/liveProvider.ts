@@ -2,9 +2,10 @@ import { createHash } from 'node:crypto';
 import type { RequestLike, RunSourceProvider } from '../runSource';
 import { createSdkApi, type LiveApi } from './api';
 import { readLimits, readRefresh, type LiveLimits, type RefreshSettings } from './limits';
-import { createLiveRunSource, createLiveState, historyInfoOf, probeHistory, type LiveState } from './liveRunSource';
+import { createLiveRunSource, createLiveState, historyInfoOf, probeHistory, type HistoryEntry, type LiveState } from './liveRunSource';
 import type { HistoryInfo } from '../../../shared/domain/types';
 import { readHistoryConfig, type HistoryConfig } from '../systables/config';
+import { knownProbe } from '../systables/probe';
 
 export interface LiveProviderDeps {
   makeApi: (opts: { host?: string; token?: string }) => LiveApi;
@@ -20,6 +21,8 @@ export interface LiveIdentity {
   user: () => Promise<string>;
   /** Identifies the requester in the cache; 'dev' for the local default auth chain. */
   userKey: string;
+  /** Identifies who the APIs read as (history and probe caches): 'app' in app mode, where every viewer reads as the app; else userKey. */
+  readKey: string;
 }
 
 export interface LiveProvider extends RunSourceProvider {
@@ -31,7 +34,11 @@ export interface LiveProvider extends RunSourceProvider {
   /** DATABRICKS_WAREHOUSE_ID, DATABRICKS_WORKSPACE_ID, JOBS_CONSOLE_HISTORY. */
   readonly historyConfig: HistoryConfig;
   identify(req: RequestLike): LiveIdentity | { status: number; error: string };
-  /** Where this requester's run history comes from (the probe, as them); undefined when they are not signed in. */
+  /**
+   * Where this requester's run history comes from, as far as is known without waiting (finding 11): the cached probe
+   * answer (and today's history read, for capped), or, with no warehouse, why not. Undefined when nothing is known yet
+   * (the header then fills in from the first runs list) or they are not signed in.
+   */
   history(req: RequestLike): Promise<HistoryInfo | undefined>;
 }
 
@@ -88,16 +95,16 @@ export function createLiveProvider(env: Record<string, string | undefined>, deps
     const email = header(req, 'x-forwarded-email');
     if (auth === 'app') {
       const d = defaultChain();
-      return { api: d.api, user: email ? () => Promise.resolve(email) : d.user, userKey: email ?? 'app' };
+      return { api: d.api, user: email ? () => Promise.resolve(email) : d.user, userKey: email ?? 'app', readKey: 'app' };
     }
     if (token) {
       const api = deps.makeApi({ host: env.DATABRICKS_HOST, token });
       const userKey = email ?? header(req, 'x-forwarded-user') ?? 'token:' + createHash('sha256').update(token).digest('hex').slice(0, 16);
-      return { api, user: email ? () => Promise.resolve(email) : userNameOf(api), userKey };
+      return { api, user: email ? () => Promise.resolve(email) : userNameOf(api), userKey, readKey: userKey };
     }
     if (env.NODE_ENV === 'development') {
       const d = defaultChain();
-      return { api: d.api, user: d.user, userKey: 'dev' };
+      return { api: d.api, user: d.user, userKey: 'dev', readKey: 'dev' };
     }
     return { status: 401, error: 'Not signed in: the request has no forwarded user access token' };
   }
@@ -113,7 +120,13 @@ export function createLiveProvider(env: Record<string, string | undefined>, deps
     async history(req) {
       const id = identify(req);
       if ('error' in id) return undefined;
-      return historyInfoOf(await probeHistory({ api: id.api, userKey: id.userKey, state, config: historyConfig, clock: deps.clock }), limits);
+      // No warehouse, or off: known without a call.
+      if (!historyConfig.enabled) return historyInfoOf(await probeHistory({ api: id.api, userKey: id.readKey, state, config: historyConfig, clock: deps.clock }), limits);
+      const known = knownProbe(state.probes, id.readKey, (deps.clock ?? Date.now)());
+      if (!known) return undefined;
+      let hist: HistoryEntry | undefined;
+      for (const [k, e] of state.history) if (k.startsWith(`${id.readKey}|`) && (!hist || e.at > hist.at)) hist = e;
+      return historyInfoOf(known, limits, hist);
     },
     forRequest(req, trace) {
       const id = identify(req);

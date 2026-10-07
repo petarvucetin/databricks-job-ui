@@ -285,6 +285,26 @@ describe('replay of run history from system tables', () => {
     expect(comparable(replayed)).toBe(comparable(second.res));
   });
 
+  it('replays a list answered with a remembered history failure the same way, with no SQL in its capture (finding 14)', async () => {
+    const state = createLiveState();
+    const busy = { ...data, sql: (statement: string) => (statement === JOB_RUNS_SQL ? Object.assign(new Error('The warehouse is starting'), { statusCode: 503 }) : data.sql!(statement, {})) };
+    const recs = [];
+    for (const [id, t] of [['s-fail', NOW], ['s-cached', NOW + 60_000]] as const) {
+      const session = new Session({ id, route: '/api/runs', query: { tzOffset: '240' }, authMode: 'user' }, () => t);
+      const src = createLiveRunSource({ api: fakeApi(busy), user: () => Promise.resolve('me@x.com'), userKey: 'me', state, limits: DEFAULT_LIMITS, clock: () => t, warn: () => {}, trace: session, history: readHistoryConfig(WAREHOUSE) });
+      const res = await src.listRuns(undefined, 240);
+      recs.push({ res, rec: session.finish({ status: 200, body: res }) });
+    }
+    const second = recs[1];
+    expect(second.res.history).toEqual({ source: 'api', days: 30, reason: 'warehouse error: The warehouse is starting' });
+    expect(second.rec.calls.filter((c) => c.method === 'executeStatement')).toHaveLength(0);
+    expect(second.rec.historyFailure).toMatchObject({ reason: 'warehouse error: The warehouse is starting', until: NOW + 5 * 60_000 });
+    // Only the later session in the capture: it is answered from its own record, not by probing again.
+    const file = await roundTrip([second.rec], WAREHOUSE);
+    const replayed = await (createReplayProvider({}, { file, warn: () => {} }).forRequest({ headers: {} }) as RunSource).listRuns();
+    expect(replayed.history).toEqual(second.res.history);
+  });
+
   it('answers SQL only on the exact statement text and parameters', async () => {
     const [{ rec }] = await recordHistory(['s-hist']);
     const recorded = (statement: string) => rec.calls.find((c) => c.method === 'executeStatement' && (c.args as sql.ExecuteStatementRequest).statement === statement)!.args as sql.ExecuteStatementRequest;

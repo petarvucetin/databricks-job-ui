@@ -2,7 +2,7 @@ import type { HistoryInfo, RefreshInfo } from '../../../shared/domain/types';
 import type { LiveApi } from '../live/api';
 import { apiErrorParts } from '../live/apiError';
 import type { LiveLimits } from '../live/limits';
-import type { DiagNote, Trace, TraceMeta } from '../live/trace';
+import type { DiagNote, HistoryFailureNote, Trace, TraceMeta } from '../live/trace';
 import type { ProbeResult } from '../systables/probe';
 import type { HistoryPlan } from '../systables/cutoff';
 
@@ -56,6 +56,8 @@ export interface SessionRecord {
   probe?: ProbeResult;
   /** The history window this list used; replay pins it, so a later list of the day issues the same SQL. */
   historyPlan?: HistoryPlan;
+  /** The remembered history failure this list was answered with; replay remembers it too. */
+  historyFailure?: HistoryFailureNote;
   calls: CallRecord[];
   diagnostics: DiagNote[];
   /** Diagnostics dropped past the per-session cap. */
@@ -134,6 +136,7 @@ export class Session implements Trace {
   note(meta: TraceMeta): void {
     if (meta.probe !== undefined) this.rec.probe = { ...meta.probe };
     if (meta.historyPlan !== undefined) this.rec.historyPlan = { ...meta.historyPlan };
+    if (meta.historyFailure !== undefined) this.rec.historyFailure = { ...meta.historyFailure };
     if (meta.refresh !== undefined) this.rec.refresh = { ...meta.refresh };
     if (meta.now !== undefined) this.rec.now = meta.now;
     if (meta.user !== undefined) this.rec.user = meta.user;
