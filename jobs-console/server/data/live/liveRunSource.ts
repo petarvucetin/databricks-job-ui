@@ -5,7 +5,7 @@ import { SourceError } from '../sourceError';
 import type { LiveApi } from './api';
 import { apiErrorParts, toSourceError } from './apiError';
 import { Deadline, EVENTS_PAGE_SIZE, FINISHED_UPDATE, TIMEOUT, collectJobRuns, collectPipelines, eventsSince } from './collect';
-import { DeltaError, baseFromFull, collectEarlier, fetchDelta, mergeBase, mergeEvents, type Base } from './delta';
+import { DeltaError, baseFromFull, collectEarlier, fetchDelta, keepEarlierUpdates, mergeBase, mergeEvents, type Base } from './delta';
 import { createLiveItems } from './items';
 import { jobDraft } from './jobs';
 import { finalize, runKey, usualByKey, type Draft } from './kinds';
@@ -15,11 +15,14 @@ import { findTask, jobLogText, pipelineLogText } from './taskLog';
 import { attemptChain, pipelineOutputOf, pipelineTaskCause, pipelineTaskLogText } from './pipelineTask';
 import { noDiag, type Trace } from './trace';
 import type { HistoryConfig } from '../systables/config';
-import { cutoffs } from '../systables/cutoff';
+import { cutoffs, type HistoryPlan } from '../systables/cutoff';
 import { readHistory, type HistoryRead } from '../systables/history';
 import { createHistoryProbe, type ProbeCache, type ProbeResult } from '../systables/probe';
 
 const DAY = 86400000;
+const HOUR = 3600000;
+/** A failed history read is served as the API fallback this long before it is tried again (ruling R11). */
+const HISTORY_FAILURE_TTL_MS = 5 * 60000;
 const CACHE_TTL_MS = 20000;
 const CACHE_MAX = 50;
 const BASES_MAX = 50;
@@ -72,6 +75,9 @@ export interface HistoryEntry extends HistoryRead {
   cutoff: number;
   /** Where the API window starts for the whole day: min(cutoff, the time of the read less the overlap). */
   apiFrom: number;
+  /** Where the history read started (:from_ts). */
+  historyFrom: number;
+  workspaceId: string;
 }
 
 /** Process-wide state shared by every request's source. Nothing in it grants access: every call still runs as the requester. */
@@ -88,11 +94,13 @@ export interface LiveState {
   history: Map<string, HistoryEntry>;
   /** Per user: can they read the system tables (10 minutes either way). */
   probes: ProbeCache;
+  /** Per user: the last failed history read, served as the API fallback for 5 minutes. */
+  historyFailures: Map<string, { at: number; reason: string }>;
   /** The workspace id from the SCIM header, once per process (dropped after a failure or an empty answer). */
   workspaceId?: Promise<string>;
 }
 
-export const createLiveState = (): LiveState => ({ pipelineRefs: new Map(), cache: new Map(), bases: new Map(), items: new Map(), history: new Map(), probes: new Map() });
+export const createLiveState = (): LiveState => ({ pipelineRefs: new Map(), cache: new Map(), bases: new Map(), items: new Map(), history: new Map(), probes: new Map(), historyFailures: new Map() });
 
 /**
  * The access probe (H5) for this user, over their own API; answers are shared through `state`. The workspace id is
@@ -143,6 +151,8 @@ export interface LiveSourceOptions {
   mode?: RefreshInfo['mode'];
   /** Run history before today from system tables (absent: the API alone, and no `history` in the response). */
   history?: HistoryConfig;
+  /** Replay: the history window the recorded list used, instead of one computed from the clock and time zone. */
+  historyPin?: HistoryPlan;
 }
 
 /** Where one list's runs come from: the API window, its base key, and the cached history next to it. */
@@ -238,7 +248,7 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
    * History mode (H1): when the probe is ok, the cached history of this local day (read now if missing) and the API
    * from that day's apiFrom on. Otherwise, or when the history read fails, the API alone over windowDays, with why.
    */
-  async function plan(since: number | undefined, now: number, tzOffsetMin: number | undefined, sqlApi: LiveApi, hostP: Promise<string>): Promise<Plan> {
+  async function plan(since: number | undefined, now: number, tzOffsetMin: number | undefined, hostP: Promise<string>): Promise<Plan> {
     const apiOnly = (reason?: string): Plan => ({
       from: since ?? now - limits.windowDays * DAY,
       windowKey: since,
@@ -246,36 +256,47 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
     });
     const config = o.history;
     if (!config || since !== undefined) return apiOnly();
-    const { day, apiFrom, historyFrom } = cutoffs(now, tzOffsetMin, limits);
-    let hist = state.history.get(o.userKey);
-    if (hist?.cutoff !== day) hist = undefined;
-    // The items list (cached for the Jobs & ETL tab too) alongside the probe, only when history will be read.
-    const itemsP = !hist && config.enabled ? itemsSrc.listItems().catch((e: unknown) => (e instanceof Error ? e : new Error(String(e)))) : undefined;
+    const pin = o.historyPin;
+    const { day, apiFrom, historyFrom } = pin ? { day: pin.cutoff, apiFrom: pin.apiFrom, historyFrom: pin.from } : cutoffs(now, tzOffsetMin, limits);
+    const done = (hist: HistoryEntry): Plan => {
+      o.trace?.note({ historyPlan: { cutoff: hist.cutoff, apiFrom: hist.apiFrom, from: hist.historyFrom, to: hist.cutoff, workspaceId: hist.workspaceId } });
+      return { from: hist.apiFrom, windowKey: `h:${hist.cutoff}`, hist, info: { source: 'system-tables', days: limits.historyDays } };
+    };
+    // Today's history is cached: no probe, no SQL (R11).
+    const cached = state.history.get(o.userKey);
+    if (cached?.cutoff === day) return done(cached);
+    const failed = state.historyFailures.get(o.userKey);
+    if (failed && now - failed.at < HISTORY_FAILURE_TTL_MS) {
+      diag({ level: 'info', code: 'history-api', message: `run history from the API: ${failed.reason} (failed ${Math.round((now - failed.at) / 1000)}s ago)` });
+      return apiOnly(failed.reason);
+    }
+    // The items list (cached for the Jobs & ETL tab too) alongside the probe.
+    const itemsP = config.enabled ? itemsSrc.listItems().catch((e: unknown) => (e instanceof Error ? e : new Error(String(e)))) : undefined;
     const probe = await probeHistory({ api, userKey: o.userKey, state, config, clock });
     o.trace?.note({ probe });
     if (!probe.ok) {
       diag({ level: 'info', code: 'history-api', message: `run history from the API: ${probe.reason}` });
       return apiOnly(probe.reason);
     }
-    if (!hist) {
-      const items = await itemsP;
-      let got: HistoryRead | { reason: string };
-      if (!items || items instanceof Error) got = { reason: `the job list failed: ${items ? apiErrorParts(items).message : 'not read'}` };
-      else if (items.partial) got = { reason: `the job list is incomplete: ${items.partial.reason}` };
-      else {
-        const dl = new Deadline(timer() + limits.itemsTimeoutMs, timer);
-        const host = await hostP;
-        got = await readHistory({ api: sqlApi, warehouseId: config.warehouseId ?? '', workspaceId: probe.workspaceId, from: historyFrom, to: day, maxRuns: limits.historyMaxRuns, items: items.items, host, dl });
-      }
-      if ('reason' in got) {
-        diag({ level: 'warn', code: 'history-failed', message: `run history from the API: ${got.reason}` });
-        return apiOnly(got.reason);
-      }
-      hist = { ...got, cutoff: day, apiFrom };
-      remember(state.history, o.userKey, hist, BASES_MAX);
-      diag({ level: 'info', code: 'history-read', message: `${got.drafts.length} runs from system tables before ${new Date(day).toISOString()}${got.capped ? ` (cap ${limits.historyMaxRuns} hit)` : ''}` });
+    const items = await itemsP;
+    let got: HistoryRead | { reason: string };
+    if (!items || items instanceof Error) got = { reason: `the job list failed: ${items ? apiErrorParts(items).message : 'not read'}` };
+    else if (items.partial) got = { reason: `the job list is incomplete: ${items.partial.reason}` };
+    else {
+      const dl = new Deadline(timer() + limits.itemsTimeoutMs, timer);
+      const host = await hostP;
+      got = await readHistory({ api, warehouseId: config.warehouseId ?? '', workspaceId: probe.workspaceId, from: historyFrom, to: day, maxRuns: limits.historyMaxRuns, items: items.items, host, dl });
     }
-    return { from: hist.apiFrom, windowKey: `h:${hist.cutoff}`, hist, info: { source: 'system-tables', days: limits.historyDays } };
+    if ('reason' in got) {
+      diag({ level: 'warn', code: 'history-failed', message: `run history from the API: ${got.reason}` });
+      remember(state.historyFailures, o.userKey, { at: now, reason: got.reason }, BASES_MAX);
+      return apiOnly(got.reason);
+    }
+    state.historyFailures.delete(o.userKey);
+    const hist: HistoryEntry = { ...got, cutoff: day, apiFrom, historyFrom, workspaceId: probe.workspaceId };
+    remember(state.history, o.userKey, hist, BASES_MAX);
+    diag({ level: 'info', code: 'history-read', message: `${got.drafts.length} runs from system tables before ${new Date(day).toISOString()}${got.capped ? ` (cap ${limits.historyMaxRuns} hit)` : ''}` });
+    return done(hist);
   }
 
   async function fetchRuns(since: number | undefined, askedFull: boolean, tzOffsetMin: number | undefined): Promise<RunsResponse> {
@@ -290,7 +311,8 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
       });
     // Straight from o.api: the host is configuration, not a counted or recorded call.
     const hostP = o.api.host().catch(() => '');
-    const p = await plan(since, now, tzOffsetMin, c.api, hostP);
+    // History SQL is recorded (api) but not counted: refresh.calls and the pages diagnostic describe the API refresh.
+    const p = await plan(since, now, tzOffsetMin, hostP);
     const { from, hist } = p;
     const base = state.bases.get(o.userKey);
     const reason = fullReason(base, p.windowKey, now, askedFull);
@@ -299,7 +321,7 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
     if (base && !reason) {
       const dl = new Deadline(timer() + limits.timeoutMs, timer);
       try {
-        const [host, me, d] = await Promise.all([hostP, dl.call(user), fetchDelta(c.api, base, { now, from, maxRuns: limits.maxRuns, concurrency: limits.concurrency, dl, diag })]);
+        const [host, me, d] = await Promise.all([hostP, dl.call(user), fetchDelta(c.api, base, { now, from, maxRuns: limits.maxRuns, concurrency: limits.concurrency, dl, diag, keep: hist ? keepEarlierUpdates(base, now) : undefined })]);
         const merged = mergeBase(base, d, from, limits.maxRuns, !!hist);
         const k = merged.counts;
         diag({
@@ -321,12 +343,14 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
 
     if (!out) {
       const dl = new Deadline(timer() + limits.timeoutMs, timer);
-      const [host, me, jobsR, pipesR] = await Promise.all([hostP, dl.call(user), collectJobRuns(c.api, from, limits.maxRuns, dl), collectPipelines(c.api, from, limits.concurrency, dl, diag)]);
+      // Next to history the window starts today. What started before it stays when still live (H2, R6), from the base
+      // of the same day, and, at a new day, from the old base when it ended late enough that history may lack it (R10).
+      const endAfter = hist && base && base.since !== p.windowKey ? hist.cutoff - limits.apiOverlapHours * HOUR : undefined;
+      const keep = hist ? keepEarlierUpdates(base, now, endAfter) : undefined;
+      const [host, me, jobsR, pipesR] = await Promise.all([hostP, dl.call(user), collectJobRuns(c.api, from, limits.maxRuns, dl), collectPipelines(c.api, from, limits.concurrency, dl, diag, keep)]);
       if (hist && !jobsR.timedOut) {
-        // Next to history the window starts today: runs still going from before it come from active_only (H2, R6).
-        const old = base?.since === p.windowKey ? base : undefined;
         const have = new Set(jobsR.runs.map((r) => r.run_id ?? 0));
-        const earlier = await collectEarlier(c.api, { from, maxRuns: limits.maxRuns, concurrency: limits.concurrency, dl, old, have }).catch((e: unknown): typeof TIMEOUT => {
+        const earlier = await collectEarlier(c.api, { from, maxRuns: limits.maxRuns, concurrency: limits.concurrency, dl, diag, old: base, endAfter, have }).catch((e: unknown): typeof TIMEOUT => {
           if (e instanceof DeltaError) return TIMEOUT;
           throw e;
         });

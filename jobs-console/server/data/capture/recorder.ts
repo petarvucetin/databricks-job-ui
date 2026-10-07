@@ -4,6 +4,7 @@ import { apiErrorParts } from '../live/apiError';
 import type { LiveLimits } from '../live/limits';
 import type { DiagNote, Trace, TraceMeta } from '../live/trace';
 import type { ProbeResult } from '../systables/probe';
+import type { HistoryPlan } from '../systables/cutoff';
 
 /** An SDK error as recorded: the code and message are the ones apiErrorParts recovers; `raw` keeps the SDK's own message when it differs. */
 export interface RecordedError {
@@ -53,6 +54,8 @@ export interface SessionRecord {
   refresh?: RefreshInfo;
   /** The system-tables access probe's answer for this request; replay answers it the same way. */
   probe?: ProbeResult;
+  /** The history window this list used; replay pins it, so a later list of the day issues the same SQL. */
+  historyPlan?: HistoryPlan;
   calls: CallRecord[];
   diagnostics: DiagNote[];
   /** Diagnostics dropped past the per-session cap. */
@@ -130,6 +133,7 @@ export class Session implements Trace {
 
   note(meta: TraceMeta): void {
     if (meta.probe !== undefined) this.rec.probe = { ...meta.probe };
+    if (meta.historyPlan !== undefined) this.rec.historyPlan = { ...meta.historyPlan };
     if (meta.refresh !== undefined) this.rec.refresh = { ...meta.refresh };
     if (meta.now !== undefined) this.rec.now = meta.now;
     if (meta.user !== undefined) this.rec.user = meta.user;

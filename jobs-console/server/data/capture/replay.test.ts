@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import type { RunSource } from '../runSource';
 import { createLiveRunSource, createLiveState } from '../live/liveRunSource';
-import { DEFAULT_LIMITS } from '../live/limits';
+import { DEFAULT_LIMITS, type RefreshSettings } from '../live/limits';
 import { fakeApi, type FakeData } from '../live/fakeApi';
 import type { DiagNote } from '../live/trace';
 import { Session, type SessionRecord } from './recorder';
@@ -234,16 +234,16 @@ describe('replay of run history from system tables', () => {
   };
 
   /** Lists as the server would for a viewer in New York (tzOffset 240), with history on. */
-  async function recordHistory(ids: string[]) {
+  async function recordHistory(ids: string[], o: { stepMs?: number; refresh?: RefreshSettings } = {}) {
     const state = createLiveState();
     const out = [];
     let t = NOW;
     for (const id of ids) {
       const session = new Session({ id, route: '/api/runs', query: { tzOffset: '240' }, authMode: 'user' }, () => t);
-      const src = createLiveRunSource({ api: fakeApi(data), user: () => Promise.resolve('me@x.com'), userKey: 'me', state, limits: DEFAULT_LIMITS, clock: () => t, warn: () => {}, trace: session, history: readHistoryConfig(WAREHOUSE) });
+      const src = createLiveRunSource({ api: fakeApi(data), user: () => Promise.resolve('me@x.com'), userKey: 'me', state, limits: DEFAULT_LIMITS, clock: () => t, warn: () => {}, trace: session, history: readHistoryConfig(WAREHOUSE), refresh: o.refresh });
       const res = await src.listRuns(undefined, 240);
       out.push({ res, rec: session.finish({ status: 200, body: res }) });
-      t += 60_000;
+      t += o.stepMs ?? 60_000;
     }
     return out;
   }
@@ -269,6 +269,19 @@ describe('replay of run history from system tables', () => {
     expect(second.rec.calls.filter((c) => c.method === 'executeStatement')).toHaveLength(0);
     const file = await roundTrip([first.rec, second.rec], WAREHOUSE);
     const replayed = await (createReplayProvider({ JOBS_CONSOLE_REPLAY_SESSION: 's-2' }, { file, warn: () => {} }).forRequest({ headers: {} }) as RunSource).listRuns();
+    expect(comparable(replayed)).toBe(comparable(second.res));
+  });
+
+  it('replays a later full load of the day with the SQL the first list ran (the recorded history window)', async () => {
+    const [first, second] = await recordHistory(['s-1', 's-2'], { stepMs: 20 * 60_000, refresh: { incremental: true, fullRefreshMs: 60_000 } });
+    expect(second.res.refresh?.mode).toBe('full');
+    expect(second.rec.calls.filter((c) => c.method === 'executeStatement')).toHaveLength(0); // cached day: no probe, no SQL
+    expect(second.rec.historyPlan).toEqual(first.rec.historyPlan);
+    const file = await roundTrip([first.rec, second.rec], WAREHOUSE);
+    const notes: string[] = [];
+    const replayed = await (createReplayProvider({ JOBS_CONSOLE_REPLAY_SESSION: 's-2' }, { file, warn: (m) => notes.push(m) }).forRequest({ headers: {} }) as RunSource).listRuns();
+    expect(replayed.history).toEqual({ source: 'system-tables', days: 90 });
+    expect(notes.filter((m) => /replay-miss/.test(m))).toEqual([]);
     expect(comparable(replayed)).toBe(comparable(second.res));
   });
 

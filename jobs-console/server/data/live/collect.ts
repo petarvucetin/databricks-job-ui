@@ -97,14 +97,17 @@ export async function listAllPipelines(api: LiveApi, dl: Deadline): Promise<{ st
  */
 export type PipelineRead = { item: PipelineCollected; partial: boolean } | 'timeout' | 'skipped';
 
+/** History mode: an update created before the window that a pipeline read keeps anyway (still live, or carried over). */
+export type KeepUpdate = (pipelineId: string, u: pipelines.UpdateInfo) => boolean;
+
 /**
  * One pipeline: getPipeline (unless its info is `known`) + listUpdates back to `from`, and at most one events call
- * (INFO/WARN/ERROR since `from`) for end times and failure causes.
+ * (INFO/WARN/ERROR since `from`) for end times and failure causes. `keep` (history mode) also keeps older updates.
  */
-export async function readPipeline(api: LiveApi, p: pipelines.PipelineStateInfo & { pipeline_id: string }, from: number, dl: Deadline, diag: Diag, known?: PipelineInfo): Promise<PipelineRead> {
+export async function readPipeline(api: LiveApi, p: pipelines.PipelineStateInfo & { pipeline_id: string }, from: number, dl: Deadline, diag: Diag, known?: PipelineInfo, keep?: KeepUpdate): Promise<PipelineRead> {
   const pipelineId = p.pipeline_id;
   try {
-    const [spec, updates] = await Promise.all([known ? known : dl.call(() => api.getPipeline({ pipeline_id: pipelineId })), updatesSince(api, pipelineId, from, dl)]);
+    const [spec, updates] = await Promise.all([known ? known : dl.call(() => api.getPipeline({ pipeline_id: pipelineId })), updatesSince(api, pipelineId, from, dl, keep)]);
     if (spec === TIMEOUT || updates === TIMEOUT) {
       diag({ level: 'warn', code: 'updates-skipped', message: 'the time budget ran out while reading this pipeline; its updates are left out', ref: `pipeline ${pipelineId}` });
       return 'timeout';
@@ -136,8 +139,8 @@ export async function readPipeline(api: LiveApi, p: pipelines.PipelineStateInfo 
   }
 }
 
-/** All pipelines (100 per page), then readPipeline for each, `concurrency` at a time. */
-export async function collectPipelines(api: LiveApi, from: number, concurrency: number, dl: Deadline, diag: Diag = noDiag): Promise<PipelinesCollected> {
+/** All pipelines (100 per page), then readPipeline for each, `concurrency` at a time. `keep`: see readPipeline. */
+export async function collectPipelines(api: LiveApi, from: number, concurrency: number, dl: Deadline, diag: Diag = noDiag, keep?: KeepUpdate): Promise<PipelinesCollected> {
   const { statuses: listed, timedOut: listTimedOut } = await listAllPipelines(api, dl);
   let timedOut = listTimedOut;
   const out: PipelineCollected[] = [];
@@ -155,7 +158,7 @@ export async function collectPipelines(api: LiveApi, from: number, concurrency: 
       notReached++;
       return;
     }
-    const got = await readPipeline(api, { ...p, pipeline_id: pipelineId }, from, dl, diag);
+    const got = await readPipeline(api, { ...p, pipeline_id: pipelineId }, from, dl, diag, undefined, keep);
     if (got === 'skipped') skipped++;
     else if (got === 'timeout') timedOut = true;
     else {
@@ -206,14 +209,15 @@ export async function eventsSince(api: LiveApi, pipelineId: string, from: number
   return out;
 }
 
-async function updatesSince(api: LiveApi, pipelineId: string, from: number, dl: Deadline): Promise<pipelines.UpdateInfo[] | typeof TIMEOUT> {
+/** A pipeline's updates created since `from` (and older ones `keep` asks for, on the pages read), newest first. */
+async function updatesSince(api: LiveApi, pipelineId: string, from: number, dl: Deadline, keep?: KeepUpdate): Promise<pipelines.UpdateInfo[] | typeof TIMEOUT> {
   const out: pipelines.UpdateInfo[] = [];
   let token: string | undefined;
   do {
     const page = await dl.call(() => api.listUpdates({ pipeline_id: pipelineId, page_token: token }));
     if (page === TIMEOUT) return out.length ? out : TIMEOUT;
     const updates = page.updates ?? [];
-    out.push(...updates.filter((u) => (u.creation_time ?? 0) >= from));
+    out.push(...updates.filter((u) => (u.creation_time ?? 0) >= from || !!keep?.(pipelineId, u)));
     if (updates.some((u) => (u.creation_time ?? 0) < from)) break;
     token = page.next_page_token;
   } while (token);

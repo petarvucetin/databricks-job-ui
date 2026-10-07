@@ -2,6 +2,7 @@ import type { RefreshInfo } from '../../../shared/domain/types';
 import type { LiveApi } from './api';
 import type { LiveLimits } from './limits';
 import type { ProbeResult } from '../systables/probe';
+import type { HistoryPlan } from '../systables/cutoff';
 
 /** A structured note the mapping code leaves instead of failing silently (unknown state, missing field, cap hit...). */
 export interface DiagNote {
@@ -32,4 +33,6 @@ export interface TraceMeta {
   refresh?: RefreshInfo;
   /** The system-tables access probe's answer (possibly cached), so a replay answers it the same way. */
   probe?: ProbeResult;
+  /** The history window a list next to history used (its SQL parameters and API start). */
+  historyPlan?: HistoryPlan;
 }

@@ -1,6 +1,18 @@
 import type { LiveLimits } from '../live/limits';
 
 const HOUR = 3_600_000;
+
+/**
+ * The history window one list used: history over [from, to) (to = cutoff, the local midnight), the API from apiFrom.
+ * Recorded on every list next to history, so a replay issues the identical SQL and API window.
+ */
+export interface HistoryPlan {
+  cutoff: number;
+  apiFrom: number;
+  from: number;
+  to: number;
+  workspaceId: string;
+}
 const DAY = 24 * HOUR;
 
 /** The viewer's local midnight before `now`. tzOffsetMin is their Date.getTimezoneOffset() (UTC minus local; undefined: UTC). */

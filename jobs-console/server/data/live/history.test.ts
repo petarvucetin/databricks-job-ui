@@ -170,19 +170,78 @@ describe('run history from system tables, today from the API', () => {
     expect(ids(res)).toEqual([500, 400]);
   });
 
-  it('PERMISSION_DENIED reading history: API only with that reason, never an error; the failure is not cached', async () => {
+  it('PERMISSION_DENIED reading history: API only with that reason, never an error; the fallback is kept 5 minutes', async () => {
     const now = DAY2 + 14 * HOUR;
     const denied = Object.assign(new Error('User does not have USE SCHEMA on Schema system.lakeflow'), { statusCode: 403, errorCode: 'PERMISSION_DENIED' });
     const t = setup({ now, data: { runs: [ok(500, 1, now - HOUR, 600), ok(400, 1, now - 20 * DAY, 600)] }, hist: { fail: { runs: denied } } });
     const res = await t.list();
-    expect(res.history).toEqual({ source: 'api', days: 30, reason: 'no access to system.lakeflow (PERMISSION_DENIED)' });
+    const fallback = { source: 'api', days: 30, reason: 'no access to system.lakeflow (PERMISSION_DENIED)' };
+    expect(res.history).toEqual(fallback);
     expect(ids(res)).toEqual([500, 400]);
-    // Granted meanwhile: the next list (past the response cache) reads history again.
+    // Granted meanwhile: within 5 minutes the failure is still served (no SQL), after it history is read again (R11).
     t.setHist({ runs: [hRun(300, 1, DAY1 + 10 * HOUR, 600)] });
     t.setNow(now + MIN);
+    const statements = t.seen.length;
+    expect((await t.list()).history).toEqual(fallback);
+    expect(t.seen).toHaveLength(statements);
+    t.setNow(now + 6 * MIN);
     const next = await t.list();
     expect(next.history).toEqual({ source: 'system-tables', days: 90 });
     expect(ids(next)).toContain(300);
+  });
+
+  it('a cached day skips the probe: later lists make no SQL calls at all (R11)', async () => {
+    const t = setup({ now: DAY2 + 14 * HOUR, hist: { runs: [hRun(300, 1, DAY1 + 10 * HOUR, 600)] } });
+    await t.list();
+    expect(t.seen.filter((s) => s.statement === PROBE_SQL)).toHaveLength(1);
+    for (const m of [11, 30, 60]) {
+      t.setNow(DAY2 + 14 * HOUR + m * MIN); // past the probe's 10 minutes too
+      expect((await t.list()).history).toEqual({ source: 'system-tables', days: 90 });
+    }
+    expect(t.seen.filter((s) => s.statement === PROBE_SQL)).toHaveLength(1);
+    expect(t.historyCalls()).toHaveLength(1);
+  });
+
+  it.each([
+    ['deltas', { incremental: true, fullRefreshMs: DAY }],
+    ['full reloads', { incremental: true, fullRefreshMs: MIN }],
+  ])('a continuous pipeline whose current update started yesterday is listed today, and stays once it finishes (%s)', async (_, refresh) => {
+    const now = DAY2 + 14 * HOUR;
+    const live = { update_id: 'cont-1', creation_time: DAY1 + 15 * HOUR, state: 'RUNNING' as const };
+    const t = setup({
+      now, refresh, hist: { runs: [] },
+      data: { specs: { p1: { pipeline_id: 'p1', name: 'pipe', run_as_user_name: 'svc', spec: { continuous: true } } }, updates: { p1: [live] } },
+    });
+    const id = pipelineNumber('cont-1');
+    expect((await t.list()).runs.find((r) => r.id === id)).toMatchObject({ live: true, continuous: true });
+    t.setNow(now + 30 * MIN);
+    expect((await t.list()).runs.find((r) => r.id === id)).toMatchObject({ live: true });
+    // It ends (the history cached this morning does not have it): it stays, finished.
+    t.data.updates = { p1: [{ ...live, state: 'COMPLETED' }] };
+    t.data.events = { p1: [{ event_type: 'update_progress', timestamp: new Date(now + 45 * MIN).toISOString(), origin: { update_id: 'cont-1' } }] };
+    t.setNow(now + 60 * MIN);
+    const res = await t.list();
+    expect(res.runs.find((r) => r.id === id)).toMatchObject({ live: false, kind: 'succeeded' });
+    expect(res.refresh?.mode).toBe(refresh.fullRefreshMs === MIN ? 'full' : 'delta');
+  });
+
+  it('midnight: a run and an update that ended late yesterday stay while the fresh history lacks them (R10)', async () => {
+    const run = ok(800, 1, DAY1 + 20 * HOUR, (3 * 60 + 55) * 60); // 20:00-23:55
+    const upd = { update_id: 'eve-1', creation_time: DAY1 + 20 * HOUR, state: 'COMPLETED' as const };
+    const t = setup({
+      now: DAY2 - 2 * MIN, hist: { runs: [] }, // 23:58
+      data: { runs: [run], updates: { p1: [upd] }, events: { p1: [{ event_type: 'update_progress', timestamp: new Date(DAY2 - 5 * MIN).toISOString(), origin: { update_id: 'eve-1' } }] } },
+    });
+    const both = [800, pipelineNumber('eve-1')];
+    expect(ids(await t.list())).toEqual(expect.arrayContaining(both));
+    // 00:05: a new day and a fresh history read, which lags and has neither; both started before apiFrom (21:05).
+    t.setNow(DAY2 + 5 * MIN);
+    const after = await t.list();
+    expect(t.historyCalls()).toHaveLength(2);
+    expect(after.refresh?.mode).toBe('full');
+    expect(ids(after)).toEqual(expect.arrayContaining(both));
+    t.setNow(DAY2 + 10 * HOUR);
+    expect(ids(await t.list())).toEqual(expect.arrayContaining(both));
   });
 
   it('a failing probe falls back the same way', async () => {

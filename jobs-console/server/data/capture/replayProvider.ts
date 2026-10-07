@@ -73,9 +73,13 @@ export function createReplayProvider(env: Record<string, string | undefined>, de
   const state = createLiveState();
   const f = file;
   const history = readHistoryConfig(f.config);
-  /** The access probe answers as it did for `s` (it may have been a cached answer, with no call recorded). */
+  /**
+   * The access probe answers as it did for `s`: its recorded answer (possibly a cached one, with no call recorded), else
+   * ok when it listed next to history (a cached day skips the probe).
+   */
   const seed = (s: SessionRecord) => {
-    if (s.probe) state.probes.set('replay', { at: s.now ?? s.startedAt, result: Promise.resolve(s.probe) });
+    const probe = s.probe ?? (s.historyPlan ? { ok: true as const, workspaceId: s.historyPlan.workspaceId } : undefined);
+    if (probe) state.probes.set('replay', { at: s.now ?? s.startedAt, result: Promise.resolve(probe) });
   };
   // Each recorded list replayed as it ran: its own calls first, frozen at its own asOf, in its own mode.
   const sourceFor = (s: SessionRecord, mode?: 'full' | 'delta') => {
@@ -92,6 +96,8 @@ export function createReplayProvider(env: Record<string, string | undefined>, de
       source: 'replay',
       mode,
       history,
+      // The day's window as recorded: a later list re-reads history with the exact SQL the first one ran.
+      historyPin: s.historyPlan,
     });
   };
   // A delta session is replayed over the base its recorded predecessors built: replay those first (once, lazily).

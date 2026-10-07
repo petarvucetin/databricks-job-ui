@@ -1,9 +1,9 @@
 import type { jobs, pipelines } from '@databricks/sdk-experimental';
 import type { LiveApi } from './api';
 import { apiErrorParts } from './apiError';
-import { Deadline, FINISHED_UPDATE, TIMEOUT, listAllPipelines, pool, readPipeline, type JobsCollected, type PipelinesCollected } from './collect';
+import { Deadline, FINISHED_UPDATE, TIMEOUT, listAllPipelines, pool, readPipeline, type JobsCollected, type KeepUpdate, type PipelinesCollected } from './collect';
 import { isTerminated } from './jobs';
-import type { PipelineInfo } from './pipelines';
+import { indexEvents, updateDraft, type PipelineInfo } from './pipelines';
 import type { Diag } from './trace';
 
 /** Clock skew and runs reported late: a delta asks for runs that started this long before the base's asOf. */
@@ -123,7 +123,7 @@ async function allRunPages(api: LiveApi, req: jobs.ListRunsRequest, max: number,
  * getRun for each run live in the base but in neither list (404: deleted), the pipeline list, and a re-read of the
  * pipelines pipelinesToReread picks. Any failure or timeout throws (DeltaError, or the SDK error).
  */
-export async function fetchDelta(api: LiveApi, base: Base, o: { now: number; from: number; maxRuns: number; concurrency: number; dl: Deadline; diag: Diag }): Promise<DeltaFetched> {
+export async function fetchDelta(api: LiveApi, base: Base, o: { now: number; from: number; maxRuns: number; concurrency: number; dl: Deadline; diag: Diag; keep?: KeepUpdate }): Promise<DeltaFetched> {
   const { dl, diag } = o;
   const [active, fresh, listing] = await Promise.all([
     allRunPages(api, { active_only: true }, o.maxRuns, dl, 'active runs'),
@@ -150,37 +150,67 @@ export async function fetchDelta(api: LiveApi, base: Base, o: { now: number; fro
   const reread: DeltaFetched['reread'] = new Map();
   const todo = listing.statuses.filter((s): s is pipelines.PipelineStateInfo & { pipeline_id: string } => !!s.pipeline_id && wanted.has(s.pipeline_id));
   await pool(todo, o.concurrency, async (s) => {
-    const got = await readPipeline(api, s, o.from, dl, diag, base.pipelines.get(s.pipeline_id)?.info);
+    const got = await readPipeline(api, s, o.from, dl, diag, base.pipelines.get(s.pipeline_id)?.info, o.keep);
     if (got === 'timeout' || (got !== 'skipped' && got.partial)) throw new DeltaError(`the time budget ran out reading pipeline ${s.pipeline_id}`);
     reread.set(s.pipeline_id, got === 'skipped' ? null : got.item);
   });
   return { asOf: o.now, active, fresh, finished, deleted, statuses: listing.statuses, reread };
 }
 
+const runEnd = (r: jobs.BaseRun): number => r.end_time || (r.start_time ?? 0) + (r.run_duration ?? 0);
+
 /**
- * History mode, for a full load: the job runs that started before `from` the API must still cover (H2, ruling R6).
- * Every active run, and the runs of the `old` base (same window) from before `from` that are no longer active, read
- * once more with getRun (gone: dropped). Runs in `have` are left out. A timeout throws DeltaError.
+ * History mode, for a full load: the job runs that started before `from` the API must still cover (H2, rulings R6,
+ * R10). Every active run, and the runs of the `old` base from before `from`: all of them when it is the same window;
+ * at a new day (`endAfter` given) only those still live or that ended at or after `endAfter`, which the day's history
+ * may not have yet. Old runs no longer active are read once more with getRun: gone ones are dropped, and any other
+ * failure but a sign-in one keeps the old copy with a diagnostic (R12). Runs in `have` are left out. A timeout throws DeltaError.
  */
-export async function collectEarlier(api: LiveApi, o: { from: number; maxRuns: number; concurrency: number; dl: Deadline; old?: Base; have: Set<number> }): Promise<jobs.BaseRun[]> {
+export async function collectEarlier(api: LiveApi, o: { from: number; maxRuns: number; concurrency: number; dl: Deadline; diag: Diag; old?: Base; endAfter?: number; have: Set<number> }): Promise<jobs.BaseRun[]> {
   const active = await allRunPages(api, { active_only: true }, o.maxRuns, o.dl, 'active runs');
   const out = active.filter((r) => r.run_id !== undefined && !o.have.has(r.run_id));
   const seen = new Set([...o.have, ...out.map((r) => r.run_id!)]);
-  const check: number[] = [];
+  const check: jobs.BaseRun[] = [];
   for (const { value: r } of o.old?.runs.values() ?? []) {
     if (r.run_id === undefined || seen.has(r.run_id) || (r.start_time ?? 0) >= o.from) continue;
-    if (isTerminated(r)) out.push(r);
-    else check.push(r.run_id);
+    if (!isTerminated(r)) check.push(r);
+    else if (o.endAfter === undefined || runEnd(r) >= o.endAfter) out.push(r);
   }
-  await pool(check, o.concurrency, async (runId) => {
-    const got = await o.dl.call(() => api.getRun({ run_id: runId })).catch((e: unknown) => {
+  await pool(check, o.concurrency, async (old) => {
+    const runId = old.run_id!;
+    const got = await o.dl.call(() => api.getRun({ run_id: runId })).catch((e: unknown): jobs.Run | null | undefined => {
       if (isGone(e)) return undefined;
-      throw e;
+      if (apiErrorParts(e).status === 401) throw e;
+      o.diag({ level: 'warn', code: 'run-reread-failed', message: `kept the last copy: ${apiErrorParts(e).message}`, ref: `run ${runId}` });
+      return null;
     });
     if (got === TIMEOUT) throw new DeltaError(`the time budget ran out reading run ${runId}`);
-    if (got) out.push(got);
+    if (got === null) out.push(old);
+    else if (got) out.push(got);
   });
   return out;
+}
+
+/**
+ * History mode: which updates created before the window a pipeline read keeps (H2, R6, R10). Every live one, and the
+ * updates `ref` (the base being refreshed) already holds: all of them in the same window; at a new day (`endAfter`
+ * given) only those that ended at or after `endAfter`.
+ */
+export function keepEarlierUpdates(ref: Base | undefined, now: number, endAfter?: number): KeepUpdate {
+  const kept = new Map<string, Set<string>>();
+  for (const [pid, p] of ref?.pipelines ?? []) {
+    const events = endAfter === undefined ? undefined : indexEvents(p.events);
+    const ids = new Set<string>();
+    for (const [uid, { value: u }] of p.updates) {
+      if (events) {
+        const d = updateDraft(u, p.info, events.get(uid), now);
+        if (d.startTime + d.durationSec * 1000 < endAfter!) continue;
+      }
+      ids.add(uid);
+    }
+    kept.set(pid, ids);
+  }
+  return (pid, u) => !FINISHED_UPDATE.has(u.state ?? '') || !!kept.get(pid)?.has(u.update_id ?? '');
 }
 
 export interface MergeCounts {
@@ -217,7 +247,7 @@ function put<K, T>(map: Map<K, Stamped<T>>, k: K, v: T, at: number): void {
  * base + a delta -> the new base (a new object; `base` is not changed). By run_id / update_id, keeping whichever copy
  * was fetched later; deleted runs and pipelines no longer listed go; anything that started before `from` ages out;
  * job runs are capped at maxRuns, newest kept. `keepEarlier` (history mode, where `from` is fixed for the day): job runs
- * that started before `from` stay (they came in active), so a finished one is read once more and kept until midnight.
+ * and pipeline updates from before `from` stay (they came in live or were carried over), until midnight.
  */
 export function mergeBase(base: Base, d: DeltaFetched, from: number, maxRuns: number, keepEarlier = false): { base: Base; counts: MergeCounts } {
   const runs = new Map(base.runs);
@@ -255,7 +285,7 @@ export function mergeBase(base: Base, d: DeltaFetched, from: number, maxRuns: nu
     } else if (old) next = { ...old, status, updates: new Map(old.updates), events: mergeEvents(old.events, [], from) };
     else continue;
     for (const [uid, e] of [...next.updates]) {
-      if ((e.value.creation_time ?? 0) < from) {
+      if (!keepEarlier && (e.value.creation_time ?? 0) < from) {
         next.updates.delete(uid);
         agedOut++;
       }

@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import type { jobs, pipelines } from '@databricks/sdk-experimental';
-import { mergeBase, mergeEvents, pipelinesToReread, type Base, type BasePipeline, type DeltaFetched } from './delta';
+import { collectEarlier, mergeBase, mergeEvents, pipelinesToReread, type Base, type BasePipeline, type DeltaFetched } from './delta';
+import { Deadline } from './collect';
+import { fakeApi } from './fakeApi';
+import type { DiagNote } from './trace';
 
 const NOW = 1_800_000_000_000;
 const MIN = 60000;
@@ -131,5 +134,21 @@ describe('mergeEvents', () => {
   it('keeps each event once, newest first, none before the window', () => {
     const e = (id: string, ago: number) => ({ id, timestamp: new Date(NOW - ago * MIN).toISOString() });
     expect(mergeEvents([e('a', 1), e('b', 5)], [e('b', 5), e('c', 3), e('old', 99)], NOW - 10 * MIN).map((x) => x.id)).toEqual(['a', 'c', 'b']);
+  });
+});
+
+describe('collectEarlier (history mode, full load)', () => {
+  it('keeps the old copy with a diagnostic when re-reading a run fails with anything but gone or sign-in (R12)', async () => {
+    const notes: DiagNote[] = [];
+    const old = base([running(1, 600), running(2, 600), running(3, 600)], []);
+    const api = fakeApi({ runsById: { 2: { ...done(2, 600) } } });
+    const getRun = api.getRun;
+    api.getRun = (req) => (req.run_id === 1 ? Promise.reject(Object.assign(new Error('Too many requests'), { statusCode: 429 })) : getRun(req));
+    const got = await collectEarlier(api, { from: NOW - 60 * MIN, maxRuns: 100, concurrency: 2, dl: new Deadline(Date.now() + 5000), diag: (n) => notes.push(n), old, have: new Set() });
+    // 1: the stale copy (429); 2: re-read, finished; 3: gone (getRun says it does not exist).
+    expect(got.map((r) => [r.run_id, r.status?.state]).sort()).toEqual([[1, 'RUNNING'], [2, 'TERMINATED']]);
+    expect(notes).toEqual([expect.objectContaining({ level: 'warn', code: 'run-reread-failed', ref: 'run 1', message: expect.stringContaining('Too many requests') as unknown })]);
+    api.getRun = () => Promise.reject(Object.assign(new Error('expired'), { statusCode: 401 }));
+    await expect(collectEarlier(api, { from: NOW - 60 * MIN, maxRuns: 100, concurrency: 2, dl: new Deadline(Date.now() + 5000), diag: () => {}, old, have: new Set() })).rejects.toThrow('expired');
   });
 });
