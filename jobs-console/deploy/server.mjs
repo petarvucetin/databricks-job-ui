@@ -233539,6 +233539,182 @@ var ServingPlugin = class extends Plugin {
 const serving = toPlugin(ServingPlugin);
 
 //#endregion
+//#region server/data/mock/mockItems.ts
+function hash(s) {
+	let h = 2166136261;
+	for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
+	return h >>> 0;
+}
+const SP = "7c1e9a40-2b3d-4f6e-9a1c-0d5e8b7f2a91";
+const sched = (cron, paused = false) => ({
+	trigger: "schedule",
+	schedule: {
+		cron,
+		tz: "UTC",
+		paused
+	},
+	paused
+});
+const SHAPES = [
+	...[
+		"0 0 2 * * ?",
+		"0 0 0 * * ?",
+		"0 30 0 * * ?",
+		"0 0 6 * * ?",
+		"0 0 6 * * ?",
+		"0 0 7 * * ?",
+		"0 30 7 * * ?",
+		"0 0 12 * * ?",
+		"0 0 18 * * ?",
+		"0 25 16 * * ?"
+	].map((c) => sched(c)),
+	...[
+		"0 0 * * * ?",
+		"0 45 * * * ?",
+		"0 5 * * * ?",
+		"0 15 0/6 * * ?",
+		"0 15 1/6 * * ?",
+		"0 15 2/6 * * ?",
+		"0 0 0/4 * * ?",
+		"0 0/15 * * * ?",
+		"0 0 3 ? * SUN",
+		"0 0 1 ? * SAT"
+	].map((c) => sched(c)),
+	sched("0 0 4 * * ?", true),
+	sched("0 0 12 1 * ?"),
+	{
+		trigger: "periodic",
+		periodic: {
+			interval: 4,
+			unit: "HOURS"
+		},
+		paused: false
+	},
+	{
+		trigger: "file_arrival",
+		paused: false
+	},
+	{
+		trigger: "table_update",
+		paused: false
+	},
+	...Array.from({ length: 8 }, () => ({
+		trigger: "manual",
+		paused: false
+	}))
+];
+const GUARANTEED = [
+	SHAPES[0],
+	SHAPES[20],
+	SHAPES[22],
+	SHAPES[23],
+	SHAPES[24],
+	SHAPES[25]
+];
+function mockItems(runs, _asOf) {
+	const seen = /* @__PURE__ */ new Map();
+	for (const r of runs) {
+		const k = `${r.type}|${r.name}`;
+		const prev = seen.get(k);
+		if (!prev || r.startTime > prev.startTime) seen.set(k, r);
+	}
+	const sorted = [...seen.values()].sort((a, b) => a.name.localeCompare(b.name));
+	const out = [];
+	let jobIndex = 0;
+	let pipeIndex = 0;
+	const used = /* @__PURE__ */ new Set();
+	const free = (type, start, fmt, mod) => {
+		let n = start;
+		while (used.has(type + fmt(n))) n = (n + 1) % mod;
+		used.add(type + fmt(n));
+		return fmt(n);
+	};
+	for (const r of sorted) {
+		const h = hash(r.name);
+		const dev = /^\[dev ([^\]]+)\] /.exec(r.name);
+		const mine = r.mine || h % 9 === 0;
+		const runAs = dev ? `${dev[1]}@example.com` : SP;
+		const base = {
+			name: r.name,
+			creator: dev ? `${dev[1]}@example.com` : "data.platform@example.com",
+			runAs,
+			deployed: !dev,
+			mine,
+			tags: {
+				project: r.name.startsWith("finance") ? "finance" : "aiges",
+				env: dev ? "dev" : "prod"
+			},
+			bundle: h % 5 !== 0
+		};
+		if (r.type === "pipeline") {
+			const continuous = pipeIndex === 0 || r.continuous || h % 4 === 0;
+			pipeIndex++;
+			out.push({
+				type: "pipeline",
+				id: free("pipeline", h, (n) => `p-${n.toString(16).padStart(8, "0")}`, 2 ** 32),
+				...base,
+				trigger: continuous ? "continuous" : "manual",
+				paused: false
+			});
+		} else {
+			const shape = jobIndex < GUARANTEED.length ? GUARANTEED[jobIndex] : SHAPES[h % SHAPES.length];
+			jobIndex++;
+			out.push({
+				type: "job",
+				id: free("job", h % 9e5, (n) => String(1e5 + n), 9e5),
+				...base,
+				...shape
+			});
+		}
+	}
+	return out;
+}
+function mockDetail(item, runs) {
+	if (item.type === "pipeline") return {
+		item,
+		pipeline: {
+			kind: hash(item.name) % 3 === 0 ? "Ingestion" : "ETL",
+			continuous: item.trigger === "continuous",
+			target: "aiges_dev.raw_bronze",
+			serverless: true,
+			channel: "CURRENT"
+		}
+	};
+	const newest = runs.filter((r) => r.name === item.name).sort((a, b) => b.startTime - a.startTime)[0];
+	const n = Math.max(1, Math.min(newest?.ntasks ?? 3, 12));
+	const keys = [
+		"extract",
+		"stage_bronze",
+		"merge_silver",
+		"refresh_gold",
+		"validate",
+		"publish",
+		"notify",
+		"archive",
+		"reconcile",
+		"export",
+		"aggregate",
+		"cleanup"
+	];
+	const types = [
+		"Notebook",
+		"Notebook",
+		"Python wheel",
+		"Pipeline",
+		"SQL",
+		"Notebook"
+	];
+	return {
+		item,
+		tasks: keys.slice(0, n).map((key, i) => ({
+			key,
+			type: types[i % types.length],
+			dependsOn: i ? [keys[i - 1]] : []
+		}))
+	};
+}
+
+//#endregion
 //#region server/data/sourceError.ts
 /** A failure the handlers pass to the client as `status` + `{ error: message }`. */
 var SourceError = class extends Error {
@@ -234115,6 +234291,7 @@ function shiftTo(data, nowMs) {
 }
 function createMockRunSource(clock = Date.now) {
 	const cache = /* @__PURE__ */ new Map();
+	let items;
 	const dataFor = (tzOffsetMin) => {
 		let data = cache.get(tzOffsetMin);
 		if (!data) {
@@ -234138,6 +234315,21 @@ function createMockRunSource(clock = Date.now) {
 		getRun(runId, tzOffsetMin) {
 			const run = shiftTo(dataFor(tzOffsetMin ?? DEFAULT_TZ_OFFSET_MIN), clock()).runs.find((r) => r.id === runId);
 			return run ? Promise.resolve(run) : Promise.reject(new SourceError(404, `Run ${runId} does not exist`));
+		},
+		listItems() {
+			const data = shiftTo(dataFor(DEFAULT_TZ_OFFSET_MIN), clock());
+			items ??= mockItems(data.runs, data.asOf);
+			return Promise.resolve({
+				asOf: data.asOf,
+				source: "mock",
+				items
+			});
+		},
+		getItem(type, id) {
+			const data = dataFor(DEFAULT_TZ_OFFSET_MIN);
+			items ??= mockItems(data.runs, data.asOf);
+			const item = items.find((i) => i.type === type && i.id === id);
+			return item ? Promise.resolve(mockDetail(item, data.runs)) : Promise.reject(new SourceError(404, `${type} ${id} does not exist`));
 		}
 	};
 }
@@ -234172,6 +234364,14 @@ function jobRunUrl(host, run) {
 	const o = workspaceOrigin(host);
 	if (!o || run.job_id === void 0 || run.run_id === void 0) return void 0;
 	return `${o}/jobs/${run.job_id}/runs/${run.run_id}${workspaceQuery(o)}`;
+}
+function jobUrl(host, jobId) {
+	const o = workspaceOrigin(host);
+	return o ? `${o}/jobs/${jobId}${workspaceQuery(o)}` : void 0;
+}
+function pipelineUrl(host, pipelineId) {
+	const o = workspaceOrigin(host);
+	return o ? `${o}/pipelines/${encodeURIComponent(pipelineId)}${workspaceQuery(o)}` : void 0;
 }
 function pipelineUpdateUrl(host, pipelineId, updateId) {
 	const o = workspaceOrigin(host);
@@ -234210,6 +234410,8 @@ function createSdkApi(opts) {
 	return {
 		host: () => host ??= client.config.getHost().then((u) => workspaceOrigin(u.origin), () => ""),
 		me: () => client.currentUser.me(),
+		listJobs: (req) => page("/api/2.2/jobs/list", { ...req }),
+		getJob: (req) => client.jobs.get(req),
 		listJobRuns: (req) => page("/api/2.2/jobs/runs/list", { ...req }),
 		getRun: (req) => client.jobs.getRun(req),
 		getRunOutput: (req) => client.jobs.getRunOutput(req),
@@ -234227,13 +234429,15 @@ const DEFAULT_LIMITS = {
 	windowDays: 30,
 	maxRuns: 2e3,
 	timeoutMs: 12e3,
-	concurrency: 8
+	concurrency: 8,
+	itemsTimeoutMs: 3e4
 };
 const ENV = {
 	windowDays: "JOBS_CONSOLE_WINDOW_DAYS",
 	maxRuns: "JOBS_CONSOLE_MAX_RUNS",
 	timeoutMs: "JOBS_CONSOLE_TIMEOUT_MS",
-	concurrency: "JOBS_CONSOLE_CONCURRENCY"
+	concurrency: "JOBS_CONSOLE_CONCURRENCY",
+	itemsTimeoutMs: "JOBS_CONSOLE_ITEMS_TIMEOUT_MS"
 };
 const DEFAULT_REFRESH = {
 	incremental: true,
@@ -234302,6 +234506,15 @@ function causeChain(e) {
 		c = x.cause;
 	}
 	return parts.length ? ` (cause: ${parts.join(" <- ")})` : "";
+}
+/** SDK failures as SourceError: auth stays 401/403, the rest is a bad gateway. With `lookup`, a missing or invalid id is 404. */
+function toSourceError(e, lookup = false) {
+	if (e instanceof SourceError) return e;
+	const { status: s, code, message } = apiErrorParts(e);
+	if (s === 401) return new SourceError(401, message);
+	if (s === 403 || code === "PERMISSION_DENIED") return new SourceError(403, message);
+	if (lookup && (s === 404 || code === "RESOURCE_DOES_NOT_EXIST" || code === "INVALID_PARAMETER_VALUE")) return new SourceError(404, message);
+	return new SourceError(502, message);
 }
 
 //#endregion
@@ -235164,6 +235377,195 @@ function mergeBase(base, d, from, maxRuns) {
 }
 
 //#endregion
+//#region server/data/live/items.ts
+const ITEMS_TTL = 5 * 6e4;
+const isSp = (s) => !!s && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
+function jobItem(j, me, host) {
+	const s = j.settings ?? {};
+	const id = String(j.job_id ?? "");
+	const runAs = s.run_as?.service_principal_name ?? s.run_as?.user_name ?? ("run_as_user_name" in j ? j.run_as_user_name : void 0) ?? j.creator_user_name;
+	let trigger = "manual";
+	let paused = false;
+	if (s.continuous) {
+		trigger = "continuous";
+		paused = s.continuous.pause_status === "PAUSED";
+	} else if (s.schedule) {
+		trigger = "schedule";
+		paused = s.schedule.pause_status === "PAUSED";
+	} else if (s.trigger?.periodic) trigger = "periodic";
+	else if (s.trigger?.file_arrival) trigger = "file_arrival";
+	else if (s.trigger?.table_update) trigger = "table_update";
+	if (s.trigger && trigger !== "manual" && trigger !== "continuous" && trigger !== "schedule") paused = s.trigger.pause_status === "PAUSED";
+	return {
+		type: "job",
+		id,
+		name: s.name ?? `job ${id}`,
+		...s.description ? { description: s.description } : {},
+		...j.creator_user_name ? { creator: j.creator_user_name } : {},
+		...runAs ? { runAs } : {},
+		deployed: !!s.run_as?.service_principal_name || isSp(runAs),
+		mine: !!me && (j.creator_user_name === me || runAs === me),
+		tags: s.tags ?? {},
+		trigger,
+		...trigger === "schedule" && s.schedule ? { schedule: {
+			cron: s.schedule.quartz_cron_expression,
+			tz: s.schedule.timezone_id,
+			paused
+		} } : {},
+		...trigger === "periodic" && s.trigger?.periodic ? { periodic: {
+			interval: s.trigger.periodic.interval,
+			unit: s.trigger.periodic.unit
+		} } : {},
+		paused,
+		bundle: s.deployment?.kind === "BUNDLE",
+		...host ? { url: jobUrl(host, id) } : {}
+	};
+}
+function pipelineItem(p, spec, me, host) {
+	const id = p.pipeline_id ?? "";
+	const runAs = p.run_as_user_name ?? spec?.run_as_user_name ?? p.creator_user_name;
+	const continuous = !!spec?.spec?.continuous;
+	return {
+		type: "pipeline",
+		id,
+		name: p.name ?? spec?.name ?? `pipeline ${id}`,
+		...p.creator_user_name ? { creator: p.creator_user_name } : {},
+		...runAs ? { runAs } : {},
+		deployed: isSp(runAs),
+		mine: !!me && (p.creator_user_name === me || runAs === me),
+		tags: (spec?.spec)?.tags ?? {},
+		trigger: continuous ? "continuous" : "manual",
+		paused: false,
+		bundle: spec?.spec?.deployment?.kind === "BUNDLE",
+		...host ? { url: pipelineUrl(host, id) } : {}
+	};
+}
+const TASK_TYPES = [
+	["notebook_task", "Notebook"],
+	["spark_python_task", "Python script"],
+	["python_wheel_task", "Python wheel"],
+	["sql_task", "SQL"],
+	["pipeline_task", "Pipeline"],
+	["run_job_task", "Run job"],
+	["dbt_task", "dbt"],
+	["spark_jar_task", "JAR"],
+	["spark_submit_task", "Spark submit"],
+	["condition_task", "Condition"],
+	["for_each_task", "For each"],
+	["clean_rooms_notebook_task", "Clean room notebook"]
+];
+function jobDetail(j, me, host) {
+	const tasks = (j.settings?.tasks ?? []).map((t) => ({
+		key: t.task_key,
+		type: TASK_TYPES.find(([k]) => t[k] !== void 0)?.[1] ?? "Task",
+		dependsOn: (t.depends_on ?? []).map((d) => d.task_key)
+	}));
+	return {
+		item: jobItem(j, me, host),
+		tasks
+	};
+}
+function pipelineDetail(spec, me, host) {
+	const s = spec.spec ?? {};
+	const target = s.catalog && (s.schema ?? s.target) ? `${s.catalog}.${s.schema ?? s.target}` : s.schema ?? s.target;
+	return {
+		item: pipelineItem({
+			pipeline_id: spec.pipeline_id,
+			name: spec.name,
+			creator_user_name: spec.creator_user_name,
+			run_as_user_name: spec.run_as_user_name
+		}, spec, me, host),
+		pipeline: {
+			kind: s.ingestion_definition ? "Ingestion" : "ETL",
+			continuous: !!s.continuous,
+			...target ? { target } : {},
+			serverless: !!s.serverless,
+			...s.channel ? { channel: s.channel } : {}
+		}
+	};
+}
+function createLiveItems(o) {
+	const clock = o.clock ?? Date.now;
+	const timer = o.timer ?? clock;
+	return {
+		async listItems() {
+			const now = clock();
+			const hit = o.state.items.get(o.userKey);
+			if (hit && now - hit.at < ITEMS_TTL) return hit.data;
+			const dl = new Deadline(timer() + o.limits.itemsTimeoutMs, timer);
+			try {
+				const [host, me] = await Promise.all([o.api.host(), o.user().catch(() => "")]);
+				const items = [];
+				let partial;
+				let token;
+				do {
+					const page = await dl.call(() => o.api.listJobs({
+						limit: 100,
+						page_token: token
+					}));
+					if (page === TIMEOUT) {
+						partial = `read ${items.length} jobs before the ${o.limits.itemsTimeoutMs / 1e3}s limit`;
+						break;
+					}
+					for (const j of page.jobs ?? []) items.push(jobItem(j, me, host));
+					token = page.next_page_token;
+				} while (token);
+				const statuses = [];
+				if (!partial) {
+					let pt;
+					do {
+						const page = await dl.call(() => o.api.listPipelines({
+							max_results: 100,
+							page_token: pt
+						}));
+						if (page === TIMEOUT) {
+							partial = "pipelines list cut by the time limit";
+							break;
+						}
+						statuses.push(...page.statuses ?? []);
+						pt = page.next_page_token;
+					} while (pt);
+				}
+				const specs = /* @__PURE__ */ new Map();
+				let cut = 0;
+				await pool(statuses.filter((p) => p.pipeline_id), o.limits.concurrency, async (p) => {
+					const r = await dl.call(() => o.api.getPipeline({ pipeline_id: p.pipeline_id }).catch(() => void 0));
+					if (r === TIMEOUT) cut++;
+					else if (r) specs.set(p.pipeline_id, r);
+				});
+				if (cut && !partial) partial = `${cut} pipeline details cut by the time limit`;
+				for (const p of statuses) items.push(pipelineItem(p, specs.get(p.pipeline_id ?? ""), me, host));
+				const data = {
+					asOf: now,
+					source: o.source ?? "live",
+					items,
+					...partial ? { partial: { reason: partial } } : {}
+				};
+				if (!partial) o.state.items.set(o.userKey, {
+					at: now,
+					data
+				});
+				return data;
+			} catch (e) {
+				throw toSourceError(e);
+			}
+		},
+		async getItem(type, id) {
+			const [host, me] = await Promise.all([o.api.host(), o.user().catch(() => "")]);
+			try {
+				if (type === "job") {
+					if (!/^\d+$/.test(id)) throw new SourceError(404, `no job ${id}`);
+					return jobDetail(await o.api.getJob({ job_id: Number(id) }), me, host);
+				}
+				return pipelineDetail(await o.api.getPipeline({ pipeline_id: id }), me, host);
+			} catch (e) {
+				throw toSourceError(e, true);
+			}
+		}
+	};
+}
+
+//#endregion
 //#region server/data/live/kinds.ts
 /** Average duration (s) of each key's succeeded runs. */
 function usualByKey(drafts) {
@@ -235462,7 +235864,8 @@ function carryNewer(next, older) {
 const createLiveState = () => ({
 	pipelineRefs: /* @__PURE__ */ new Map(),
 	cache: /* @__PURE__ */ new Map(),
-	bases: /* @__PURE__ */ new Map()
+	bases: /* @__PURE__ */ new Map(),
+	items: /* @__PURE__ */ new Map()
 });
 /** Counts calls per LiveApi method, for the `pages` diagnostic. */
 function counting(api) {
@@ -235481,15 +235884,6 @@ function counting(api) {
 		counts
 	};
 }
-/** SDK failures as SourceError: auth stays 401/403, the rest is a bad gateway. With `lookup`, a missing or invalid id is 404. */
-function toSourceError(e, lookup = false) {
-	if (e instanceof SourceError) return e;
-	const { status: s, code, message } = apiErrorParts(e);
-	if (s === 401) return new SourceError(401, message);
-	if (s === 403 || code === "PERMISSION_DENIED") return new SourceError(403, message);
-	if (lookup && (s === 404 || code === "RESOURCE_DOES_NOT_EXIST" || code === "INVALID_PARAMETER_VALUE")) return new SourceError(404, message);
-	return new SourceError(502, message);
-}
 function remember(map, key, value, max) {
 	map.delete(key);
 	map.set(key, value);
@@ -235503,6 +235897,16 @@ function createLiveRunSource(o) {
 	const { limits, state } = o;
 	const api = o.trace ? o.trace.wrap(o.api) : o.api;
 	const refresh = o.refresh ?? DEFAULT_REFRESH;
+	const itemsSrc = createLiveItems({
+		api,
+		user: o.user,
+		userKey: o.userKey,
+		state,
+		limits,
+		clock,
+		timer,
+		source: o.source
+	});
 	/** Maps what was collected (a full load's lists, or a merged base) with the pure mappers; remembers pipeline refs. */
 	function mapCollected(col, now, me, host) {
 		const drafts = [];
@@ -235869,6 +236273,8 @@ function createLiveRunSource(o) {
 			}, CACHE_MAX);
 			return data;
 		},
+		listItems: itemsSrc.listItems,
+		getItem: itemsSrc.getItem,
 		async taskLog(runId, task) {
 			const ref = state.pipelineRefs.get(runId);
 			try {
@@ -236083,7 +236489,9 @@ const METHODS = [
 	"getPipeline",
 	"listUpdates",
 	"getUpdate",
-	"listPipelineEvents"
+	"listPipelineEvents",
+	"listJobs",
+	"getJob"
 ];
 /** JSON with object keys sorted and undefined dropped, so equal requests give equal strings. */
 function canon(v) {
@@ -236285,7 +236693,9 @@ function createReplayProvider(env, deps = {}) {
 		kind: inner.kind,
 		listRuns: (since, tz, opts) => prime().then(() => inner.listRuns(since, tz, opts)),
 		getRun: (id, tz) => prime().then(() => inner.getRun(id, tz)),
-		taskLog: (id, task, hint) => prime().then(() => inner.taskLog(id, task, hint))
+		taskLog: (id, task, hint) => prime().then(() => inner.taskLog(id, task, hint)),
+		listItems: () => prime().then(() => inner.listItems()),
+		getItem: (t, id) => prime().then(() => inner.getItem(t, id))
 	};
 	const auth = file.config.authMode === "app" ? "app" : "user";
 	const now = session.now ?? session.startedAt;
@@ -236578,6 +236988,36 @@ async function getRun(source, id, query) {
 }
 
 //#endregion
+//#region server/api/listItems.ts
+async function listItems(source, _query) {
+	return orSourceError(async () => ({
+		status: 200,
+		body: await source.listItems()
+	}));
+}
+
+//#endregion
+//#region server/api/getItem.ts
+async function getItem(source, type, id) {
+	if (type !== "job" && type !== "pipeline") return {
+		status: 400,
+		body: { error: "type must be job or pipeline" }
+	};
+	if (!id || id.length > 100) return {
+		status: 400,
+		body: { error: "bad id" }
+	};
+	if (type === "pipeline" && !/^[0-9a-zA-Z-]{1,64}$/.test(id)) return {
+		status: 400,
+		body: { error: "bad pipeline id" }
+	};
+	return orSourceError(async () => ({
+		status: 200,
+		body: await source.getItem(type, id)
+	}));
+}
+
+//#endregion
 //#region server/data/capture/sweep.ts
 const SWEEP_DEFAULT_DAYS = 90;
 const SWEEP_MAX_DAYS = 180;
@@ -236629,7 +237069,8 @@ async function runSweep(o) {
 		windowDays: o.days,
 		maxRuns: Number.MAX_SAFE_INTEGER,
 		timeoutMs: o.timeoutMs,
-		concurrency: o.concurrency
+		concurrency: o.concurrency,
+		itemsTimeoutMs: o.timeoutMs
 	};
 	const source = createLiveRunSource({
 		api: onceGetRun(session.wrap(o.api)),
@@ -236647,6 +237088,7 @@ async function runSweep(o) {
 		}
 	});
 	const res = await source.listRuns();
+	await source.listItems().catch(() => void 0);
 	const wanted = res.runs.flatMap((r) => r.failed.map((f) => ({
 		id: r.id,
 		runId: r.runId,
@@ -236962,6 +237404,12 @@ createApp({
 			});
 			app.get("/api/runs/:id/log", (req, res, next) => {
 				serve(req, res, next, "/api/runs/:id/log", (source) => taskLog(source, req.params.id, req.query));
+			});
+			app.get("/api/items", (req, res, next) => {
+				serve(req, res, next, "/api/items", (source) => listItems(source, req.query));
+			});
+			app.get("/api/items/:type/:id", (req, res, next) => {
+				serve(req, res, next, "/api/items/:type/:id", (source) => getItem(source, req.params.type, req.params.id));
 			});
 			if (live && store) registerDiag(app, {
 				provider: live,
