@@ -233539,6 +233539,104 @@ var ServingPlugin = class extends Plugin {
 const serving = toPlugin(ServingPlugin);
 
 //#endregion
+//#region shared/domain/cron.ts
+const MONTHS = [
+	"JAN",
+	"FEB",
+	"MAR",
+	"APR",
+	"MAY",
+	"JUN",
+	"JUL",
+	"AUG",
+	"SEP",
+	"OCT",
+	"NOV",
+	"DEC"
+];
+const DAYS = [
+	"SUN",
+	"MON",
+	"TUE",
+	"WED",
+	"THU",
+	"FRI",
+	"SAT"
+];
+/** One field: * ? n a-b a/b, star-slash-b, a-b/c and lists; names for month (1-12) and day-of-week (1-7, SUN = 1). null = unsupported. */
+function field(raw, lo, hi, names) {
+	if (raw === "*" || raw === "?") return {
+		values: range(lo, hi, 1),
+		any: true
+	};
+	const out = /* @__PURE__ */ new Set();
+	const num = (s) => {
+		const up = s.toUpperCase();
+		if (names) {
+			const i = names.indexOf(up);
+			if (i >= 0) return i + 1;
+		}
+		if (!/^\d+$/.test(s)) return null;
+		const n = Number(s);
+		return n >= lo && n <= hi ? n : null;
+	};
+	for (const part of raw.split(",")) {
+		const m = /^([^/]+)(?:\/(\d+))?$/.exec(part);
+		if (!m) return null;
+		const step = m[2] ? Number(m[2]) : 1;
+		if (step < 1) return null;
+		let a;
+		let b;
+		if (m[1] === "*") {
+			a = lo;
+			b = hi;
+		} else if (m[1].includes("-")) {
+			const [x, y] = m[1].split("-");
+			a = num(x);
+			b = num(y);
+		} else {
+			a = num(m[1]);
+			b = m[2] ? hi : a;
+		}
+		if (a === null || b === null || a > b) return null;
+		for (const v of range(a, b, step)) out.add(v);
+	}
+	return {
+		values: [...out].sort((x, y) => x - y),
+		any: false
+	};
+}
+function range(a, b, step) {
+	const out = [];
+	for (let v = a; v <= b; v += step) out.push(v);
+	return out;
+}
+function parseQuartz(expr) {
+	const f = expr.trim().split(/\s+/);
+	if (f.length !== 6 && f.length !== 7) return null;
+	if (f.some((x) => /[LW#]/i.test(x.replace(/JUL|WED/gi, "")))) return null;
+	const sec = field(f[0], 0, 59);
+	const min = field(f[1], 0, 59);
+	const hour = field(f[2], 0, 23);
+	const dom = field(f[3], 1, 31);
+	const month = field(f[4], 1, 12, MONTHS);
+	const dow = field(f[5], 1, 7, DAYS);
+	const year = f[6] === void 0 || f[6] === "*" ? null : field(f[6], 1970, 2199);
+	if (!sec || !min || !hour || !dom || !month || !dow || f[6] !== void 0 && f[6] !== "*" && !year) return null;
+	return {
+		sec: sec.values,
+		min: min.values,
+		hour: hour.values,
+		dom: new Set(dom.values),
+		domAny: dom.any,
+		month: new Set(month.values),
+		dow: new Set(dow.values),
+		dowAny: dow.any,
+		years: year ? new Set(year.values) : null
+	};
+}
+
+//#endregion
 //#region server/data/mock/mockItems.ts
 function hash(s) {
 	let h = 2166136261;
@@ -233666,6 +233764,24 @@ function mockItems(runs, _asOf) {
 				...shape
 			});
 		}
+	}
+	const starters = out.filter((i) => i.type === "job" && i.trigger === "schedule" && !i.paused && i.schedule && parseQuartz(i.schedule.cron));
+	if (starters.length) {
+		let first = true;
+		out.forEach((p, n) => {
+			if (p.type !== "pipeline" || p.trigger === "continuous") return;
+			const h = hash(p.name);
+			if (!first && h % 2 !== 0) return;
+			first = false;
+			const j = starters[h % starters.length];
+			out[n] = {
+				...p,
+				startedBy: [{
+					jobId: j.id,
+					jobName: j.name
+				}]
+			};
+		});
 	}
 	return out;
 }
@@ -234419,7 +234535,22 @@ function createSdkApi(opts) {
 		getPipeline: (req) => client.pipelines.get(req),
 		listUpdates: (req) => client.pipelines.listUpdates(req),
 		getUpdate: (req) => client.pipelines.getUpdate(req),
-		listPipelineEvents: (req) => page(`/api/2.0/pipelines/${encodeURIComponent(req.pipeline_id)}/events`, { ...req })
+		listPipelineEvents: (req) => page(`/api/2.0/pipelines/${encodeURIComponent(req.pipeline_id)}/events`, { ...req }),
+		executeStatement: (req) => client.statementExecution.executeStatement(req),
+		getStatement: (req) => client.statementExecution.getStatement(req),
+		getStatementChunk: (req) => client.statementExecution.getStatementResultChunkN(req),
+		cancelStatement: (req) => client.statementExecution.cancelExecution(req),
+		workspaceId: async () => {
+			const id = (await client.apiClient.request({
+				path: "/api/2.0/preview/scim/v2/Me",
+				method: "GET",
+				headers: new Headers(),
+				raw: false,
+				query: {},
+				responseHeaders: ["x-databricks-org-id"]
+			}))["x-databricks-org-id"];
+			return typeof id === "string" ? id : "";
+		}
 	};
 }
 
@@ -234430,14 +234561,21 @@ const DEFAULT_LIMITS = {
 	maxRuns: 2e3,
 	timeoutMs: 12e3,
 	concurrency: 8,
-	itemsTimeoutMs: 3e4
+	itemsTimeoutMs: 3e4,
+	historyDays: 90,
+	historyMaxRuns: 2e4,
+	apiOverlapHours: 3
 };
+const MAX_HISTORY_DAYS = 365;
 const ENV = {
 	windowDays: "JOBS_CONSOLE_WINDOW_DAYS",
 	maxRuns: "JOBS_CONSOLE_MAX_RUNS",
 	timeoutMs: "JOBS_CONSOLE_TIMEOUT_MS",
 	concurrency: "JOBS_CONSOLE_CONCURRENCY",
-	itemsTimeoutMs: "JOBS_CONSOLE_ITEMS_TIMEOUT_MS"
+	itemsTimeoutMs: "JOBS_CONSOLE_ITEMS_TIMEOUT_MS",
+	historyDays: "JOBS_CONSOLE_HISTORY_DAYS",
+	historyMaxRuns: "JOBS_CONSOLE_HISTORY_MAX_RUNS",
+	apiOverlapHours: "JOBS_CONSOLE_API_OVERLAP_HOURS"
 };
 const DEFAULT_REFRESH = {
 	incremental: true,
@@ -234457,13 +234595,20 @@ function readRefresh(env) {
 	}
 	return out;
 }
-function readLimits(env) {
+/** The clamp warning is given once per process (readLimits runs for the provider and for every replay). */
+let clampWarned = false;
+function readLimits(env, warn = (m) => console.warn(m)) {
 	const out = { ...DEFAULT_LIMITS };
 	for (const key of Object.keys(ENV)) {
 		const raw = env[ENV[key]];
 		if (raw === void 0 || raw === "") continue;
 		if (!/^\d+$/.test(raw) || Number(raw) < 1) throw new Error(`${ENV[key]} must be a positive integer, got "${raw}"`);
 		out[key] = Number(raw);
+	}
+	if (out.historyDays > MAX_HISTORY_DAYS) {
+		if (!clampWarned) warn(`${ENV.historyDays}=${out.historyDays} is more than ${MAX_HISTORY_DAYS}; using ${MAX_HISTORY_DAYS}`);
+		clampWarned = true;
+		out.historyDays = MAX_HISTORY_DAYS;
 	}
 	return out;
 }
@@ -234610,12 +234755,12 @@ async function listAllPipelines(api, dl) {
 }
 /**
 * One pipeline: getPipeline (unless its info is `known`) + listUpdates back to `from`, and at most one events call
-* (INFO/WARN/ERROR since `from`) for end times and failure causes.
+* (INFO/WARN/ERROR since `from`) for end times and failure causes. `keep` (history mode) also keeps older updates.
 */
-async function readPipeline(api, p, from, dl, diag, known) {
+async function readPipeline(api, p, from, dl, diag, known, keep) {
 	const pipelineId = p.pipeline_id;
 	try {
-		const [spec, updates] = await Promise.all([known ? known : dl.call(() => api.getPipeline({ pipeline_id: pipelineId })), updatesSince(api, pipelineId, from, dl)]);
+		const [spec, updates] = await Promise.all([known ? known : dl.call(() => api.getPipeline({ pipeline_id: pipelineId })), updatesSince(api, pipelineId, from, dl, keep)]);
 		if (spec === TIMEOUT || updates === TIMEOUT) {
 			diag({
 				level: "warn",
@@ -234656,8 +234801,8 @@ async function readPipeline(api, p, from, dl, diag, known) {
 		return "skipped";
 	}
 }
-/** All pipelines (100 per page), then readPipeline for each, `concurrency` at a time. */
-async function collectPipelines(api, from, concurrency, dl, diag = noDiag) {
+/** All pipelines (100 per page), then readPipeline for each, `concurrency` at a time. `keep`: see readPipeline. */
+async function collectPipelines(api, from, concurrency, dl, diag = noDiag, keep) {
 	const { statuses: listed, timedOut: listTimedOut } = await listAllPipelines(api, dl);
 	let timedOut = listTimedOut;
 	const out = [];
@@ -234682,7 +234827,7 @@ async function collectPipelines(api, from, concurrency, dl, diag = noDiag) {
 		const got = await readPipeline(api, {
 			...p,
 			pipeline_id: pipelineId
-		}, from, dl, diag);
+		}, from, dl, diag, void 0, keep);
 		if (got === "skipped") skipped++;
 		else if (got === "timeout") timedOut = true;
 		else {
@@ -234759,7 +234904,8 @@ async function eventsSince(api, pipelineId, from, dl, diag) {
 	});
 	return out;
 }
-async function updatesSince(api, pipelineId, from, dl) {
+/** A pipeline's updates created since `from` (and older ones `keep` asks for, on the pages read), newest first. */
+async function updatesSince(api, pipelineId, from, dl, keep) {
 	const out = [];
 	let token;
 	do {
@@ -234769,7 +234915,7 @@ async function updatesSince(api, pipelineId, from, dl) {
 		}));
 		if (page === TIMEOUT) return out.length ? out : TIMEOUT;
 		const updates = page.updates ?? [];
-		out.push(...updates.filter((u) => (u.creation_time ?? 0) >= from));
+		out.push(...updates.filter((u) => (u.creation_time ?? 0) >= from || !!keep?.(pipelineId, u)));
 		if (updates.some((u) => (u.creation_time ?? 0) < from)) break;
 		token = page.next_page_token;
 	} while (token);
@@ -234848,7 +234994,7 @@ function failureCause(code, message, timedOut = false) {
 //#endregion
 //#region server/data/live/jobs.ts
 /** status.state, or the older life_cycle_state translated to it when status is absent. */
-function stateOf(r) {
+function stateOf$1(r) {
 	if (r.status?.state) return r.status.state;
 	const lc = r.state?.life_cycle_state;
 	switch (lc) {
@@ -234860,7 +235006,7 @@ function stateOf(r) {
 	}
 }
 /** The run has ended (TERMINATED): nothing about it changes any more, unless it is repaired (then it is active again). */
-const isTerminated = (r) => stateOf(r) === "TERMINATED";
+const isTerminated = (r) => stateOf$1(r) === "TERMINATED";
 /** Outcome of a finished run or task: result_state first, then the termination code. */
 function resultOf(state, term) {
 	switch (state?.result_state) {
@@ -234994,7 +235140,7 @@ function checkStates(r, ref, diag) {
 }
 /** A task's state for the client: TERMINATED by outcome, running or waiting to retry is r, the rest has not started. */
 function taskState(t) {
-	switch (stateOf(t)) {
+	switch (stateOf$1(t)) {
 		case "TERMINATED": {
 			const r = resultOf(t.state, t.status?.termination_details);
 			return r === "failed" ? "f" : r === "cancelled" ? "s" : "ok";
@@ -235040,7 +235186,7 @@ function taskOrder(keys, deps, starts, ref, diag) {
 * The run's tasks for the client: the latest attempt of each task key, with times relative to the run's start. A task
 * waiting to retry has no start of its own yet, so it keeps the start of its earlier attempt.
 */
-function runTasks(run, latest, failed, now, diag = noDiag) {
+function runTasks$1(run, latest, failed, now, diag = noDiag) {
 	const ref = `run ${run.run_id ?? "?"}`;
 	const all = run.tasks ?? [];
 	const keys = latest.map((t) => t.task_key);
@@ -235091,7 +235237,7 @@ function runTasks(run, latest, failed, now, diag = noDiag) {
 		};
 	});
 }
-const causeOf = (r) => failureCause(r.status?.termination_details?.code, r.status?.termination_details?.message || r.state?.state_message, r.state?.result_state === "TIMEDOUT");
+const causeOf$1 = (r) => failureCause(r.status?.termination_details?.code, r.status?.termination_details?.message || r.state?.state_message, r.state?.result_state === "TIMEDOUT");
 /** Run-level codes that only say "something failed"; the first failed task says more. */
 const GENERIC = new Set([
 	"",
@@ -235114,17 +235260,17 @@ function jobDraft(run, now, diag = noDiag, host) {
 	});
 	checkStates(run, ref, diag);
 	for (const t of tasks) checkStates(t, `${ref} task ${t.task_key}`, diag);
-	const state = stateOf(run);
-	const started = tasks.some((t) => (t.start_time ?? 0) > 0 && !["QUEUED", "BLOCKED"].includes(stateOf(t) ?? ""));
+	const state = stateOf$1(run);
+	const started = tasks.some((t) => (t.start_time ?? 0) > 0 && !["QUEUED", "BLOCKED"].includes(stateOf$1(t) ?? ""));
 	const waiting = state === "PENDING" || state === "BLOCKED" || state === "WAITING";
 	const queued = state === "QUEUED" || waiting && !started;
 	const live = !queued && (state === "RUNNING" || state === "TERMINATING" || waiting);
 	const finished = !queued && !live;
 	const start = run.start_time ?? 0;
 	const latest = latestAttempts(tasks);
-	const failed = latest.filter((t) => stateOf(t) === "TERMINATED" && resultOf(t.state, t.status?.termination_details) === "failed").map((t) => ({
+	const failed = latest.filter((t) => stateOf$1(t) === "TERMINATED" && resultOf(t.state, t.status?.termination_details) === "failed").map((t) => ({
 		name: t.task_key,
-		cause: causeOf(t),
+		cause: causeOf$1(t),
 		secs: finishedSec(t),
 		...t.pipeline_task ? { pipeline: "unread" } : {}
 	}));
@@ -235138,7 +235284,7 @@ function jobDraft(run, now, diag = noDiag, host) {
 			detail: q.message ?? ""
 		} : QUEUED;
 	} else if (result === "failed" || result === "partial") {
-		cause = causeOf(run);
+		cause = causeOf$1(run);
 		if (GENERIC.has(cause.code) && cause.label !== "Timed out" && failed.length) cause = failed[0].cause;
 	}
 	return {
@@ -235159,9 +235305,132 @@ function jobDraft(run, now, diag = noDiag, host) {
 		params: Object.fromEntries((run.job_parameters ?? []).flatMap((p) => p.name ? [[p.name, p.value ?? p.default ?? ""]] : [])),
 		retryAttempt: live ? Math.max(0, ...tasks.map((t) => t.attempt_number ?? 0)) : 0,
 		cause,
-		tasks: runTasks(run, latest, failed, now, diag),
+		tasks: runTasks$1(run, latest, failed, now, diag),
 		url: jobRunUrl(host, run),
 		jobId: run.job_id
+	};
+}
+
+//#endregion
+//#region server/data/live/pipelines.ts
+const MASK = (1n << 53n) - 1n;
+/** Stable positive 53-bit integer for an update id (FNV-1a 64, folded). The same update always gets the same Run.id. */
+function pipelineNumber(updateId) {
+	let h = 14695981039346656037n;
+	for (let i = 0; i < updateId.length; i++) {
+		h ^= BigInt(updateId.charCodeAt(i));
+		h = h * 1099511628211n & 18446744073709551615n;
+	}
+	return Number((h ^ h >> 53n) & MASK) || 1;
+}
+const ts = (e) => e.timestamp ? Date.parse(e.timestamp) : NaN;
+function indexEvents(events) {
+	const out = /* @__PURE__ */ new Map();
+	for (const e of events) {
+		const id = e.origin?.update_id;
+		if (!id) continue;
+		const u = out.get(id) ?? { errors: [] };
+		out.set(id, u);
+		const t = ts(e);
+		if (e.event_type === "update_progress" && !Number.isNaN(t) && (u.endTime === void 0 || t > u.endTime)) u.endTime = t;
+		if (e.level === "ERROR") u.errors.push(e);
+	}
+	for (const u of out.values()) u.errors.sort((a, b) => ts(a) - ts(b));
+	return out;
+}
+const QUEUED_STATES = new Set([
+	"QUEUED",
+	"CREATED",
+	"WAITING_FOR_RESOURCES"
+]);
+const LIVE_STATES = new Set([
+	"INITIALIZING",
+	"RESETTING",
+	"SETTING_UP_TABLES",
+	"RUNNING",
+	"STOPPING"
+]);
+const RESULTS = {
+	COMPLETED: "succeeded",
+	FAILED: "failed",
+	CANCELED: "cancelled"
+};
+/** Cause of a failed update: the first ERROR event that carries an exception (its message, not the top-level "Update is FAILED"). */
+function errorCause(errors) {
+	const e = errors.find((x) => x.error?.exceptions?.length) ?? errors[0];
+	if (!e) return { cause: failureCause("FAILED", "") };
+	const ex = e.error?.exceptions?.[0];
+	const message = ex?.message || e.message || "";
+	return {
+		cause: failureCause(/\[([A-Z][A-Z0-9_]+)\]/.exec(message)?.[1] ?? ex?.class_name?.split(".").pop() ?? "FAILED", message),
+		flow: e.origin?.flow_name
+	};
+}
+/** `host`: the workspace the update was read from, for its link. */
+function updateDraft(u, p, events, now, diag = noDiag, host) {
+	const state = u.state ?? "";
+	const ref = `update ${u.update_id ?? "?"}`;
+	for (const f of ["update_id", "creation_time"]) if (u[f] === void 0) diag({
+		level: "warn",
+		code: "missing-field",
+		message: `pipeline ${p.pipelineId} update has no ${f}`,
+		ref
+	});
+	const queued = QUEUED_STATES.has(state);
+	const live = LIVE_STATES.has(state);
+	if (!queued && !live && !RESULTS[state]) diag({
+		level: "warn",
+		code: "unknown-update-state",
+		message: `update state "${state}" is not a known state (mapped as failed)`,
+		ref
+	});
+	const start = u.creation_time ?? 0;
+	const result = queued || live ? null : RESULTS[state] ?? "failed";
+	if (result && !events?.endTime) diag({
+		level: "info",
+		code: "pipeline-end-missing",
+		message: `no update_progress event for this ${state} update of pipeline ${p.pipelineId}; duration reported as 0`,
+		ref
+	});
+	const durationSec = queued ? 0 : live ? (now - start) / 1e3 : events?.endTime ? (events.endTime - start) / 1e3 : 0;
+	const secs = Math.max(0, Math.round(durationSec));
+	const failure = result === "failed" ? errorCause(events?.errors ?? []) : void 0;
+	const updateId = u.update_id ?? "";
+	const retryAttempt = live && u.cause === "RETRY_ON_FAILURE" ? 1 : 0;
+	const taskState = queued ? "p" : live ? "r" : result === "succeeded" ? "ok" : result === "failed" ? "f" : "s";
+	return {
+		id: pipelineNumber(updateId),
+		runId: "upd " + updateId.slice(0, 8),
+		type: "pipeline",
+		name: p.name,
+		key: `p:${p.pipelineId}`,
+		startTime: start,
+		durationSec: secs,
+		ntasks: 1,
+		failed: failure ? [{
+			name: failure.flow ?? p.name,
+			cause: failure.cause,
+			secs
+		}] : [],
+		runAs: p.runAs,
+		live,
+		queued,
+		continuous: p.continuous,
+		result,
+		params: {},
+		retryAttempt,
+		cause: failure?.cause ?? null,
+		tasks: [{
+			key: p.name,
+			startSec: queued ? -1 : 0,
+			durSec: secs,
+			state: taskState,
+			deps: [],
+			attempt: u.cause === "RETRY_ON_FAILURE" ? 1 : 0,
+			...failure ? { failIndex: 0 } : {}
+		}],
+		url: pipelineUpdateUrl(host, p.pipelineId, u.update_id),
+		pipelineId: p.pipelineId
 	};
 }
 
@@ -235262,7 +235531,7 @@ async function fetchDelta(api, base, o) {
 	const wanted = new Set(pipelinesToReread(base, listing.statuses));
 	const reread = /* @__PURE__ */ new Map();
 	await pool(listing.statuses.filter((s) => !!s.pipeline_id && wanted.has(s.pipeline_id)), o.concurrency, async (s) => {
-		const got = await readPipeline(api, s, o.from, dl, diag, base.pipelines.get(s.pipeline_id)?.info);
+		const got = await readPipeline(api, s, o.from, dl, diag, base.pipelines.get(s.pipeline_id)?.info, o.keep);
 		if (got === "timeout" || got !== "skipped" && got.partial) throw new DeltaError(`the time budget ran out reading pipeline ${s.pipeline_id}`);
 		reread.set(s.pipeline_id, got === "skipped" ? null : got.item);
 	});
@@ -235275,6 +235544,65 @@ async function fetchDelta(api, base, o) {
 		statuses: listing.statuses,
 		reread
 	};
+}
+const runEnd = (r) => r.end_time || (r.start_time ?? 0) + (r.run_duration ?? 0);
+/**
+* History mode, for a full load: the job runs that started before `from` the API must still cover (H2, rulings R6,
+* R10). Every active run, and the runs of the `old` base from before `from`: all of them when it is the same window;
+* at a new day (`endAfter` given) only those still live or that ended at or after `endAfter`, which the day's history
+* may not have yet. Old runs no longer active are read once more with getRun: gone ones are dropped, and any other
+* failure but a sign-in one keeps the old copy with a diagnostic (R12), within the same window only: at a new day it is
+* dropped. Runs in `have` are left out. A timeout throws DeltaError.
+*/
+async function collectEarlier(api, o) {
+	const out = (await allRunPages(api, { active_only: true }, o.maxRuns, o.dl, "active runs")).filter((r) => r.run_id !== void 0 && !o.have.has(r.run_id));
+	const seen = new Set([...o.have, ...out.map((r) => r.run_id)]);
+	const check = [];
+	for (const { value: r } of o.old?.runs.values() ?? []) {
+		if (r.run_id === void 0 || seen.has(r.run_id) || (r.start_time ?? 0) >= o.from) continue;
+		if (!isTerminated(r)) check.push(r);
+		else if (o.endAfter === void 0 || runEnd(r) >= o.endAfter) out.push(r);
+	}
+	await pool(check, o.concurrency, async (old) => {
+		const runId = old.run_id;
+		const got = await o.dl.call(() => api.getRun({ run_id: runId })).catch((e) => {
+			if (isGone(e)) return void 0;
+			if (apiErrorParts(e).status === 401) throw e;
+			const keep = o.endAfter === void 0;
+			o.diag({
+				level: "warn",
+				code: "run-reread-failed",
+				message: `${keep ? "kept the last copy" : "dropped the copy from yesterday"}: ${apiErrorParts(e).message}`,
+				ref: `run ${runId}`
+			});
+			return keep ? null : void 0;
+		});
+		if (got === TIMEOUT) throw new DeltaError(`the time budget ran out reading run ${runId}`);
+		if (got === null) out.push(old);
+		else if (got) out.push(got);
+	});
+	return out;
+}
+/**
+* History mode: which updates created before the window a pipeline read keeps (H2, R6, R10). Every live one, and the
+* updates `ref` (the base being refreshed) already holds: all of them in the same window; at a new day (`endAfter`
+* given) only those that ended at or after `endAfter`.
+*/
+function keepEarlierUpdates(ref, now, endAfter) {
+	const kept = /* @__PURE__ */ new Map();
+	for (const [pid, p] of ref?.pipelines ?? []) {
+		const events = endAfter === void 0 ? void 0 : indexEvents(p.events);
+		const ids = /* @__PURE__ */ new Set();
+		for (const [uid, { value: u }] of p.updates) {
+			if (events) {
+				const d = updateDraft(u, p.info, events.get(uid), now);
+				if (d.startTime + d.durationSec * 1e3 < endAfter) continue;
+			}
+			ids.add(uid);
+		}
+		kept.set(pid, ids);
+	}
+	return (pid, u) => !FINISHED_UPDATE.has(u.state ?? "") || !!kept.get(pid)?.has(u.update_id ?? "");
 }
 const eventKey = (e) => e.id ?? `${e.timestamp ?? ""}|${e.event_type ?? ""}|${e.origin?.update_id ?? ""}|${e.message ?? ""}`;
 /** Events of both lists, each once, newest first, none before `from`. */
@@ -235298,9 +235626,10 @@ function put(map, k, v, at) {
 /**
 * base + a delta -> the new base (a new object; `base` is not changed). By run_id / update_id, keeping whichever copy
 * was fetched later; deleted runs and pipelines no longer listed go; anything that started before `from` ages out;
-* job runs are capped at maxRuns, newest kept.
+* job runs are capped at maxRuns, newest kept. `keepEarlier` (history mode, where `from` is fixed for the day): job runs
+* and pipeline updates from before `from` stay (they came in live or were carried over), until midnight.
 */
-function mergeBase(base, d, from, maxRuns) {
+function mergeBase(base, d, from, maxRuns, keepEarlier = false) {
 	const runs = new Map(base.runs);
 	for (const r of [
 		...d.fresh,
@@ -235309,7 +235638,7 @@ function mergeBase(base, d, from, maxRuns) {
 	]) if (r.run_id !== void 0) put(runs, r.run_id, r, d.asOf);
 	for (const id of d.deleted) runs.delete(id);
 	let agedOut = 0;
-	for (const [id, e] of runs) if ((e.value.start_time ?? 0) < from) {
+	for (const [id, e] of runs) if (!keepEarlier && (e.value.start_time ?? 0) < from) {
 		runs.delete(id);
 		agedOut++;
 	}
@@ -235348,7 +235677,7 @@ function mergeBase(base, d, from, maxRuns) {
 			events: mergeEvents(old.events, [], from)
 		};
 		else continue;
-		for (const [uid, e] of [...next.updates]) if ((e.value.creation_time ?? 0) < from) {
+		for (const [uid, e] of [...next.updates]) if (!keepEarlier && (e.value.creation_time ?? 0) < from) {
 			next.updates.delete(uid);
 			agedOut++;
 		}
@@ -235496,18 +235825,31 @@ function createLiveItems(o) {
 			try {
 				const [host, me] = await Promise.all([o.api.host(), o.user().catch(() => "")]);
 				const items = [];
+				const starters = /* @__PURE__ */ new Map();
 				let partial;
 				let token;
 				do {
 					const page = await dl.call(() => o.api.listJobs({
 						limit: 100,
+						expand_tasks: true,
 						page_token: token
 					}));
 					if (page === TIMEOUT) {
 						partial = `read ${items.length} jobs before the ${o.limits.itemsTimeoutMs / 1e3}s limit`;
 						break;
 					}
-					for (const j of page.jobs ?? []) items.push(jobItem(j, me, host));
+					for (const j of page.jobs ?? []) {
+						const item = jobItem(j, me, host);
+						items.push(item);
+						for (const pid of new Set((j.settings?.tasks ?? []).map((t) => t.pipeline_task?.pipeline_id).filter((x) => !!x))) {
+							const list = starters.get(pid) ?? [];
+							list.push({
+								jobId: item.id,
+								jobName: item.name
+							});
+							starters.set(pid, list);
+						}
+					}
 					token = page.next_page_token;
 				} while (token);
 				const statuses = [];
@@ -235534,7 +235876,13 @@ function createLiveItems(o) {
 					else if (r) specs.set(p.pipeline_id, r);
 				});
 				if (cut && !partial) partial = `${cut} pipeline details cut by the time limit`;
-				for (const p of statuses) items.push(pipelineItem(p, specs.get(p.pipeline_id ?? ""), me, host));
+				for (const p of statuses) {
+					const by = starters.get(p.pipeline_id ?? "");
+					items.push({
+						...pipelineItem(p, specs.get(p.pipeline_id ?? ""), me, host),
+						...by ? { startedBy: by } : {}
+					});
+				}
 				const data = {
 					asOf: now,
 					source: o.source ?? "live",
@@ -235615,129 +235963,6 @@ function finalize(drafts, me, usual = usualByKey(drafts)) {
 }
 /** The usualSec key of a run already mapped (the Draft key it was grouped by). */
 const runKey = (r) => r.type === "pipeline" ? `p:${r.pipelineId ?? ""}` : r.jobId !== void 0 ? `j:${r.jobId}` : `r:${r.name}`;
-
-//#endregion
-//#region server/data/live/pipelines.ts
-const MASK = (1n << 53n) - 1n;
-/** Stable positive 53-bit integer for an update id (FNV-1a 64, folded). The same update always gets the same Run.id. */
-function pipelineNumber(updateId) {
-	let h = 14695981039346656037n;
-	for (let i = 0; i < updateId.length; i++) {
-		h ^= BigInt(updateId.charCodeAt(i));
-		h = h * 1099511628211n & 18446744073709551615n;
-	}
-	return Number((h ^ h >> 53n) & MASK) || 1;
-}
-const ts = (e) => e.timestamp ? Date.parse(e.timestamp) : NaN;
-function indexEvents(events) {
-	const out = /* @__PURE__ */ new Map();
-	for (const e of events) {
-		const id = e.origin?.update_id;
-		if (!id) continue;
-		const u = out.get(id) ?? { errors: [] };
-		out.set(id, u);
-		const t = ts(e);
-		if (e.event_type === "update_progress" && !Number.isNaN(t) && (u.endTime === void 0 || t > u.endTime)) u.endTime = t;
-		if (e.level === "ERROR") u.errors.push(e);
-	}
-	for (const u of out.values()) u.errors.sort((a, b) => ts(a) - ts(b));
-	return out;
-}
-const QUEUED_STATES = new Set([
-	"QUEUED",
-	"CREATED",
-	"WAITING_FOR_RESOURCES"
-]);
-const LIVE_STATES = new Set([
-	"INITIALIZING",
-	"RESETTING",
-	"SETTING_UP_TABLES",
-	"RUNNING",
-	"STOPPING"
-]);
-const RESULTS = {
-	COMPLETED: "succeeded",
-	FAILED: "failed",
-	CANCELED: "cancelled"
-};
-/** Cause of a failed update: the first ERROR event that carries an exception (its message, not the top-level "Update is FAILED"). */
-function errorCause(errors) {
-	const e = errors.find((x) => x.error?.exceptions?.length) ?? errors[0];
-	if (!e) return { cause: failureCause("FAILED", "") };
-	const ex = e.error?.exceptions?.[0];
-	const message = ex?.message || e.message || "";
-	return {
-		cause: failureCause(/\[([A-Z][A-Z0-9_]+)\]/.exec(message)?.[1] ?? ex?.class_name?.split(".").pop() ?? "FAILED", message),
-		flow: e.origin?.flow_name
-	};
-}
-/** `host`: the workspace the update was read from, for its link. */
-function updateDraft(u, p, events, now, diag = noDiag, host) {
-	const state = u.state ?? "";
-	const ref = `update ${u.update_id ?? "?"}`;
-	for (const f of ["update_id", "creation_time"]) if (u[f] === void 0) diag({
-		level: "warn",
-		code: "missing-field",
-		message: `pipeline ${p.pipelineId} update has no ${f}`,
-		ref
-	});
-	const queued = QUEUED_STATES.has(state);
-	const live = LIVE_STATES.has(state);
-	if (!queued && !live && !RESULTS[state]) diag({
-		level: "warn",
-		code: "unknown-update-state",
-		message: `update state "${state}" is not a known state (mapped as failed)`,
-		ref
-	});
-	const start = u.creation_time ?? 0;
-	const result = queued || live ? null : RESULTS[state] ?? "failed";
-	if (result && !events?.endTime) diag({
-		level: "info",
-		code: "pipeline-end-missing",
-		message: `no update_progress event for this ${state} update of pipeline ${p.pipelineId}; duration reported as 0`,
-		ref
-	});
-	const durationSec = queued ? 0 : live ? (now - start) / 1e3 : events?.endTime ? (events.endTime - start) / 1e3 : 0;
-	const secs = Math.max(0, Math.round(durationSec));
-	const failure = result === "failed" ? errorCause(events?.errors ?? []) : void 0;
-	const updateId = u.update_id ?? "";
-	const retryAttempt = live && u.cause === "RETRY_ON_FAILURE" ? 1 : 0;
-	const taskState = queued ? "p" : live ? "r" : result === "succeeded" ? "ok" : result === "failed" ? "f" : "s";
-	return {
-		id: pipelineNumber(updateId),
-		runId: "upd " + updateId.slice(0, 8),
-		type: "pipeline",
-		name: p.name,
-		key: `p:${p.pipelineId}`,
-		startTime: start,
-		durationSec: secs,
-		ntasks: 1,
-		failed: failure ? [{
-			name: failure.flow ?? p.name,
-			cause: failure.cause,
-			secs
-		}] : [],
-		runAs: p.runAs,
-		live,
-		queued,
-		continuous: p.continuous,
-		result,
-		params: {},
-		retryAttempt,
-		cause: failure?.cause ?? null,
-		tasks: [{
-			key: p.name,
-			startSec: queued ? -1 : 0,
-			durSec: secs,
-			state: taskState,
-			deps: [],
-			attempt: u.cause === "RETRY_ON_FAILURE" ? 1 : 0,
-			...failure ? { failIndex: 0 } : {}
-		}],
-		url: pipelineUpdateUrl(host, p.pipelineId, u.update_id),
-		pipelineId: p.pipelineId
-	};
-}
 
 //#endregion
 //#region server/data/live/taskLog.ts
@@ -235829,8 +236054,589 @@ function pipelineTaskCause(events, chain) {
 }
 
 //#endregion
+//#region server/data/systables/cutoff.ts
+const HOUR$1 = 36e5;
+const DAY$1 = 24 * HOUR$1;
+/** The viewer's local midnight before `now`. tzOffsetMin is their Date.getTimezoneOffset() (UTC minus local; undefined: UTC). */
+function localMidnight(now, tzOffsetMin) {
+	const shift = (tzOffsetMin ?? 0) * 6e4;
+	const local = now - shift;
+	return local - (local % DAY$1 + DAY$1) % DAY$1 + shift;
+}
+/**
+* Where history ends and the API begins (decision H1). `day` is the viewer's local midnight: history covers runs that
+* started in [historyFrom, day) and is cached per day. The API covers [apiFrom, now] plus active_only, where apiFrom
+* reaches back apiOverlapHours before now just after midnight (system tables lag), so the two overlap.
+*/
+function cutoffs(now, tzOffsetMin, limits) {
+	const day = localMidnight(now, tzOffsetMin);
+	return {
+		day,
+		apiFrom: Math.min(day, now - limits.apiOverlapHours * HOUR$1),
+		historyFrom: now - limits.historyDays * DAY$1
+	};
+}
+
+//#endregion
+//#region server/data/systables/mapHistory.ts
+/** result_state of job_run_timeline / job_task_run_timeline. Anything else maps as failed, like the API path. */
+const JOB_RESULTS = {
+	SUCCEEDED: "succeeded",
+	FAILED: "failed",
+	ERROR: "failed",
+	TIMED_OUT: "failed",
+	CANCELLED: "cancelled",
+	SKIPPED: "cancelled",
+	BLOCKED: "cancelled"
+};
+/** result_state of pipeline_update_timeline. */
+const UPDATE_RESULTS = {
+	COMPLETED: "succeeded",
+	FAILED: "failed",
+	CANCELED: "cancelled"
+};
+const stateOf = (r) => r === "succeeded" ? "ok" : r === "failed" ? "f" : "s";
+/** Epoch ms from start_ms / end_ms (UNIX_MILLIS), or an ISO timestamp as the API prints one ("2026-01-01 12:00:00+00:00"). */
+function ms(v) {
+	if (!v) return NaN;
+	return /^-?\d+$/.test(v) ? Number(v) : Date.parse(v.replace(" ", "T"));
+}
+const secs = (from, to) => Math.max(0, Math.round((to - from) / 1e3));
+function aggregate(rows, key) {
+	const out = /* @__PURE__ */ new Map();
+	for (const r of rows) {
+		const start = ms(r.start_ms);
+		const end = ms(r.end_ms);
+		if (Number.isNaN(start)) continue;
+		const k = key(r);
+		const a = out.get(k) ?? {
+			start,
+			end: Number.isNaN(end) ? start : end,
+			finalEnd: -Infinity,
+			first: r
+		};
+		out.set(k, a);
+		a.start = Math.min(a.start, start);
+		if (!Number.isNaN(end)) a.end = Math.max(a.end, end);
+		if (r.result_state && (Number.isNaN(end) ? a.start : end) >= a.finalEnd) {
+			a.final = r;
+			a.finalEnd = Number.isNaN(end) ? a.start : end;
+		}
+	}
+	return out;
+}
+const causeOf = (final) => failureCause(final.termination_code ?? "", "", final.result_state === "TIMED_OUT");
+function parseKeys(v) {
+	try {
+		const x = JSON.parse(v ?? "[]");
+		return Array.isArray(x) ? x.filter((k) => typeof k === "string") : [];
+	} catch {
+		return [];
+	}
+}
+/** A run's tasks as the API path gives them: the latest attempt per task key, dependencies first, times from the run's start. */
+function runTasks(runStart, attempts, deps, jobId, runId) {
+	const byKey = /* @__PURE__ */ new Map();
+	for (const a of attempts) {
+		const k = a.first.task_key ?? "";
+		byKey.set(k, [...byKey.get(k) ?? [], a]);
+	}
+	for (const all of byKey.values()) all.sort((x, y) => x.start - y.start);
+	const latestStart = (k) => {
+		const all = byKey.get(k) ?? [];
+		return all[all.length - 1]?.start ?? Infinity;
+	};
+	const keys = [...byKey.keys()].sort((x, y) => latestStart(x) - latestStart(y));
+	const index = new Map(keys.map((k, i) => [k, i]));
+	const latest = keys.map((k) => {
+		const all = byKey.get(k) ?? [];
+		return {
+			a: all[all.length - 1],
+			attempt: all.length - 1
+		};
+	});
+	const failed = [];
+	const rows = latest.map(({ a, attempt }, i) => {
+		const final = a.final;
+		const state = stateOf(JOB_RESULTS[final.result_state ?? ""] ?? "failed");
+		const dur = secs(a.start, a.end);
+		let failIndex;
+		if (state === "f") {
+			failIndex = failed.length;
+			failed.push({
+				name: keys[i],
+				cause: causeOf(final),
+				secs: dur
+			});
+		}
+		const on = [];
+		for (const d of deps.get(`${jobId}|${keys[i]}`) ?? []) {
+			const at = index.get(d);
+			if (at !== void 0 && at !== i && !on.includes(at)) on.push(at);
+		}
+		return {
+			key: keys[i],
+			startSec: secs(runStart, a.start),
+			durSec: dur,
+			state,
+			deps: on,
+			attempt,
+			...failIndex !== void 0 ? { failIndex } : {}
+		};
+	});
+	const order = taskOrder(keys, rows.map((r) => r.deps), rows.map((r) => r.startSec), `run ${runId}`, noDiag);
+	const moved = new Map(order.map((from, to) => [from, to]));
+	return {
+		tasks: order.map((from) => {
+			const r = rows[from];
+			return {
+				...r,
+				deps: r.deps.map((d) => moved.get(d) ?? d).sort((x, y) => x - y)
+			};
+		}),
+		failed
+	};
+}
+/**
+* System-table rows to Drafts shaped like the API path's (jobDraft / updateDraft), for finalize to join with the API drafts.
+* Rows may be the queries' per-run aggregates or raw hourly slices: they are aggregated here either way. Only the job and
+* pipeline ids among `items` are kept (visibility: what the reading identity can list), and only runs whose final slice
+* has a result. Name and run-as come from the item; there is no message text (the drawer fetches it by run id).
+*/
+function historyDrafts(rows, items, host, _me) {
+	const byId = new Map(items.map((i) => [`${i.type}:${i.id}`, i]));
+	const deps = new Map((rows.deps ?? []).map((d) => [`${d.job_id ?? ""}|${d.task_key ?? ""}`, parseKeys(d.depends_on_keys)]));
+	const taskRuns = aggregate(rows.tasks ?? [], (r) => `${r.job_id ?? ""}|${r.job_run_id ?? ""}|${r.run_id ?? ""}|${r.task_key ?? ""}`);
+	const tasksOf = /* @__PURE__ */ new Map();
+	for (const t of taskRuns.values()) {
+		if (!t.final) continue;
+		const k = `${t.first.job_id ?? ""}|${t.first.job_run_id ?? ""}`;
+		tasksOf.set(k, [...tasksOf.get(k) ?? [], t]);
+	}
+	const detail = !!rows.tasks && !!rows.deps;
+	const jobTaskCount = /* @__PURE__ */ new Map();
+	if (!rows.tasks) for (const d of rows.deps ?? []) jobTaskCount.set(d.job_id ?? "", (jobTaskCount.get(d.job_id ?? "") ?? 0) + 1);
+	const ntasksOf = (jobId, runId) => rows.tasks ? new Set((tasksOf.get(`${jobId}|${runId}`) ?? []).map((t) => t.first.task_key ?? "")).size : jobTaskCount.get(jobId) ?? 0;
+	const out = [];
+	for (const a of aggregate(rows.runs, (r) => `${r.job_id ?? ""}|${r.run_id ?? ""}`).values()) {
+		const jobId = a.first.job_id ?? "";
+		const runId = a.first.run_id ?? "";
+		const item = byId.get(`job:${jobId}`);
+		if (!item || !a.final) continue;
+		const result = JOB_RESULTS[a.final.result_state ?? ""] ?? "failed";
+		const { tasks, failed } = detail ? runTasks(a.start, tasksOf.get(`${jobId}|${runId}`) ?? [], deps, jobId, runId) : {
+			tasks: void 0,
+			failed: []
+		};
+		let cause = null;
+		if (result === "failed") {
+			cause = causeOf(a.final);
+			if (GENERIC.has(cause.code) && cause.label !== "Timed out" && failed.length) cause = failed[0].cause;
+		}
+		out.push({
+			id: Number(runId),
+			runId,
+			type: "job",
+			name: item.name,
+			key: `j:${jobId}`,
+			startTime: a.start,
+			durationSec: secs(a.start, a.end),
+			ntasks: tasks ? tasks.length : ntasksOf(jobId, runId),
+			failed,
+			runAs: item.runAs ?? "",
+			live: false,
+			queued: false,
+			continuous: false,
+			result,
+			params: {},
+			retryAttempt: 0,
+			cause,
+			...tasks ? { tasks } : {},
+			url: jobRunUrl(host, {
+				job_id: Number(jobId),
+				run_id: Number(runId)
+			}),
+			jobId: Number(jobId)
+		});
+	}
+	for (const a of aggregate(rows.updates, (r) => `${r.pipeline_id ?? ""}|${r.update_id ?? ""}`).values()) {
+		const pipelineId = a.first.pipeline_id ?? "";
+		const updateId = a.first.update_id ?? "";
+		const item = byId.get(`pipeline:${pipelineId}`);
+		if (!item || !a.final) continue;
+		const result = UPDATE_RESULTS[a.final.result_state ?? ""] ?? "failed";
+		const dur = secs(a.start, a.end);
+		const cause = result === "failed" ? failureCause("FAILED", "") : null;
+		out.push({
+			id: pipelineNumber(updateId),
+			runId: "upd " + updateId.slice(0, 8),
+			type: "pipeline",
+			name: item.name,
+			key: `p:${pipelineId}`,
+			startTime: a.start,
+			durationSec: dur,
+			ntasks: 1,
+			failed: cause ? [{
+				name: item.name,
+				cause,
+				secs: dur
+			}] : [],
+			runAs: item.runAs || a.final.run_as_user_name || "",
+			live: false,
+			queued: false,
+			continuous: item.trigger === "continuous",
+			result,
+			params: {},
+			retryAttempt: 0,
+			cause,
+			tasks: [{
+				key: item.name,
+				startSec: 0,
+				durSec: dur,
+				state: stateOf(result),
+				deps: [],
+				attempt: 0,
+				...cause ? { failIndex: 0 } : {}
+			}],
+			url: pipelineUpdateUrl(host, pipelineId, updateId),
+			pipelineId
+		});
+	}
+	return out;
+}
+
+//#endregion
+//#region server/data/systables/sql.ts
+const POLL_MS = 1e3;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+/** A statement that ended FAILED / CANCELED / CLOSED: its message, with the Statement API's error code on `.code`. */
+function statementError(s) {
+	const e = s.status?.error;
+	return Object.assign(new Error(e?.message || `statement ${s.status?.state ?? "failed"}`), { code: e?.error_code ?? "" });
+}
+/**
+* Runs one SQL statement on a warehouse and answers its rows as objects keyed by column name (values as the API's
+* JSON_ARRAY strings). Polls every second while the statement is PENDING or RUNNING and pages through result chunks,
+* all within `dl`: TIMEOUT when the budget runs out, and the statement is cancelled (best effort). HTTP errors from the
+* API pass through unchanged.
+*/
+async function runSql(api, warehouseId, statement, params, dl) {
+	const cancel = (id) => {
+		if (id) api.cancelStatement({ statement_id: id }).catch(() => void 0);
+	};
+	const running = (r) => r.status?.state === "PENDING" || r.status?.state === "RUNNING";
+	if (dl.expired) return TIMEOUT;
+	const exec = api.executeStatement({
+		warehouse_id: warehouseId,
+		statement,
+		parameters: Object.entries(params).map(([name, value]) => ({
+			name,
+			value
+		})),
+		wait_timeout: "30s",
+		on_wait_timeout: "CONTINUE",
+		disposition: "INLINE",
+		format: "JSON_ARRAY"
+	});
+	let s = await dl.call(() => exec);
+	if (s === TIMEOUT) {
+		exec.then((late) => running(late) && cancel(late.statement_id), () => void 0);
+		return TIMEOUT;
+	}
+	while (running(s)) {
+		const id = s.statement_id ?? "";
+		if (await dl.call(() => sleep(POLL_MS)) === TIMEOUT) return cancel(id), TIMEOUT;
+		const polled = await dl.call(() => api.getStatement({ statement_id: id }));
+		if (polled === TIMEOUT) return cancel(id), TIMEOUT;
+		s = polled;
+	}
+	if (s.status?.state !== "SUCCEEDED") throw statementError(s);
+	const names = (s.manifest?.schema?.columns ?? []).map((c, i) => c.name ?? `col${i}`);
+	const data = [...s.result?.data_array ?? []];
+	let next = s.result?.next_chunk_index;
+	const id = s.statement_id ?? "";
+	while (next !== void 0) {
+		const at = next;
+		const chunk = await dl.call(() => api.getStatementChunk({
+			statement_id: id,
+			chunk_index: at
+		}));
+		if (chunk === TIMEOUT) return TIMEOUT;
+		data.push(...chunk.data_array ?? []);
+		next = chunk.next_chunk_index;
+	}
+	return data.map((row) => Object.fromEntries(names.map((n, i) => [n, row[i] ?? null])));
+}
+
+//#endregion
+//#region server/data/systables/probe.ts
+const PROBE_SQL = "SELECT 1 AS ok FROM system.lakeflow.job_run_timeline WHERE workspace_id = :ws LIMIT 1";
+/** How long one user's answer is kept before the probe runs again (decision H5). */
+const TTL_MS = 10 * 6e4;
+/** Codes that mean the reading identity cannot read system.lakeflow (no grant, or the tables are not there). */
+const NO_ACCESS = new Set([
+	"PERMISSION_DENIED",
+	"INSUFFICIENT_PERMISSIONS",
+	"UNAUTHORIZED",
+	"TABLE_OR_VIEW_NOT_FOUND",
+	"SCHEMA_NOT_FOUND",
+	"CATALOG_NOT_FOUND"
+]);
+/**
+* The most specific code of a failed probe. The Statement API's own error_code is coarse (BAD_REQUEST, NOT_FOUND), so a
+* known code named in the message ("[INSUFFICIENT_PERMISSIONS] ...") wins; then the error's code; an HTTP 403 is PERMISSION_DENIED.
+*/
+function failure(e) {
+	const { status, code: sdkCode, message } = apiErrorParts(e);
+	const own = e?.code;
+	const named = /\[([A-Z][A-Z0-9_]+)\]/.exec(message)?.[1];
+	return {
+		code: (named && NO_ACCESS.has(named) ? named : "") || (typeof own === "string" ? own : "") || sdkCode || (status === 403 ? "PERMISSION_DENIED" : ""),
+		message
+	};
+}
+/** Why a failed system-table read falls back to the API: no access (with the code), or the warehouse's error. */
+function sqlFailureReason(e) {
+	return sqlFailure(e).reason;
+}
+/** A result over the INLINE disposition's limit (25 MiB): the same query fails the same way all day. */
+const TOO_LARGE = /INLINE|BYTE_LIMIT|too large|too big|\bsize\b/i;
+/**
+* Why a system-table read failed, and whether that lasts (finding 2c): no access, a missing table, or a result too
+* large fail the same way on every retry today; anything else (the warehouse starting, a network error) may not.
+*/
+function sqlFailure(e) {
+	const { code, message } = failure(e);
+	if (NO_ACCESS.has(code)) return {
+		reason: `no access to system.lakeflow (${code})`,
+		lasting: true
+	};
+	return {
+		reason: `warehouse error: ${message}`,
+		lasting: TOO_LARGE.test(code) || TOO_LARGE.test(message)
+	};
+}
+/** The answer `cache` already has for `key` (not one still being asked), while it is kept (10 minutes). */
+function knownProbe(cache, key, now) {
+	const hit = cache.get(key);
+	return hit && now - hit.at < TTL_MS ? hit.value : void 0;
+}
+/**
+* Can this reading identity read the system tables? Answers ok with the workspace id to filter by, or the reason the
+* app falls back to the API alone. Each user's answer (either way) is kept for 10 minutes, in `cache` when given (so a
+* probe made per request, over that request's API, shares the answers).
+*/
+function createHistoryProbe(o) {
+	const clock = o.clock ?? Date.now;
+	const timeoutMs = o.timeoutMs ?? 3e4;
+	const cache = o.cache ?? /* @__PURE__ */ new Map();
+	async function probe() {
+		const { api, config } = o;
+		if (config.off) return {
+			ok: false,
+			reason: "history off"
+		};
+		if (!config.warehouseId) return {
+			ok: false,
+			reason: "no SQL warehouse configured"
+		};
+		const dl = new Deadline(Date.now() + timeoutMs);
+		let ws = config.workspaceId ?? "";
+		if (!ws) {
+			const got = await dl.call(() => api.workspaceId()).catch(() => "");
+			if (got === TIMEOUT) return {
+				ok: false,
+				reason: "timed out"
+			};
+			ws = got;
+		}
+		if (!ws) return {
+			ok: false,
+			reason: "no workspace id"
+		};
+		try {
+			if (await runSql(api, config.warehouseId, PROBE_SQL, { ws }, dl) === TIMEOUT) return {
+				ok: false,
+				reason: "timed out"
+			};
+			return {
+				ok: true,
+				workspaceId: ws
+			};
+		} catch (e) {
+			return {
+				ok: false,
+				reason: sqlFailureReason(e)
+			};
+		}
+	}
+	return { check(userKey) {
+		const now = clock();
+		const hit = cache.get(userKey);
+		if (hit && now - hit.at < TTL_MS) return hit.result;
+		const result = probe();
+		const entry = {
+			at: now,
+			result
+		};
+		result.then((v) => entry.value = v, () => void 0);
+		cache.set(userKey, entry);
+		return result;
+	} };
+}
+
+//#endregion
+//#region server/data/systables/queries.ts
+/**
+* History queries over system.lakeflow (https://docs.databricks.com/aws/en/admin/system-tables/jobs).
+* Parameters (all sent as strings, so replay matches them exactly): :ws workspace id, :from_ts / :to_ts ISO instants
+* bounding the run start, :max_runs the history cap. Timestamps come back as epoch ms (start_ms, end_ms).
+*
+* The timeline tables slice long runs into hourly rows; result_state and termination_code are only set on the final
+* slice. Each run is aggregated over its slices and kept by its START: [from_ts, to_ts), even when it ended after
+* to_ts (ruling R8). A run whose final slice is not written yet (still running) is left out: the API's active_only read
+* covers it. Slices are read from a day before :from_ts to a day after :to_ts, which prunes the scan and keeps every
+* slice of a run that started in range (up to a day past the cutoff).
+*/
+const WINDOW = `WHERE workspace_id = :ws
+  AND period_start_time >= CAST(:from_ts AS TIMESTAMP) - INTERVAL 1 DAY
+  AND period_start_time < CAST(:to_ts AS TIMESTAMP) + INTERVAL 1 DAY`;
+const FINAL = `MAX_BY(result_state, period_end_time) IS NOT NULL`;
+/** Kept by start only: no bound on the end, so a run that crossed the cutoff and finished stays in history. */
+const STARTED_IN_RANGE = `HAVING MIN(period_start_time) >= CAST(:from_ts AS TIMESTAMP)
+  AND MIN(period_start_time) < CAST(:to_ts AS TIMESTAMP)
+  AND ${FINAL}`;
+const TIMES = `UNIX_MILLIS(MIN(period_start_time)) AS start_ms,
+  UNIX_MILLIS(MAX(period_end_time)) AS end_ms,
+  MAX_BY(result_state, period_end_time) AS result_state`;
+const JOB_RUNS_SQL = `SELECT job_id, run_id,
+  ${TIMES},
+  MAX_BY(termination_code, period_end_time) AS termination_code
+FROM system.lakeflow.job_run_timeline
+${WINDOW}
+GROUP BY job_id, run_id
+${STARTED_IN_RANGE}
+ORDER BY start_ms DESC
+LIMIT CAST(:max_runs AS INT)`;
+/** Task runs (each retry is its own run_id) of exactly the runs JOB_RUNS_SQL keeps (same parameters). */
+const TASK_RUNS_SQL = `WITH kept_runs AS (
+${JOB_RUNS_SQL}
+)
+SELECT job_id, job_run_id, run_id, task_key,
+  ${TIMES},
+  MAX_BY(termination_code, period_end_time) AS termination_code
+FROM system.lakeflow.job_task_run_timeline
+${WINDOW}
+  AND (job_id, job_run_id) IN (SELECT job_id, run_id FROM kept_runs)
+GROUP BY job_id, job_run_id, run_id, task_key
+HAVING ${FINAL}`;
+/**
+* job_tasks is SCD2: the latest row per (job_id, task_key), dropped when that row records a deletion. Only the jobs of
+* the runs JOB_RUNS_SQL keeps (same parameters), so the result stays bounded by the history window and cap.
+*/
+const TASK_DEPS_SQL = `WITH kept_runs AS (
+${JOB_RUNS_SQL}
+)
+SELECT job_id, task_key, depends_on_keys
+FROM (
+  SELECT job_id, task_key, TO_JSON(depends_on_keys) AS depends_on_keys, delete_time,
+    ROW_NUMBER() OVER (PARTITION BY job_id, task_key ORDER BY change_time DESC) AS rn
+  FROM system.lakeflow.job_tasks
+  WHERE workspace_id = :ws
+    AND job_id IN (SELECT job_id FROM kept_runs)
+)
+WHERE rn = 1 AND delete_time IS NULL`;
+const PIPELINE_UPDATES_SQL = `SELECT pipeline_id, update_id,
+  ${TIMES},
+  MAX_BY(run_as_user_name, period_end_time) AS run_as_user_name
+FROM system.lakeflow.pipeline_update_timeline
+${WINDOW}
+GROUP BY pipeline_id, update_id
+${STARTED_IN_RANGE}
+ORDER BY start_ms DESC
+LIMIT CAST(:max_runs AS INT)`;
+
+//#endregion
+//#region server/data/systables/history.ts
+/**
+* Runs that started in [from, to) from system tables: the four history queries at once, within `dl`, mapped against
+* the reading identity's items. A failing or timed-out job-runs or pipeline-updates query answers the reason instead
+* (the caller falls back to the API); a failing task-runs or dependencies query only costs the task detail (finding 2b).
+*/
+async function readHistory(o) {
+	const { api, warehouseId, dl } = o;
+	const params = {
+		ws: o.workspaceId,
+		from_ts: new Date(o.from).toISOString(),
+		to_ts: new Date(o.to).toISOString(),
+		max_runs: String(o.maxRuns)
+	};
+	const settle = (p) => p.catch((e) => sqlFailure(e));
+	const [runs, tasks, deps, updates] = await Promise.all([
+		settle(runSql(api, warehouseId, JOB_RUNS_SQL, params, dl)),
+		settle(runSql(api, warehouseId, TASK_RUNS_SQL, params, dl)),
+		settle(runSql(api, warehouseId, TASK_DEPS_SQL, params, dl)),
+		settle(runSql(api, warehouseId, PIPELINE_UPDATES_SQL, params, dl))
+	]);
+	const failed = (r) => r === TIMEOUT ? {
+		reason: "timed out",
+		lasting: false
+	} : Array.isArray(r) ? void 0 : r;
+	const lost = failed(runs) ?? failed(updates);
+	if (lost || !Array.isArray(runs) || !Array.isArray(updates)) return lost ?? {
+		reason: "timed out",
+		lasting: false
+	};
+	const noTasks = failed(tasks) ?? failed(deps);
+	try {
+		const drafts = historyDrafts({
+			runs,
+			updates,
+			...Array.isArray(tasks) ? { tasks } : {},
+			...Array.isArray(deps) ? { deps } : {}
+		}, o.items, o.host, "");
+		const updateIds = new Map(updates.map((u) => [pipelineNumber(u.update_id ?? ""), u.update_id ?? ""]));
+		const refs = [];
+		for (const d of drafts) {
+			if (d.type !== "pipeline" || !d.pipelineId) continue;
+			refs.push({
+				pipelineId: d.pipelineId,
+				updateId: updateIds.get(d.id) ?? "",
+				startTime: d.startTime,
+				info: {
+					pipelineId: d.pipelineId,
+					name: d.name,
+					continuous: d.continuous,
+					runAs: d.runAs
+				}
+			});
+		}
+		return {
+			drafts,
+			capped: runs.length >= o.maxRuns || updates.length >= o.maxRuns,
+			refs,
+			...noTasks ? { noTasks } : {}
+		};
+	} catch (e) {
+		return {
+			reason: `mapping the history failed: ${e instanceof Error ? e.message : String(e)}`,
+			lasting: false
+		};
+	}
+}
+
+//#endregion
 //#region server/data/live/liveRunSource.ts
 const DAY = 864e5;
+const HOUR = 36e5;
+/**
+* A transient history failure (the warehouse starting, a timeout) is served as the API fallback this long before it is
+* tried again (ruling R11); a lasting one (no access, no table, a result too large) until the local day ends (finding 2c).
+* A history read for an incomplete job list, or without task detail after a transient failure, is re-read after it too.
+*/
+const HISTORY_RETRY_MS = 5 * 6e4;
+/** The probe, the job list and the history read together wait at most this long next to the API (finding 3). */
+const HISTORY_BUDGET_MS = 25e3;
 const CACHE_TTL_MS = 2e4;
 const CACHE_MAX = 50;
 const BASES_MAX = 50;
@@ -235865,8 +236671,68 @@ const createLiveState = () => ({
 	pipelineRefs: /* @__PURE__ */ new Map(),
 	cache: /* @__PURE__ */ new Map(),
 	bases: /* @__PURE__ */ new Map(),
-	items: /* @__PURE__ */ new Map()
+	items: /* @__PURE__ */ new Map(),
+	history: /* @__PURE__ */ new Map(),
+	historyReads: /* @__PURE__ */ new Map(),
+	probes: /* @__PURE__ */ new Map(),
+	historyFailures: /* @__PURE__ */ new Map()
 });
+/** The history cache key (finding 4a): who reads (the app, in app mode), in which time zone, for which local day. */
+const historyKey = (readKey, tzOffsetMin, day) => `${readKey}|${tzOffsetMin ?? ""}|${day}`;
+/**
+* The access probe (H5) for this user, over their own API; answers are shared through `state`. The workspace id is
+* DATABRICKS_WORKSPACE_ID, else the SCIM header, read once per process.
+*/
+async function probeHistory(o) {
+	const { state, config } = o;
+	let workspaceId = config.workspaceId;
+	if (!workspaceId && config.enabled) {
+		const p = state.workspaceId ??= o.api.workspaceId().catch(() => "");
+		workspaceId = await p;
+		if (!workspaceId && state.workspaceId === p) state.workspaceId = void 0;
+	}
+	return createHistoryProbe({
+		api: o.api,
+		config: {
+			...config,
+			workspaceId: workspaceId || void 0
+		},
+		clock: o.clock,
+		cache: state.probes
+	}).check(o.userKey);
+}
+/** What the header says about history, from a probe answer and, when there is one, the history read (capped or partial). */
+function historyInfoOf(p, limits, hist) {
+	if (!p.ok) return {
+		source: "api",
+		days: limits.windowDays,
+		reason: p.reason
+	};
+	if (hist?.partialItems) return {
+		source: "system-tables",
+		days: limits.historyDays,
+		capped: true,
+		reason: "job list incomplete"
+	};
+	return hist?.capped ? {
+		source: "system-tables",
+		days: limits.historyDays,
+		capped: true
+	} : {
+		source: "system-tables",
+		days: limits.historyDays
+	};
+}
+/** The job and pipeline ids of a cached items list, built once per list. */
+const visibleCache = /* @__PURE__ */ new WeakMap();
+function visibleIds(items) {
+	let ids = visibleCache.get(items);
+	if (!ids) {
+		ids = new Set(items.items.map((i) => `${i.type}:${i.id}`));
+		visibleCache.set(items, ids);
+	}
+	return ids;
+}
 /** Counts calls per LiveApi method, for the `pages` diagnostic. */
 function counting(api) {
 	const counts = /* @__PURE__ */ new Map();
@@ -235907,9 +236773,26 @@ function createLiveRunSource(o) {
 		timer,
 		source: o.source
 	});
+	const readKey = o.readKey ?? o.userKey;
+	const historyBudgetMs = o.historyBudgetMs ?? HISTORY_BUDGET_MS;
+	/**
+	* Is this history draft's job or pipeline in the requester's latest cached item list (finding 5)? Checked on every
+	* list, so an item gone from the list leaves history without another SQL read. No cached list: all are kept.
+	*/
+	function visibleFilter() {
+		const items = state.items.get(o.userKey)?.data;
+		if (!items) return void 0;
+		const ids = visibleIds(items);
+		return (d) => ids.has(d.type === "job" ? `job:${d.jobId ?? ""}` : `pipeline:${d.pipelineId ?? ""}`);
+	}
 	/** Maps what was collected (a full load's lists, or a merged base) with the pure mappers; remembers pipeline refs. */
-	function mapCollected(col, now, me, host) {
+	function mapCollected(col, now, me, host, hist) {
 		const drafts = [];
+		const visible = hist && visibleFilter();
+		for (const ref of hist?.refs ?? []) if (!visible || visible({
+			type: "pipeline",
+			pipelineId: ref.pipelineId
+		})) remember(state.pipelineRefs, pipelineNumber(ref.updateId), ref, ID_MAP_MAX);
 		for (const r of col.runs) drafts.push(jobDraft(r, now, diag, host));
 		const jobRuns = drafts.length;
 		let withUpdates = 0;
@@ -235928,6 +236811,10 @@ function createLiveRunSource(o) {
 				}, ID_MAP_MAX);
 			}
 			if (any) withUpdates++;
+		}
+		if (hist) {
+			const have = new Set(drafts.map((d) => d.id));
+			for (const d of hist.drafts) if (!have.has(d.id) && (!visible || visible(d))) drafts.push(d);
 		}
 		return {
 			all: finalize(drafts, me).sort((a, b) => b.startTime - a.startTime || b.id - a.id),
@@ -235955,23 +236842,211 @@ function createLiveRunSource(o) {
 		if (now - base.fullAt >= refresh.fullRefreshMs) return `the base is older than ${refresh.fullRefreshMs}ms`;
 		return null;
 	}
-	async function fetchRuns(since, askedFull) {
-		const started = timer();
-		const now = clock();
-		o.trace?.note({
-			now,
-			limits
+	/** Can the cached history entry still be served? Not past `expires`, nor, read for a partial job list, once a complete one is cached. */
+	function fresh(e, now) {
+		if (e.expires !== void 0 && now >= e.expires) return false;
+		const items = state.items.get(o.userKey);
+		return !(e.partialItems && items && items.at > e.at);
+	}
+	/**
+	* One local day's history for this reading identity: the probe, the job list and the four queries, within `dl`.
+	* Stored on success (the identity's other days in this time zone are dropped), its failure remembered otherwise.
+	* Concurrent first lists share one read (finding 10).
+	*/
+	function readDay(key, w, now, config, hostP, dl) {
+		const inFlight = state.historyReads.get(key);
+		if (inFlight) return inFlight;
+		const read = (async () => {
+			const timedOut = {
+				reason: "timed out",
+				lasting: false
+			};
+			const itemsP = itemsSrc.listItems().catch((e) => e instanceof Error ? e : new Error(String(e)));
+			const probe = await dl.call(() => probeHistory({
+				api,
+				userKey: readKey,
+				state,
+				config,
+				clock
+			}));
+			if (probe === TIMEOUT) return timedOut;
+			o.trace?.note({ probe });
+			if (!probe.ok) return {
+				reason: probe.reason,
+				lasting: false,
+				probe: true
+			};
+			const items = await dl.call(() => itemsP);
+			if (items === TIMEOUT) return timedOut;
+			if (items instanceof Error) return {
+				reason: `the job list failed: ${apiErrorParts(items).message}`,
+				lasting: false
+			};
+			const host = await hostP;
+			const got = await readHistory({
+				api,
+				warehouseId: config.warehouseId ?? "",
+				workspaceId: probe.workspaceId,
+				from: w.historyFrom,
+				to: w.day,
+				maxRuns: limits.historyMaxRuns,
+				items: items.items,
+				host,
+				dl
+			});
+			if ("reason" in got) return got;
+			const retry = !!items.partial || !!got.noTasks && !got.noTasks.lasting;
+			return {
+				...got,
+				cutoff: w.day,
+				apiFrom: w.apiFrom,
+				historyFrom: w.historyFrom,
+				workspaceId: probe.workspaceId,
+				at: now,
+				...retry ? { expires: now + HISTORY_RETRY_MS } : {},
+				...items.partial ? { partialItems: true } : {}
+			};
+		})().catch((e) => ({
+			reason: `the history read failed: ${apiErrorParts(e).message}`,
+			lasting: false
+		})).then((out) => {
+			if ("reason" in out) {
+				if (!out.probe) remember(state.historyFailures, key, {
+					at: now,
+					until: out.lasting ? w.day + DAY : now + HISTORY_RETRY_MS,
+					reason: out.reason
+				}, BASES_MAX);
+				return out;
+			}
+			const prefix = key.slice(0, key.lastIndexOf("|") + 1);
+			for (const k of [...state.history.keys()]) if (k !== key && k.startsWith(prefix)) state.history.delete(k);
+			state.historyFailures.delete(key);
+			remember(state.history, key, out, BASES_MAX);
+			return out;
+		}).finally(() => state.historyReads.delete(key));
+		state.historyReads.set(key, read);
+		return read;
+	}
+	/**
+	* History mode (H1): today's cached history (no probe, no SQL), or, the first list of the day, the history read
+	* alongside the API (`pending`, within the history budget). Otherwise, when the probe says no or a read failed
+	* (remembered, R11 / finding 2c), the API alone over windowDays, with why.
+	*/
+	async function plan(since, now, tzOffsetMin, hostP) {
+		const apiOnly = (reason) => ({
+			from: since ?? now - limits.windowDays * DAY,
+			windowKey: since,
+			info: o.history && since === void 0 ? {
+				source: "api",
+				days: limits.windowDays,
+				...reason ? { reason } : {}
+			} : void 0
 		});
-		const from = since ?? now - limits.windowDays * DAY;
-		const c = counting(api);
-		const user = () => o.user().then((u) => {
-			o.trace?.note({ user: u });
-			return u;
+		const config = o.history;
+		if (!config || since !== void 0) return apiOnly();
+		if (!config.enabled) {
+			const probe = await probeHistory({
+				api,
+				userKey: readKey,
+				state,
+				config,
+				clock
+			});
+			o.trace?.note({ probe });
+			const reason = probe.ok ? void 0 : probe.reason;
+			diag({
+				level: "info",
+				code: "history-api",
+				message: `run history from the API: ${reason ?? "off"}`
+			});
+			return apiOnly(reason);
+		}
+		const pin = o.historyPin;
+		const w = pin ? {
+			day: pin.cutoff,
+			apiFrom: pin.apiFrom,
+			historyFrom: pin.from
+		} : cutoffs(now, tzOffsetMin, limits);
+		const key = historyKey(readKey, tzOffsetMin, w.day);
+		const cached = state.history.get(key);
+		if (cached && fresh(cached, now)) return withHistory(cached);
+		const failed = state.historyFailures.get(key);
+		if (failed && now < failed.until) {
+			if (cached) return withHistory(cached);
+			o.trace?.note({ historyFailure: {
+				cutoff: w.day,
+				reason: failed.reason,
+				until: failed.until
+			} });
+			diag({
+				level: "info",
+				code: "history-api",
+				message: `run history from the API: ${failed.reason} (failed ${Math.round((now - failed.at) / 1e3)}s ago)`
+			});
+			return apiOnly(failed.reason);
+		}
+		const known = knownProbe(state.probes, readKey, now);
+		if (known && !known.ok) {
+			o.trace?.note({ probe: known });
+			diag({
+				level: "info",
+				code: "history-api",
+				message: `run history from the API: ${known.reason}`
+			});
+			return apiOnly(known.reason);
+		}
+		const dl = new Deadline(timer() + historyBudgetMs, timer);
+		const pending = dl.call(() => readDay(key, w, now, config, hostP, dl)).then((got) => {
+			if (got === TIMEOUT) {
+				if (!state.history.has(key) && !state.historyFailures.has(key)) remember(state.historyFailures, key, {
+					at: now,
+					until: now + HISTORY_RETRY_MS,
+					reason: "timed out"
+				}, BASES_MAX);
+				return cached ? { hist: cached } : { failure: {
+					reason: "timed out",
+					lasting: false
+				} };
+			}
+			if (!("reason" in got)) return { hist: got };
+			return cached ? { hist: cached } : { failure: got };
 		});
-		const hostP = o.api.host().catch(() => "");
+		return {
+			from: w.apiFrom,
+			windowKey: `h:${w.day}`,
+			day: w.day,
+			pending
+		};
+	}
+	/** The plan next to history entry `hist`, recorded so a replay issues the same SQL and API window. */
+	function withHistory(hist) {
+		o.trace?.note({ historyPlan: {
+			cutoff: hist.cutoff,
+			apiFrom: hist.apiFrom,
+			from: hist.historyFrom,
+			to: hist.cutoff,
+			workspaceId: hist.workspaceId
+		} });
+		return {
+			from: hist.apiFrom,
+			windowKey: `h:${hist.cutoff}`,
+			day: hist.cutoff,
+			hist,
+			info: historyInfoOf({
+				ok: true,
+				workspaceId: hist.workspaceId
+			}, limits, hist)
+		};
+	}
+	/**
+	* The API part of one list for plan `p`: a delta over the requester's base when one will do, else a full load. In
+	* history mode (`p.day`) the window is today, plus what started before it and is still live or ended late (H2, R6, R10).
+	*/
+	async function collectApi(p, c, now, askedFull, hostP, user) {
+		const { from } = p;
+		const historyMode = p.day !== void 0;
 		const base = state.bases.get(o.userKey);
-		const reason = fullReason(base, since, now, askedFull);
-		let out;
+		const reason = fullReason(base, p.windowKey, now, askedFull);
 		if (base && !reason) {
 			const dl = new Deadline(timer() + limits.timeoutMs, timer);
 			try {
@@ -235984,10 +237059,11 @@ function createLiveRunSource(o) {
 						maxRuns: limits.maxRuns,
 						concurrency: limits.concurrency,
 						dl,
-						diag
+						diag,
+						keep: historyMode ? keepEarlierUpdates(base, now) : void 0
 					})
 				]);
-				const merged = mergeBase(base, d, from, limits.maxRuns);
+				const merged = mergeBase(base, d, from, limits.maxRuns, historyMode);
 				const k = merged.counts;
 				diag({
 					level: "info",
@@ -235999,15 +237075,16 @@ function createLiveRunSource(o) {
 					code: "pages",
 					message: [...c.counts].map(([key, n]) => `${key} ${n}`).join(", ") || "no calls"
 				});
-				commitBase(merged.base);
-				out = {
+				return {
 					mode: "delta",
-					...mapCollected(collectedOf(merged.base), now, me === TIMEOUT ? void 0 : me, host),
+					col: collectedOf(merged.base),
+					host,
+					me,
 					listed: k.pipelines,
 					skipped: 0,
 					capped: merged.base.capped,
 					timedOut: me === TIMEOUT,
-					me
+					commit: () => commitBase(merged.base)
 				};
 			} catch (e) {
 				diag({
@@ -236021,38 +237098,122 @@ function createLiveRunSource(o) {
 			code: "full-load",
 			message: `full load: ${reason ?? "no base yet"}`
 		});
-		if (!out) {
-			const dl = new Deadline(timer() + limits.timeoutMs, timer);
-			const [host, me, jobsR, pipesR] = await Promise.all([
-				hostP,
-				dl.call(user),
-				collectJobRuns(c.api, from, limits.maxRuns, dl),
-				collectPipelines(c.api, from, limits.concurrency, dl, diag)
-			]);
-			diag({
-				level: "info",
-				code: "pages",
-				message: [...c.counts].map(([k, n]) => `${k} ${n}`).join(", ") || "no calls"
+		const dl = new Deadline(timer() + limits.timeoutMs, timer);
+		const endAfter = historyMode && base && base.since !== p.windowKey ? p.day - limits.apiOverlapHours * HOUR : void 0;
+		const keep = historyMode ? keepEarlierUpdates(base, now, endAfter) : void 0;
+		const [host, me, jobsR, pipesR] = await Promise.all([
+			hostP,
+			dl.call(user),
+			collectJobRuns(c.api, from, limits.maxRuns, dl),
+			collectPipelines(c.api, from, limits.concurrency, dl, diag, keep)
+		]);
+		if (historyMode && !jobsR.timedOut) {
+			const have = new Set(jobsR.runs.map((r) => r.run_id ?? 0));
+			const earlier = await collectEarlier(c.api, {
+				from,
+				maxRuns: limits.maxRuns,
+				concurrency: limits.concurrency,
+				dl,
+				diag,
+				old: base,
+				endAfter,
+				have
+			}).catch((e) => {
+				if (e instanceof DeltaError) return TIMEOUT;
+				throw e;
 			});
-			const timedOut = jobsR.timedOut || pipesR.timedOut || me === TIMEOUT;
-			if (!jobsR.timedOut && !pipesR.timedOut && refresh.incremental) commitBase(baseFromFull(since, now, jobsR, pipesR));
-			out = {
-				mode: "full",
-				...mapCollected({
-					runs: jobsR.runs,
-					pipelines: pipesR.pipelines
-				}, now, me === TIMEOUT ? void 0 : me, host),
-				listed: pipesR.listed,
-				skipped: pipesR.skipped,
-				capped: jobsR.capped,
-				timedOut,
-				me
-			};
+			if (earlier === TIMEOUT) jobsR.timedOut = true;
+			else jobsR.runs.push(...earlier);
 		}
-		const { all, me } = out;
-		const runs = all.slice(0, limits.maxRuns);
+		diag({
+			level: "info",
+			code: "pages",
+			message: [...c.counts].map(([k, n]) => `${k} ${n}`).join(", ") || "no calls"
+		});
+		const timedOut = jobsR.timedOut || pipesR.timedOut || me === TIMEOUT;
+		const commit = () => {
+			if (!jobsR.timedOut && !pipesR.timedOut && refresh.incremental) commitBase(baseFromFull(p.windowKey, now, jobsR, pipesR));
+		};
+		return {
+			mode: "full",
+			col: {
+				runs: jobsR.runs,
+				pipelines: pipesR.pipelines
+			},
+			host,
+			me,
+			listed: pipesR.listed,
+			skipped: pipesR.skipped,
+			capped: jobsR.capped,
+			timedOut,
+			commit
+		};
+	}
+	async function fetchRuns(since, askedFull, tzOffsetMin) {
+		const started = timer();
+		const now = clock();
+		o.trace?.note({
+			now,
+			limits
+		});
+		const c = counting(api);
+		const user = () => o.user().then((u) => {
+			o.trace?.note({ user: u });
+			return u;
+		});
+		const hostP = o.api.host().catch(() => "");
+		let p = await plan(since, now, tzOffsetMin, hostP);
+		let part = collectApi(p, c, now, askedFull, hostP, user);
+		let { hist, info } = p;
+		if (p.pending) {
+			part.catch(() => void 0);
+			const got = await p.pending;
+			if ("hist" in got) {
+				hist = got.hist;
+				info = withHistory(hist).info;
+				diag({
+					level: "info",
+					code: "history-read",
+					message: `${hist.drafts.length} runs from system tables before ${new Date(hist.cutoff).toISOString()}${hist.capped ? ` (cap ${limits.historyMaxRuns} hit)` : ""}${hist.partialItems ? " (job list incomplete)" : ""}${hist.noTasks ? ` (no task detail: ${hist.noTasks.reason})` : ""}`
+				});
+			} else if (got.failure.reason === "timed out") {
+				diag({
+					level: "warn",
+					code: "history-failed",
+					message: `run history from the API: timed out after ${historyBudgetMs}ms`
+				});
+				info = {
+					source: "api",
+					days: Math.max(1, Math.ceil((now - p.from) / DAY)),
+					reason: "timed out"
+				};
+			} else {
+				const { reason, probe } = got.failure;
+				diag({
+					level: probe ? "info" : "warn",
+					code: probe ? "history-api" : "history-failed",
+					message: `run history from the API: ${reason}`
+				});
+				p = {
+					from: now - limits.windowDays * DAY,
+					windowKey: void 0,
+					info: {
+						source: "api",
+						days: limits.windowDays,
+						reason
+					}
+				};
+				part = collectApi(p, c, now, askedFull, hostP, user);
+				info = p.info;
+			}
+		}
+		const out = await part;
+		out.commit();
+		const { me } = out;
+		const { all, jobRuns, withUpdates } = mapCollected(out.col, now, me === TIMEOUT ? void 0 : me, out.host, hist);
+		const runs = hist ? all : all.slice(0, limits.maxRuns);
 		const capped = out.capped || all.length > runs.length;
-		const counts = `returned ${runs.length} of ${all.length} (job runs ${out.jobRuns}, pipeline updates ${all.length - out.jobRuns}, pipelines ${out.withUpdates} with updates / ${out.listed} listed, ${out.skipped} skipped)`;
+		const counts = `returned ${runs.length} of ${all.length} (job runs ${jobRuns}, pipeline updates ${all.length - jobRuns}, pipelines ${withUpdates} with updates / ${out.listed} listed, ${out.skipped} skipped)`;
 		if (capped) diag({
 			level: "warn",
 			code: "cap-hit",
@@ -236064,17 +237225,22 @@ function createLiveRunSource(o) {
 			message: `timeout ${limits.timeoutMs}ms hit${me === TIMEOUT ? " (user name not resolved)" : ""}; ${counts}`
 		});
 		if (capped || out.timedOut || out.skipped) warn(`[live] runs list cut short:${capped ? ` cap ${limits.maxRuns} hit;` : ""}${out.timedOut ? ` timeout ${limits.timeoutMs}ms hit;` : ""} ${counts}`);
-		const info = {
+		const refreshInfo = {
 			mode: out.mode,
 			calls: [...c.counts.values()].reduce((a, b) => a + b, 0),
 			ms: Math.max(0, Math.round(timer() - started))
 		};
-		o.trace?.note({ refresh: info });
+		o.trace?.note({ refresh: refreshInfo });
+		const history = info && (capped && !info.capped ? {
+			...info,
+			capped: true
+		} : info);
 		return {
 			asOf: now,
 			source: o.source ?? "live",
 			runs,
-			refresh: info
+			refresh: refreshInfo,
+			...history ? { history } : {}
 		};
 	}
 	/** A pipeline's WARN and ERROR events since `from`, oldest first, up to 8 pages. */
@@ -236249,8 +237415,8 @@ function createLiveRunSource(o) {
 				throw toSourceError(e, true);
 			}
 		},
-		async listRuns(since, _tzOffsetMin, opts = {}) {
-			const key = `${o.userKey}|${since ?? ""}`;
+		async listRuns(since, tzOffsetMin, opts = {}) {
+			const key = `${o.userKey}|${since ?? ""}|${tzOffsetMin ?? ""}`;
 			const hit = state.cache.get(key);
 			if (hit && !opts.full && clock() - hit.at < CACHE_TTL_MS) {
 				o.trace?.note({ now: hit.data.asOf });
@@ -236263,7 +237429,7 @@ function createLiveRunSource(o) {
 			}
 			let data;
 			try {
-				data = await fetchRuns(since, !!opts.full);
+				data = await fetchRuns(since, !!opts.full, tzOffsetMin);
 			} catch (e) {
 				throw toSourceError(e);
 			}
@@ -236283,6 +237449,20 @@ function createLiveRunSource(o) {
 				throw toSourceError(e, true);
 			}
 		}
+	};
+}
+
+//#endregion
+//#region server/data/systables/config.ts
+function readHistoryConfig(env) {
+	const warehouseId = env.DATABRICKS_WAREHOUSE_ID || void 0;
+	const workspaceId = env.DATABRICKS_WORKSPACE_ID || void 0;
+	const off = (env.JOBS_CONSOLE_HISTORY ?? "").trim().toLowerCase() === "off";
+	return {
+		warehouseId,
+		workspaceId,
+		off,
+		enabled: !off && !!warehouseId
 	};
 }
 
@@ -236321,6 +237501,7 @@ function createLiveProvider(env, deps = { makeApi: createSdkApi }) {
 	const limits = readLimits(env);
 	const refresh = readRefresh(env);
 	const auth = readAuthMode(env);
+	const historyConfig = readHistoryConfig(env);
 	const state = createLiveState();
 	let shared;
 	const defaultChain = () => {
@@ -236341,7 +237522,8 @@ function createLiveProvider(env, deps = { makeApi: createSdkApi }) {
 			return {
 				api: d.api,
 				user: email ? () => Promise.resolve(email) : d.user,
-				userKey: email ?? "app"
+				userKey: email ?? "app",
+				readKey: "app"
 			};
 		}
 		if (token) {
@@ -236353,7 +237535,8 @@ function createLiveProvider(env, deps = { makeApi: createSdkApi }) {
 			return {
 				api,
 				user: email ? () => Promise.resolve(email) : userNameOf(api),
-				userKey
+				userKey,
+				readKey: userKey
 			};
 		}
 		if (env.NODE_ENV === "development") {
@@ -236361,7 +237544,8 @@ function createLiveProvider(env, deps = { makeApi: createSdkApi }) {
 			return {
 				api: d.api,
 				user: d.user,
-				userKey: "dev"
+				userKey: "dev",
+				readKey: "dev"
 			};
 		}
 		return {
@@ -236375,7 +237559,24 @@ function createLiveProvider(env, deps = { makeApi: createSdkApi }) {
 		limits,
 		refresh,
 		state,
+		historyConfig,
 		identify,
+		async history(req) {
+			const id = identify(req);
+			if ("error" in id) return void 0;
+			if (!historyConfig.enabled) return historyInfoOf(await probeHistory({
+				api: id.api,
+				userKey: id.readKey,
+				state,
+				config: historyConfig,
+				clock: deps.clock
+			}), limits);
+			const known = knownProbe(state.probes, id.readKey, (deps.clock ?? Date.now)());
+			if (!known) return void 0;
+			let hist;
+			for (const [k, e] of state.history) if (k.startsWith(`${id.readKey}|`) && (!hist || e.at > hist.at)) hist = e;
+			return historyInfoOf(known, limits, hist);
+		},
 		forRequest(req, trace) {
 			const id = identify(req);
 			if ("error" in id) return id;
@@ -236385,7 +237586,8 @@ function createLiveProvider(env, deps = { makeApi: createSdkApi }) {
 				limits,
 				refresh,
 				clock: deps.clock,
-				trace
+				trace,
+				history: historyConfig
 			});
 		}
 	};
@@ -236395,9 +237597,15 @@ function createLiveProvider(env, deps = { makeApi: createSdkApi }) {
 //#region server/data/capture/captureFile.ts
 const CAPTURE_FORMAT = "jobs-console-capture";
 const CAPTURE_VERSION = 1;
+/** Besides JOBS_CONSOLE_*: the host, and the warehouse and workspace the history SQL ran with (replay matches them exactly). */
+const CONFIG_KEYS = new Set([
+	"DATABRICKS_HOST",
+	"DATABRICKS_WAREHOUSE_ID",
+	"DATABRICKS_WORKSPACE_ID"
+]);
 function captureConfig(env, authMode) {
 	const out = {};
-	for (const [k, v] of Object.entries(env).sort(([a], [b]) => a.localeCompare(b))) if (v !== void 0 && (k.startsWith("JOBS_CONSOLE_") || k === "DATABRICKS_HOST")) out[k] = v;
+	for (const [k, v] of Object.entries(env).sort(([a], [b]) => a.localeCompare(b))) if (v !== void 0 && (k.startsWith("JOBS_CONSOLE_") || CONFIG_KEYS.has(k))) out[k] = v;
 	out.authMode = authMode;
 	return out;
 }
@@ -236491,7 +237699,12 @@ const METHODS = [
 	"getUpdate",
 	"listPipelineEvents",
 	"listJobs",
-	"getJob"
+	"getJob",
+	"executeStatement",
+	"getStatement",
+	"getStatementChunk",
+	"cancelStatement",
+	"workspaceId"
 ];
 /** JSON with object keys sorted and undefined dropped, so equal requests give equal strings. */
 function canon(v) {
@@ -236502,12 +237715,16 @@ function canon(v) {
 	};
 	return JSON.stringify(norm(v ?? {}));
 }
+/** SQL is answered only by a recording of the same statement text, parameters and warehouse (decision H10). */
+const EXACT_ONLY = new Set(["executeStatement"]);
 /** Args that name what a call is about; a fallback that agrees on these is much nearer than one that doesn't. */
 const IDENTITY = new Set([
 	"page_token",
 	"pipeline_id",
 	"run_id",
-	"update_id"
+	"update_id",
+	"statement_id",
+	"chunk_index"
 ]);
 function nearness(want, have) {
 	let score = 0;
@@ -236529,7 +237746,8 @@ function sdkError(r) {
 }
 /**
 * LiveApi answered from recorded calls. Exact match on method + canonical args, the preferred session first, each
-* recorded answer served in order (the last one repeats). Otherwise the nearest same-method call, with a diagnostic.
+* recorded answer served in order (the last one repeats). Otherwise the nearest same-method call, with a diagnostic
+* (never for SQL statements: those miss).
 * A call cut off by the time budget when it was recorded is left unanswered, so the budget cuts it again.
 */
 function createReplayApi(sessions, preferred, diag, host = "") {
@@ -236577,6 +237795,17 @@ function createReplayApi(sessions, preferred, diag, host = "") {
 			const c = slot.calls[Math.min(slot.next, slot.calls.length - 1)];
 			slot.next++;
 			return answer(c);
+		}
+		if (EXACT_ONLY.has(method)) {
+			diag({
+				level: "warn",
+				code: "replay-miss",
+				message: `${method} ${canon(args)} was not recorded with these exact parameters; answering not found`
+			});
+			return Promise.reject(Object.assign(/* @__PURE__ */ new Error(`Replay: no recorded ${method} call for ${canon(args)}`), {
+				statusCode: 404,
+				errorCode: "RESOURCE_DOES_NOT_EXIST"
+			}));
 		}
 		const listed = fromList(method, args);
 		if (listed !== void 0) {
@@ -236651,6 +237880,11 @@ const sinceOf = (s) => {
 	const raw = s.query.since;
 	return typeof raw === "string" && /^\d+$/.test(raw) ? Number(raw) : void 0;
 };
+/** The recorded request's tzOffset: it sets the history cutoff, so the replayed SQL parameters match the recording. */
+const tzOf = (s) => {
+	const raw = s.query.tzOffset;
+	return typeof raw === "string" && /^-?\d+$/.test(raw) ? Number(raw) : void 0;
+};
 /**
 * JOBS_CONSOLE_DATA=replay: the live source over a ReplayApi, frozen at the replayed session's asOf, with the limits it
 * ran with. Every request acts as the recorded user.
@@ -236667,6 +237901,28 @@ function createReplayProvider(env, deps = {}) {
 	const user = session.user ?? file.workspace.user ?? "";
 	const state = createLiveState();
 	const f = file;
+	const history = readHistoryConfig(f.config);
+	/**
+	* The access probe answers as it did for `s`: its recorded answer (possibly a cached one, with no call recorded), else
+	* ok when it listed next to history (a cached day skips the probe).
+	*/
+	const seed = (s) => {
+		const probe = s.probe ?? (s.historyPlan ? {
+			ok: true,
+			workspaceId: s.historyPlan.workspaceId
+		} : void 0);
+		if (probe) state.probes.set("replay", {
+			at: s.now ?? s.startedAt,
+			result: Promise.resolve(probe),
+			value: probe
+		});
+		const f = s.historyFailure;
+		if (f) state.historyFailures.set(historyKey("replay", tzOf(s), f.cutoff), {
+			at: s.now ?? s.startedAt,
+			until: f.until,
+			reason: f.reason
+		});
+	};
 	const sourceFor = (s, mode) => {
 		const now = s.now ?? s.startedAt;
 		return createLiveRunSource({
@@ -236679,19 +237935,26 @@ function createReplayProvider(env, deps = {}) {
 			timer: Date.now,
 			warn: (m) => warn(`[replay] ${m}`),
 			source: "replay",
-			mode
+			mode,
+			history,
+			historyPin: s.historyPlan
 		});
 	};
 	const chain = baseChain(file, session);
 	if (session.refresh?.mode === "delta" && !chain.length) warn(`[replay] ${session.id} was a delta but the capture has no full load before it; replaying it as a full load`);
 	let primed;
 	const prime = () => primed ??= (async () => {
-		for (const s of chain) await sourceFor(s, s.refresh?.mode).listRuns(sinceOf(s), void 0, { full: s.refresh?.mode === "full" }).catch(() => void 0);
+		for (const s of chain) {
+			seed(s);
+			await sourceFor(s, s.refresh?.mode).listRuns(sinceOf(s), tzOf(s), { full: s.refresh?.mode === "full" }).catch(() => void 0);
+		}
+		seed(session);
 	})();
+	seed(session);
 	const inner = sourceFor(session, chain.length ? session.refresh?.mode : void 0);
 	const source = {
 		kind: inner.kind,
-		listRuns: (since, tz, opts) => prime().then(() => inner.listRuns(since, tz, opts)),
+		listRuns: (since, _tz, opts) => prime().then(() => inner.listRuns(since, tzOf(session), opts)),
 		getRun: (id, tz) => prime().then(() => inner.getRun(id, tz)),
 		taskLog: (id, task, hint) => prime().then(() => inner.taskLog(id, task, hint)),
 		listItems: () => prime().then(() => inner.listItems()),
@@ -236700,12 +237963,15 @@ function createReplayProvider(env, deps = {}) {
 	const auth = file.config.authMode === "app" ? "app" : "user";
 	const now = session.now ?? session.startedAt;
 	warn(`[replay] ${file.sessions.length} sessions in the capture; replaying ${session.id} (${session.route}, asOf ${new Date(now).toISOString()}, user ${user || "unknown"}${chain.length ? `, a delta over ${chain.map((s) => s.id).join(" -> ")}` : ""})`);
+	const limits = session.limits ?? readLimits(file.config);
+	const recorded = session.responseSummary?.history ?? (session.probe ? historyInfoOf(session.probe, limits) : void 0);
 	return {
 		kind: "replay",
 		auth,
 		session,
 		file,
-		forRequest: () => source
+		forRequest: () => source,
+		history: () => Promise.resolve(recorded)
 	};
 }
 
@@ -236750,11 +238016,13 @@ const summarize = (status, body) => {
 		for (const r of runs) out[String(r[key])] = (out[String(r[key])] ?? 0) + 1;
 		return out;
 	};
+	const history = body.history;
 	return {
 		status,
 		runCount: runs.length,
 		byKind: count("kind"),
-		byType: count("type")
+		byType: count("type"),
+		...history ? { history } : {}
 	};
 };
 /** One app request's worth of recorded calls and diagnostics. Plugs into a live source as its Trace. */
@@ -236780,6 +238048,9 @@ var Session = class {
 		else this.rec.droppedDiagnostics = (this.rec.droppedDiagnostics ?? 0) + 1;
 	}
 	note(meta) {
+		if (meta.probe !== void 0) this.rec.probe = { ...meta.probe };
+		if (meta.historyPlan !== void 0) this.rec.historyPlan = { ...meta.historyPlan };
+		if (meta.historyFailure !== void 0) this.rec.historyFailure = { ...meta.historyFailure };
 		if (meta.refresh !== void 0) this.rec.refresh = { ...meta.refresh };
 		if (meta.now !== void 0) this.rec.now = meta.now;
 		if (meta.user !== void 0) this.rec.user = meta.user;
@@ -237066,7 +238337,9 @@ async function runSweep(o) {
 	const { session } = o;
 	const endAt = timer() + o.timeoutMs;
 	const limits = {
+		...DEFAULT_LIMITS,
 		windowDays: o.days,
+		historyDays: o.days,
 		maxRuns: Number.MAX_SAFE_INTEGER,
 		timeoutMs: o.timeoutMs,
 		concurrency: o.concurrency,
@@ -237085,7 +238358,9 @@ async function runSweep(o) {
 			diag: (n) => session.diag(n),
 			note: (m) => session.note(m),
 			wrap: (a) => a
-		}
+		},
+		history: o.history,
+		historyBudgetMs: o.timeoutMs
 	});
 	const res = await source.listRuns();
 	await source.listItems().catch(() => void 0);
@@ -237242,7 +238517,8 @@ function registerDiag(app, deps) {
 				session,
 				days,
 				...sweepLimits,
-				concurrency: provider.limits.concurrency
+				concurrency: provider.limits.concurrency,
+				history: provider.historyConfig
 			});
 			store.add(session.finish({
 				status: 200,
@@ -237281,6 +238557,42 @@ function registerNoDiag(app) {
 }
 
 //#endregion
+//#region server/api/gzip.ts
+/** Bodies smaller than this go out as they are: gzip would barely shrink them. */
+const MIN_BYTES = 1024;
+/** Does an Accept-Encoding header allow gzip (gzip or *, with a q-value above 0)? */
+function acceptsGzip(header) {
+	return (Array.isArray(header) ? header.join(",") : header ?? "").split(",").some((part) => {
+		const [name, ...params] = part.trim().toLowerCase().split(";");
+		if (name.trim() !== "gzip" && name.trim() !== "*") return false;
+		const q = params.map((p) => /^\s*q=([\d.]+)\s*$/.exec(p)?.[1]).find((v) => v !== void 0);
+		return q === void 0 || Number(q) > 0;
+	});
+}
+/**
+* Sends `body` as JSON with `status`, like res.status().json(), gzipped when the request accepts it (finding 4b): a
+* history-sized runs list is megabytes of JSON. Node's own zlib, off the event loop's critical path.
+*/
+function sendJson(req, res, status, body) {
+	const json = JSON.stringify(body) ?? "";
+	res.status(status);
+	res.vary("Accept-Encoding");
+	res.setHeader("Content-Type", "application/json; charset=utf-8");
+	if (Buffer.byteLength(json) < MIN_BYTES || !acceptsGzip(req.headers["accept-encoding"])) {
+		res.send(json);
+		return;
+	}
+	gzip(json, (err, zipped) => {
+		if (err) {
+			res.send(json);
+			return;
+		}
+		res.setHeader("Content-Encoding", "gzip");
+		res.send(zipped);
+	});
+}
+
+//#endregion
 //#region server/server.ts
 const provider = selectRunSource(process.env);
 const live = provider.kind === "live" ? provider : void 0;
@@ -237308,8 +238620,11 @@ const header = (req, name) => {
 	const v = req.headers[name];
 	return (Array.isArray(v) ? v[0] : v) || void 0;
 };
-/** Resolves the request's RunSource (live: as the signed-in user, recorded) and sends the handler's result. */
-function serve(req, res, next, route, handle) {
+/**
+* Resolves the request's RunSource (live: as the signed-in user, recorded) and sends the handler's result; `gzipped`:
+* compressed when the browser accepts it (the runs and items lists, megabytes at 10k items and 90 days of history).
+*/
+function serve(req, res, next, route, handle, gzipped = false) {
 	const session = live && store ? new Session({
 		id: newSessionId(),
 		route,
@@ -237338,7 +238653,8 @@ function serve(req, res, next, route, handle) {
 				error
 			}));
 		}
-		res.status(result.status).json(result.body);
+		if (gzipped) sendJson(req, res, result.status, result.body);
+		else res.status(result.status).json(result.body);
 	}).catch((e) => {
 		if (session) store?.add(session.finish({
 			status: 500,
@@ -237390,14 +238706,20 @@ createApp({
 	onPluginsReady(appkit) {
 		appkit.server.extend((app) => {
 			app.get("/api/mode", (req, res, next) => {
-				Promise.all([workspace ??= monitoredWorkspace(), identity(header(req, "x-forwarded-email"))]).then(([ws, who]) => res.json({
+				const history = provider.history ? provider.history(req).catch(() => void 0) : Promise.resolve(void 0);
+				Promise.all([
+					workspace ??= monitoredWorkspace(),
+					identity(header(req, "x-forwarded-email")),
+					history
+				]).then(([ws, who, h]) => res.json({
 					...mode,
 					...ws,
-					...who
+					...who,
+					...h ? { history: h } : {}
 				})).catch(next);
 			});
 			app.get("/api/runs", (req, res, next) => {
-				serve(req, res, next, "/api/runs", (source) => listRuns(source, req.query));
+				serve(req, res, next, "/api/runs", (source) => listRuns(source, req.query), true);
 			});
 			app.get("/api/runs/:id", (req, res, next) => {
 				serve(req, res, next, "/api/runs/:id", (source) => getRun(source, req.params.id, req.query));
@@ -237406,7 +238728,7 @@ createApp({
 				serve(req, res, next, "/api/runs/:id/log", (source) => taskLog(source, req.params.id, req.query));
 			});
 			app.get("/api/items", (req, res, next) => {
-				serve(req, res, next, "/api/items", (source) => listItems(source, req.query));
+				serve(req, res, next, "/api/items", (source) => listItems(source, req.query), true);
 			});
 			app.get("/api/items/:type/:id", (req, res, next) => {
 				serve(req, res, next, "/api/items/:type/:id", (source) => getItem(source, req.params.type, req.params.id));

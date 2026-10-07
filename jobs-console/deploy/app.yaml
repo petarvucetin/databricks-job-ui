@@ -9,3 +9,6 @@ env:
   # `user` (per-user token) stays in the code for when Databricks adds those scopes.
   - name: JOBS_CONSOLE_AUTH
     value: app
+  # Run history from system tables: the warehouse bound by the sql-warehouse resource in databricks.yml.
+  - name: DATABRICKS_WAREHOUSE_ID
+    valueFrom: sql-warehouse
