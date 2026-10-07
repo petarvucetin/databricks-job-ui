@@ -44,7 +44,7 @@ describe('AttentionView', () => {
 
   it('initialQuery widens the window and filters; initialRunId opens the drawer', () => {
     render(<AttentionView data={data} loadedAt={asOf} initialQuery="gl_load" initialRunId={1} />);
-    expect((screen.getByPlaceholderText('search job, task, run id, cause, error')).value).toBe('gl_load');
+    expect(screen.getByDisplayValue('gl_load')).toBe(screen.getByPlaceholderText('search job, task, run id, cause, error'));
     expect(screen.getByRole('dialog')).toBeTruthy();
   });
 
