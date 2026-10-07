@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { memo, type ReactNode } from 'react';
 import type { Item, Run } from '../../../shared/domain/types';
 import { dur } from '../../../shared/domain/format';
 import type { ItemsState } from '../hooks/useItems';
@@ -47,8 +47,11 @@ function StartsCell({ item, range, scale }: { item: Item; range: Range; scale: S
   );
 }
 
-/** One line per job or pipeline: type tag, name, trigger pill, and a right-hand cell (last run, or starts). */
-export function ItemRow({ item, now, selected, onSelect, right }: { item: Item; now: number; selected: string | null; onSelect: (key: string | null) => void; right: ReactNode }) {
+/**
+ * One line per job or pipeline: type tag, name, trigger pill, and a right-hand cell (last run, or starts). Memoized: up to
+ * 300 rows sit under views that re-render often (the Load chart's hover).
+ */
+export const ItemRow = memo(function ItemRow({ item, now, selected, onSelect, right }: { item: Item; now: number; selected: string | null; onSelect: (key: string | null) => void; right: ReactNode }) {
   const { prefix, rest: bare } = splitName(item.name);
   const pill = pillOf(item, now);
   const key = itemKey(item);
@@ -60,7 +63,7 @@ export function ItemRow({ item, now, selected, onSelect, right }: { item: Item; 
       {right}
     </div>
   );
-}
+});
 
 /** The Jobs & ETL list: one line per job or pipeline, at most 300 rows. */
 export function ItemList({ load, rows, total, range, scale, runs, now, selected, onSelect, view, onView, filters, onClearFilters }: {

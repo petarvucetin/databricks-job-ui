@@ -45,7 +45,10 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
   const { ticks, top } = niceTicks(maxR);
 
   const [sel, setSel] = useState<{ a: number; b: number } | null>(null);
-  const [hover, setHover] = useState<{ i: number; x: number; y: number } | null>(null);
+  /** The hovered sample; the pointer position lives in `pointer` so moving within one sample renders nothing. */
+  const [hover, setHover] = useState<{ i: number } | null>(null);
+  const pointer = useRef({ x: 0, y: 0 });
+  const hoverI = useRef<number | null>(null);
   const [drag, setDrag] = useState<{ lo: number; hi: number } | null>(null);
   const dragFrom = useRef<At | null>(null);
   const plotRef = useRef<HTMLDivElement>(null);
@@ -58,14 +61,25 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
     return { f, i: Math.round(f * N), t: from + f * span };
   };
 
-  // The tooltip follows the pointer and stays inside the window.
-  useLayoutEffect(() => {
+  // The tooltip follows the pointer and stays inside the window: placed through its ref, not state.
+  const placeTip = () => {
     const tip = tipRef.current;
-    if (!tip || !hover) return;
+    if (!tip) return;
     const r = tip.getBoundingClientRect();
-    tip.style.left = `${Math.min(hover.x + 14, window.innerWidth - r.width - 8)}px`;
-    tip.style.top = `${Math.min(hover.y + 16, window.innerHeight - r.height - 8)}px`;
-  }, [hover]);
+    tip.style.left = `${Math.min(pointer.current.x + 14, window.innerWidth - r.width - 8)}px`;
+    tip.style.top = `${Math.min(pointer.current.y + 16, window.innerHeight - r.height - 8)}px`;
+  };
+  useLayoutEffect(placeTip, [hover]);
+  const onMouseMove = (e: { clientX: number; clientY: number }) => {
+    pointer.current = { x: e.clientX, y: e.clientY };
+    const i = at(e.clientX).i;
+    // Same sample: no state update at all, only the tooltip moves.
+    if (hoverI.current !== i) {
+      hoverI.current = i;
+      setHover({ i });
+    }
+    placeTip();
+  };
 
   const onPointerDown = (e: RPointerEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -105,22 +119,22 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
   for (let t = Math.ceil(from / H) * H; t <= to; t += H) if (new Date(t).getHours() % every === 0) xt.push(t);
 
   // Tooltip: the time, the number running, the starts in the next sample, the top 5 groups, and the estimates.
-  let tip: string[] | null = null;
-  let hoverN = 0;
-  if (hover) {
-    const t = from + hover.i * step;
-    hoverN = running[hover.i] ?? 0;
+  const hi = hover?.i ?? null;
+  const hoverN = hi === null ? 0 : running[hi] ?? 0;
+  const tip = useMemo(() => {
+    if (hi === null) return null;
+    const t = from + hi * step;
     const going = lr.filter((r) => r.start <= t && r.end > t);
     const g = new Map<string, number>();
     for (const r of going) g.set(groupOf(r.item), (g.get(groupOf(r.item)) ?? 0) + 1);
     const est = new Set(going.filter((r) => r.estimated).map((r) => r.item)).size;
     const topG = [...g.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
-    tip = [
+    return [
       ...topG.map(([k, v]) => `${k}  ${fmtN(v)}`),
       ...(g.size > 5 ? [`+${g.size - 5} more groups`] : []),
       ...(est ? [`(runtimes estimated for ${est} jobs)`] : []),
     ];
-  }
+  }, [lr, hi, from, step]);
 
   const selList = useMemo(() => (sel ? runningIn(lr, sel.a, sel.b) : null), [lr, sel]);
   const startList = useMemo(
@@ -128,36 +142,40 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
     [items, from, to, sel],
   );
 
-  let meta;
-  let rows;
-  let more = null;
-  if (selList && sel) {
-    meta = <><b>{fmtN(selList.length)}</b> jobs running between {when(sel.a)} and {when(sel.b)}</>;
-    rows = selList.slice(0, CAP).map(({ item, runs: rs }) => (
-      <ItemRow
-        key={itemKey(item)}
-        item={item}
-        now={now}
-        selected={selected}
-        onSelect={onSelect}
-        right={<span className="starts">{rs.slice(0, 2).map((r) => `${when(r.start)}–${hhmm(r.end)}`).join(' · ')}{rs.length > 2 ? ` +${rs.length - 2}` : ''}</span>}
-      />
-    ));
-    if (selList.length > CAP) more = `+${fmtN(selList.length - CAP)} more — narrow the selection or filter by type, scope, tags or name`;
-  } else {
-    meta = <>{fmtN(startList.length)} scheduled to start in range, by first start</>;
-    rows = startList.slice(0, CAP).map(({ it, f }) => (
-      <ItemRow
-        key={itemKey(it)}
-        item={it}
-        now={now}
-        selected={selected}
-        onSelect={onSelect}
-        right={<span className="starts">⏱ {f.slice(0, 3).map(when).join(' · ')}{f.length > 3 ? ` +${f.length - 3}` : ''}</span>}
-      />
-    ));
-    if (startList.length > CAP) more = `+${fmtN(startList.length - CAP)} more — drag across the chart or filter to narrow`;
-  }
+  // Memoized so hovering the chart (which re-renders this view) leaves the rows alone.
+  const { meta, rows, more } = useMemo(() => {
+    const when = (t: number) => whenAt(t, scale);
+    if (selList && sel) {
+      return {
+        meta: <><b>{fmtN(selList.length)}</b> jobs running between {when(sel.a)} and {when(sel.b)}</>,
+        rows: selList.slice(0, CAP).map(({ item, runs: rs }) => (
+          <ItemRow
+            key={itemKey(item)}
+            item={item}
+            now={now}
+            selected={selected}
+            onSelect={onSelect}
+            right={<span className="starts">{rs.slice(0, 2).map((r) => `${when(r.start)}–${hhmm(r.end)}`).join(' · ')}{rs.length > 2 ? ` +${rs.length - 2}` : ''}</span>}
+          />
+        )),
+        more: selList.length > CAP ? `+${fmtN(selList.length - CAP)} more — narrow the selection or filter by type, scope, tags or name` : null,
+      };
+    }
+    return {
+      meta: <>{fmtN(startList.length)} scheduled to start in range, by first start</>,
+      rows: startList.slice(0, CAP).map(({ it, f }) => (
+        <ItemRow
+          key={itemKey(it)}
+          item={it}
+          now={now}
+          selected={selected}
+          onSelect={onSelect}
+          right={<span className="starts">⏱ {f.slice(0, 3).map(when).join(' · ')}{f.length > 3 ? ` +${f.length - 3}` : ''}</span>}
+        />
+      )),
+      more: startList.length > CAP ? `+${fmtN(startList.length - CAP)} more — drag across the chart or filter to narrow` : null,
+    };
+  }, [selList, sel, startList, scale, now, selected, onSelect]);
 
   return (
     <div className="list">
@@ -180,8 +198,11 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
           <div
             className="ld-plot"
             ref={plotRef}
-            onMouseMove={(e) => setHover({ i: at(e.clientX).i, x: e.clientX, y: e.clientY })}
-            onMouseLeave={() => setHover(null)}
+            onMouseMove={onMouseMove}
+            onMouseLeave={() => {
+              hoverI.current = null;
+              setHover(null);
+            }}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
@@ -196,7 +217,7 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
             {now >= from && now < to && <div className="ld-now" style={{ left: `${pc(now)}%` }}><span>now</span></div>}
             {sel && <div className="ld-sel" style={{ left: `${pc(sel.a)}%`, width: `${pc(sel.b) - pc(sel.a)}%` }} />}
             {drag && <div className="ld-drag" style={{ left: `${drag.lo * 100}%`, width: `${(drag.hi - drag.lo) * 100}%` }} />}
-            {hover && <div className="ld-x" style={{ left: `${(hover.i / N) * 100}%` }}><i style={{ bottom: `${(hoverN / top) * 100}%` }} /></div>}
+            {hi !== null && <div className="ld-x" style={{ left: `${(hi / N) * 100}%` }}><i style={{ bottom: `${(hoverN / top) * 100}%` }} /></div>}
           </div>
         </div>
         <div className="ld-xa">
@@ -210,9 +231,9 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
         {rows}
         {more && <div className="list-note">{more}</div>}
       </div>
-      {hover && tip && (
+      {hi !== null && tip && (
         <div className="tip" ref={tipRef}>
-          <b>{when(from + hover.i * step)}</b> · {fmtN(hoverN)} running · {fmtN(startsIn[Math.min(hover.i, N - 1)] ?? 0)} start in the next {step / 60e3} min
+          <b>{when(from + hi * step)}</b> · {fmtN(hoverN)} running · {fmtN(startsIn[Math.min(hi, N - 1)] ?? 0)} start in the next {step / 60e3} min
           {tip.map((line) => `\n${line}`).join('')}
         </div>
       )}
