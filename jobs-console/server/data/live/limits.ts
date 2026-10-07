@@ -54,7 +54,10 @@ export function readRefresh(env: Record<string, string | undefined>): RefreshSet
   return out;
 }
 
-export function readLimits(env: Record<string, string | undefined>): LiveLimits {
+/** The clamp warning is given once per process (readLimits runs for the provider and for every replay). */
+let clampWarned = false;
+
+export function readLimits(env: Record<string, string | undefined>, warn: (msg: string) => void = (m) => console.warn(m)): LiveLimits {
   const out = { ...DEFAULT_LIMITS };
   for (const key of Object.keys(ENV) as (keyof LiveLimits)[]) {
     const raw = env[ENV[key]];
@@ -62,6 +65,10 @@ export function readLimits(env: Record<string, string | undefined>): LiveLimits 
     if (!/^\d+$/.test(raw) || Number(raw) < 1) throw new Error(`${ENV[key]} must be a positive integer, got "${raw}"`);
     out[key] = Number(raw);
   }
-  out.historyDays = Math.min(out.historyDays, MAX_HISTORY_DAYS);
+  if (out.historyDays > MAX_HISTORY_DAYS) {
+    if (!clampWarned) warn(`${ENV.historyDays}=${out.historyDays} is more than ${MAX_HISTORY_DAYS}; using ${MAX_HISTORY_DAYS}`);
+    clampWarned = true;
+    out.historyDays = MAX_HISTORY_DAYS;
+  }
   return out;
 }

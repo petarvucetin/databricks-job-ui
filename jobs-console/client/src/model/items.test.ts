@@ -141,6 +141,20 @@ describe('pipelines credited to the jobs that start them', () => {
     expect(filterItems(list, { ...F, query: 'by job' }, null, now).map((i) => i.id)).toEqual(['cp4']);
   });
 
+  it('a continuous pipeline, paused or not, is never credited: Unscheduled, no starts, its own pill (R15)', () => {
+    const now = Date.UTC(2026, 9, 6, 16, 16);
+    for (const paused of [false, true]) {
+      const own = base({ type: 'pipeline', id: `own${paused}`, name: 'stream', trigger: 'continuous', paused });
+      const p = pipe(`cc${paused}`, [daily], { name: 'stream', trigger: 'continuous', paused });
+      const list = [daily, p, own];
+      linkStarters(list);
+      expect(isOnTimeline(p)).toBe(false);
+      expect(startsOf(p, Date.UTC(2026, 9, 7, 1), Date.UTC(2026, 9, 7, 3))).toEqual([]);
+      expect(pillOf(p, now)).toEqual(pillOf(own, now));
+      expect(triggerCounts(list)).toEqual({ any: 3, sched: 1, unsched: 2 });
+    }
+  });
+
   it('a type filter of Pipelines keeps the credited starts (the jobs are linked from the full list)', () => {
     const p = pipe('cp5', [daily]);
     const list = [daily, p];

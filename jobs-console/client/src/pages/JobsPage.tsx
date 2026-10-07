@@ -62,7 +62,10 @@ export function JobsPage({ data, active, onSeeRuns, onOpenRun }: { data: RunsDat
     if (!active) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setSelected(null);
-      const typing = /^(INPUT|SELECT|TEXTAREA)$/.test((e.target as HTMLElement | null)?.tagName ?? '') || e.ctrlKey || e.metaKey || e.altKey;
+      const el = e.target as HTMLElement | null;
+      // isContentEditable, or an editable ancestor where the DOM doesn't compute it (jsdom).
+      const editable = !!el && (el.isContentEditable || !!el.closest?.('[contenteditable]:not([contenteditable="false"])'));
+      const typing = /^(INPUT|SELECT|TEXTAREA)$/.test(el?.tagName ?? '') || editable || e.ctrlKey || e.metaKey || e.altKey;
       if (typing) return;
       const k = e.key.toLowerCase();
       if (k === 't') setTlCollapsed((c) => !c);

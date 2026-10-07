@@ -159,7 +159,7 @@ describe('JobsPage', () => {
 
     const plot = document.querySelector('.ld-plot')!;
     fireEvent.mouseMove(plot, { clientX: 0, clientY: 0 });
-    expect(document.querySelector('.tip')!.textContent).toBe('16:00 · 3 running: 2 jobs · 1 pipelines · 1 start in the next 5 min\nprod / no prefix  3\n(runtimes estimated for 1 jobs)');
+    expect(document.querySelector('.tip')!.textContent).toBe('16:00 · 3 running: 2 jobs · 1 pipelines · 1 start in the next 5 min\nprod / no prefix  3\n(runtimes estimated for 1 items)');
     expect(document.querySelector('.ld-x')).not.toBeNull();
     fireEvent.mouseLeave(plot);
     expect(document.querySelector('.tip')).toBeNull();
@@ -315,6 +315,14 @@ describe('JobsPage', () => {
     fireEvent.keyDown(input, { key: 't' });
     fireEvent.keyDown(input, { key: 'd' });
     fireEvent.keyDown(document.querySelector('.sortsel select')!, { key: 'd' });
+    // A contenteditable region (and anything inside it) is typing too.
+    const editor = document.createElement('div');
+    editor.setAttribute('contenteditable', 'true');
+    editor.innerHTML = '<span>x</span>';
+    document.body.appendChild(editor);
+    fireEvent.keyDown(editor, { key: 't' });
+    fireEvent.keyDown(editor.firstChild!, { key: 'd' });
+    editor.remove();
     fireEvent.keyDown(document, { key: 't', ctrlKey: true });
     fireEvent.keyDown(document, { key: 'd', metaKey: true });
     fireEvent.keyDown(document, { key: 'd', altKey: true });

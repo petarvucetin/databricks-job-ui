@@ -145,7 +145,7 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
     return [
       ...topG.map(([k, v]) => `${k}  ${fmtN(v)}`),
       ...(g.size > 5 ? [`+${g.size - 5} more groups`] : []),
-      ...(est ? [`(runtimes estimated for ${est} jobs)`] : []),
+      ...(est ? [`(runtimes estimated for ${est} items)`] : []),
     ];
   }, [lr, hi, from, step]);
   const hoverJ = hi === null ? 0 : runningJobs[hi] ?? 0;
@@ -206,7 +206,7 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
           <b>Running at once</b>
           <span className="ld-key"><i className="kj" />jobs <i className="kp" />pipelines</span>
           <span>
-            from schedules and typical runtimes · pipelines count when a scheduled job starts them{contN ? `, continuous ones (${fmtN(contN)}) run the whole time` : ''} · peak <b>{fmtN(maxR)}</b> at {when(from + peak * step)}
+            from schedules and typical runtimes · pipelines count when a scheduled job starts them{contN ? `, continuous ones (${fmtN(contN)}) run the whole time` : ''} · {onChart ? <>peak <b>{fmtN(maxR)}</b> at {when(from + peak * step)}</> : 'Nothing on the chart'}
           </span>
           {sel
             ? <button type="button" className="ld-clear" onClick={() => setSel(null)}>clear selection ✕</button>

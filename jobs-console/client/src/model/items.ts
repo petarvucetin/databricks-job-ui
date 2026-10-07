@@ -83,9 +83,12 @@ export function linkStarters(items: Item[]): void {
   }
 }
 
-/** The starting jobs (in the list, linked by linkStarters) that have starts of their own: what a pipeline is credited with. */
+/**
+ * The starting jobs (in the list, linked by linkStarters) that have starts of their own: what a pipeline is credited with.
+ * A continuous pipeline, paused or not, is never credited (R15): it runs all the time, or not at all.
+ */
 function creditedBy(item: Item): Item[] {
-  const by = item.type === 'pipeline' ? startersCache.get(item) : undefined;
+  const by = item.type === 'pipeline' && item.trigger !== 'continuous' ? startersCache.get(item) : undefined;
   return by?.length ? by.filter(hasOwnStarts) : [];
 }
 

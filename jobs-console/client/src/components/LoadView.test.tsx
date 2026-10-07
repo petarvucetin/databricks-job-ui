@@ -99,8 +99,21 @@ describe('LoadView: jobs and pipelines stacked, continuous pipelines, items not 
     fireEvent.mouseMove(document.querySelector('.ld-plot')!, { clientX: 0, clientY: 0 });
     // every_five 15:55–16:05 and 16:00–16:10 (10-minute estimate), the same for the credited pipeline, the continuous one
     expect(document.querySelector('.tip')!.textContent).toBe(
-      '16:00 · 5 running: 2 jobs · 3 pipelines · 2 start in the next 5 min\nprod / no prefix  5\n(runtimes estimated for 2 jobs)',
+      '16:00 · 5 running: 2 jobs · 3 pipelines · 2 start in the next 5 min\nprod / no prefix  5\n(runtimes estimated for 2 items)',
     );
+  });
+
+  it('a continuous pipeline a scheduled job starts runs the whole time, not at the job\'s starts; paused, it is not on the chart (R15)', () => {
+    const contByJob = base({ id: 'cj', type: 'pipeline', name: 'stream_by_job', trigger: 'continuous', startedBy: [{ jobId: 'e', jobName: 'every_five' }] });
+    const { unmount } = show([every5, contByJob]);
+    expect(right('cj')).toBe('running the whole time');
+    expect(document.querySelector('.list-meta')!.textContent).toContain('1 scheduled to start in range, by first start · 1 continuous');
+    fireEvent.mouseMove(document.querySelector('.ld-plot')!, { clientX: 0, clientY: 0 });
+    expect(document.querySelector('.tip')!.textContent).toMatch(/^16:00 · 3 running: 2 jobs · 1 pipelines/);
+    unmount();
+    show([every5, { ...contByJob, paused: true }]);
+    expect(ids()).toEqual(['e', 'OFF', 'cj']);
+    expect(right('cj')).toBe('no start times');
   });
 
   it('continuous first ("running the whole time"), then by first start, then the items not on the chart', () => {
@@ -135,6 +148,7 @@ describe('LoadView: jobs and pipelines stacked, continuous pipelines, items not 
   it('nothing with start times: an empty chart, "Nothing on the chart", the section capped at 200', () => {
     show(Array.from({ length: 201 }, (_, i) => base({ id: `m${i}`, name: `adhoc_${i}` })));
     expect(document.querySelectorAll('.ld-plot svg polygon, .ld-plot svg polyline')).toHaveLength(0);
+    expect(document.querySelector('.ld-key ~ span')!.textContent).toBe('from schedules and typical runtimes · pipelines count when a scheduled job starts them · Nothing on the chart');
     expect(document.querySelector('.list-meta')!.textContent).toContain('Nothing on the chart · nothing here has fixed start times, so the chart is empty');
     expect(document.querySelector('.ld-off')!.textContent).toContain('Not on the chart · 201 with no fixed start times');
     expect(document.querySelectorAll('.ld-list .ir')).toHaveLength(200);

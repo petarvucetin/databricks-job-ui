@@ -120,6 +120,7 @@ export function createLiveItems(o: LiveItemsOptions): { listItems: () => Promise
           }
           for (const j of page.jobs ?? []) {
             const item = jobItem(j, me, host);
+            // expand_tasks returns at most the first 100 tasks of a job (API limit): a pipeline task past those is not credited.
             items.push(item);
             for (const pid of new Set((j.settings?.tasks ?? []).map((t) => t.pipeline_task?.pipeline_id).filter((x): x is string => !!x))) {
               const list = starters.get(pid) ?? [];

@@ -15,4 +15,8 @@ describe('readHistoryConfig', () => {
     expect(readHistoryConfig({ DATABRICKS_WAREHOUSE_ID: 'wh1', JOBS_CONSOLE_HISTORY: 'off' })).toMatchObject({ off: true, enabled: false });
     expect(readHistoryConfig({ DATABRICKS_WAREHOUSE_ID: 'wh1', JOBS_CONSOLE_HISTORY: 'on' }).enabled).toBe(true);
   });
+
+  it('accepts off in any case, with spaces around it', () => {
+    for (const v of ['OFF', 'Off', ' off ', 'off\n']) expect(readHistoryConfig({ DATABRICKS_WAREHOUSE_ID: 'wh1', JOBS_CONSOLE_HISTORY: v })).toMatchObject({ off: true, enabled: false });
+  });
 });

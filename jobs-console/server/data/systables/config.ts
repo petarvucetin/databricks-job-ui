@@ -10,6 +10,6 @@ export interface HistoryConfig {
 export function readHistoryConfig(env: Record<string, string | undefined>): HistoryConfig {
   const warehouseId = env.DATABRICKS_WAREHOUSE_ID || undefined;
   const workspaceId = env.DATABRICKS_WORKSPACE_ID || undefined;
-  const off = env.JOBS_CONSOLE_HISTORY === 'off';
+  const off = (env.JOBS_CONSOLE_HISTORY ?? '').trim().toLowerCase() === 'off';
   return { warehouseId, workspaceId, off, enabled: !off && !!warehouseId };
 }

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { DEFAULT_LIMITS, readLimits, readRefresh } from './limits';
 
 describe('readRefresh', () => {
@@ -21,7 +21,13 @@ describe('readLimits', () => {
 
   it('reads the history limits and clamps the days to 365', () => {
     expect(readLimits({ JOBS_CONSOLE_HISTORY_DAYS: '30', JOBS_CONSOLE_HISTORY_MAX_RUNS: '500', JOBS_CONSOLE_API_OVERLAP_HOURS: '6' })).toMatchObject({ historyDays: 30, historyMaxRuns: 500, apiOverlapHours: 6 });
-    expect(readLimits({ JOBS_CONSOLE_HISTORY_DAYS: '1000' }).historyDays).toBe(365);
+    const warn = vi.fn();
+    expect(readLimits({ JOBS_CONSOLE_HISTORY_DAYS: '1000' }, warn).historyDays).toBe(365);
+    expect(warn).toHaveBeenCalledWith('JOBS_CONSOLE_HISTORY_DAYS=1000 is more than 365; using 365');
+    // Once per process: replays read the limits again.
+    expect(readLimits({ JOBS_CONSOLE_HISTORY_DAYS: '500' }, warn).historyDays).toBe(365);
+    expect(readLimits({ JOBS_CONSOLE_HISTORY_DAYS: '365' }, warn).historyDays).toBe(365);
+    expect(warn).toHaveBeenCalledTimes(1);
   });
 
   it('rejects non-positive or non-integer values', () => {
