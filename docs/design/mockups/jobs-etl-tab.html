@@ -292,6 +292,20 @@ button { font: inherit; color: inherit; }
 .hc.sel { outline: 2px solid var(--ink); outline-offset: 1px; }
 .tl-foot .leg { display: inline-flex; align-items: center; gap: 2px; }
 .tl-foot .leg i { width: 14px; height: 10px; border-radius: 2px; }
+
+.ld-key { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--ink-2) !important; }
+.ld-key i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; margin-left: 6px; }
+.ld-key i.kj { background: #eadfce; border: 1.5px solid #9c8462; }
+.ld-key i.kp { background: #ddd3f3; border: 1.5px solid #6a4fb0; }
+.tl-min { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 8px 14px; }
+.tl-min .tl-span { grid-column: 2; font-size: 15px; font-weight: 500; color: var(--ink); }
+.tl-min .tl-key { grid-column: 3; justify-self: end; font-size: 11px; color: var(--ink-3); }
+.ld-off { padding: 10px 16px 6px; font-size: 11.5px; color: var(--ink-3); background: var(--paper); border-bottom: 1px solid var(--rule); border-top: 1px solid var(--rule); }
+.ld-offr { color: var(--ink-3); font-style: italic; }
+kbd { display: inline-block; min-width: 14px; padding: 0 4px; margin-left: 6px; border: 1px solid #d9cfc2; border-bottom-width: 2px; border-radius: 3px; background: var(--sheet); font-family: var(--mono); font-size: 10px; line-height: 14px; color: var(--ink-3); text-align: center; }
+.vsw button.on kbd { border-color: #e2c27e; color: var(--amber-ink); }
+.tl-hint { font-size: 11px; color: var(--ink-3); }
+.tl-hint kbd, .tl-key kbd { margin: 0 3px 0 0; }
 </style>
 </head>
 <body>
@@ -312,6 +326,7 @@ button { font: inherit; color: inherit; }
     <label class="search">⌕ <input id="q" placeholder="Name tokens or job / pipeline ID — e.g. coretables mfg"></label>
     <div class="vr"></div>
     <div class="seg" id="typeSeg"></div>
+    <div class="seg" id="schedSeg"></div>
     <div class="vr"></div>
     <div class="seg" id="scopeSeg"></div>
     <div class="fm">
@@ -361,6 +376,7 @@ items.push(mk({ type: 'job', id: '610448190', prefix: '', name: 'ops_cluster_cos
 items.push(mk({ type: 'job', id: '610449033', prefix: '', name: 'weekly_vacuum_optimize_aiges', runAs: SP, creator: 'data.platform@agency.gov', tags: { project: 'aiges', env: 'prod' }, bundle: 'prod', desc: 'VACUUM + OPTIMIZE on aiges schemas', hist: hist(6), tasks: [['optimize', 'SQL', ''], ['vacuum', 'SQL', 'optimize']] }));
 
 // Schedules (Quartz cron in the real data: settings.schedule.quartz_cron_expression + timezone_id; mock uses three shapes).
+const VIA = {};
 const SCHED = {
   'aiges_ingest_sap_backfill_sys_bic_ngc_dwh_edw_ca_cvg_ct_ecc_stxl_stxh_dev': { daily: [2, 0] },
   'Run All Backfill Jobs Sequentially': { daily: [16, 25] },
@@ -390,9 +406,15 @@ const SCHED = {
     SCHED[nm] = shapes[(i * 7) % shapes.length];
   }
 })();
+// Triggered pipelines started by a scheduled job's pipeline task inherit that job's start times (+10 min).
+['mfg_op','md0','ca0','fin0'].forEach((s) => {
+  const job = SCHED[`aiges_ingest_sap_sap_erp1_edw_core_tables_${s}_dev`];
+  if (job) { SCHED[`raw_bronze_sap_sap_erp1_edw_core_tables_${s}_dev`] = { every: job.every, at: job.at + 10 }; VIA[`raw_bronze_sap_sap_erp1_edw_core_tables_${s}_dev`] = `aiges_ingest_sap_sap_erp1_edw_core_tables_${s}_dev`; }
+});
 const pad = (n) => String(n).padStart(2, '0');
 items.forEach((it) => {
   it.sched = SCHED[it.name] || null;
+  it.via = VIA[it.name] || null;
   const s = it.sched;
   if (s?.daily) it.trigger = `Every day at ${pad(s.daily[0])}:${pad(s.daily[1])}`;
   else if (s?.weekly) it.trigger = `Every Sunday at ${pad(s.weekly[1])}:${pad(s.weekly[2])}`;
@@ -427,7 +449,7 @@ const ago = (t) => { const m = Math.round((NOW - t) / 60e3); return m < 60 ? `${
 const last = (it) => it.hist[it.hist.length - 1];
 const isSP = (s) => /^[0-9a-f-]{36}$/.test(s);
 
-const st = { tab: 'jobs', q: '', type: 'all', scope: 'all', tags: new Set(), sort: 'name', sel: null, view: 'ok', lv: 'list', lsel: null, scale: 'hour', win: null, cube: null };
+const st = { tab: 'jobs', q: '', type: 'all', scope: 'all', tags: new Set(), sched2: 'all', tlMin: false, sort: 'name', sel: null, view: 'ok', lv: 'list', lsel: null, scale: 'hour', win: null, cube: null };
 
 /* ---- schedule timeline ---- */
 function buckets() {
@@ -456,6 +478,13 @@ function renderSched() {
   if (st.view !== 'ok') { sched.innerHTML = ''; sched.hidden = true; return; }
   sched.hidden = false;
   const bks = buckets(), w = winOf(bks);
+  if (st.tlMin) {
+    const f0 = bks[w.a].start, t0 = bks[w.b - 1].end;
+    sched.className = 'tl tl-min';
+    sched.innerHTML = `<span class="tl-span">${st.scale === 'hour' && new Date(f0).getDate() !== new Date(t0).getDate() ? dayName(f0) + ' ' : ''}${when(f0)} to ${st.scale === 'hour' && new Date(f0).getDate() !== new Date(t0).getDate() ? dayName(t0) + ' ' : ''}${when(t0)}, ${spanText(t0 - f0)}${narrowed(bks) ? ' · schedule filter on' : ''}</span><span class="tl-key"><kbd>T</kbd> expand</span>`;
+    return;
+  }
+  sched.className = 'tl';
   // counts use the other filters (type, scope, tags, search) but not the schedule window itself
   const pool = filtered(true);
   const counts = bks.map((bk) => ({ job: 0, pipeline: 0, ...pool.reduce((c, it) => { c[it.type] = (c[it.type] || 0) + fires(it, bk.start, bk.end).length; return c; }, {}) }));
@@ -466,7 +495,7 @@ function renderSched() {
   const unsched = pool.filter((it) => !it.sched).length;
   sched.innerHTML = `
     <div class="tl-head-row">
-      <span class="tl-t">Scheduled starts by ${st.scale}</span>
+      <span class="tl-t">Scheduled starts by ${st.scale}</span><span class="tl-hint"><kbd>T</kbd> collapse</span>
       <span class="tl-scale">${['hour', 'day'].map((s) => `<button data-scale="${s}" class="${st.scale === s ? 'on' : ''}">${s}</button>`).join('')}</span>
       <span class="tl-span"><b>${new Date(from).getDate() !== new Date(to).getDate() && st.scale === 'hour' ? dayName(from) + ' ' : ''}${when(from)}</b> to <b>${new Date(from).getDate() !== new Date(to).getDate() && st.scale === 'hour' ? dayName(to) + ' ' : ''}${when(to)}</b>, ${spanText(to - from)} · your local time</span>
       <span class="tl-presets">${presets.map(([k, l, pa, pb]) => `<button data-pa="${pa}" data-pb="${pb}" class="${!st.cube && w.a === pa && w.b === pb ? 'on' : ''}">${l}</button>`).join('')}</span>
@@ -504,6 +533,8 @@ function filtered(ignoreSched) {
   let out = items.filter((it) => {
     if (sr && (sr.type && it.type !== sr.type || !fires(it, sr.from, sr.to).length)) return false;
     if (st.type !== 'all' && it.type !== st.type) return false;
+    if (st.sched2 === 'sched' && !it.sched) return false;
+    if (st.sched2 === 'unsched' && it.sched) return false;
     if (st.scope === 'mine' && it.runAs !== ME && it.creator !== ME) return false;
     if (st.scope === 'deployed' && !isSP(it.runAs)) return false;
     for (const t of st.tags) { const [k, v] = t.split(':'); if (it.tags[k] !== v) return false; }
@@ -522,6 +553,8 @@ const count = (pred) => items.filter(pred).length;
 function renderBar() {
   const types = [['all', 'All', items.length], ['job', 'Jobs', count((i) => i.type === 'job')], ['pipeline', 'Pipelines', count((i) => i.type === 'pipeline')]];
   typeSeg.innerHTML = types.map(([k, l, n]) => `<button data-k="${k}" class="${st.type === k ? 'on' : ''}">${l}<i>${n}</i></button>`).join('');
+  const sk = [['all', 'Any trigger', items.length], ['sched', 'Scheduled', count((i) => !!i.sched)], ['unsched', 'Unscheduled', count((i) => !i.sched)]];
+  schedSeg.innerHTML = sk.map(([k, l, n]) => `<button data-k="${k}" class="${st.sched2 === k ? 'on' : ''}">${l}<i>${n}</i></button>`).join('');
   const scopes = [['mine', 'Mine', count((i) => i.runAs === ME || i.creator === ME)], ['deployed', 'Deployed', count((i) => isSP(i.runAs))], ['all', 'All', items.length]];
   scopeSeg.innerHTML = scopes.map(([k, l, n]) => `<button data-k="${k}" class="${st.scope === k ? 'on' : ''}">${l}<i>${n}</i></button>`).join('');
   const pairs = {};
@@ -641,20 +674,30 @@ function loadRange() {
 
 function renderLoad(vsw) {
   const { from, to } = loadRange(), span = to - from;
-  const pool = filtered(true).filter((it) => it.sched);
+  const all = filtered(true);
+  const pool = all.filter((it) => it.sched);
   const runs = [];
   for (const it of pool) { const d = typical(it) * 1e3; for (const t of fires(it, from - 24 * H, to)) if (t + d > from) runs.push({ it, t, end: t + d }); }
+  for (const it of all) if (it.type === 'pipeline' && it.continuous && !it.sched) runs.push({ it, t: from - 24 * H, end: to + 24 * H, always: true });
   const S = runs.map((r) => r.t).sort((a, b) => a - b), E = runs.map((r) => r.end).sort((a, b) => a - b);
+  const pr = runs.filter((r) => r.it.type === 'pipeline');
+  const SPp = pr.map((r) => r.t).sort((a, b) => a - b), EP = pr.map((r) => r.end).sort((a, b) => a - b);
   const step = span <= 26 * H ? 5 * 60e3 : 30 * 60e3, N = Math.round(span / step);
   const running = Array.from({ length: N + 1 }, (_, i) => { const t = from + i * step; return countLE(S, t) - countLE(E, t); });
+  const runningP = Array.from({ length: N + 1 }, (_, i) => { const t = from + i * step; return countLE(SPp, t) - countLE(EP, t); });
+  const runningJ = running.map((n, i) => n - runningP[i]);
   const startsIn = Array.from({ length: N }, (_, i) => countLE(S, from + (i + 1) * step - 1) - countLE(S, from + i * step - 1));
   const maxR = Math.max(1, ...running);
   const tick = niceStep(maxR / 4), yMax = Math.ceil(maxR / tick) * tick;
   const peakI = running.indexOf(maxR);
-  window._ld = { from, to, step, N, running, startsIn, runs, yMax };
+  window._ld = { from, to, step, N, running, runningJ, runningP, startsIn, runs, yMax };
 
   const W = 1000, Ht = 200, x = (i) => (i / N) * W, y = (n) => Ht - (n / yMax) * Ht;
   const pts = running.map((n, i) => `${x(i)},${y(n)}`).join(' ');
+  const ptsJ = runningJ.map((n, i) => `${x(i)},${y(n)}`).join(' ');
+  const ptsJrev = runningJ.map((n, i) => `${x(i)},${y(n)}`).reverse().join(' ');
+  const hasJ = runningJ.some((n) => n > 0), hasP = runningP.some((n) => n > 0);
+  const contN = runs.filter((r) => r.always).length;
   const yt = []; for (let v = 0; v <= yMax; v += tick) yt.push(v);
   const pc = (t) => ((t - from) / span) * 100;
   const xt = [];
@@ -663,7 +706,7 @@ function renderLoad(vsw) {
   const sel = st.lsel;
   const chart = `
     <div class="ld">
-      <div class="ld-head"><b>Scheduled jobs running at once</b><span>from each job's schedule and its typical runtime · peak <b>${fmtN(maxR)}</b> at ${when(from + peakI * step)} · ${fmtN(pool.length)} scheduled items · ${fmtN(runs.length)} runs in range</span>
+      <div class="ld-head"><b>Running at once</b><span class="ld-key"><i class="kj"></i>jobs <i class="kp"></i>pipelines</span><span>from schedules and typical runtimes · pipelines count when a scheduled job starts them${contN ? `, continuous ones (${contN}) run the whole time` : ''} · peak <b>${fmtN(maxR)}</b> at ${when(from + peakI * step)}</span>
         ${sel ? `<button class="ld-clear" id="ldClear">clear selection ✕</button>` : '<span class="ld-hint">drag across the chart to list the jobs running then</span>'}</div>
       <div class="ld-body">
         <div class="ld-y">${yt.map((v) => `<span style="bottom:${(v / yMax) * 100}%">${fmtN(v)}</span>`).join('')}</div>
@@ -671,8 +714,10 @@ function renderLoad(vsw) {
           ${yt.map((v) => `<div class="ld-grid" style="bottom:${(v / yMax) * 100}%"></div>`).join('')}
           ${xt.map((t) => `<div class="ld-vgrid" style="left:${pc(t)}%"></div>`).join('')}
           <svg viewBox="0 0 ${W} ${Ht}" preserveAspectRatio="none">
-            <polygon points="0,${Ht} ${pts} ${W},${Ht}" fill="#f8e4bd"/>
-            <polyline points="${pts}" fill="none" stroke="#c07a0c" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+            ${hasJ ? `<polygon points="0,${Ht} ${ptsJ} ${W},${Ht}" fill="#eadfce"/>` : ''}
+            ${hasP ? `<polygon points="${pts} ${ptsJrev}" fill="#ddd3f3"/>` : ''}
+            ${hasJ ? `<polyline points="${ptsJ}" fill="none" stroke="#9c8462" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>` : ''}
+            ${hasP ? `<polyline points="${pts}" fill="none" stroke="#6a4fb0" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>` : ''}
           </svg>
           ${NOW >= from && NOW < to ? `<div class="ld-now" style="left:${pc(NOW)}%"><span>now</span></div>` : ''}
           ${sel ? `<div class="ld-sel" style="left:${pc(sel.a)}%;width:${pc(sel.b) - pc(sel.a)}%"></div>` : ''}
@@ -690,16 +735,23 @@ function renderLoad(vsw) {
     const hit = runs.filter((r) => r.t < sel.b && r.end > sel.a).sort((a, b) => a.t - b.t);
     const by = new Map(); for (const r of hit) { if (!by.has(r.it)) by.set(r.it, []); by.get(r.it).push(r); }
     const list = [...by.entries()];
-    meta = `<b>${fmtN(list.length)}</b> jobs running between ${when(sel.a)} and ${when(sel.b)}`;
+    meta = `<b>${fmtN(list.length)}</b> jobs and pipelines running between ${when(sel.a)} and ${when(sel.b)}`;
     rowsHtml = list.slice(0, CAP).map(([it, rs]) => loadRow(it, `${rs.slice(0, 2).map((r) => `${when(r.t)}–${hhmm(r.end)}`).join(' · ')}${rs.length > 2 ? ` +${rs.length - 2}` : ''}`)).join('')
       + (list.length > CAP ? `<div class="gt-note">+${fmtN(list.length - CAP)} more — narrow the selection or filter by type, scope, tags or name</div>` : '');
   } else {
     const list = pool.map((it) => ({ it, f: fires(it, from, to) })).filter((x) => x.f.length).sort((a, b) => a.f[0] - b.f[0]);
-    meta = `${fmtN(list.length)} scheduled to start in range, by first start`;
-    rowsHtml = list.slice(0, CAP).map(({ it, f }) => loadRow(it, `⏱ ${f.slice(0, 3).map(when).join(' · ')}${f.length > 3 ? ` +${f.length - 3}` : ''}`)).join('')
+    const cont = all.filter((it) => it.type === 'pipeline' && it.continuous && !it.sched);
+    meta = list.length ? `${fmtN(list.length)} scheduled to start in range, by first start${cont.length ? ` · ${cont.length} continuous` : ''}` : `${cont.length ? `${cont.length} continuous on the chart` : 'Nothing on the chart'}`;
+    rowsHtml = cont.map((it) => loadRow(it, '<span class="ld-offr">running the whole time</span>')).join('');
+    rowsHtml += list.slice(0, CAP).map(({ it, f }) => loadRow(it, `⏱ ${f.slice(0, 3).map(when).join(' · ')}${f.length > 3 ? ` +${f.length - 3}` : ''}`)).join('')
       + (list.length > CAP ? `<div class="gt-note">+${fmtN(list.length - CAP)} more — drag across the chart or filter to narrow</div>` : '');
   }
-  return `<div class="list-meta"><span>${meta}</span>${vsw}</div>${chart}<div class="ld-list">${rowsHtml}</div>`;
+  const off = all.filter((it) => !it.sched && !(it.type === 'pipeline' && it.continuous));
+  const offHtml = off.length ? `<div class="ld-off">Not on the chart · ${fmtN(off.length)} with no fixed start times (manual, triggered by a file or a table, paused, or a pipeline no scheduled job starts)</div>`
+    + off.slice(0, CAP).map((it) => loadRow(it, `<span class="ld-offr">no start times</span>`)).join('')
+    + (off.length > CAP ? `<div class="gt-note">+${fmtN(off.length - CAP)} more</div>` : '') : '';
+  const onChart = runs.length > 0;
+  return `<div class="list-meta"><span>${meta}${!onChart && off.length ? ` · nothing here has fixed start times, so the chart is empty` : ''}</span>${vsw}</div>${chart}<div class="ld-list">${rowsHtml}${offHtml}</div>`;
 }
 function loadRow(it, right) {
   return `<div class="ir ${st.sel === it.id ? 'on' : ''}" data-id="${it.id}" title="${it.prefix}${it.name}">
@@ -726,7 +778,7 @@ document.addEventListener('mousemove', (e) => {
   const now = L.runs.filter((r) => r.t <= t && r.end > t);
   const g = new Map(); for (const r of now) g.set(groupOf(r.it), (g.get(groupOf(r.it)) || 0) + 1);
   const top = [...g.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
-  tip.innerHTML = `<b>${when(t)}</b> · ${fmtN(n)} running · ${fmtN(L.startsIn[Math.min(i, L.N - 1)] || 0)} start in the next ${L.step / 60e3} min` +
+  tip.innerHTML = `<b>${when(t)}</b> · ${fmtN(n)} running: ${fmtN(L.runningJ[i])} jobs · ${fmtN(L.runningP[i])} pipelines · ${fmtN(L.startsIn[Math.min(i, L.N - 1)] || 0)} start in the next ${L.step / 60e3} min` +
     (top.length ? `\n${top.map(([k, v]) => `${k}  ${fmtN(v)}`).join('\n')}${g.size > 5 ? `\n+${g.size - 5} more groups` : ''}` : '');
   tip.style.display = 'block';
   const r = tip.getBoundingClientRect();
@@ -783,6 +835,7 @@ function trgPill(it) {
   else if (s?.every) { cls = 'sched'; txt = s.every < 60 ? `every ${s.every}m` : s.every === 60 ? `hourly · :${pad(s.at)}` : `every ${s.every / 60}h · ${pad(Math.floor(s.at / 60))}:${pad(s.at % 60)}`; }
   else if (it.continuous) { cls = 'cont'; txt = 'continuous'; }
   else if (/launched by|by a job/i.test(it.trigger)) txt = 'by a job';
+  if (it.via) return `<span class="trg ${cls}" title="Started by the pipeline task of ${it.via}">⏱ ${txt} · by job</span>`;
   return `<span class="trg ${cls}" title="${it.trigger}">${cls === 'sched' ? '⏱ ' : ''}${txt}</span>`;
 }
 
@@ -845,7 +898,7 @@ function renderList() {
   const rows = st.view === 'empty' ? [] : filtered();
   if (!rows.length) { list.innerHTML = `<div class="state"><p>No job or pipeline matches.</p><p class="sub">“${st.q || 'zz_nothing'}” · ${st.type === 'all' ? 'all types' : st.type + 's'} · ${st.scope}</p><button id="clr">Clear filters</button></div>`; return; }
   const sr = schedRange();
-  const vsw = `<span class="vsw">${['list', 'load'].map((v) => `<button data-lv="${v}" class="${st.lv === v ? 'on' : ''}">${{ list: 'List', load: 'Load' }[v]}</button>`).join('')}</span>`;
+  const vsw = `<span class="vsw">${['list', 'load'].map((v) => `<button data-lv="${v}" class="${st.lv === v ? 'on' : ''}" title="${v === 'list' ? 'List (L)' : 'Load (D)'}">${{ list: 'List', load: 'Load' }[v]}<kbd>${v === 'list' ? 'L' : 'D'}</kbd></button>`).join('')}</span>`;
   if (st.lv === 'load') { list.innerHTML = renderLoad(vsw); return; }
   list.innerHTML = `<div class="list-meta"><span>${rows.length} of ${items.length} · ${sr ? `scheduled to start ${when(sr.from)}–${when(sr.to)}${sr.type ? ` (${sr.type}s)` : ''}` : 'last-run marks use the Runs window (last 7 days)'}</span>${vsw}</div>` + rows.slice(0, 300).map((it) => `
     <div class="ir ${st.sel === it.id ? 'on' : ''}" data-id="${it.id}" title="${it.prefix}${it.name}">
@@ -926,6 +979,7 @@ function goRuns(it) {
 
 tabs.onclick = (e) => { const t = e.target.closest('button')?.dataset.tab; if (t) { st.tab = t; runsFilter.innerHTML = ''; history.replaceState(null, '', t === 'jobs' ? '?tab=jobs' : '?tab=runs'); render(); } };
 typeSeg.onclick = (e) => { const k = e.target.closest('button')?.dataset.k; if (k) { st.type = k; render(); } };
+schedSeg.onclick = (e) => { const k = e.target.closest('button')?.dataset.k; if (k) { st.sched2 = k; render(); } };
 scopeSeg.onclick = (e) => { const k = e.target.closest('button')?.dataset.k; if (k) { st.scope = k; render(); } };
 q.oninput = () => { st.q = q.value; render(); };
 sort.onchange = () => { st.sort = sort.value; render(); };
@@ -946,7 +1000,13 @@ document.querySelector('.mock-sw').onclick = (e) => { const s = e.target.dataset
 /** View and data scale survive a refresh. */
 function syncHash() { const h = [st.lv !== 'list' ? st.lv : '', sc10k.classList.contains('on') ? '10k' : ''].filter(Boolean).join(','); history.replaceState(null, '', location.pathname + (h ? '#' + h : '')); }
 function syncSw() { document.querySelectorAll('.mock-sw button[data-st]').forEach((b) => b.classList.toggle('on', b.dataset.st === st.view)); }
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { st.sel = null; render(); } });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { st.sel = null; render(); }
+  const typing = /INPUT|SELECT|TEXTAREA/.test(e.target.tagName) || e.ctrlKey || e.metaKey || e.altKey;
+  if (!typing && (e.key === 'l' || e.key === 'L') && st.tab === 'jobs') { st.lv = 'list'; render(); }
+  if (!typing && (e.key === 'd' || e.key === 'D') && st.tab === 'jobs') { st.lv = 'load'; render(); }
+  if ((e.key === 't' || e.key === 'T') && !e.ctrlKey && !e.metaKey && !e.altKey && !/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) { st.tlMin = !st.tlMin; render(); }
+});
 
 const hw = location.hash.match(/w=(\d+)-(\d+)/); if (hw) { st.win = { a: +hw[1], b: +hw[2] }; st.sel = null; }
 if (/gantt/.test(location.hash)) { st.lv = 'gantt'; st.sel = null; }
