@@ -35,7 +35,7 @@ describe('GET /api/runs/:id/log handler', () => {
 
   it('accepts a 53-bit pipeline update id and a pipeline or flow name as the task', async () => {
     let seen: [number, string] | undefined;
-    const spy: RunSource = { kind: 'live', listRuns: () => Promise.reject(new Error('unused')), getRun: () => Promise.reject(new Error('unused')), taskLog: (id, task) => ((seen = [id, task]), Promise.resolve('ok')) };
+    const spy: RunSource = { kind: 'live', listItems: () => Promise.reject(new Error('unused')), getItem: () => Promise.reject(new Error('unused')), listRuns: () => Promise.reject(new Error('unused')), getRun: () => Promise.reject(new Error('unused')), taskLog: (id, task) => ((seen = [id, task]), Promise.resolve('ok')) };
     const res = await taskLog(spy, '9007199254740991', { task: '[dev john smith] raw_bronze `sap`' });
     expect(res).toEqual({ status: 200, body: { text: 'ok' } });
     expect(seen).toEqual([9007199254740991, '[dev john smith] raw_bronze `sap`']);
@@ -43,7 +43,7 @@ describe('GET /api/runs/:id/log handler', () => {
 
   it('passes 404 and 403 from the source on as { error }', async () => {
     for (const status of [404, 403]) {
-      const failing: RunSource = { kind: 'live', listRuns: () => Promise.reject(new Error('unused')), getRun: () => Promise.reject(new Error('unused')), taskLog: () => Promise.reject(new SourceError(status, 'no such run')) };
+      const failing: RunSource = { kind: 'live', listItems: () => Promise.reject(new Error('unused')), getItem: () => Promise.reject(new Error('unused')), listRuns: () => Promise.reject(new Error('unused')), getRun: () => Promise.reject(new Error('unused')), taskLog: () => Promise.reject(new SourceError(status, 'no such run')) };
       expect(await taskLog(failing, '5', { task: 'x' })).toEqual({ status, body: { error: 'no such run' } });
     }
   });

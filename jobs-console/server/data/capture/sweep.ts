@@ -68,7 +68,7 @@ export async function runSweep(o: SweepOptions): Promise<RunsResponse> {
   const timer = o.timer ?? clock;
   const { session } = o;
   const endAt = timer() + o.timeoutMs;
-  const limits: LiveLimits = { windowDays: o.days, maxRuns: Number.MAX_SAFE_INTEGER, timeoutMs: o.timeoutMs, concurrency: o.concurrency };
+  const limits: LiveLimits = { windowDays: o.days, maxRuns: Number.MAX_SAFE_INTEGER, timeoutMs: o.timeoutMs, concurrency: o.concurrency, itemsTimeoutMs: o.timeoutMs };
   const source = createLiveRunSource({
     api: onceGetRun(session.wrap(o.api)),
     user: o.user,

@@ -1,11 +1,12 @@
 import type { jobs, pipelines } from '@databricks/sdk-experimental';
-import type { RefreshInfo, Run, RunsResponse } from '../../../shared/domain/types';
+import type { ItemsResponse, RefreshInfo, Run, RunsResponse } from '../../../shared/domain/types';
 import type { RunSource } from '../runSource';
 import { SourceError } from '../sourceError';
 import type { LiveApi } from './api';
-import { apiErrorParts } from './apiError';
+import { apiErrorParts, toSourceError } from './apiError';
 import { Deadline, EVENTS_PAGE_SIZE, FINISHED_UPDATE, TIMEOUT, collectJobRuns, collectPipelines, eventsSince } from './collect';
 import { baseFromFull, fetchDelta, mergeBase, mergeEvents, type Base } from './delta';
+import { createLiveItems } from './items';
 import { jobDraft } from './jobs';
 import { finalize, runKey, usualByKey, type Draft } from './kinds';
 import { DEFAULT_REFRESH, type LiveLimits, type RefreshSettings } from './limits';
@@ -51,7 +52,7 @@ function carryNewer(next: Base, older: Base): void {
   }
 }
 
-export { apiErrorParts };
+export { apiErrorParts, toSourceError };
 
 export interface PipelineRef {
   pipelineId: string;
@@ -69,9 +70,11 @@ export interface LiveState {
   cache: Map<string, { at: number; data: RunsResponse }>;
   /** Per user: the collected SDK objects of the last full load, with every delta since merged in. */
   bases: Map<string, Base>;
+  /** Per user: the Jobs & ETL definitions list (TTL 5 min), separate from the run caches. */
+  items: Map<string, { at: number; data: ItemsResponse }>;
 }
 
-export const createLiveState = (): LiveState => ({ pipelineRefs: new Map(), cache: new Map(), bases: new Map() });
+export const createLiveState = (): LiveState => ({ pipelineRefs: new Map(), cache: new Map(), bases: new Map(), items: new Map() });
 
 export interface ListOptions {
   /** A full load even when a delta would do (the filter bar's refresh-now button: `?full=1`). Skips the response cache. */
@@ -118,16 +121,6 @@ function counting(api: LiveApi): { api: LiveApi; counts: Map<string, number> } {
   return { api: out as unknown as LiveApi, counts };
 }
 
-/** SDK failures as SourceError: auth stays 401/403, the rest is a bad gateway. With `lookup`, a missing or invalid id is 404. */
-export function toSourceError(e: unknown, lookup = false): SourceError {
-  if (e instanceof SourceError) return e;
-  const { status: s, code, message } = apiErrorParts(e);
-  if (s === 401) return new SourceError(401, message);
-  if (s === 403 || code === 'PERMISSION_DENIED') return new SourceError(403, message);
-  if (lookup && (s === 404 || code === 'RESOURCE_DOES_NOT_EXIST' || code === 'INVALID_PARAMETER_VALUE')) return new SourceError(404, message);
-  return new SourceError(502, message);
-}
-
 function remember<K, V>(map: Map<K, V>, key: K, value: V, max: number): void {
   map.delete(key);
   map.set(key, value);
@@ -142,6 +135,7 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
   const { limits, state } = o;
   const api = o.trace ? o.trace.wrap(o.api) : o.api;
   const refresh = o.refresh ?? DEFAULT_REFRESH;
+  const itemsSrc = createLiveItems({ api, user: o.user, userKey: o.userKey, state, limits, clock, timer, source: o.source });
 
   /** Maps what was collected (a full load's lists, or a merged base) with the pure mappers; remembers pipeline refs. */
   function mapCollected(col: Collected, now: number, me: string | undefined, host: string): { all: Run[]; jobRuns: number; withUpdates: number } {
@@ -416,6 +410,8 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
       remember(state.cache, key, { at: clock(), data }, CACHE_MAX);
       return data;
     },
+    listItems: itemsSrc.listItems,
+    getItem: itemsSrc.getItem,
     async taskLog(runId, task) {
       const ref = state.pipelineRefs.get(runId);
       try {

@@ -9,6 +9,10 @@ export interface LiveApi {
   /** Workspace URL this API reads from ('' when unknown), for links to runs. Configuration, not a call: never recorded. */
   host: () => Promise<string>;
   me: () => Promise<iam.User>;
+  /** One page of job definitions (GET /api/2.2/jobs/list). */
+  listJobs: (req: jobs.ListJobsRequest) => Promise<jobs.ListJobsResponse>;
+  /** One job definition with its tasks (GET /api/2.2/jobs/get). */
+  getJob: (req: jobs.GetJobRequest) => Promise<jobs.Job>;
   listJobRuns: (req: jobs.ListRunsRequest) => Promise<jobs.ListRunsResponse>;
   getRun: (req: jobs.GetRunRequest) => Promise<jobs.Run>;
   getRunOutput: (req: jobs.GetRunOutputRequest) => Promise<jobs.RunOutput>;
@@ -42,6 +46,8 @@ export function createSdkApi(opts: { host?: string; token?: string }): LiveApi {
     // The host the client resolved (explicit, or the default chain's profile / DATABRICKS_HOST), once per client.
     host: () => (host ??= client.config.getHost().then((u) => workspaceOrigin(u.origin), () => '')),
     me: () => client.currentUser.me(),
+    listJobs: (req) => page('/api/2.2/jobs/list', { ...req }),
+    getJob: (req) => client.jobs.get(req),
     listJobRuns: (req) => page('/api/2.2/jobs/runs/list', { ...req }),
     getRun: (req) => client.jobs.getRun(req),
     getRunOutput: (req) => client.jobs.getRunOutput(req),

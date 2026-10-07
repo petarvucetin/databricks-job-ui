@@ -1,4 +1,4 @@
-import type { DataSource, Run, RunsResponse } from '../../shared/domain/types';
+import type { DataSource, ItemDetail, ItemsResponse, Run, RunsResponse } from '../../shared/domain/types';
 import { createMockRunSource } from './mock/mockRunSource';
 import { createLiveProvider } from './live/liveProvider';
 import type { Trace } from './live/trace';
@@ -25,6 +25,10 @@ export interface RunSource {
    * Throws SourceError for an unknown run (404) or a refused one (401/403).
    */
   getRun(runId: number, tzOffsetMin?: number): Promise<Run>;
+  /** Every job and pipeline definition the user can see (the Jobs & ETL tab). Live: own time budget, `partial` when it runs out. */
+  listItems(): Promise<ItemsResponse>;
+  /** One definition with its tasks (job) or facts (pipeline). Throws SourceError(404) for an unknown id, 401/403 when refused. */
+  getItem(type: 'job' | 'pipeline', id: string): Promise<ItemDetail>;
 }
 
 export interface RequestLike {

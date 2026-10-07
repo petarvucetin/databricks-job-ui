@@ -36,5 +36,8 @@ export function createMockRunSource(clock: () => number = Date.now): RunSource {
       const run = shiftTo(dataFor(tzOffsetMin ?? DEFAULT_TZ_OFFSET_MIN), clock()).runs.find((r) => r.id === runId);
       return run ? Promise.resolve(run) : Promise.reject(new SourceError(404, `Run ${runId} does not exist`));
     },
+    // Temporary stubs until the mock items land.
+    listItems: () => Promise.reject(new SourceError(501, 'items not implemented yet')),
+    getItem: () => Promise.reject(new SourceError(501, 'items not implemented yet')),
   };
 }

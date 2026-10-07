@@ -63,20 +63,20 @@ describe('GET /api/runs handler', () => {
 
 describe('listRuns errors', () => {
   it('passes a SourceError on as its status and { error }', async () => {
-    const failing: RunSource = { kind: 'live', listRuns: () => Promise.reject(new SourceError(502, 'upstream down')), taskLog: () => Promise.resolve(''), getRun: () => Promise.reject(new Error('unused')) };
+    const failing: RunSource = { kind: 'live', listItems: () => Promise.reject(new Error('unused')), getItem: () => Promise.reject(new Error('unused')), listRuns: () => Promise.reject(new SourceError(502, 'upstream down')), taskLog: () => Promise.resolve(''), getRun: () => Promise.reject(new Error('unused')) };
     expect(await listRuns(failing, {})).toEqual({ status: 502, body: { error: 'upstream down' } });
   });
 
   it('passes full=1 on as a full load; without it, no options', async () => {
     const seen: unknown[] = [];
-    const spy: RunSource = { kind: 'live', listRuns: (...args) => (seen.push(args[2]), Promise.resolve({ asOf: 1, source: 'live', runs: [] })), taskLog: () => Promise.resolve(''), getRun: () => Promise.reject(new Error('unused')) };
+    const spy: RunSource = { kind: 'live', listItems: () => Promise.reject(new Error('unused')), getItem: () => Promise.reject(new Error('unused')), listRuns: (...args) => (seen.push(args[2]), Promise.resolve({ asOf: 1, source: 'live', runs: [] })), taskLog: () => Promise.resolve(''), getRun: () => Promise.reject(new Error('unused')) };
     await listRuns(spy, { full: '1' });
     await listRuns(spy, {});
     expect(seen).toEqual([{ full: true }, undefined]);
   });
 
   it('lets other errors propagate', async () => {
-    const buggy: RunSource = { kind: 'live', listRuns: () => Promise.reject(new TypeError('bug')), taskLog: () => Promise.resolve(''), getRun: () => Promise.reject(new Error('unused')) };
+    const buggy: RunSource = { kind: 'live', listItems: () => Promise.reject(new Error('unused')), getItem: () => Promise.reject(new Error('unused')), listRuns: () => Promise.reject(new TypeError('bug')), taskLog: () => Promise.resolve(''), getRun: () => Promise.reject(new Error('unused')) };
     await expect(listRuns(buggy, {})).rejects.toThrow('bug');
   });
 });

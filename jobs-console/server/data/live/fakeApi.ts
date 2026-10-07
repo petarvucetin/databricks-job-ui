@@ -7,6 +7,9 @@ export interface FakeData {
   user?: string;
   /** Workspace host host() answers with ('' when absent). */
   host?: string;
+  jobs?: jobs.BaseJob[];
+  jobPageSize?: number;
+  jobsById?: Record<number, jobs.Job>;
   runs?: jobs.BaseRun[];
   runPageSize?: number;
   pipelines?: pipelines.PipelineStateInfo[];
@@ -29,10 +32,24 @@ export function fakeApi(data: FakeData): LiveApi & { calls: string[] } {
     return value();
   };
   const size = data.runPageSize ?? 25;
+  const jobSize = data.jobPageSize ?? 100;
   return {
     calls,
     host: () => Promise.resolve(data.host ?? ''),
     me: () => reply('me', () => ({ userName: data.user ?? 'me@x.com' })),
+    listJobs: (req) =>
+      reply('listJobs', () => {
+        const all = data.jobs ?? [];
+        const at = Number(req.page_token ?? 0);
+        const next = at + jobSize;
+        return { jobs: all.slice(at, next), next_page_token: next < all.length ? String(next) : undefined, has_more: next < all.length };
+      }),
+    getJob: (req) =>
+      reply('getJob', () => {
+        const j = data.jobsById?.[req.job_id];
+        if (!j) throw Object.assign(new Error(`Job ${req.job_id} does not exist.`), { statusCode: 400, errorCode: 'INVALID_PARAMETER_VALUE' });
+        return j;
+      }),
     listJobRuns: (req) =>
       reply('listJobRuns', () => {
         const all = (data.runs ?? []).filter((r) => (r.start_time ?? 0) >= (req.start_time_from ?? 0) && (!req.active_only || !isTerminated(r)));

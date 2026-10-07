@@ -4,15 +4,18 @@ export interface LiveLimits {
   maxRuns: number;
   timeoutMs: number;
   concurrency: number;
+  /** Time budget of the Jobs & ETL definitions list, separate from the runs budget. */
+  itemsTimeoutMs: number;
 }
 
-export const DEFAULT_LIMITS: LiveLimits = { windowDays: 30, maxRuns: 2000, timeoutMs: 12000, concurrency: 8 };
+export const DEFAULT_LIMITS: LiveLimits = { windowDays: 30, maxRuns: 2000, timeoutMs: 12000, concurrency: 8, itemsTimeoutMs: 30000 };
 
 const ENV: Record<keyof LiveLimits, string> = {
   windowDays: 'JOBS_CONSOLE_WINDOW_DAYS',
   maxRuns: 'JOBS_CONSOLE_MAX_RUNS',
   timeoutMs: 'JOBS_CONSOLE_TIMEOUT_MS',
   concurrency: 'JOBS_CONSOLE_CONCURRENCY',
+  itemsTimeoutMs: 'JOBS_CONSOLE_ITEMS_TIMEOUT_MS',
 };
 
 /** How /api/runs refreshes: deltas over a per-user base snapshot, with a full load at least every fullRefreshMs. */

@@ -1,3 +1,5 @@
+import { SourceError } from '../sourceError';
+
 /**
  * Status, error code and message of an SDK ApiError. When the SDK can't parse an error body (0.17.0 fails on
  * `details` entries without `metadata`, e.g. RequestInfo) it reports "Response from server (Bad Request) {json}";
@@ -35,4 +37,14 @@ function causeChain(e: unknown): string {
     c = x.cause;
   }
   return parts.length ? ` (cause: ${parts.join(' <- ')})` : '';
+}
+
+/** SDK failures as SourceError: auth stays 401/403, the rest is a bad gateway. With `lookup`, a missing or invalid id is 404. */
+export function toSourceError(e: unknown, lookup = false): SourceError {
+  if (e instanceof SourceError) return e;
+  const { status: s, code, message } = apiErrorParts(e);
+  if (s === 401) return new SourceError(401, message);
+  if (s === 403 || code === 'PERMISSION_DENIED') return new SourceError(403, message);
+  if (lookup && (s === 404 || code === 'RESOURCE_DOES_NOT_EXIST' || code === 'INVALID_PARAMETER_VALUE')) return new SourceError(404, message);
+  return new SourceError(502, message);
 }

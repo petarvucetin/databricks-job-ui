@@ -32,6 +32,16 @@ export function jobRunUrl(host: string | undefined, run: { job_id?: number; run_
   return `${o}/jobs/${run.job_id}/runs/${run.run_id}${workspaceQuery(o)}`;
 }
 
+export function jobUrl(host: string | undefined, jobId: string | number): string | undefined {
+  const o = workspaceOrigin(host);
+  return o ? `${o}/jobs/${jobId}${workspaceQuery(o)}` : undefined;
+}
+
+export function pipelineUrl(host: string | undefined, pipelineId: string): string | undefined {
+  const o = workspaceOrigin(host);
+  return o ? `${o}/pipelines/${encodeURIComponent(pipelineId)}${workspaceQuery(o)}` : undefined;
+}
+
 export function pipelineUpdateUrl(host: string | undefined, pipelineId: string, updateId: string | undefined): string | undefined {
   const o = workspaceOrigin(host);
   if (!o || !pipelineId || !updateId) return undefined;
