@@ -53,7 +53,9 @@
 .jobs .partial { padding: 5px 16px; font-size: 11.5px; color: var(--amber-ink); border-bottom: 1px solid var(--rule); }
 .jobs .list-note { padding: 8px 16px; font-size: 11.5px; color: var(--ink-3); }
 
-/* Trigger pill (inline in the row) */
+/* Trigger pill (inline in the row), the next start beside it */
+.jobs .trgc { justify-self: end; display: inline-flex; align-items: center; gap: 8px; }
+.jobs .nxt { font-size: 11.5px; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .jobs .trg { justify-self: end; display: inline-flex; align-items: center; gap: 5px; padding: 0 9px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); font-size: 11.5px; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; line-height: 1.6; }
 .jobs .trg.sched { background: var(--wash-amber); border-color: #e8c98a; color: var(--amber-ink); }
 .jobs .trg.cont { background: var(--wash-blue); border-color: #c5d6ec; color: var(--blue); }

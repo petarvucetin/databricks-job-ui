@@ -4,7 +4,7 @@ import { dur, fmtStart } from '../../../shared/domain/format';
 import { useItemDetail } from '../hooks/useItemDetail';
 import { pillOf, runsFor, startsOf } from '../model/items';
 import { dayTime, durShort } from '../model/history';
-import { dayName, hhmm } from '../model/schedule';
+import { nextWhen } from '../model/schedule';
 import { splitName } from '../model/rowView';
 import { CopyButton } from './CopyButton';
 import './runrow.css';
@@ -101,7 +101,7 @@ export function ItemPane({ item, runs, now, onClose, onSeeRuns, onOpenRun }: {
           <dd title={pill.title}>
             {pill.text}
             {pill.cls === 'sched' && item.schedule && <span className="h-none"> · {item.schedule.tz} schedule</span>}
-            {next !== undefined && <span className="h-none"> · next {dayName(next)} {hhmm(next)}, in {spanIn(next - now)}</span>}
+            {next !== undefined && <span className="h-none"> · next {nextWhen(next)}, in {spanIn(next - now)}</span>}
           </dd>
           <dt>Bundle</dt><dd>{item.bundle ? 'from a bundle' : 'not from a bundle'}</dd>
           <dt>Tags</dt><dd>{tags.length ? tags.map(([k, v]) => <span key={k} className="chip"><b>{k}:</b>{v}</span>) : '—'}</dd>

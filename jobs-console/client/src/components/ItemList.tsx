@@ -5,7 +5,7 @@ import type { ItemsState } from '../hooks/useItems';
 import { itemKey, lastRun, pillOf, startsOf, type ItemFilters } from '../model/items';
 import { splitName } from '../model/rowView';
 import { fmtN } from '../model/load';
-import { when, type SchedScale } from '../model/schedule';
+import { nextWhen, when, type SchedScale } from '../model/schedule';
 import { CopyButton } from './CopyButton';
 
 export type ItemsView = 'list' | 'load';
@@ -55,12 +55,16 @@ function StartsCell({ item, range, scale }: { item: Item; range: Range; scale: S
 export const ItemRow = memo(function ItemRow({ item, now, selected, onSelect, right }: { item: Item; now: number; selected: string | null; onSelect: (key: string | null) => void; right: ReactNode }) {
   const { prefix, rest: bare } = splitName(item.name);
   const pill = pillOf(item, now);
+  const next = pill.cls === 'sched' ? startsOf(item, now, now + 8 * 24 * 3600e3)[0] : undefined;
   const key = itemKey(item);
   return (
     <div className={`ir${selected === key ? ' on' : ''}`} data-id={item.id} title={item.name} onClick={() => onSelect(selected === key ? null : key)}>
       <span className={`tag ${item.type}`}>{item.type === 'job' ? 'Job' : 'Pipeline'}</span>
       <span className="nmc"><span className="nm"><span><i>{prefix}</i>{bare}</span></span><CopyButton value={item.name} label="name" /></span>
-      <span className={`trg ${pill.cls}`} title={pill.title}>{pill.cls === 'sched' ? '⏱ ' : ''}{pill.text}</span>
+      <span className="trgc">
+        {next !== undefined && <span className="nxt" title="Next scheduled start, your local time">next {nextWhen(next)}</span>}
+        <span className={`trg ${pill.cls}`} title={pill.title}>{pill.cls === 'sched' ? '⏱ ' : ''}{pill.text}</span>
+      </span>
       {right}
     </div>
   );

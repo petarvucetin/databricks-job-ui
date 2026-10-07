@@ -133,6 +133,10 @@ describe('JobsPage', () => {
     expect(pill('3')).toBe('⏱ cron 0 0 12 L * ?');
     expect(pill('4')).toBe('paused');
     expect(pill('5')).toBe('every 4h (periodic)');
+    // the next start sits beside a schedule the timeline understands, and nowhere else
+    const nxt = (id: string) => document.querySelector(`.ir[data-id="${id}"] .nxt`)?.textContent;
+    expect(nxt('2')).toBe('next Wed 7 Oct 02:00');
+    expect([nxt('3'), nxt('4'), nxt('5')]).toEqual([undefined, undefined, undefined]);
     // only the daily 02:00 job adds a start
     expect([...document.querySelectorAll('.cube.job')].map((c) => c.textContent)).toEqual(['1']);
   });
@@ -183,7 +187,7 @@ describe('JobsPage', () => {
     const pane = document.querySelector('.pane')!;
     // readable trigger text, the schedule's zone quietly, the next start; the raw cron only as the tooltip
     const trigger = [...pane.querySelectorAll('.facts dt')].find((dt) => dt.textContent === 'Trigger')!.nextElementSibling!;
-    expect(trigger.textContent).toBe('daily 02:00 · UTC schedule · next Wed 02:00, in 9h 44m');
+    expect(trigger.textContent).toBe('daily 02:00 · UTC schedule · next Wed 7 Oct 02:00, in 9h 44m');
     expect(trigger.getAttribute('title')).toBe('cron 0 0 2 * * ? (UTC)');
     expect(pane.textContent).toContain('not from a bundle');
     expect(pane.textContent).toContain('Job ID2');

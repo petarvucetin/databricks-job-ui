@@ -11,6 +11,8 @@ export const hhmm = (t: number) => {
 export const dayName = (t: number) => dayLabel(t).dow;
 /** A start time as the scale reads it: "14:00" by hour, "Tue 14:00" by day. */
 export const when = (t: number, scale: SchedScale) => (scale === 'day' ? `${dayName(t)} ${hhmm(t)}` : hhmm(t));
+/** The next start with its date: "Tue 7 Oct 02:00". */
+export const nextWhen = (t: number) => `${dayName(t)} ${dayLabel(t).full} ${hhmm(t)}`;
 
 export interface SchedState {
   scale: SchedScale;
