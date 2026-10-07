@@ -41,11 +41,19 @@ function Identity({ mode }: { mode: DataMode }) {
   );
 }
 
-export function Shell({ mode, children }: { mode?: DataMode; children: ReactNode }) {
+export type Tab = 'jobs' | 'runs';
+
+export function Shell({ mode, tab, onTab, children }: { mode?: DataMode; tab?: Tab; onTab?: (t: Tab) => void; children: ReactNode }) {
   return (
     <div className="shell">
-      <header className="shell-top">
+      <header className={`shell-top${onTab ? ' has-tabs' : ''}`}>
         <h1>Jobs console</h1>
+        {onTab && (
+          <nav className="tabs">
+            <button type="button" className={tab === 'jobs' ? 'on' : undefined} onClick={() => onTab('jobs')}>Jobs &amp; ETL</button>
+            <button type="button" className={tab === 'runs' ? 'on' : undefined} onClick={() => onTab('runs')}>Runs</button>
+          </nav>
+        )}
         {mode && <span className="shell-badge">{badgeText(mode)}</span>}
         {mode && <Workspace mode={mode} />}
         {mode && <Identity mode={mode} />}

@@ -16,6 +16,20 @@ describe('Shell', () => {
     expect(screen.getByText('body')).toBeTruthy();
   });
 
+  it('renders tabs and reports clicks', () => {
+    const onTab = vi.fn();
+    render(<Shell tab="runs" onTab={onTab}><p>x</p></Shell>);
+    expect(screen.getByRole('button', { name: 'Runs' }).className).toContain('on');
+    fireEvent.click(screen.getByRole('button', { name: 'Jobs & ETL' }));
+    expect(onTab).toHaveBeenCalledWith('jobs');
+  });
+
+  it('renders no tabs without onTab', () => {
+    const { container } = render(<Shell><p>x</p></Shell>);
+    expect(container.querySelector('.tabs')).toBeNull();
+    expect(container.querySelector('.shell-top')!.className).toBe('shell-top');
+  });
+
   it('shows the version, bumped by every commit, with the commit it was built from', () => {
     const { container } = render(<Shell><p /></Shell>);
     const v = container.querySelector('.shell-ver')!;

@@ -7,6 +7,12 @@
 .shell-user { font-size: 12px; color: var(--ink-2); padding-left: 10px; border-left: 1px solid var(--rule); cursor: default; }
 .shell-user span { color: var(--ink-3); }
 .shell-ver { margin-left: auto; font-size: 11.5px; color: var(--ink-3); font-variant-numeric: tabular-nums; cursor: default; }
+.shell-top.has-tabs { padding-bottom: 0; }
+.shell-top.has-tabs > :not(.tabs) { margin-bottom: 10px; }
+.tabs { display: flex; gap: 4px; margin-left: 18px; align-self: flex-end; }
+.tabs button { border: 0; background: none; padding: 6px 14px 9px; font: inherit; font-size: 13.5px; color: var(--ink-2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tabs button:hover { color: var(--ink); }
+.tabs button.on { color: var(--ink); font-weight: 600; border-bottom-color: var(--ink); }
 .shell-body { min-height: calc(100vh - 44px); }
 .capture { position: relative; display: flex; align-items: center; gap: 10px; }
 .capture-toggle { background: none; border: 0; padding: 0; font-size: 12px; color: var(--ink-3); cursor: pointer; }

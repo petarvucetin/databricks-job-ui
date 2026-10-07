@@ -3,6 +3,7 @@ import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react';
 import { AttentionView } from './AttentionView';
 import { AttentionPage } from './AttentionPage';
+import { useRunsData } from '../hooks/useRunsData';
 import { makeRun } from '../test/fixtures';
 import type { RunsResponse } from '../../../shared/domain/types';
 
@@ -39,6 +40,12 @@ describe('AttentionView', () => {
     const { container } = render(<AttentionView data={runs} loadedAt={Date.now()} />);
     expect([...container.querySelectorAll('.rl .rr')].map((r) => r.getAttribute('data-id'))).toEqual(['11']);
     expect(container.querySelector('.rl-n')!.textContent).toBe('1 job');
+  });
+
+  it('initialQuery widens the window and filters; initialRunId opens the drawer', () => {
+    render(<AttentionView data={data} loadedAt={asOf} initialQuery="gl_load" initialRunId={1} />);
+    expect((screen.getByPlaceholderText('search job, task, run id, cause, error')).value).toBe('gl_load');
+    expect(screen.getByRole('dialog')).toBeTruthy();
   });
 
   it('filters to running runs with the Running now toggle', () => {
@@ -97,10 +104,15 @@ describe('AttentionView', () => {
   });
 });
 
+/** The page as the app mounts it: runs data loaded by the hook, handed down. */
+function PageWithData() {
+  return <AttentionPage data={useRunsData()} />;
+}
+
 describe('AttentionPage', () => {
   it('shows an error with a retry button when the API fails', async () => {
     vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('x', { status: 503 }))));
-    render(<AttentionPage />);
+    render(<PageWithData />);
     expect(await screen.findByText('Could not load runs: HTTP 503')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Retry' })).toBeTruthy();
   });
@@ -135,7 +147,7 @@ describe('the drawer follows the data', () => {
       return log();
     });
     vi.stubGlobal('fetch', fetchMock);
-    const { container } = render(<AttentionPage />);
+    const { container } = render(<PageWithData />);
     await waitFor(() => expect(container.querySelector('.rl .rr[data-id="3"]')).not.toBeNull());
     openRunning(container);
     expect(container.querySelector('.dr .panel.last .hd .v')!.textContent).toBe('Running, on track');

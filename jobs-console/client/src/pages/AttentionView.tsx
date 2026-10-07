@@ -22,9 +22,13 @@ import './attention.css';
 const CODE_OPTIONS = ['CLIENT_ERROR', 'CLOUD_FAILURE', 'TIMEDOUT', 'MAX_CONCURRENT_RUNS_REACHED', 'none'];
 
 /** `runRefresh` refreshes single runs (the drawer's ↻); `data` should already carry its refreshed runs (useRunRefresh). */
-export function AttentionView({ data, loadedAt, refresh, runRefresh }: { data: RunsResponse; loadedAt: number; refresh?: ReactNode; runRefresh?: Pick<RunRefresh, 'refreshRun' | 'status'> }) {
+export function AttentionView({ data, loadedAt, refresh, runRefresh, initialQuery, initialRunId }: { data: RunsResponse; loadedAt: number; refresh?: ReactNode; runRefresh?: Pick<RunRefresh, 'refreshRun' | 'status'>; initialQuery?: string; initialRunId?: number }) {
   const ctx: ViewCtx = useMemo(() => ({ runs: data.runs, end: timelineEnd(data.asOf) }), [data]);
-  const [state, setState] = useState(() => initialState(ctx));
+  const [state, setState] = useState(() => {
+    const s = initialState(ctx);
+    // Opened from the Jobs & ETL tab on a job: widen the window to everything loaded, then search for the job.
+    return initialQuery ? applyAction(applyAction(s, { type: 'preset', preset: 'all' }, ctx), { type: 'query', query: initialQuery }, ctx) : s;
+  });
   const dispatch = useCallback((a: Action) => setState((s) => applyAction(s, a, ctx)), [ctx]);
   // Auto refresh moved "now": keep a window that was showing the present current (viewState followNow).
   const prevAsOf = useRef(data.asOf);
@@ -35,7 +39,7 @@ export function AttentionView({ data, loadedAt, refresh, runRefresh }: { data: R
   const [selected, setSelected] = useState<number | null>(null);
   const byId = useMemo(() => new Map(data.runs.map((r) => [r.id, r])), [data.runs]);
   // Runs open here: one shows the run drawer, two or more the comparison. Ctrl+click adds, a plain click starts over.
-  const [stack, setStack] = useState<number[]>([]);
+  const [stack, setStack] = useState<number[]>(() => (initialRunId !== undefined ? [initialRunId] : []));
   const compareTab = useRef<Window | null>(null);
   const onOpenRun = useCallback((runId: number, rowId: number, how: OpenHow) => {
     if (how === 'tab') {
