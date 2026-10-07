@@ -187,3 +187,24 @@ describe('choosing the session to replay', () => {
     expect(warn.mock.calls.some(([m]) => /replay-mismatch/.test(String(m)))).toBe(true);
   });
 });
+
+describe('replay of items', () => {
+  it('serves the recorded jobs/list as items', async () => {
+    const data: FakeData = {
+      ...richWorkspace,
+      jobs: [1, 2, 3].map((id) => ({ job_id: id, creator_user_name: 'me@x.com', settings: { name: `item_job_${id}` } })),
+      pipelines: [{ pipeline_id: 'p1', name: 'item_pipe' }],
+    };
+    const session = new Session({ id: 's-items', route: '/api/runs', query: {}, authMode: 'user' }, () => NOW);
+    const src = createLiveRunSource({
+      api: fakeApi(data), user: () => Promise.resolve('me@x.com'), userKey: 'me', state: createLiveState(), limits: DEFAULT_LIMITS, clock: () => NOW, warn: () => {}, trace: session,
+    });
+    const original = await src.listRuns();
+    const items = await src.listItems();
+    expect(items.items.filter((i) => i.type === 'job')).toHaveLength(3);
+    const file = await roundTrip([session.finish({ status: 200, body: original })]);
+    const replay = createReplayProvider({}, { file, warn: () => {} }).forRequest({ headers: {} }) as RunSource;
+    const replayed = await replay.listItems();
+    expect(replayed.items.filter((i) => i.type === 'job').map((i) => i.id).sort()).toEqual(['1', '2', '3']);
+  });
+});

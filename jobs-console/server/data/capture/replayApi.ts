@@ -3,7 +3,7 @@ import { workspaceOrigin } from '../live/links';
 import type { Diag } from '../live/trace';
 import type { CallRecord, RecordedError, SessionRecord } from './recorder';
 
-const METHODS: Exclude<keyof LiveApi, 'host'>[] = ['me', 'listJobRuns', 'getRun', 'getRunOutput', 'listPipelines', 'getPipeline', 'listUpdates', 'getUpdate', 'listPipelineEvents'];
+const METHODS: Exclude<keyof LiveApi, 'host'>[] = ['me', 'listJobRuns', 'getRun', 'getRunOutput', 'listPipelines', 'getPipeline', 'listUpdates', 'getUpdate', 'listPipelineEvents', 'listJobs', 'getJob'];
 
 /** JSON with object keys sorted and undefined dropped, so equal requests give equal strings. */
 export function canon(v: unknown): string {

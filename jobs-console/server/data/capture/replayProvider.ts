@@ -1,5 +1,4 @@
 import type { RunSource, RunSourceProvider } from '../runSource';
-import { SourceError } from '../sourceError';
 import { createLiveRunSource, createLiveState } from '../live/liveRunSource';
 import { readLimits } from '../live/limits';
 import type { DiagNote } from '../live/trace';
@@ -96,9 +95,8 @@ export function createReplayProvider(env: Record<string, string | undefined>, de
     listRuns: (since, tz, opts) => prime().then(() => inner.listRuns(since, tz, opts)),
     getRun: (id, tz) => prime().then(() => inner.getRun(id, tz)),
     taskLog: (id, task, hint) => prime().then(() => inner.taskLog(id, task, hint)),
-    // Temporary stubs until replay items land.
-    listItems: () => Promise.reject(new SourceError(501, 'items not implemented yet')),
-    getItem: () => Promise.reject(new SourceError(501, 'items not implemented yet')),
+    listItems: () => prime().then(() => inner.listItems()),
+    getItem: (t, id) => prime().then(() => inner.getItem(t, id)),
   };
   const auth = file.config.authMode === 'app' ? 'app' : 'user';
   const now = session.now ?? session.startedAt;

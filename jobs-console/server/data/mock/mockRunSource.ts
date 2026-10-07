@@ -1,4 +1,5 @@
-import type { RunsResponse } from '../../../shared/domain/types';
+import type { Item, RunsResponse } from '../../../shared/domain/types';
+import { mockDetail, mockItems } from './mockItems';
 import type { RunSource } from '../runSource';
 import { SourceError } from '../sourceError';
 import { generateRuns } from './generateRuns';
@@ -15,6 +16,7 @@ function shiftTo(data: RunsResponse, nowMs: number): RunsResponse {
 
 export function createMockRunSource(clock: () => number = Date.now): RunSource {
   const cache = new Map<number, RunsResponse>();
+  let items: Item[] | undefined;
   const dataFor = (tzOffsetMin: number): RunsResponse => {
     let data = cache.get(tzOffsetMin);
     if (!data) {
@@ -36,8 +38,16 @@ export function createMockRunSource(clock: () => number = Date.now): RunSource {
       const run = shiftTo(dataFor(tzOffsetMin ?? DEFAULT_TZ_OFFSET_MIN), clock()).runs.find((r) => r.id === runId);
       return run ? Promise.resolve(run) : Promise.reject(new SourceError(404, `Run ${runId} does not exist`));
     },
-    // Temporary stubs until the mock items land.
-    listItems: () => Promise.reject(new SourceError(501, 'items not implemented yet')),
-    getItem: () => Promise.reject(new SourceError(501, 'items not implemented yet')),
+    listItems() {
+      const data = shiftTo(dataFor(DEFAULT_TZ_OFFSET_MIN), clock());
+      items ??= mockItems(data.runs, data.asOf);
+      return Promise.resolve({ asOf: data.asOf, source: 'mock', items });
+    },
+    getItem(type, id) {
+      const data = shiftTo(dataFor(DEFAULT_TZ_OFFSET_MIN), clock());
+      items ??= mockItems(data.runs, data.asOf);
+      const item = items.find((i) => i.type === type && i.id === id);
+      return item ? Promise.resolve(mockDetail(item, data.runs)) : Promise.reject(new SourceError(404, `${type} ${id} does not exist`));
+    },
   };
 }

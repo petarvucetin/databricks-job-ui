@@ -7,6 +7,8 @@ import { CaptureStore, Session, readCaptureLimits } from './data/capture/recorde
 import { listRuns, type HandlerResult } from './api/listRuns';
 import { taskLog } from './api/taskLog';
 import { getRun } from './api/getRun';
+import { listItems } from './api/listItems';
+import { getItem } from './api/getItem';
 import { newSessionId, registerDiag, registerNoDiag } from './api/diag';
 import { createSdkApi, resolveDefaultHost } from './data/live/api';
 
@@ -109,6 +111,12 @@ createApp({
       });
       app.get('/api/runs/:id/log', (req, res, next) => {
         serve(req, res, next, '/api/runs/:id/log', (source) => taskLog(source, req.params.id, req.query));
+      });
+      app.get('/api/items', (req, res, next) => {
+        serve(req, res, next, '/api/items', (source) => listItems(source, req.query));
+      });
+      app.get('/api/items/:type/:id', (req, res, next) => {
+        serve(req, res, next, '/api/items/:type/:id', (source) => getItem(source, req.params.type, req.params.id));
       });
       if (live && store) registerDiag(app, { provider: live, store, env: process.env });
       else registerNoDiag(app);

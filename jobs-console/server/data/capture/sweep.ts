@@ -82,6 +82,7 @@ export async function runSweep(o: SweepOptions): Promise<RunsResponse> {
     trace: { diag: (n) => session.diag(n), note: (m) => session.note(m), wrap: (a) => a },
   });
   const res = await source.listRuns();
+  await source.listItems().catch(() => undefined);
 
   const wanted = res.runs.flatMap((r) => r.failed.map((f) => ({ id: r.id, runId: r.runId, task: f.name })));
   const todo = wanted.slice(0, o.maxOutputs);
