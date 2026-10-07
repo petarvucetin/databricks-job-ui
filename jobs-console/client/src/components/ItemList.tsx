@@ -1,26 +1,23 @@
+import type { ReactNode } from 'react';
 import type { Item, Run } from '../../../shared/domain/types';
-import { triggerPill } from '../../../shared/domain/cron';
 import { dur } from '../../../shared/domain/format';
 import type { ItemsState } from '../hooks/useItems';
-import { lastRun, startsOf, type ItemFilters } from '../model/items';
+import { itemKey, lastRun, pillOf, startsOf, type ItemFilters } from '../model/items';
+import { splitName } from '../model/rowView';
+import { fmtN } from '../model/load';
 import { when, type SchedScale } from '../model/schedule';
 
 export type ItemsView = 'list' | 'load';
 type Range = { from: number; to: number; type?: 'job' | 'pipeline' };
 
 const CAP = 300;
-const fmtN = (n: number) => (n >= 1000 ? (n / 1000).toFixed(n % 1000 ? 1 : 0) + 'k' : String(n));
 const ago = (ms: number) => {
   const m = Math.max(0, Math.round(ms / 60e3));
   return m < 60 ? `${m}m ago` : m < 1440 ? `${Math.round(m / 60)}h ago` : `${Math.round(m / 1440)}d ago`;
 };
-const splitName = (name: string) => {
-  const m = /^\[[^\]]+\] /.exec(name);
-  return m ? [m[0], name.slice(m[0].length)] : ['', name];
-};
 
 /** The list header's List · Load switch. */
-function ViewSwitch({ view, onView }: { view: ItemsView; onView: (v: ItemsView) => void }) {
+export function ViewSwitch({ view, onView }: { view: ItemsView; onView: (v: ItemsView) => void }) {
   return (
     <span className="vsw">
       {(['list', 'load'] as const).map((v) => (
@@ -47,6 +44,21 @@ function StartsCell({ item, range, scale }: { item: Item; range: Range; scale: S
     <span className="starts" title={f.map((t) => when(t, scale)).join(', ')}>
       ⏱ <b>{f.slice(0, 3).map((t) => when(t, scale)).join(' · ')}</b>{f.length > 3 ? ` +${f.length - 3}` : ''}
     </span>
+  );
+}
+
+/** One line per job or pipeline: type tag, name, trigger pill, and a right-hand cell (last run, or starts). */
+export function ItemRow({ item, now, selected, onSelect, right }: { item: Item; now: number; selected: string | null; onSelect: (key: string | null) => void; right: ReactNode }) {
+  const { prefix, rest: bare } = splitName(item.name);
+  const pill = pillOf(item, now);
+  const key = itemKey(item);
+  return (
+    <div className={`ir${selected === key ? ' on' : ''}`} data-id={item.id} title={item.name} onClick={() => onSelect(selected === key ? null : key)}>
+      <span className={`tag ${item.type}`}>{item.type === 'job' ? 'Job' : 'Pipeline'}</span>
+      <span className="nm"><span><i>{prefix}</i>{bare}</span></span>
+      <span className={`trg ${pill.cls}`} title={pill.title}>{pill.cls === 'sched' ? '⏱ ' : ''}{pill.text}</span>
+      {right}
+    </div>
   );
 }
 
@@ -86,14 +98,6 @@ export function ItemList({ load, rows, total, range, scale, runs, now, selected,
     );
   }
   const partial = load.data.partial ? <div className="partial">Partial list: {load.data.partial.reason}.</div> : null;
-  if (view === 'load') {
-    return (
-      <div className="list">
-        <div className="list-meta"><span /><ViewSwitch view={view} onView={onView} /></div>
-        {partial}
-      </div>
-    );
-  }
   if (!rows.length) {
     const words = [
       filters.query ? `“${filters.query}”` : null,
@@ -113,7 +117,6 @@ export function ItemList({ load, rows, total, range, scale, runs, now, selected,
       </div>
     );
   }
-  const key = (it: Item) => `${it.type}:${it.id}`;
   return (
     <div className="list">
       <div className="list-meta">
@@ -123,18 +126,16 @@ export function ItemList({ load, rows, total, range, scale, runs, now, selected,
         <ViewSwitch view={view} onView={onView} />
       </div>
       {partial}
-      {rows.slice(0, CAP).map((it) => {
-        const [prefix, bare] = splitName(it.name);
-        const pill = triggerPill(it, now);
-        return (
-          <div key={key(it)} className={`ir${selected === key(it) ? ' on' : ''}`} data-id={it.id} title={it.name} onClick={() => onSelect(selected === key(it) ? null : key(it))}>
-            <span className={`tag ${it.type}`}>{it.type === 'job' ? 'Job' : 'Pipeline'}</span>
-            <span className="nm"><span><i>{prefix}</i>{bare}</span></span>
-            <span className={`trg ${pill.cls}`} title={pill.title}>{pill.cls === 'sched' ? '⏱ ' : ''}{pill.text}</span>
-            {range ? <StartsCell item={it} range={range} scale={scale} /> : <LastCell run={lastRun(it, runs)} now={now} />}
-          </div>
-        );
-      })}
+      {rows.slice(0, CAP).map((it) => (
+        <ItemRow
+          key={itemKey(it)}
+          item={it}
+          now={now}
+          selected={selected}
+          onSelect={onSelect}
+          right={range ? <StartsCell item={it} range={range} scale={scale} /> : <LastCell run={lastRun(it, runs)} now={now} />}
+        />
+      ))}
       {rows.length > CAP && <div className="list-note">+{fmtN(rows.length - CAP)} more — narrow with search, type, scope, tags or the schedule window</div>}
     </div>
   );

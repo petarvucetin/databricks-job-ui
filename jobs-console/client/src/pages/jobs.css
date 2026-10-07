@@ -74,9 +74,70 @@
 .jobs .mk.running { background: var(--wash-blue); color: var(--blue); animation: blink 1.4s ease-in-out infinite; }
 .jobs .mk.none { color: var(--ink-3); }
 
-/* Detail pane (filled by the next task) */
+/* Load view: scheduled jobs expected to be running at once */
+.jobs .ld { padding: 14px 16px 8px; border-bottom: 1px solid var(--rule); background: var(--sheet); }
+.jobs .ld-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.jobs .ld-head > b { font-size: 13px; font-weight: 600; }
+.jobs .ld-head > span { font-size: 12px; color: var(--ink-3); }
+.jobs .ld-head > span b { color: var(--ink); font-weight: 600; }
+.jobs .ld-hint { margin-left: auto; }
+.jobs .ld-clear { margin-left: auto; border: 1px solid #e8c98a; background: var(--wash-amber); color: var(--ink); border-radius: 999px; padding: 1px 10px; font: inherit; font-size: 12px; cursor: pointer; }
+.jobs .ld-body { display: grid; grid-template-columns: 44px minmax(0, 1fr); }
+.jobs .ld-y { position: relative; height: 200px; }
+.jobs .ld-y span { position: absolute; right: 8px; transform: translateY(50%); font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.jobs .ld-plot { position: relative; height: 200px; cursor: crosshair; user-select: none; touch-action: none; }
+.jobs .ld-plot svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.jobs .ld-grid { position: absolute; left: 0; right: 0; border-top: 1px solid #efe7dc; }
+.jobs .ld-grid:first-child { border-top-color: #cfc3b3; }
+.jobs .ld-vgrid { position: absolute; top: 0; bottom: 0; border-left: 1px dotted #efe7dc; }
+.jobs .ld-now { position: absolute; top: -6px; bottom: 0; border-left: 2px solid var(--blue); z-index: 2; pointer-events: none; }
+.jobs .ld-now span { position: absolute; top: -10px; left: 3px; font-size: 9.5px; font-weight: 600; color: var(--blue); }
+.jobs .ld-sel { position: absolute; top: 0; bottom: 0; background: rgba(217, 138, 18, .16); border-left: 1.5px solid var(--amber); border-right: 1.5px solid var(--amber); z-index: 1; pointer-events: none; }
+.jobs .ld-drag { position: absolute; top: 0; bottom: 0; background: rgba(39, 33, 28, .08); pointer-events: none; z-index: 1; }
+.jobs .ld-x { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--ink); pointer-events: none; z-index: 3; }
+.jobs .ld-x i { position: absolute; left: -5px; width: 8px; height: 8px; margin-bottom: -5px; border-radius: 50%; background: #c07a0c; border: 2px solid var(--sheet); }
+.jobs .ld-xa { position: relative; height: 18px; margin: 4px 0 0 44px; }
+.jobs .ld-xa span { position: absolute; transform: translateX(-50%); font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.jobs .ld-xa span.d { color: var(--ink-2); font-weight: 600; }
+.jobs .ld-list .starts { color: var(--ink-2); }
+.jobs .tip { position: fixed; z-index: 100; pointer-events: none; max-width: 420px; padding: 7px 10px; background: var(--ink); color: var(--sheet); border-radius: 6px; font-size: 12px; line-height: 1.45; box-shadow: 0 6px 18px rgba(0,0,0,.18); white-space: pre-line; }
+.jobs .tip b { font-weight: 600; }
+
+/* Detail pane */
 .jobs .pane { display: none; border-left: 1px solid var(--rule); background: var(--sheet); overflow-y: auto; }
 .jobs .split.sel .pane { display: block; }
+.jobs .p-head { padding: 16px 20px 14px; border-bottom: 1px solid var(--rule); background: var(--paper); }
+.jobs .p-top { display: flex; align-items: center; gap: 10px; }
+.jobs .p-x { margin-left: auto; border: 0; background: none; color: var(--ink-3); cursor: pointer; font-size: 16px; }
+.jobs .p-x:hover { color: var(--ink); }
+.jobs .p-open { font-size: 12px; color: var(--blue); text-decoration: none; }
+.jobs .p-open:hover { text-decoration: underline; }
+.jobs .p-name { margin: 8px 0 4px; font-family: var(--mono); font-size: 15px; font-weight: 500; overflow-wrap: anywhere; line-height: 1.4; }
+.jobs .p-name i { font-style: normal; font-weight: 400; color: var(--ink-3); }
+.jobs .p-desc { margin: 0; color: var(--ink-2); font-size: 13px; }
+.jobs .p-sec { padding: 14px 20px; border-bottom: 1px solid var(--rule); }
+.jobs .p-sec h3 { margin: 0 0 8px; font-size: 10.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); display: flex; align-items: baseline; gap: 8px; }
+.jobs .p-sec h3 .h-none { text-transform: none; letter-spacing: 0; font-weight: 400; }
+.jobs .facts { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 5px 12px; margin: 0; }
+.jobs .facts dt { color: var(--ink-3); font-size: 12.5px; }
+.jobs .facts dd { margin: 0; font-size: 13px; overflow-wrap: anywhere; }
+.jobs .facts code { font-family: var(--mono); font-size: 12.5px; }
+.jobs .chip { display: inline-block; padding: 0 8px; margin: 0 4px 3px 0; border-radius: 999px; background: var(--wash-sand); border: 1px solid #e3d7c6; font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); }
+.jobs .chip b { font-weight: 400; color: var(--ink-3); }
+/* Run history boxes: runrow.css's .rh, in a scrolling strip */
+.jobs .boxes { display: flex; gap: 3px; overflow-x: auto; padding: 3px 3px 6px; margin: -3px -3px 0; }
+.jobs .boxes .rh { flex: none; }
+.jobs .h-none { color: var(--ink-3); font-size: 12.5px; }
+/* Structure */
+.jobs .tasks { margin: 0; padding: 0; list-style: none; }
+.jobs .tasks li { display: grid; grid-template-columns: minmax(0, 1fr) 90px; gap: 10px; padding: 4px 0; border-bottom: 1px dashed var(--rule); font-size: 12.5px; }
+.jobs .tasks li:last-child { border-bottom: 0; }
+.jobs .tasks .tk { font-family: var(--mono); overflow-wrap: anywhere; }
+.jobs .tasks .dep { display: block; font-family: var(--sans); font-size: 11.5px; color: var(--ink-3); }
+.jobs .tasks .tt { color: var(--ink-3); text-align: right; }
+.jobs .see { display: flex; justify-content: flex-end; padding: 14px 20px 20px; }
+.jobs .see button { border: 1px solid var(--ink); background: var(--ink); color: var(--sheet); padding: 6px 16px; border-radius: 999px; cursor: pointer; font: inherit; font-weight: 500; }
+.jobs .see button:hover { background: #3d342d; }
 
 /* States */
 .jobs .state { padding: 60px 24px; text-align: center; color: var(--ink-2); }

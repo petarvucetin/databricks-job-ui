@@ -23,16 +23,17 @@ const describe = (err: unknown): string =>
     : `Could not load jobs and pipelines: ${err instanceof Error ? err.message : String(err)}`;
 
 /**
- * Jobs and pipelines from /api/items, on mount and every `intervalMs` (when > 0). A failed background refresh keeps
- * the last good data on screen. Paused while the tab is hidden.
+ * Jobs and pipelines from /api/items, on mount and again whenever `refreshKey` changes after that (the page passes the
+ * runs' `loadedAt`, so the list refreshes with every runs load: the runs interval and the manual ↻ alike; with the
+ * interval off only ↻ refreshes). A failed background refresh keeps the last good data on screen.
  */
-export function useItems(intervalMs = 0): ItemsState {
+export function useItems(refreshKey = 0): ItemsState {
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState<{ attempt: number; message: string } | null>(null);
   const [latest, setLatest] = useState<{ data: ItemsResponse; loadedAt: number } | null>(null);
   const inFlight = useRef(false);
   const alive = useRef(true);
-  const lastTry = useRef(0);
+  const lastKey = useRef(refreshKey);
   const retry = useCallback(() => setAttempt((n) => n + 1), []);
 
   useEffect(() => {
@@ -44,7 +45,6 @@ export function useItems(intervalMs = 0): ItemsState {
 
   useEffect(() => {
     let current = true;
-    lastTry.current = Date.now();
     fetchItems()
       .then((data) => {
         if (current) setLatest({ data, loadedAt: Date.now() });
@@ -59,30 +59,22 @@ export function useItems(intervalMs = 0): ItemsState {
 
   const ready = latest !== null;
   useEffect(() => {
-    if (!intervalMs || !ready) return;
-    const tick = () => {
-      if (document.visibilityState === 'hidden' || inFlight.current) return;
-      if (Date.now() - lastTry.current < intervalMs) return;
-      inFlight.current = true;
-      lastTry.current = Date.now();
-      fetchItems()
-        .then((data) => {
-          if (alive.current) setLatest({ data, loadedAt: Date.now() });
-        })
-        .catch(() => {
-          // keep the last good list
-        })
-        .finally(() => {
-          inFlight.current = false;
-        });
-    };
-    const timer = setInterval(tick, Math.min(5000, intervalMs));
-    document.addEventListener('visibilitychange', tick);
-    return () => {
-      clearInterval(timer);
-      document.removeEventListener('visibilitychange', tick);
-    };
-  }, [intervalMs, ready]);
+    const prev = lastKey.current;
+    lastKey.current = refreshKey;
+    // Not on the runs' first load (the list is loading alongside it), only on later ones, and once the list is here.
+    if (!prev || prev === refreshKey || !ready || inFlight.current) return;
+    inFlight.current = true;
+    fetchItems()
+      .then((data) => {
+        if (alive.current) setLatest({ data, loadedAt: Date.now() });
+      })
+      .catch(() => {
+        // keep the last good list
+      })
+      .finally(() => {
+        inFlight.current = false;
+      });
+  }, [refreshKey, ready]);
 
   if (latest) return { state: 'ready', data: latest.data, loadedAt: latest.loadedAt };
   return failed && failed.attempt === attempt ? { state: 'error', message: failed.message, retry } : { state: 'loading' };

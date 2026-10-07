@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { filterItems, sortItems, lastRun, typicalSec, runsFor, scopeCounts, startsOf, isOnTimeline, tagCounts } from './items';
+import { filterItems, sortItems, lastRun, typicalSec, runsFor, scopeCounts, startsOf, isOnTimeline, tagCounts, pillOf } from './items';
 import { makeRun } from '../test/fixtures';
 import type { Item } from '../../../shared/domain/types';
 
@@ -68,5 +68,19 @@ describe('items model', () => {
     ];
     expect(sortItems(items, 'last', runs, 0).map((i) => i.id)).toEqual(['1', '2', 'p1']);
     expect(sortItems(items, 'failed', runs, 0).map((i) => i.id)).toEqual(['2', '1', 'p1']);
+  });
+  it('the trigger pill is computed once per item and minute', () => {
+    const it2 = items[1];
+    const t = Date.UTC(2026, 9, 6, 16, 16, 5);
+    const p = pillOf(it2, t);
+    expect(p.text).toBe('daily 02:00');
+    expect(pillOf(it2, t + 50e3)).toBe(p);
+    expect(pillOf(it2, t + 60e3)).not.toBe(p);
+  });
+  it('search matches the pill text of the current minute, not the first one asked for', () => {
+    // a 2026-only daily schedule: "daily 02:00" while it has starts ahead, "cron …" once it has none
+    const y = [base({ id: 'y', name: 'year_bound', trigger: 'schedule', schedule: { cron: '0 0 2 * * ? 2026', tz: 'UTC', paused: false } })];
+    expect(filterItems(y, { ...F, query: 'daily' }, null, Date.UTC(2026, 11, 30)).map((i) => i.id)).toEqual(['y']);
+    expect(filterItems(y, { ...F, query: 'daily' }, null, Date.UTC(2027, 0, 1))).toEqual([]);
   });
 });

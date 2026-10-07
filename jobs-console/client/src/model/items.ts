@@ -15,6 +15,9 @@ export const DEFAULT_FILTERS: ItemFilters = { query: '', type: 'all', scope: 'al
 
 const DAY = 24 * 3600e3;
 
+/** "type:id": how the page keys and selects an item. */
+export const itemKey = (it: Item) => `${it.type}:${it.id}`;
+
 /** scheduleOf per item, cached: the pill, the timeline and the footer all ask. */
 const parsedCache = new WeakMap<Item, ReturnType<typeof scheduleOf> | null>();
 function parsed(item: Item): ReturnType<typeof scheduleOf> | null {
@@ -106,16 +109,32 @@ export function typicalSec(item: Item, runs: Run[]): { sec: number; estimated: b
   return { sec: 600, estimated: true };
 }
 
-/** Search text per item: name, id, run-as, creator, k:v tags and the pill text, lower-cased. */
-const hayCache = new WeakMap<Item, string>();
+export type Pill = ReturnType<typeof triggerPill>;
+
+/**
+ * The trigger pill, computed once per item and minute (each call looks 8 days ahead for the next start, and the list,
+ * the pane and the search all ask for it on every render).
+ */
+const pillCache = new WeakMap<Item, { minute: number; pill: Pill }>();
+export function pillOf(item: Item, now: number): Pill {
+  const minute = Math.floor(now / 60e3);
+  const c = pillCache.get(item);
+  if (c && c.minute === minute) return c.pill;
+  const pill = triggerPill(item, now);
+  pillCache.set(item, { minute, pill });
+  return pill;
+}
+
+/** Search text per item: name, id, run-as, creator, k:v tags and the pill text (of the same minute as pillOf), lower-cased. */
+const hayCache = new WeakMap<Item, { minute: number; text: string }>();
 function haystack(item: Item, now: number): string {
-  let h = hayCache.get(item);
-  if (h === undefined) {
-    const tags = Object.entries(item.tags).map(([k, v]) => `${k}:${v}`).join(' ');
-    h = [item.name, item.id, item.runAs ?? '', item.creator ?? '', tags, triggerPill(item, now).text].join(' ').toLowerCase();
-    hayCache.set(item, h);
-  }
-  return h;
+  const minute = Math.floor(now / 60e3);
+  const c = hayCache.get(item);
+  if (c && c.minute === minute) return c.text;
+  const tags = Object.entries(item.tags).map(([k, v]) => `${k}:${v}`).join(' ');
+  const text = [item.name, item.id, item.runAs ?? '', item.creator ?? '', tags, pillOf(item, now).text].join(' ').toLowerCase();
+  hayCache.set(item, { minute, text });
+  return text;
 }
 
 export function filterItems(items: Item[], f: ItemFilters, sched: { from: number; to: number; type?: 'job' | 'pipeline' } | null, now = Date.now()): Item[] {
