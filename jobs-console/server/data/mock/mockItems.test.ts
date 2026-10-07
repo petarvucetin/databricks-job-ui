@@ -9,6 +9,7 @@ describe('mockItems', () => {
   it('one item per distinct job and pipeline name, stable ids', () => {
     const names = new Set(runs.map((r) => `${r.type}|${r.name}`));
     expect(items).toHaveLength(names.size);
+    expect(new Set(items.map((i) => i.type + i.id)).size).toBe(items.length);
     expect(mockItems(runs, asOf).map((i) => i.id)).toEqual(items.map((i) => i.id));
   });
   it('has the spread the UI needs', () => {

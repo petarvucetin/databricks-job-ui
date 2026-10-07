@@ -44,7 +44,7 @@ export function createMockRunSource(clock: () => number = Date.now): RunSource {
       return Promise.resolve({ asOf: data.asOf, source: 'mock', items });
     },
     getItem(type, id) {
-      const data = shiftTo(dataFor(DEFAULT_TZ_OFFSET_MIN), clock());
+      const data = dataFor(DEFAULT_TZ_OFFSET_MIN); // detail needs only names and ntasks: no shift
       items ??= mockItems(data.runs, data.asOf);
       const item = items.find((i) => i.type === type && i.id === id);
       return item ? Promise.resolve(mockDetail(item, data.runs)) : Promise.reject(new SourceError(404, `${type} ${id} does not exist`));

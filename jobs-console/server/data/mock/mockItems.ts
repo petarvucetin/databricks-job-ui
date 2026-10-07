@@ -33,6 +33,14 @@ export function mockItems(runs: Run[], _asOf: number): Item[] {
   const out: Item[] = [];
   let jobIndex = 0;
   let pipeIndex = 0;
+  const used = new Set<string>();
+  // Unique id per type: probe past a hash collision to the next free number, in name order (deterministic).
+  const free = (type: string, start: number, fmt: (n: number) => string, mod: number): string => {
+    let n = start;
+    while (used.has(type + fmt(n))) n = (n + 1) % mod;
+    used.add(type + fmt(n));
+    return fmt(n);
+  };
   for (const r of sorted) {
     const h = hash(r.name);
     const dev = /^\[dev ([^\]]+)\] /.exec(r.name);
@@ -50,11 +58,11 @@ export function mockItems(runs: Run[], _asOf: number): Item[] {
     if (r.type === 'pipeline') {
       const continuous = pipeIndex === 0 || r.continuous || h % 4 === 0;
       pipeIndex++;
-      out.push({ type: 'pipeline', id: `p-${h.toString(16).padStart(8, '0')}`, ...base, trigger: continuous ? 'continuous' : 'manual', paused: false });
+      out.push({ type: 'pipeline', id: free('pipeline', h, (n) => `p-${n.toString(16).padStart(8, '0')}`, 2 ** 32), ...base, trigger: continuous ? 'continuous' : 'manual', paused: false });
     } else {
       const shape = jobIndex < GUARANTEED.length ? GUARANTEED[jobIndex] : SHAPES[h % SHAPES.length];
       jobIndex++;
-      out.push({ type: 'job', id: String(100000 + (h % 900000)), ...base, ...shape });
+      out.push({ type: 'job', id: free('job', h % 900000, (n) => String(100000 + n), 900000), ...base, ...shape });
     }
   }
   return out;
