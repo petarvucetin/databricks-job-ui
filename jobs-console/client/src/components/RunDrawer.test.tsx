@@ -3,6 +3,7 @@ import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
 import { render, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import { RunDrawer } from './RunDrawer';
 import { makeRealRun, makeRetryingRun, makeRun } from '../test/fixtures';
+import { TabActiveContext } from '../hooks/useTabActive';
 
 const fetchMock = vi.fn();
 beforeEach(() => {
@@ -92,6 +93,18 @@ describe('RunDrawer', () => {
     box.remove();
     fireEvent.click(container.querySelector('.dh .x')!);
     expect(onClose).toHaveBeenCalledTimes(3);
+  });
+
+  it('while its tab is hidden, Escape and clicks elsewhere leave it open', () => {
+    const onClose = vi.fn();
+    render(
+      <TabActiveContext.Provider value={false}>
+        <RunDrawer run={makeRun()} nowMs={0} loadedAt={0} onClose={onClose} />
+      </TabActiveContext.Provider>,
+    );
+    fireEvent.keyDown(document, { key: 'Escape' });
+    fireEvent.click(document.body);
+    expect(onClose).not.toHaveBeenCalled();
   });
 });
 

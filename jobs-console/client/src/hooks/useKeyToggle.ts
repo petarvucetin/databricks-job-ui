@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
+import { useTabActiveRef } from './useTabActive';
 
-/** A view switch flipped by a single letter key (ignored while typing in a field); the choice is remembered. */
+/** A view switch flipped by a single letter key (ignored while typing in a field or while its tab is hidden); the choice is remembered. */
 export function useKeyToggle(letter: string, storageKey: string, initial: boolean): boolean {
   const [on, setOn] = useState(() => {
     const saved = localStorage.getItem(storageKey);
     return saved === null ? initial : saved === '1';
   });
+  const tabActive = useTabActiveRef();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (!tabActive.current) return;
       if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
@@ -19,7 +22,7 @@ export function useKeyToggle(letter: string, storageKey: string, initial: boolea
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [letter, storageKey]);
+  }, [letter, storageKey, tabActive]);
   return on;
 }
 

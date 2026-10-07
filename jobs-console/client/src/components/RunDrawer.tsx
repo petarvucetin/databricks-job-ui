@@ -5,6 +5,7 @@ import { dur, durLive, fmtStart } from '../../../shared/domain/format';
 import { elapsedSec, runningIndex, splitName, taskStates } from '../model/rowView';
 import { causeGroups, lastRunSec, schedule, spanSec, tasksHead, ticks, type ScheduledTask } from '../model/runDetail';
 import { useTaskLog } from '../hooks/useTaskLog';
+import { useTabActiveRef } from '../hooks/useTabActive';
 import { TitleLink } from './TitleLink';
 import './drawer.css';
 
@@ -270,13 +271,15 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose, refresh }: {
     refreshNow();
   });
   const updated = agoText(Math.max(0, Math.round((nowMs - (refresh?.updatedAt ?? loadedAt)) / 1000)));
+  const tabActive = useTabActiveRef();
   useEffect(() => {
     closeRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    // Nothing while the Runs tab is hidden (an Esc or a click on the other tab is not meant for this drawer).
+    const onKey = (e: KeyboardEvent) => tabActive.current && e.key === 'Escape' && onClose();
     // Clicks outside close it, except on run history boxes, which open or stack runs.
     const onClick = (e: MouseEvent) => {
       const t = e.target;
-      if (t instanceof Element && !t.closest('.dr, .rh')) onClose();
+      if (tabActive.current && t instanceof Element && !t.closest('.dr, .rh')) onClose();
     };
     document.addEventListener('keydown', onKey);
     document.addEventListener('click', onClick);
@@ -284,7 +287,7 @@ export function RunDrawer({ run, history, nowMs, loadedAt, onClose, refresh }: {
       document.removeEventListener('keydown', onKey);
       document.removeEventListener('click', onClick);
     };
-  }, [onClose]);
+  }, [onClose, tabActive]);
 
   const elapsed = elapsedSec(run, nowMs, loadedAt);
   const total = spanSec(run, elapsed);

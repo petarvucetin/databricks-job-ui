@@ -5,6 +5,7 @@ import { useRunsData } from './hooks/useRunsData';
 import { AttentionPage, type RunsFocus } from './pages/AttentionPage';
 import { ComparePage } from './pages/ComparePage';
 import { JobsPage } from './pages/JobsPage';
+import { TabActiveContext } from './hooks/useTabActive';
 
 export default function App() {
   const compare = new URLSearchParams(window.location.search).has('compare');
@@ -30,15 +31,20 @@ function Tabbed({ mode }: { mode: ReturnType<typeof useDataMode> }) {
   return (
     <Shell mode={mode} tab={tab} onTab={setTab}>
       <div hidden={tab !== 'jobs'}>
-        <JobsPage
-          data={data}
-          active={tab === 'jobs'}
-          onSeeRuns={(name) => { setFocus({ seq: Date.now(), query: name }); setTab('runs'); }}
-          onOpenRun={(runId) => { setFocus({ seq: Date.now(), runId }); setTab('runs'); }}
-        />
+        <TabActiveContext.Provider value={tab === 'jobs'}>
+          <JobsPage
+            data={data}
+            active={tab === 'jobs'}
+            onSeeRuns={(name) => { setFocus({ seq: Date.now(), query: name }); setTab('runs'); }}
+            onOpenRun={(runId) => { setFocus({ seq: Date.now(), runId }); setTab('runs'); }}
+          />
+        </TabActiveContext.Provider>
       </div>
       <div hidden={tab !== 'runs'}>
-        <AttentionPage key={focus?.seq ?? 0} data={data} focus={focus} />
+        {/* Runs listeners (drawer Esc / outside click, the l/c/t keys) stay quiet while this tab is hidden. */}
+        <TabActiveContext.Provider value={tab === 'runs'}>
+          <AttentionPage key={focus?.seq ?? 0} data={data} focus={focus} />
+        </TabActiveContext.Provider>
       </div>
     </Shell>
   );
