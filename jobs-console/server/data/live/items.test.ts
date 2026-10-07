@@ -56,6 +56,36 @@ describe('createLiveItems', () => {
     expect(r.partial).toBeDefined();
     expect(r.items.length).toBeLessThan(500);
   });
+  it('partial when the budget expires during the pipeline spec phase, and is not cached', async () => {
+    const inner = fakeApi({ jobs: [job(1, {})], pipelines: [{ pipeline_id: 'p1', name: 'pipe' }, { pipeline_id: 'p2', name: 'pipe2' }] });
+    const api = { ...inner, getPipeline: (req: { pipeline_id: string }) => new Promise<pipelines.GetPipelineResponse>((r) => setTimeout(() => r({ pipeline_id: req.pipeline_id }), 300)) };
+    const src = createLiveItems({ ...base, clock: Date.now, api, state: createLiveState(), limits: { ...DEFAULT_LIMITS, itemsTimeoutMs: 100 } });
+    const r = await src.listItems();
+    expect(r.partial?.reason).toMatch(/2 pipeline details cut/);
+    const calls = inner.calls.filter((c) => c === 'listJobs').length;
+    await src.listItems();
+    expect(inner.calls.filter((c) => c === 'listJobs').length).toBe(calls + 1);
+  });
+  it('a partial jobs list is not cached either', async () => {
+    const api = fakeApi({ jobs: Array.from({ length: 300 }, (_, i) => job(i + 1, {})), jobPageSize: 100, delay: 100 });
+    const src = createLiveItems({ ...base, clock: Date.now, api, state: createLiveState(), limits: { ...DEFAULT_LIMITS, itemsTimeoutMs: 150 } });
+    expect((await src.listItems()).partial).toBeDefined();
+    const calls = api.calls.length;
+    await src.listItems();
+    expect(api.calls.length).toBeGreaterThan(calls);
+  });
+  it('the cache expires after the 5-minute TTL', async () => {
+    let now = 1_000_000;
+    const api = fakeApi({ jobs: [job(1, {})] });
+    const src = createLiveItems({ ...base, clock: () => now, api, state: createLiveState() });
+    await src.listItems();
+    now += 4 * 60_000;
+    await src.listItems();
+    expect(api.calls.filter((c) => c === 'listJobs').length).toBe(1);
+    now += 61_000;
+    await src.listItems();
+    expect(api.calls.filter((c) => c === 'listJobs').length).toBe(2);
+  });
   it('getItem: job tasks with deps, pipeline facts, 404 for unknown', async () => {
     const api = fakeApi({
       jobsById: { 9: { job_id: 9, run_as_user_name: SP, settings: { name: 'j9', tasks: [{ task_key: 'a', notebook_task: { notebook_path: '/x' } }, { task_key: 'b', depends_on: [{ task_key: 'a' }], pipeline_task: { pipeline_id: 'p1' } }] } } },

@@ -26,7 +26,7 @@ export function jobItem(j: jobs.BaseJob | jobs.Job, me: string, host: string): I
   } else if (s.trigger?.periodic) trigger = 'periodic';
   else if (s.trigger?.file_arrival) trigger = 'file_arrival';
   else if (s.trigger?.table_update) trigger = 'table_update';
-  if (s.trigger && trigger !== 'continuous' && trigger !== 'schedule') paused = s.trigger.pause_status === 'PAUSED';
+  if (s.trigger && trigger !== 'manual' && trigger !== 'continuous' && trigger !== 'schedule') paused = s.trigger.pause_status === 'PAUSED';
   return {
     type: 'job', id, name: s.name ?? `job ${id}`,
     ...(s.description ? { description: s.description } : {}),
@@ -134,10 +134,13 @@ export function createLiveItems(o: LiveItemsOptions): { listItems: () => Promise
           } while (pt);
         }
         const specs = new Map<string, pipelines.GetPipelineResponse>();
+        let cut = 0;
         await pool(statuses.filter((p) => p.pipeline_id), o.limits.concurrency, async (p) => {
           const r = await dl.call(() => o.api.getPipeline({ pipeline_id: p.pipeline_id! }).catch(() => undefined));
-          if (r && r !== TIMEOUT) specs.set(p.pipeline_id!, r);
+          if (r === TIMEOUT) cut++;
+          else if (r) specs.set(p.pipeline_id!, r);
         });
+        if (cut && !partial) partial = `${cut} pipeline details cut by the time limit`;
         for (const p of statuses) items.push(pipelineItem(p, specs.get(p.pipeline_id ?? ''), me, host));
         const data: ItemsResponse = { asOf: now, source: o.source ?? 'live', items, ...(partial ? { partial: { reason: partial } } : {}) };
         if (!partial) o.state.items.set(o.userKey, { at: now, data });
