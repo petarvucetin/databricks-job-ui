@@ -22,6 +22,9 @@ export function canon(v: unknown): string {
   return JSON.stringify(norm(v ?? {}));
 }
 
+/** SQL is answered only by a recording of the same statement text, parameters and warehouse (decision H10). */
+const EXACT_ONLY = new Set<keyof LiveApi>(['executeStatement']);
+
 /** Args that name what a call is about; a fallback that agrees on these is much nearer than one that doesn't. */
 const IDENTITY = new Set(['page_token', 'pipeline_id', 'run_id', 'update_id', 'statement_id', 'chunk_index']);
 
@@ -44,7 +47,8 @@ export function sdkError(r: RecordedError): Error {
 
 /**
  * LiveApi answered from recorded calls. Exact match on method + canonical args, the preferred session first, each
- * recorded answer served in order (the last one repeats). Otherwise the nearest same-method call, with a diagnostic.
+ * recorded answer served in order (the last one repeats). Otherwise the nearest same-method call, with a diagnostic
+ * (never for SQL statements: those miss).
  * A call cut off by the time budget when it was recorded is left unanswered, so the budget cuts it again.
  */
 export function createReplayApi(sessions: SessionRecord[], preferred: SessionRecord | undefined, diag: Diag, host = ''): LiveApi {
@@ -94,6 +98,11 @@ export function createReplayApi(sessions: SessionRecord[], preferred: SessionRec
       const c = slot.calls[Math.min(slot.next, slot.calls.length - 1)];
       slot.next++;
       return answer(c);
+    }
+    if (EXACT_ONLY.has(method)) {
+      // Another statement's rows (or the same statement's for another window) would be wrong data, not a near miss.
+      diag({ level: 'warn', code: 'replay-miss', message: `${method} ${canon(args)} was not recorded with these exact parameters; answering not found` });
+      return Promise.reject(Object.assign(new Error(`Replay: no recorded ${method} call for ${canon(args)}`), { statusCode: 404, errorCode: 'RESOURCE_DOES_NOT_EXIST' }));
     }
     const listed = fromList(method, args);
     if (listed !== undefined) {

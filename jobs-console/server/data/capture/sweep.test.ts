@@ -6,13 +6,15 @@ import { buildCapture, gzipCapture, readCapture } from './captureFile';
 import { createReplayProvider } from './replayProvider';
 import { parseSweepDays, readSweepLimits, runSweep } from './sweep';
 import { NOW, comparable, richWorkspace } from './fixtures';
+import { readHistoryConfig } from '../systables/config';
+import { JOB_RUNS_SQL } from '../systables/queries';
 
 const sweepSession = () => new Session({ id: 'sweep', route: '/api/diag/sweep', query: { days: '90' }, authMode: 'user' }, () => NOW);
 
 function sweep(over: Partial<Parameters<typeof runSweep>[0]> = {}) {
   const session = sweepSession();
   const api = fakeApi(richWorkspace);
-  const run = runSweep({ api, user: () => Promise.resolve('me@x.com'), session, days: 90, timeoutMs: 240000, maxOutputs: 300, concurrency: 4, clock: () => NOW, ...over });
+  const run = runSweep({ api, user: () => Promise.resolve('me@x.com'), session, days: 90, timeoutMs: 240000, maxOutputs: 300, concurrency: 4, clock: () => NOW, history: readHistoryConfig({}), ...over });
   return { session, api, run };
 }
 
@@ -58,6 +60,29 @@ describe('sweep', () => {
     expect(comparable(replayed)).toBe(comparable(res));
     const failed = res.runs.find((r) => r.type === 'job' && r.failed.length)!;
     expect(await src.taskLog(failed.id, failed.failed[0].name)).toContain('TABLE_OR_VIEW_NOT_FOUND');
+  });
+});
+
+describe('sweep with run history', () => {
+  it('reads history from system tables over the sweep days, so the capture carries the SQL', async () => {
+    const session = sweepSession();
+    const seen: Record<string, string>[] = [];
+    const api = fakeApi({
+      ...richWorkspace,
+      workspaceId: '42',
+      jobs: [{ job_id: 1, creator_user_name: 'me@x.com', settings: { name: 'nightly_etl' } }],
+      sql: (statement, params) => {
+        seen.push(params);
+        return statement === JOB_RUNS_SQL ? [{ job_id: '1', run_id: '9001', start_ms: String(NOW - 5 * 86_400_000), end_ms: String(NOW - 5 * 86_400_000 + 60_000), result_state: 'SUCCEEDED', termination_code: 'SUCCESS' }] : [];
+      },
+    });
+    const res = await runSweep({ api, user: () => Promise.resolve('me@x.com'), session, days: 30, timeoutMs: 240000, maxOutputs: 300, concurrency: 4, clock: () => NOW, history: readHistoryConfig({ DATABRICKS_WAREHOUSE_ID: 'wh1' }) });
+    expect(res.history).toEqual({ source: 'system-tables', days: 30 });
+    expect(res.runs.map((r) => r.id)).toContain(9001);
+    expect(seen.find((p) => p.from_ts)?.from_ts).toBe(new Date(NOW - 30 * 86_400_000).toISOString());
+    const rec = session.finish({ status: 200, body: res });
+    expect(rec.calls.filter((c) => c.method === 'executeStatement')).toHaveLength(5);
+    expect(rec.probe).toEqual({ ok: true, workspaceId: '42' });
   });
 });
 

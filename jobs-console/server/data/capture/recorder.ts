@@ -1,8 +1,9 @@
-import type { RefreshInfo } from '../../../shared/domain/types';
+import type { HistoryInfo, RefreshInfo } from '../../../shared/domain/types';
 import type { LiveApi } from '../live/api';
 import { apiErrorParts } from '../live/apiError';
 import type { LiveLimits } from '../live/limits';
-import type { DiagNote, Trace } from '../live/trace';
+import type { DiagNote, Trace, TraceMeta } from '../live/trace';
+import type { ProbeResult } from '../systables/probe';
 
 /** An SDK error as recorded: the code and message are the ones apiErrorParts recovers; `raw` keeps the SDK's own message when it differs. */
 export interface RecordedError {
@@ -33,6 +34,8 @@ export interface ResponseSummary {
   runCount?: number;
   byKind?: Record<string, number>;
   byType?: Record<string, number>;
+  /** Where the list's run history came from (live and replay lists). Replay's /api/mode answers with it. */
+  history?: HistoryInfo;
 }
 
 export interface SessionRecord {
@@ -48,6 +51,8 @@ export interface SessionRecord {
   limits?: LiveLimits;
   /** A list the source computed (not a cache hit): full load or delta. Replay re-runs the same mode. */
   refresh?: RefreshInfo;
+  /** The system-tables access probe's answer for this request; replay answers it the same way. */
+  probe?: ProbeResult;
   calls: CallRecord[];
   diagnostics: DiagNote[];
   /** Diagnostics dropped past the per-session cap. */
@@ -96,7 +101,8 @@ const summarize = (status: number, body: unknown): ResponseSummary => {
     for (const r of runs as Record<string, unknown>[]) out[String(r[key])] = (out[String(r[key])] ?? 0) + 1;
     return out;
   };
-  return { status, runCount: runs.length, byKind: count('kind'), byType: count('type') };
+  const history = (body as { history?: HistoryInfo }).history;
+  return { status, runCount: runs.length, byKind: count('kind'), byType: count('type'), ...(history ? { history } : {}) };
 };
 
 /** One app request's worth of recorded calls and diagnostics. Plugs into a live source as its Trace. */
@@ -122,7 +128,8 @@ export class Session implements Trace {
     else this.rec.droppedDiagnostics = (this.rec.droppedDiagnostics ?? 0) + 1;
   }
 
-  note(meta: { now?: number; user?: string; limits?: LiveLimits; refresh?: RefreshInfo }): void {
+  note(meta: TraceMeta): void {
+    if (meta.probe !== undefined) this.rec.probe = { ...meta.probe };
     if (meta.refresh !== undefined) this.rec.refresh = { ...meta.refresh };
     if (meta.now !== undefined) this.rec.now = meta.now;
     if (meta.user !== undefined) this.rec.user = meta.user;

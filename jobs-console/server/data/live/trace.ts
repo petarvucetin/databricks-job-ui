@@ -1,6 +1,7 @@
 import type { RefreshInfo } from '../../../shared/domain/types';
 import type { LiveApi } from './api';
 import type { LiveLimits } from './limits';
+import type { ProbeResult } from '../systables/probe';
 
 /** A structured note the mapping code leaves instead of failing silently (unknown state, missing field, cap hit...). */
 export interface DiagNote {
@@ -21,5 +22,14 @@ export interface Trace {
   /** Wraps the request's LiveApi so every call is recorded. */
   wrap(api: LiveApi): LiveApi;
   /** What the source settled on: the asOf it used, the requester, the limits in effect, how it refreshed. */
-  note(meta: { now?: number; user?: string; limits?: LiveLimits; refresh?: RefreshInfo }): void;
+  note(meta: TraceMeta): void;
+}
+
+export interface TraceMeta {
+  now?: number;
+  user?: string;
+  limits?: LiveLimits;
+  refresh?: RefreshInfo;
+  /** The system-tables access probe's answer (possibly cached), so a replay answers it the same way. */
+  probe?: ProbeResult;
 }

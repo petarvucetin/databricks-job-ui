@@ -14,7 +14,7 @@ export interface CaptureFile {
   version: typeof CAPTURE_VERSION;
   createdAt: string;
   app: { version: string; gitSha?: string; node: string };
-  /** Every JOBS_CONSOLE_* value, DATABRICKS_HOST and the auth mode: enough to replay with the same limits. */
+  /** Every JOBS_CONSOLE_* value, DATABRICKS_HOST / _WAREHOUSE_ID / _WORKSPACE_ID and the auth mode: enough to replay with the same limits. */
   config: Record<string, string>;
   workspace: { host?: string; user?: string };
   /** Oldest first. */
@@ -23,10 +23,13 @@ export interface CaptureFile {
   process: ProcessRecord[];
 }
 
+/** Besides JOBS_CONSOLE_*: the host, and the warehouse and workspace the history SQL ran with (replay matches them exactly). */
+const CONFIG_KEYS = new Set(['DATABRICKS_HOST', 'DATABRICKS_WAREHOUSE_ID', 'DATABRICKS_WORKSPACE_ID']);
+
 export function captureConfig(env: Record<string, string | undefined>, authMode: string): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [k, v] of Object.entries(env).sort(([a], [b]) => a.localeCompare(b))) {
-    if (v !== undefined && (k.startsWith('JOBS_CONSOLE_') || k === 'DATABRICKS_HOST')) out[k] = v;
+    if (v !== undefined && (k.startsWith('JOBS_CONSOLE_') || CONFIG_KEYS.has(k))) out[k] = v;
   }
   out.authMode = authMode;
   return out;

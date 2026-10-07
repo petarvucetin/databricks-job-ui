@@ -1,4 +1,4 @@
-import type { DataSource, ItemDetail, ItemsResponse, Run, RunsResponse } from '../../shared/domain/types';
+import type { DataSource, HistoryInfo, ItemDetail, ItemsResponse, Run, RunsResponse } from '../../shared/domain/types';
 import { createMockRunSource } from './mock/mockRunSource';
 import { createLiveProvider } from './live/liveProvider';
 import type { Trace } from './live/trace';
@@ -42,6 +42,8 @@ export interface RunSourceProvider {
   readonly auth?: 'user' | 'app';
   /** `trace` (live only) records the request's calls and diagnostics into the capture. */
   forRequest(req: RequestLike, trace?: Trace): RunSource | { status: number; error: string };
+  /** Live: where the requester's run history comes from (probed as them); replay: as the recorded session had it. Mock: absent. */
+  history?(req: RequestLike): Promise<HistoryInfo | undefined>;
 }
 
 export function selectRunSource(env: Record<string, string | undefined>): RunSourceProvider {

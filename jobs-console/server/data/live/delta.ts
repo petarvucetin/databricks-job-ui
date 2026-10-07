@@ -30,8 +30,11 @@ export interface BasePipeline {
  * everything with the same pure mappers a full load uses.
  */
 export interface Base {
-  /** The `since` the window was asked with (undefined: the default window). Another window means a full load. */
-  since: number | undefined;
+  /**
+   * The window the base was loaded for: the `since` asked for (undefined: the default window), or `h:<local midnight>`
+   * when the API covers today next to cached history. Another window means a full load.
+   */
+  since: number | string | undefined;
   /** Clock time of the fetch the base describes (the last full load or delta). */
   asOf: number;
   /** Clock time of the last full load. */
@@ -43,7 +46,7 @@ export interface Base {
 }
 
 /** A full load's collections as a base. Only pipelines read completely are in it; the rest count as new to the next delta. */
-export function baseFromFull(since: number | undefined, now: number, jobsR: JobsCollected, pipesR: PipelinesCollected): Base {
+export function baseFromFull(since: Base['since'], now: number, jobsR: JobsCollected, pipesR: PipelinesCollected): Base {
   const runs = new Map<number, Stamped<jobs.BaseRun>>();
   for (const r of jobsR.runs) if (r.run_id !== undefined) runs.set(r.run_id, { value: r, at: now });
   const pipes = new Map<string, BasePipeline>();
@@ -154,6 +157,32 @@ export async function fetchDelta(api: LiveApi, base: Base, o: { now: number; fro
   return { asOf: o.now, active, fresh, finished, deleted, statuses: listing.statuses, reread };
 }
 
+/**
+ * History mode, for a full load: the job runs that started before `from` the API must still cover (H2, ruling R6).
+ * Every active run, and the runs of the `old` base (same window) from before `from` that are no longer active, read
+ * once more with getRun (gone: dropped). Runs in `have` are left out. A timeout throws DeltaError.
+ */
+export async function collectEarlier(api: LiveApi, o: { from: number; maxRuns: number; concurrency: number; dl: Deadline; old?: Base; have: Set<number> }): Promise<jobs.BaseRun[]> {
+  const active = await allRunPages(api, { active_only: true }, o.maxRuns, o.dl, 'active runs');
+  const out = active.filter((r) => r.run_id !== undefined && !o.have.has(r.run_id));
+  const seen = new Set([...o.have, ...out.map((r) => r.run_id!)]);
+  const check: number[] = [];
+  for (const { value: r } of o.old?.runs.values() ?? []) {
+    if (r.run_id === undefined || seen.has(r.run_id) || (r.start_time ?? 0) >= o.from) continue;
+    if (isTerminated(r)) out.push(r);
+    else check.push(r.run_id);
+  }
+  await pool(check, o.concurrency, async (runId) => {
+    const got = await o.dl.call(() => api.getRun({ run_id: runId })).catch((e: unknown) => {
+      if (isGone(e)) return undefined;
+      throw e;
+    });
+    if (got === TIMEOUT) throw new DeltaError(`the time budget ran out reading run ${runId}`);
+    if (got) out.push(got);
+  });
+  return out;
+}
+
 export interface MergeCounts {
   active: number;
   fresh: number;
@@ -187,15 +216,16 @@ function put<K, T>(map: Map<K, Stamped<T>>, k: K, v: T, at: number): void {
 /**
  * base + a delta -> the new base (a new object; `base` is not changed). By run_id / update_id, keeping whichever copy
  * was fetched later; deleted runs and pipelines no longer listed go; anything that started before `from` ages out;
- * job runs are capped at maxRuns, newest kept.
+ * job runs are capped at maxRuns, newest kept. `keepEarlier` (history mode, where `from` is fixed for the day): job runs
+ * that started before `from` stay (they came in active), so a finished one is read once more and kept until midnight.
  */
-export function mergeBase(base: Base, d: DeltaFetched, from: number, maxRuns: number): { base: Base; counts: MergeCounts } {
+export function mergeBase(base: Base, d: DeltaFetched, from: number, maxRuns: number, keepEarlier = false): { base: Base; counts: MergeCounts } {
   const runs = new Map(base.runs);
   for (const r of [...d.fresh, ...d.active, ...d.finished]) if (r.run_id !== undefined) put(runs, r.run_id, r, d.asOf);
   for (const id of d.deleted) runs.delete(id);
   let agedOut = 0;
   for (const [id, e] of runs) {
-    if ((e.value.start_time ?? 0) < from) {
+    if (!keepEarlier && (e.value.start_time ?? 0) < from) {
       runs.delete(id);
       agedOut++;
     }

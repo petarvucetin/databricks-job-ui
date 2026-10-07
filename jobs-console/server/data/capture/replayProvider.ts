@@ -1,5 +1,6 @@
 import type { RunSource, RunSourceProvider } from '../runSource';
-import { createLiveRunSource, createLiveState } from '../live/liveRunSource';
+import { createLiveRunSource, createLiveState, historyInfoOf } from '../live/liveRunSource';
+import { readHistoryConfig } from '../systables/config';
 import { readLimits } from '../live/limits';
 import type { DiagNote } from '../live/trace';
 import { readCaptureFile, type CaptureFile } from './captureFile';
@@ -43,6 +44,12 @@ const sinceOf = (s: SessionRecord): number | undefined => {
   return typeof raw === 'string' && /^\d+$/.test(raw) ? Number(raw) : undefined;
 };
 
+/** The recorded request's tzOffset: it sets the history cutoff, so the replayed SQL parameters match the recording. */
+const tzOf = (s: SessionRecord): number | undefined => {
+  const raw = s.query.tzOffset;
+  return typeof raw === 'string' && /^-?\d+$/.test(raw) ? Number(raw) : undefined;
+};
+
 export interface ReplayDeps {
   /** The capture itself (tests); default: read JOBS_CONSOLE_REPLAY. */
   file?: CaptureFile;
@@ -65,6 +72,11 @@ export function createReplayProvider(env: Record<string, string | undefined>, de
   const user = session.user ?? file.workspace.user ?? '';
   const state = createLiveState();
   const f = file;
+  const history = readHistoryConfig(f.config);
+  /** The access probe answers as it did for `s` (it may have been a cached answer, with no call recorded). */
+  const seed = (s: SessionRecord) => {
+    if (s.probe) state.probes.set('replay', { at: s.now ?? s.startedAt, result: Promise.resolve(s.probe) });
+  };
   // Each recorded list replayed as it ran: its own calls first, frozen at its own asOf, in its own mode.
   const sourceFor = (s: SessionRecord, mode?: 'full' | 'delta') => {
     const now = s.now ?? s.startedAt;
@@ -79,6 +91,7 @@ export function createReplayProvider(env: Record<string, string | undefined>, de
       warn: (m) => warn(`[replay] ${m}`),
       source: 'replay',
       mode,
+      history,
     });
   };
   // A delta session is replayed over the base its recorded predecessors built: replay those first (once, lazily).
@@ -87,12 +100,18 @@ export function createReplayProvider(env: Record<string, string | undefined>, de
   let primed: Promise<void> | undefined;
   const prime = () =>
     (primed ??= (async () => {
-      for (const s of chain) await sourceFor(s, s.refresh?.mode).listRuns(sinceOf(s), undefined, { full: s.refresh?.mode === 'full' }).catch(() => undefined);
+      for (const s of chain) {
+        seed(s);
+        await sourceFor(s, s.refresh?.mode).listRuns(sinceOf(s), tzOf(s), { full: s.refresh?.mode === 'full' }).catch(() => undefined);
+      }
+      seed(session);
     })());
+  seed(session);
   const inner = sourceFor(session, chain.length ? session.refresh?.mode : undefined);
   const source: RunSource = {
     kind: inner.kind,
-    listRuns: (since, tz, opts) => prime().then(() => inner.listRuns(since, tz, opts)),
+    // The recorded tzOffset, not the viewer's: the cutoff (and so every SQL parameter) is the one that was recorded.
+    listRuns: (since, _tz, opts) => prime().then(() => inner.listRuns(since, tzOf(session), opts)),
     getRun: (id, tz) => prime().then(() => inner.getRun(id, tz)),
     taskLog: (id, task, hint) => prime().then(() => inner.taskLog(id, task, hint)),
     listItems: () => prime().then(() => inner.listItems()),
@@ -104,5 +123,8 @@ export function createReplayProvider(env: Record<string, string | undefined>, de
     `[replay] ${file.sessions.length} sessions in the capture; replaying ${session.id} (${session.route}, asOf ${new Date(now).toISOString()}, user ${user || 'unknown'}` +
       `${chain.length ? `, a delta over ${chain.map((s) => s.id).join(' -> ')}` : ''})`
   );
-  return { kind: 'replay', auth, session, file, forRequest: () => source };
+  // /api/mode: the history the recorded list answered with, else what its probe said.
+  const limits = session.limits ?? readLimits(file.config);
+  const recorded = session.responseSummary?.history ?? (session.probe ? historyInfoOf(session.probe, limits) : undefined);
+  return { kind: 'replay', auth, session, file, forRequest: () => source, history: () => Promise.resolve(recorded) };
 }

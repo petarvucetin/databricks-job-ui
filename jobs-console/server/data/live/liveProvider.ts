@@ -2,7 +2,9 @@ import { createHash } from 'node:crypto';
 import type { RequestLike, RunSourceProvider } from '../runSource';
 import { createSdkApi, type LiveApi } from './api';
 import { readLimits, readRefresh, type LiveLimits, type RefreshSettings } from './limits';
-import { createLiveRunSource, createLiveState, type LiveState } from './liveRunSource';
+import { createLiveRunSource, createLiveState, historyInfoOf, probeHistory, type LiveState } from './liveRunSource';
+import type { HistoryInfo } from '../../../shared/domain/types';
+import { readHistoryConfig, type HistoryConfig } from '../systables/config';
 
 export interface LiveProviderDeps {
   makeApi: (opts: { host?: string; token?: string }) => LiveApi;
@@ -26,7 +28,11 @@ export interface LiveProvider extends RunSourceProvider {
   readonly limits: LiveLimits;
   readonly refresh: RefreshSettings;
   readonly state: LiveState;
+  /** DATABRICKS_WAREHOUSE_ID, DATABRICKS_WORKSPACE_ID, JOBS_CONSOLE_HISTORY. */
+  readonly historyConfig: HistoryConfig;
   identify(req: RequestLike): LiveIdentity | { status: number; error: string };
+  /** Where this requester's run history comes from (the probe, as them); undefined when they are not signed in. */
+  history(req: RequestLike): Promise<HistoryInfo | undefined>;
 }
 
 const header = (req: RequestLike, name: string): string | undefined => {
@@ -66,6 +72,7 @@ export function createLiveProvider(env: Record<string, string | undefined>, deps
   const limits = readLimits(env);
   const refresh = readRefresh(env);
   const auth = readAuthMode(env);
+  const historyConfig = readHistoryConfig(env);
   const state = createLiveState();
   let shared: { api: LiveApi; user: () => Promise<string> } | undefined;
   const defaultChain = () => {
@@ -101,11 +108,17 @@ export function createLiveProvider(env: Record<string, string | undefined>, deps
     limits,
     refresh,
     state,
+    historyConfig,
     identify,
+    async history(req) {
+      const id = identify(req);
+      if ('error' in id) return undefined;
+      return historyInfoOf(await probeHistory({ api: id.api, userKey: id.userKey, state, config: historyConfig, clock: deps.clock }), limits);
+    },
     forRequest(req, trace) {
       const id = identify(req);
       if ('error' in id) return id;
-      return createLiveRunSource({ ...id, state, limits, refresh, clock: deps.clock, trace });
+      return createLiveRunSource({ ...id, state, limits, refresh, clock: deps.clock, trace, history: historyConfig });
     },
   };
 }

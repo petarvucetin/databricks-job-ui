@@ -25,14 +25,24 @@ function failure(e: unknown): { code: string; message: string } {
   return { code, message };
 }
 
+/** Why a failed system-table read falls back to the API: no access (with the code), or the warehouse's error. */
+export function sqlFailureReason(e: unknown): string {
+  const { code, message } = failure(e);
+  return NO_ACCESS.has(code) ? `no access to system.lakeflow (${code})` : `warehouse error: ${message}`;
+}
+
+/** Each user's probe answer and when it was asked. */
+export type ProbeCache = Map<string, { at: number; result: Promise<ProbeResult> }>;
+
 /**
  * Can this reading identity read the system tables? Answers ok with the workspace id to filter by, or the reason the
- * app falls back to the API alone. Each user's answer (either way) is kept for 10 minutes.
+ * app falls back to the API alone. Each user's answer (either way) is kept for 10 minutes, in `cache` when given (so a
+ * probe made per request, over that request's API, shares the answers).
  */
-export function createHistoryProbe(o: { api: LiveApi; config: HistoryConfig; clock?: () => number; timeoutMs?: number }): { check(userKey: string): Promise<ProbeResult> } {
+export function createHistoryProbe(o: { api: LiveApi; config: HistoryConfig; clock?: () => number; timeoutMs?: number; cache?: ProbeCache }): { check(userKey: string): Promise<ProbeResult> } {
   const clock = o.clock ?? Date.now;
   const timeoutMs = o.timeoutMs ?? 30_000;
-  const cache = new Map<string, { at: number; result: Promise<ProbeResult> }>();
+  const cache: ProbeCache = o.cache ?? (new Map() as ProbeCache);
 
   async function probe(): Promise<ProbeResult> {
     const { api, config } = o;
@@ -52,8 +62,7 @@ export function createHistoryProbe(o: { api: LiveApi; config: HistoryConfig; clo
       if (rows === TIMEOUT) return { ok: false, reason: 'timed out' };
       return { ok: true, workspaceId: ws };
     } catch (e) {
-      const { code, message } = failure(e);
-      return NO_ACCESS.has(code) ? { ok: false, reason: `no access to system.lakeflow (${code})` } : { ok: false, reason: `warehouse error: ${message}` };
+      return { ok: false, reason: sqlFailureReason(e) };
     }
   }
 

@@ -9,14 +9,20 @@ import { buildCapture, gzipCapture, readCapture, type CaptureFile } from './capt
 import { canon, createReplayApi } from './replayApi';
 import { createReplayProvider, pickSession } from './replayProvider';
 import { richWorkspace, NOW, comparable } from './fixtures';
+import { readHistoryConfig } from '../systables/config';
+import { PROBE_SQL } from '../systables/probe';
+import { JOB_RUNS_SQL, TASK_DEPS_SQL } from '../systables/queries';
+import type { sql } from '@databricks/sdk-experimental';
 
 const APP = { version: '1.0.0', node: 'v24' };
+const NO_WAREHOUSE = readHistoryConfig({});
 
 /** Records one list (and optionally some task logs) against a fake workspace, as the server would. */
 async function record(data: FakeData, opts: { route?: string; logs?: [number, string][]; since?: number } = {}) {
   const session = new Session({ id: 's-list', route: opts.route ?? '/api/runs', query: {}, authMode: 'user' }, () => NOW);
   const src = createLiveRunSource({
     api: fakeApi(data), user: () => Promise.resolve('me@x.com'), userKey: 'me', state: createLiveState(), limits: DEFAULT_LIMITS, clock: () => NOW, warn: () => {}, trace: session,
+    history: NO_WAREHOUSE, // as the server reads it (no DATABRICKS_WAREHOUSE_ID)
   });
   let original;
   let error: unknown;
@@ -31,8 +37,8 @@ async function record(data: FakeData, opts: { route?: string; logs?: [number, st
   return { original, error, logs, rec };
 }
 
-async function roundTrip(sessions: SessionRecord[]): Promise<CaptureFile> {
-  const file = buildCapture({ env: { DATABRICKS_HOST: 'https://x.cloud.databricks.us', JOBS_CONSOLE_DATA: 'live' }, authMode: 'user', user: 'me@x.com', sessions, clientErrors: [], process: [], app: APP });
+async function roundTrip(sessions: SessionRecord[], env: Record<string, string> = {}): Promise<CaptureFile> {
+  const file = buildCapture({ env: { DATABRICKS_HOST: 'https://x.cloud.databricks.us', JOBS_CONSOLE_DATA: 'live', ...env }, authMode: 'user', user: 'me@x.com', sessions, clientErrors: [], process: [], app: APP });
   return readCapture(await gzipCapture(file));
 }
 
@@ -98,7 +104,7 @@ describe('replaying a delta', () => {
     let t = NOW;
     const recordList = async (id: string) => {
       const session = new Session({ id, route: '/api/runs', query: {}, authMode: 'user' }, () => t);
-      const src = createLiveRunSource({ api: fakeApi(data), user: () => Promise.resolve('me@x.com'), userKey: 'me', state, limits: DEFAULT_LIMITS, clock: () => t, warn: () => {}, trace: session });
+      const src = createLiveRunSource({ api: fakeApi(data), user: () => Promise.resolve('me@x.com'), userKey: 'me', state, limits: DEFAULT_LIMITS, clock: () => t, warn: () => {}, trace: session, history: NO_WAREHOUSE });
       const res = await src.listRuns();
       return { res, rec: session.finish({ status: 200, body: res }) };
     };
@@ -206,5 +212,79 @@ describe('replay of items', () => {
     const replay = createReplayProvider({}, { file, warn: () => {} }).forRequest({ headers: {} }) as RunSource;
     const replayed = await replay.listItems();
     expect(replayed.items.filter((i) => i.type === 'job').map((i) => i.id).sort()).toEqual(['1', '2', '3']);
+  });
+});
+
+describe('replay of run history from system tables', () => {
+  const DAY = 86_400_000;
+  const WAREHOUSE = { DATABRICKS_WAREHOUSE_ID: 'wh1' };
+  const histRow = (runId: number, jobId: number, ago: number) => ({
+    job_id: String(jobId), run_id: String(runId), start_ms: String(NOW - ago * DAY), end_ms: String(NOW - ago * DAY + 600_000), result_state: 'SUCCEEDED', termination_code: 'SUCCESS',
+  });
+  const data: FakeData = {
+    ...richWorkspace,
+    workspaceId: '42',
+    jobs: [1, 2, 3, 4].map((id) => ({ job_id: id, creator_user_name: 'me@x.com', settings: { name: `job_${id}` } })),
+    sql: (statement) => {
+      if (statement === PROBE_SQL) return [{ ok: '1' }];
+      if (statement === JOB_RUNS_SQL) return [histRow(9001, 1, 3), histRow(9002, 2, 40)];
+      if (statement === TASK_DEPS_SQL) return [{ job_id: '1', task_key: 'main', depends_on_keys: '[]' }];
+      return [];
+    },
+  };
+
+  /** Lists as the server would for a viewer in New York (tzOffset 240), with history on. */
+  async function recordHistory(ids: string[]) {
+    const state = createLiveState();
+    const out = [];
+    let t = NOW;
+    for (const id of ids) {
+      const session = new Session({ id, route: '/api/runs', query: { tzOffset: '240' }, authMode: 'user' }, () => t);
+      const src = createLiveRunSource({ api: fakeApi(data), user: () => Promise.resolve('me@x.com'), userKey: 'me', state, limits: DEFAULT_LIMITS, clock: () => t, warn: () => {}, trace: session, history: readHistoryConfig(WAREHOUSE) });
+      const res = await src.listRuns(undefined, 240);
+      out.push({ res, rec: session.finish({ status: 200, body: res }) });
+      t += 60_000;
+    }
+    return out;
+  }
+
+  it("records the SQL and replays the same runs and history, whatever the viewer's time zone", async () => {
+    const [{ res, rec }] = await recordHistory(['s-hist']);
+    expect(res.history).toEqual({ source: 'system-tables', days: 90 });
+    expect(res.runs.map((r) => r.id)).toEqual(expect.arrayContaining([9001, 9002]));
+    expect(rec.calls.filter((c) => c.method === 'executeStatement')).toHaveLength(5); // probe + 4 history queries
+    expect(rec.calls.some((c) => c.method === 'workspaceId')).toBe(true);
+    const file = await roundTrip([rec], WAREHOUSE);
+    const notes: string[] = [];
+    const provider = createReplayProvider({}, { file, warn: (m) => notes.push(m) });
+    const replayed = await (provider.forRequest({ headers: {} }) as RunSource).listRuns(undefined, -60);
+    expect(replayed.runs.map((r) => r.id)).toEqual(res.runs.map((r) => r.id));
+    expect(comparable(replayed)).toBe(comparable(res));
+    expect(await provider.history?.({ headers: {} })).toEqual({ source: 'system-tables', days: 90 });
+    expect(notes.filter((m) => /replay-(miss|mismatch)/.test(m))).toEqual([]);
+  });
+
+  it('replays a later list that used the cached probe and history (their SQL is in the earlier session)', async () => {
+    const [first, second] = await recordHistory(['s-1', 's-2']);
+    expect(second.rec.calls.filter((c) => c.method === 'executeStatement')).toHaveLength(0);
+    const file = await roundTrip([first.rec, second.rec], WAREHOUSE);
+    const replayed = await (createReplayProvider({ JOBS_CONSOLE_REPLAY_SESSION: 's-2' }, { file, warn: () => {} }).forRequest({ headers: {} }) as RunSource).listRuns();
+    expect(comparable(replayed)).toBe(comparable(second.res));
+  });
+
+  it('answers SQL only on the exact statement text and parameters', async () => {
+    const [{ rec }] = await recordHistory(['s-hist']);
+    const recorded = (statement: string) => rec.calls.find((c) => c.method === 'executeStatement' && (c.args as sql.ExecuteStatementRequest).statement === statement)!.args as sql.ExecuteStatementRequest;
+    const notes: DiagNote[] = [];
+    const api = createReplayApi([rec], rec, (n) => notes.push(n));
+    const rows = async (req: sql.ExecuteStatementRequest) => (await api.executeStatement(req)).result?.data_array;
+    expect(await rows(recorded(JOB_RUNS_SQL))).toHaveLength(2);
+    expect(await rows(recorded(TASK_DEPS_SQL))).toEqual([['1', 'main', '[]']]);
+    // The same statement for another window is not answered with the recorded window's rows.
+    const runs = recorded(JOB_RUNS_SQL);
+    const otherWindow = { ...runs, parameters: runs.parameters!.map((p) => (p.name === 'to_ts' ? { ...p, value: new Date(NOW).toISOString() } : p)) };
+    await expect(api.executeStatement(otherWindow)).rejects.toMatchObject({ statusCode: 404 });
+    await expect(api.executeStatement({ ...runs, statement: `${JOB_RUNS_SQL} ` })).rejects.toMatchObject({ statusCode: 404 });
+    expect(notes.map((n) => n.code)).toEqual(['replay-miss', 'replay-miss']);
   });
 });

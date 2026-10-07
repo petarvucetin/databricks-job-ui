@@ -169,7 +169,7 @@ describe('list diagnostics', () => {
     const meta: Record<string, unknown>[] = [];
     const source = createLiveRunSource({
       api, user: () => Promise.resolve('me@x.com'), userKey: 'me', state: createLiveState(), limits: { ...DEFAULT_LIMITS, ...limits }, clock: () => NOW, warn: () => {},
-      trace: { diag: s.diag, wrap: (a) => a, note: (m) => meta.push(m) },
+      trace: { diag: s.diag, wrap: (a) => a, note: (m) => meta.push({ ...m }) },
     });
     return { s, source, meta };
   };

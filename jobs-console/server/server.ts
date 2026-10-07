@@ -99,8 +99,10 @@ createApp({
   onPluginsReady(appkit) {
     appkit.server.extend((app) => {
       app.get('/api/mode', (req, res, next) => {
-        Promise.all([(workspace ??= monitoredWorkspace()), identity(header(req, 'x-forwarded-email'))])
-          .then(([ws, who]) => res.json({ ...mode, ...ws, ...who }))
+        // History: live probes as the requester (cached 10 min); replay answers as recorded; mock has none.
+        const history = provider.history ? provider.history(req).catch((): undefined => undefined) : Promise.resolve(undefined);
+        Promise.all([(workspace ??= monitoredWorkspace()), identity(header(req, 'x-forwarded-email')), history])
+          .then(([ws, who, h]) => res.json({ ...mode, ...ws, ...who, ...(h ? { history: h } : {}) }))
           .catch(next);
       });
       app.get('/api/runs', (req, res, next) => {

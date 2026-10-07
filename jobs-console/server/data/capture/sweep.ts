@@ -5,6 +5,7 @@ import { apiErrorParts } from '../live/apiError';
 import { createLiveRunSource, createLiveState } from '../live/liveRunSource';
 import { DEFAULT_LIMITS, type LiveLimits } from '../live/limits';
 import type { Session } from './recorder';
+import type { HistoryConfig } from '../systables/config';
 
 export const SWEEP_DEFAULT_DAYS = 90;
 export const SWEEP_MAX_DAYS = 180;
@@ -40,6 +41,8 @@ export interface SweepOptions {
   clock?: () => number;
   /** Clock for the time budget (default: clock). */
   timer?: () => number;
+  /** Run history from system tables, as /api/runs reads it (the capture then carries the SQL). */
+  history?: HistoryConfig;
 }
 
 /** getRun answered once per run id, so a run with several failed tasks costs one call (and one recorded call). */
@@ -68,7 +71,7 @@ export async function runSweep(o: SweepOptions): Promise<RunsResponse> {
   const timer = o.timer ?? clock;
   const { session } = o;
   const endAt = timer() + o.timeoutMs;
-  const limits: LiveLimits = { ...DEFAULT_LIMITS, windowDays: o.days, maxRuns: Number.MAX_SAFE_INTEGER, timeoutMs: o.timeoutMs, concurrency: o.concurrency, itemsTimeoutMs: o.timeoutMs };
+  const limits: LiveLimits = { ...DEFAULT_LIMITS, windowDays: o.days, historyDays: o.days, maxRuns: Number.MAX_SAFE_INTEGER, timeoutMs: o.timeoutMs, concurrency: o.concurrency, itemsTimeoutMs: o.timeoutMs };
   const source = createLiveRunSource({
     api: onceGetRun(session.wrap(o.api)),
     user: o.user,
@@ -80,6 +83,7 @@ export async function runSweep(o: SweepOptions): Promise<RunsResponse> {
     warn: (m) => console.warn(`[sweep] ${m}`),
     // Calls are already recorded (inside the getRun de-dup); the source only adds diagnostics and notes.
     trace: { diag: (n) => session.diag(n), note: (m) => session.note(m), wrap: (a) => a },
+    history: o.history,
   });
   const res = await source.listRuns();
   await source.listItems().catch(() => undefined);

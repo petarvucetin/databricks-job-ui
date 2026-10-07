@@ -100,7 +100,7 @@ export function registerDiag(app: Application, deps: { provider: LiveProvider; s
       sweeping.add(id.userKey);
       const session = new Session({ id: newSessionId(), route: SWEEP_ROUTE, query: { ...req.query }, authMode: provider.auth, user: header(req, 'x-forwarded-email') });
       try {
-        const out = await runSweep({ api: id.api, user: id.user, session, days, ...sweepLimits, concurrency: provider.limits.concurrency });
+        const out = await runSweep({ api: id.api, user: id.user, session, days, ...sweepLimits, concurrency: provider.limits.concurrency, history: provider.historyConfig });
         store.add(session.finish({ status: 200, body: out }));
       } catch (e) {
         // A failed sweep is still worth bringing home: it goes in as the newest session, with its error.

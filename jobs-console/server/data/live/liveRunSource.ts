@@ -1,19 +1,23 @@
 import type { jobs, pipelines } from '@databricks/sdk-experimental';
-import type { ItemsResponse, RefreshInfo, Run, RunsResponse } from '../../../shared/domain/types';
+import type { HistoryInfo, ItemsResponse, RefreshInfo, Run, RunsResponse } from '../../../shared/domain/types';
 import type { RunSource } from '../runSource';
 import { SourceError } from '../sourceError';
 import type { LiveApi } from './api';
 import { apiErrorParts, toSourceError } from './apiError';
 import { Deadline, EVENTS_PAGE_SIZE, FINISHED_UPDATE, TIMEOUT, collectJobRuns, collectPipelines, eventsSince } from './collect';
-import { baseFromFull, fetchDelta, mergeBase, mergeEvents, type Base } from './delta';
+import { DeltaError, baseFromFull, collectEarlier, fetchDelta, mergeBase, mergeEvents, type Base } from './delta';
 import { createLiveItems } from './items';
 import { jobDraft } from './jobs';
 import { finalize, runKey, usualByKey, type Draft } from './kinds';
 import { DEFAULT_REFRESH, type LiveLimits, type RefreshSettings } from './limits';
-import { indexEvents, updateDraft, type PipelineInfo } from './pipelines';
+import { indexEvents, pipelineNumber, updateDraft, type PipelineInfo } from './pipelines';
 import { findTask, jobLogText, pipelineLogText } from './taskLog';
 import { attemptChain, pipelineOutputOf, pipelineTaskCause, pipelineTaskLogText } from './pipelineTask';
 import { noDiag, type Trace } from './trace';
+import type { HistoryConfig } from '../systables/config';
+import { cutoffs } from '../systables/cutoff';
+import { readHistory, type HistoryRead } from '../systables/history';
+import { createHistoryProbe, type ProbeCache, type ProbeResult } from '../systables/probe';
 
 const DAY = 86400000;
 const CACHE_TTL_MS = 20000;
@@ -62,6 +66,14 @@ export interface PipelineRef {
   info: PipelineInfo;
 }
 
+/** One user's run history from system tables, for one local day. */
+export interface HistoryEntry extends HistoryRead {
+  /** The local midnight history ends at (exclusive); a new day re-queries. */
+  cutoff: number;
+  /** Where the API window starts for the whole day: min(cutoff, the time of the read less the overlap). */
+  apiFrom: number;
+}
+
 /** Process-wide state shared by every request's source. Nothing in it grants access: every call still runs as the requester. */
 export interface LiveState {
   /** Run.id of a pipeline update -> the update, for the log and single-run routes. Refreshed on every list call. */
@@ -72,9 +84,34 @@ export interface LiveState {
   bases: Map<string, Base>;
   /** Per user: the Jobs & ETL definitions list (TTL 5 min), separate from the run caches. */
   items: Map<string, { at: number; data: ItemsResponse }>;
+  /** Per user: run history before today, until the local day changes. A failed read is never stored. */
+  history: Map<string, HistoryEntry>;
+  /** Per user: can they read the system tables (10 minutes either way). */
+  probes: ProbeCache;
+  /** The workspace id from the SCIM header, once per process (dropped after a failure or an empty answer). */
+  workspaceId?: Promise<string>;
 }
 
-export const createLiveState = (): LiveState => ({ pipelineRefs: new Map(), cache: new Map(), bases: new Map(), items: new Map() });
+export const createLiveState = (): LiveState => ({ pipelineRefs: new Map(), cache: new Map(), bases: new Map(), items: new Map(), history: new Map(), probes: new Map() });
+
+/**
+ * The access probe (H5) for this user, over their own API; answers are shared through `state`. The workspace id is
+ * DATABRICKS_WORKSPACE_ID, else the SCIM header, read once per process.
+ */
+export async function probeHistory(o: { api: LiveApi; userKey: string; state: LiveState; config: HistoryConfig; clock?: () => number }): Promise<ProbeResult> {
+  const { state, config } = o;
+  let workspaceId = config.workspaceId;
+  if (!workspaceId && config.enabled) {
+    const p = (state.workspaceId ??= o.api.workspaceId().catch(() => ''));
+    workspaceId = await p;
+    if (!workspaceId && state.workspaceId === p) state.workspaceId = undefined;
+  }
+  return createHistoryProbe({ api: o.api, config: { ...config, workspaceId: workspaceId || undefined }, clock: o.clock, cache: state.probes }).check(o.userKey);
+}
+
+/** What the header says about history, from a probe answer. */
+export const historyInfoOf = (p: ProbeResult, limits: LiveLimits): HistoryInfo =>
+  p.ok ? { source: 'system-tables', days: limits.historyDays } : { source: 'api', days: limits.windowDays, reason: p.reason };
 
 export interface ListOptions {
   /** A full load even when a delta would do (the filter bar's refresh-now button: `?full=1`). Skips the response cache. */
@@ -104,6 +141,16 @@ export interface LiveSourceOptions {
    * (whatever its age); 'full' always loads in full.
    */
   mode?: RefreshInfo['mode'];
+  /** Run history before today from system tables (absent: the API alone, and no `history` in the response). */
+  history?: HistoryConfig;
+}
+
+/** Where one list's runs come from: the API window, its base key, and the cached history next to it. */
+interface Plan {
+  from: number;
+  windowKey: Base['since'];
+  hist?: HistoryEntry;
+  info?: HistoryInfo;
 }
 
 /** Counts calls per LiveApi method, for the `pages` diagnostic. */
@@ -138,8 +185,10 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
   const itemsSrc = createLiveItems({ api, user: o.user, userKey: o.userKey, state, limits, clock, timer, source: o.source });
 
   /** Maps what was collected (a full load's lists, or a merged base) with the pure mappers; remembers pipeline refs. */
-  function mapCollected(col: Collected, now: number, me: string | undefined, host: string): { all: Run[]; jobRuns: number; withUpdates: number } {
+  function mapCollected(col: Collected, now: number, me: string | undefined, host: string, hist?: HistoryEntry): { all: Run[]; jobRuns: number; withUpdates: number } {
     const drafts: Draft[] = [];
+    // History updates first, so the API's refs win for an update in both.
+    for (const ref of hist?.refs ?? []) remember(state.pipelineRefs, pipelineNumber(ref.updateId), ref, ID_MAP_MAX);
     for (const r of col.runs) drafts.push(jobDraft(r, now, diag, host));
     const jobRuns = drafts.length;
     let withUpdates = 0;
@@ -153,6 +202,11 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
         remember(state.pipelineRefs, d.id, { pipelineId: p.info.pipelineId, updateId: u.update_id ?? '', startTime: d.startTime, info: p.info }, ID_MAP_MAX);
       }
       if (any) withUpdates++;
+    }
+    if (hist) {
+      // Before finalize, so usualSec and slow are computed over the whole history. The API wins on the same id.
+      const have = new Set(drafts.map((d) => d.id));
+      for (const d of hist.drafts) if (!have.has(d.id)) drafts.push(d);
     }
     const all: Run[] = finalize(drafts, me).sort((a, b) => b.startTime - a.startTime || b.id - a.id);
     return { all, jobRuns, withUpdates };
@@ -169,7 +223,7 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
   }
 
   /** Why this list must be a full load, or null when a delta over the base will do. */
-  function fullReason(base: Base | undefined, since: number | undefined, now: number, asked: boolean): string | null {
+  function fullReason(base: Base | undefined, since: Base['since'], now: number, asked: boolean): string | null {
     if (o.mode === 'full') return 'replayed as a full load';
     if (!refresh.incremental) return 'deltas are off (JOBS_CONSOLE_INCREMENTAL=0)';
     if (!base) return 'no base yet';
@@ -180,11 +234,54 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
     return null;
   }
 
-  async function fetchRuns(since: number | undefined, askedFull: boolean): Promise<RunsResponse> {
+  /**
+   * History mode (H1): when the probe is ok, the cached history of this local day (read now if missing) and the API
+   * from that day's apiFrom on. Otherwise, or when the history read fails, the API alone over windowDays, with why.
+   */
+  async function plan(since: number | undefined, now: number, tzOffsetMin: number | undefined, sqlApi: LiveApi, hostP: Promise<string>): Promise<Plan> {
+    const apiOnly = (reason?: string): Plan => ({
+      from: since ?? now - limits.windowDays * DAY,
+      windowKey: since,
+      info: o.history && since === undefined ? { source: 'api', days: limits.windowDays, ...(reason ? { reason } : {}) } : undefined,
+    });
+    const config = o.history;
+    if (!config || since !== undefined) return apiOnly();
+    const { day, apiFrom, historyFrom } = cutoffs(now, tzOffsetMin, limits);
+    let hist = state.history.get(o.userKey);
+    if (hist?.cutoff !== day) hist = undefined;
+    // The items list (cached for the Jobs & ETL tab too) alongside the probe, only when history will be read.
+    const itemsP = !hist && config.enabled ? itemsSrc.listItems().catch((e: unknown) => (e instanceof Error ? e : new Error(String(e)))) : undefined;
+    const probe = await probeHistory({ api, userKey: o.userKey, state, config, clock });
+    o.trace?.note({ probe });
+    if (!probe.ok) {
+      diag({ level: 'info', code: 'history-api', message: `run history from the API: ${probe.reason}` });
+      return apiOnly(probe.reason);
+    }
+    if (!hist) {
+      const items = await itemsP;
+      let got: HistoryRead | { reason: string };
+      if (!items || items instanceof Error) got = { reason: `the job list failed: ${items ? apiErrorParts(items).message : 'not read'}` };
+      else if (items.partial) got = { reason: `the job list is incomplete: ${items.partial.reason}` };
+      else {
+        const dl = new Deadline(timer() + limits.itemsTimeoutMs, timer);
+        const host = await hostP;
+        got = await readHistory({ api: sqlApi, warehouseId: config.warehouseId ?? '', workspaceId: probe.workspaceId, from: historyFrom, to: day, maxRuns: limits.historyMaxRuns, items: items.items, host, dl });
+      }
+      if ('reason' in got) {
+        diag({ level: 'warn', code: 'history-failed', message: `run history from the API: ${got.reason}` });
+        return apiOnly(got.reason);
+      }
+      hist = { ...got, cutoff: day, apiFrom };
+      remember(state.history, o.userKey, hist, BASES_MAX);
+      diag({ level: 'info', code: 'history-read', message: `${got.drafts.length} runs from system tables before ${new Date(day).toISOString()}${got.capped ? ` (cap ${limits.historyMaxRuns} hit)` : ''}` });
+    }
+    return { from: hist.apiFrom, windowKey: `h:${hist.cutoff}`, hist, info: { source: 'system-tables', days: limits.historyDays } };
+  }
+
+  async function fetchRuns(since: number | undefined, askedFull: boolean, tzOffsetMin: number | undefined): Promise<RunsResponse> {
     const started = timer();
     const now = clock();
     o.trace?.note({ now, limits });
-    const from = since ?? now - limits.windowDays * DAY;
     const c = counting(api);
     const user = () =>
       o.user().then((u) => {
@@ -193,15 +290,17 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
       });
     // Straight from o.api: the host is configuration, not a counted or recorded call.
     const hostP = o.api.host().catch(() => '');
+    const p = await plan(since, now, tzOffsetMin, c.api, hostP);
+    const { from, hist } = p;
     const base = state.bases.get(o.userKey);
-    const reason = fullReason(base, since, now, askedFull);
+    const reason = fullReason(base, p.windowKey, now, askedFull);
 
     let out: { mode: RefreshInfo['mode']; all: Run[]; jobRuns: number; withUpdates: number; listed: number; skipped: number; capped: boolean; timedOut: boolean; me: string | typeof TIMEOUT } | undefined;
     if (base && !reason) {
       const dl = new Deadline(timer() + limits.timeoutMs, timer);
       try {
         const [host, me, d] = await Promise.all([hostP, dl.call(user), fetchDelta(c.api, base, { now, from, maxRuns: limits.maxRuns, concurrency: limits.concurrency, dl, diag })]);
-        const merged = mergeBase(base, d, from, limits.maxRuns);
+        const merged = mergeBase(base, d, from, limits.maxRuns, !!hist);
         const k = merged.counts;
         diag({
           level: 'info',
@@ -210,7 +309,7 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
         });
         diag({ level: 'info', code: 'pages', message: [...c.counts].map(([key, n]) => `${key} ${n}`).join(', ') || 'no calls' });
         commitBase(merged.base);
-        const m = mapCollected(collectedOf(merged.base), now, me === TIMEOUT ? undefined : me, host);
+        const m = mapCollected(collectedOf(merged.base), now, me === TIMEOUT ? undefined : me, host, hist);
         out = { mode: 'delta', ...m, listed: k.pipelines, skipped: 0, capped: merged.base.capped, timedOut: me === TIMEOUT, me };
       } catch (e) {
         // Nothing of the delta is kept: the full load starts from scratch.
@@ -223,16 +322,28 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
     if (!out) {
       const dl = new Deadline(timer() + limits.timeoutMs, timer);
       const [host, me, jobsR, pipesR] = await Promise.all([hostP, dl.call(user), collectJobRuns(c.api, from, limits.maxRuns, dl), collectPipelines(c.api, from, limits.concurrency, dl, diag)]);
+      if (hist && !jobsR.timedOut) {
+        // Next to history the window starts today: runs still going from before it come from active_only (H2, R6).
+        const old = base?.since === p.windowKey ? base : undefined;
+        const have = new Set(jobsR.runs.map((r) => r.run_id ?? 0));
+        const earlier = await collectEarlier(c.api, { from, maxRuns: limits.maxRuns, concurrency: limits.concurrency, dl, old, have }).catch((e: unknown): typeof TIMEOUT => {
+          if (e instanceof DeltaError) return TIMEOUT;
+          throw e;
+        });
+        if (earlier === TIMEOUT) jobsR.timedOut = true;
+        else jobsR.runs.push(...earlier);
+      }
       diag({ level: 'info', code: 'pages', message: [...c.counts].map(([k, n]) => `${k} ${n}`).join(', ') || 'no calls' });
       const timedOut = jobsR.timedOut || pipesR.timedOut || me === TIMEOUT;
       // A load the time budget cut short is served, but is no base: the next list loads in full again.
-      if (!jobsR.timedOut && !pipesR.timedOut && refresh.incremental) commitBase(baseFromFull(since, now, jobsR, pipesR));
-      const m = mapCollected({ runs: jobsR.runs, pipelines: pipesR.pipelines }, now, me === TIMEOUT ? undefined : me, host);
+      if (!jobsR.timedOut && !pipesR.timedOut && refresh.incremental) commitBase(baseFromFull(p.windowKey, now, jobsR, pipesR));
+      const m = mapCollected({ runs: jobsR.runs, pipelines: pipesR.pipelines }, now, me === TIMEOUT ? undefined : me, host, hist);
       out = { mode: 'full', ...m, listed: pipesR.listed, skipped: pipesR.skipped, capped: jobsR.capped, timedOut, me };
     }
 
     const { all, me } = out;
-    const runs = all.slice(0, limits.maxRuns);
+    // Next to history, the API part keeps maxRuns on its own (collect / mergeBase) and history has its cap.
+    const runs = hist ? all : all.slice(0, limits.maxRuns);
     const capped = out.capped || all.length > runs.length;
     const counts = `returned ${runs.length} of ${all.length} (job runs ${out.jobRuns}, pipeline updates ${all.length - out.jobRuns}, pipelines ${out.withUpdates} with updates / ${out.listed} listed, ${out.skipped} skipped)`;
     if (capped) diag({ level: 'warn', code: 'cap-hit', message: `cap ${limits.maxRuns} hit; ${counts}` });
@@ -242,7 +353,8 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
     }
     const info: RefreshInfo = { mode: out.mode, calls: [...c.counts.values()].reduce((a, b) => a + b, 0), ms: Math.max(0, Math.round(timer() - started)) };
     o.trace?.note({ refresh: info });
-    return { asOf: now, source: o.source ?? 'live', runs, refresh: info };
+    const history: HistoryInfo | undefined = p.info && (capped || hist?.capped ? { ...p.info, capped: true } : p.info);
+    return { asOf: now, source: o.source ?? 'live', runs, refresh: info, ...(history ? { history } : {}) };
   }
 
   /** A pipeline's WARN and ERROR events since `from`, oldest first, up to 8 pages. */
@@ -393,8 +505,8 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
         throw toSourceError(e, true);
       }
     },
-    async listRuns(since, _tzOffsetMin, opts: ListOptions = {}) {
-      const key = `${o.userKey}|${since ?? ''}`;
+    async listRuns(since, tzOffsetMin, opts: ListOptions = {}) {
+      const key = `${o.userKey}|${since ?? ''}|${tzOffsetMin ?? ''}`;
       const hit = state.cache.get(key);
       if (hit && !opts.full && clock() - hit.at < CACHE_TTL_MS) {
         o.trace?.note({ now: hit.data.asOf });
@@ -403,7 +515,7 @@ export function createLiveRunSource(o: LiveSourceOptions): RunSource {
       }
       let data: RunsResponse;
       try {
-        data = await fetchRuns(since, !!opts.full);
+        data = await fetchRuns(since, !!opts.full, tzOffsetMin);
       } catch (e) {
         throw toSourceError(e);
       }
