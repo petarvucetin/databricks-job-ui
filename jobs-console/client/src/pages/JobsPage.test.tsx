@@ -95,6 +95,7 @@ describe('JobsPage', () => {
     fireEvent.click(heads[10]);
     expect([...rows()].map((r) => r.getAttribute('data-id'))).toEqual(['2']);
     expect(rows()[0].querySelector('.starts')!.textContent).toBe('⏱ 02:00');
+    expect(document.querySelector('.tl-foot')!.textContent).toContain('2 have no schedule (manual, triggered, continuous, paused)');
     fireEvent.click(screen.getByText('clear schedule filter ✕'));
     expect(rows()).toHaveLength(3);
   });

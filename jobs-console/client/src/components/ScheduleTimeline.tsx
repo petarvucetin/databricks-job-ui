@@ -118,7 +118,7 @@ export function ScheduleTimeline({ items, bks, state, onChange }: { items: Item[
         <span className="k job"><i />job starts</span>
         <span className="k pipeline"><i />pipeline starts</span>
         <span className="tl-nosched">
-          {narrowed ? `${foot.none} without a schedule hidden (manual, triggered, continuous, paused)` : `${foot.none} have no schedule (manual, triggered, continuous, paused)`}
+          {`${foot.none} have no schedule (manual, triggered, continuous, paused)`}
           {foot.unparsed > 0 && ` · ${foot.unparsed} schedules not understood`}
         </span>
         {narrowed && <button type="button" className="tl-clear" onClick={() => set({ win: null, cube: null })}>clear schedule filter ✕</button>}
