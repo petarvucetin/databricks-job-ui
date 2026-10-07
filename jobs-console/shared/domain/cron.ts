@@ -109,8 +109,8 @@ function zoned(y: number, mo: number, d: number, h: number, mi: number, s: numbe
   const key = `${tz}|${y}-${mo}-${d}`;
   let offs = dayOffsets.get(key);
   if (!offs) {
-    const noon = Date.UTC(y, mo - 1, d, 12);
-    offs = [offsetAt(noon - 12 * 3600e3 - 3600e3 * 2, tz), offsetAt(noon + 12 * 3600e3, tz)];
+    // Before local midnight and after the next local midnight for any offset in -12..+14, so a transition day shows.
+    offs = [offsetAt(Date.UTC(y, mo - 1, d) - 14 * 3600e3, tz), offsetAt(Date.UTC(y, mo - 1, d + 1) + 12 * 3600e3, tz)];
     dayOffsets.set(key, offs);
   }
   const guess = Date.UTC(y, mo - 1, d, h, mi, s);
@@ -171,6 +171,7 @@ function stepOf(vals: number[], span: number): number | null {
 
 /** The short trigger pill. Times are the viewer's local time; the cron and its zone go in the title. */
 export function triggerPill(item: Item, now: number): { text: string; cls: 'sched' | 'cont' | 'none' | 'paused'; title: string } {
+  if (item.trigger === 'continuous' && item.paused) return { text: 'paused', cls: 'paused', title: 'Continuous, paused' };
   if (item.trigger === 'continuous') return { text: 'continuous', cls: 'cont', title: 'Continuous: always on, no scheduled starts' };
   if (item.paused) return { text: 'paused', cls: 'paused', title: `Trigger paused${item.schedule ? ` (cron ${item.schedule.cron}, ${item.schedule.tz})` : ''}` };
   if (item.trigger === 'periodic' && item.periodic) {

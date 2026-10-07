@@ -49,6 +49,14 @@ describe('startsBetween', () => {
     expect(out).toContain(T('2026-03-07T10:30:00Z'));
     expect(out).toContain(T('2026-03-09T09:30:00Z'));
   });
+  it('spring-forward day east of UTC+2: Sydney 01:30 is still AEST (+10)', () => {
+    const s = parseQuartz('0 30 1 * * ?')!;
+    expect(startsBetween(s, 'Australia/Sydney', T('2026-10-03T12:00:00Z'), T('2026-10-04T00:00:00Z'))).toEqual([T('2026-10-03T15:30:00Z')]);
+  });
+  it('spring-forward day east of UTC+2: Auckland 00:30 is still NZST (+12)', () => {
+    const s = parseQuartz('0 30 0 * * ?')!;
+    expect(startsBetween(s, 'Pacific/Auckland', T('2026-09-26T06:00:00Z'), T('2026-09-26T18:00:00Z'))).toEqual([T('2026-09-26T12:30:00Z')]);
+  });
   it('year field limits', () => {
     const s = parseQuartz('0 0 1 * * ? 2025')!;
     expect(startsBetween(s, 'UTC', T('2026-01-01T00:00:00Z'), T('2026-01-05T00:00:00Z'))).toEqual([]);
@@ -82,5 +90,8 @@ describe('triggerPill', () => {
     expect(triggerPill(item({ trigger: 'continuous' }), now)).toMatchObject({ text: 'continuous', cls: 'cont' });
     expect(triggerPill(item({ trigger: 'manual' }), now)).toMatchObject({ text: 'manual', cls: 'none' });
     expect(triggerPill(item({ type: 'pipeline', trigger: 'manual' }), now).text).toBe('triggered');
+  });
+  it('a paused continuous job shows paused, not continuous', () => {
+    expect(triggerPill(item({ trigger: 'continuous', paused: true }), now)).toEqual({ text: 'paused', cls: 'paused', title: 'Continuous, paused' });
   });
 });
