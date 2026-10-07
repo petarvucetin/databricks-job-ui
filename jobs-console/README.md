@@ -231,8 +231,8 @@ Runs before today come from the `system.lakeflow` tables through a serverless SQ
 
 It is opt-in, so existing deploys keep working. To enable it:
 
-- **On Databricks Apps:** in `databricks.yml` uncomment the `sql-warehouse` resource and put a real warehouse id in it; in `app.yaml` uncomment the `DATABRICKS_WAREHOUSE_ID` / `valueFrom: sql-warehouse` entry (it needs that resource). Then `npm run package`, commit `deploy/`, `databricks bundle deploy` and `databricks bundle run app`.
-- **Locally:** `.un-local.ps1 -Profile <profile> -Warehouse <id>`, or set `DATABRICKS_WAREHOUSE_ID` in `.env` for dev mode.
+- **On Databricks Apps:** in `databricks.yml` uncomment the `sql-warehouse` resource and put a real warehouse id in it; in `app.yaml` uncomment the `DATABRICKS_WAREHOUSE_ID` / `valueFrom: sql-warehouse` entry. Uncomment both together: the env line without the resource breaks the deploy. Then `npm run package`, commit `deploy/`, `databricks bundle deploy` and `databricks bundle run app`.
+- **Locally:** `.\run-local.ps1 -Profile <profile> -Warehouse <id>`, or set `DATABRICKS_WAREHOUSE_ID` in `.env` for dev mode.
 
 | Variable | Meaning | Default |
 | --- | --- | --- |
