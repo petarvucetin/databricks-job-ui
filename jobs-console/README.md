@@ -225,6 +225,33 @@ databricks bundle run app -t gov --profile gov
 
 Logs: `databricks apps logs jobs-console --profile gov`, or `<app url>/logz` in the browser (app URL: `databricks apps get jobs-console --profile gov -o json`, field `url`).
 
+### Run history from system tables
+
+Runs before today come from the `system.lakeflow` tables through a serverless SQL warehouse, so history reaches back months instead of what the Jobs API keeps. Today's runs still come from the API. If the history read fails (no warehouse, no access, too large, too slow), the app falls back to the API automatically and the header says why (`history: API · 30 days`, reason in the tooltip).
+
+Enable it by giving the app a warehouse: deploy with `databricks bundle deploy --var warehouse_id=<id>` (the `sql-warehouse` resource in `databricks.yml` binds it as `DATABRICKS_WAREHOUSE_ID` in `app.yaml`; the variable must be set for history), or run locally with `.un-local.ps1 -Profile <profile> -Warehouse <id>`.
+
+| Variable | Meaning | Default |
+| --- | --- | --- |
+| `JOBS_CONSOLE_HISTORY` | `off` turns system-table history off (API only) | on |
+| `JOBS_CONSOLE_HISTORY_DAYS` | How far back history reads | 90 (max 365) |
+| `JOBS_CONSOLE_HISTORY_MAX_RUNS` | Cap on history runs, newest kept | 20000 |
+| `JOBS_CONSOLE_API_OVERLAP_HOURS` | Hours the API part overlaps the history part | 3 |
+| `DATABRICKS_WORKSPACE_ID` | Workspace id for the queries | fetched from the API |
+
+The identity that reads (the app's service principal; your CLI profile locally) needs:
+
+```sql
+GRANT USE CATALOG ON CATALOG system TO `<principal>`;
+GRANT USE SCHEMA ON SCHEMA system.lakeflow TO `<principal>`;
+GRANT SELECT ON TABLE system.lakeflow.job_run_timeline TO `<principal>`;
+GRANT SELECT ON TABLE system.lakeflow.job_task_run_timeline TO `<principal>`;
+GRANT SELECT ON TABLE system.lakeflow.job_tasks TO `<principal>`;
+GRANT SELECT ON TABLE system.lakeflow.pipeline_update_timeline TO `<principal>`;
+```
+
+plus **CAN USE** on the warehouse (the bundle resource grants it to the app's service principal).
+
 ### Bringing problems home: the Capture menu
 
 In live mode the top bar has a quiet **Capture** menu next to the badge:

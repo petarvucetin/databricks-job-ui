@@ -18,12 +18,24 @@ resources:
       # The app reads Jobs and Pipelines as its service principal (JOBS_CONSOLE_AUTH=app in app.yaml), which needs
       # CAN_VIEW on the jobs and pipelines it should show. The viewer's x-forwarded-email still decides "Mine".
 
+      # SQL warehouse for run history from system.lakeflow tables (app.yaml injects it as DATABRICKS_WAREHOUSE_ID).
+      # Set the warehouse_id variable on deploy, e.g. `--var warehouse_id=<id>`: the resource needs a real id.
+      resources:
+        - name: sql-warehouse
+          sql_warehouse:
+            id: ${var.warehouse_id}
+            permission: CAN_USE
+
 variables:
   # Accepted for the documented deploy command, but informational only: the CLI does not interpolate variables in
   # workspace.host (it parses "${var.gov_host}" literally; https://github.com/databricks/cli/issues/1786), so the
   # gov target takes its host from the profile: databricks auth login --host <url> --profile gov.
   gov_host:
     description: "Workspace URL of the gov target, e.g. https://dbc-1234abcd-5678.cloud.databricks.us"
+    default: ""
+
+  warehouse_id:
+    description: "ID of the (serverless) SQL warehouse that reads system.lakeflow for run history; the app's service principal gets CAN_USE on it"
     default: ""
 
 targets:

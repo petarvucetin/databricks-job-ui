@@ -3,7 +3,9 @@
 param(
   [Parameter(Mandatory = $true)][string]$Profile,
   [int]$Port = 8000,
-  [ValidateSet('live', 'mock')][string]$Data = 'live'
+  [ValidateSet('live', 'mock')][string]$Data = 'live',
+  # SQL warehouse id for run history from system tables; without it history falls back to the API.
+  [string]$Warehouse = ''
 )
 $ErrorActionPreference = 'Stop'
 $deploy = Join-Path $PSScriptRoot 'deploy'
@@ -16,6 +18,7 @@ $env:JOBS_CONSOLE_DATA = $Data
 $env:JOBS_CONSOLE_AUTH = 'app'
 $env:DATABRICKS_CONFIG_PROFILE = $Profile
 $env:DATABRICKS_APP_PORT = "$Port"
+if ($Warehouse) { $env:DATABRICKS_WAREHOUSE_ID = $Warehouse }
 # Listen on this machine only. The default, 0.0.0.0, is not browsable (corporate web filters block it) and exposes the app on the network.
 $env:FLASK_RUN_HOST = '127.0.0.1'
 
