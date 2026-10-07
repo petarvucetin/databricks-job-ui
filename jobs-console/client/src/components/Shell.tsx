@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { DataMode } from '../../../shared/domain/types';
+import type { DataMode, HistoryInfo } from '../../../shared/domain/types';
 import appVersion from 'virtual:app-version';
 import { CaptureMenu } from './CaptureMenu';
 import './shell.css';
@@ -7,7 +7,38 @@ import './shell.css';
 function badgeText(mode: DataMode): string {
   if (mode.source === 'mock') return 'mock data';
   const base = mode.source === 'replay' ? 'replay' : 'live data';
-  return mode.auth === 'app' ? `${base} · as app` : base;
+  const withAuth = mode.auth === 'app' ? `${base} · as app` : base;
+
+  if (!mode.history) return withAuth;
+
+  const historyPart = getHistoryPart(mode.history);
+  return `${withAuth} · ${historyPart}`;
+}
+
+function getHistoryPart(history: HistoryInfo): string {
+  const source = history.source === 'system-tables' ? 'system tables' : 'API';
+  const base = `history: ${source} · ${history.days} days`;
+  return history.capped ? `${base} · capped` : base;
+}
+
+function badgeTitle(mode: DataMode): string | null {
+  if (!mode.history) return null;
+
+  const history = mode.history;
+  let baseTitle: string;
+
+  if (history.source === 'system-tables') {
+    baseTitle = 'Run history before today from system tables, today from the API';
+  } else {
+    const reason = history.reason ? `: ${history.reason}` : '';
+    baseTitle = `Run history from the API only${reason}`;
+  }
+
+  if (history.capped) {
+    return `${baseTitle}; history limit reached`;
+  }
+
+  return baseTitle;
 }
 
 /** The monitored workspace, named by its host; links to the workspace. Nothing in mock mode. */
@@ -54,7 +85,7 @@ export function Shell({ mode, tab, onTab, children }: { mode?: DataMode; tab?: T
             <button type="button" className={tab === 'runs' ? 'on' : undefined} onClick={() => onTab('runs')}>Runs</button>
           </nav>
         )}
-        {mode && <span className="shell-badge">{badgeText(mode)}</span>}
+        {mode && <span className="shell-badge" title={badgeTitle(mode) ?? undefined}>{badgeText(mode)}</span>}
         {mode && <Workspace mode={mode} />}
         {mode && <Identity mode={mode} />}
         {mode?.capture && <CaptureMenu />}

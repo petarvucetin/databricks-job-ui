@@ -94,6 +94,44 @@ describe('Shell', () => {
     expect(screen.getByRole('menuitem', { name: 'Sweep 90 days + download' })).toBeTruthy();
   });
 
+  it('shows system tables history in the badge', () => {
+    render(<Shell mode={{ source: 'live', auth: 'user', capture: true, history: { source: 'system-tables', days: 90 } }}><p /></Shell>);
+    const badge = screen.getByText(/live data · history: system tables · 90 days/);
+    expect(badge).toBeTruthy();
+    expect(badge.getAttribute('title')).toBe('Run history before today from system tables, today from the API');
+  });
+
+  it('shows API history in the badge with reason in tooltip', () => {
+    render(<Shell mode={{ source: 'live', auth: 'user', capture: true, history: { source: 'api', days: 30, reason: 'permission denied' } }}><p /></Shell>);
+    const badge = screen.getByText(/live data · history: API · 30 days/);
+    expect(badge).toBeTruthy();
+    expect(badge.getAttribute('title')).toBe('Run history from the API only: permission denied');
+  });
+
+  it('shows API history in the badge without reason when not provided', () => {
+    render(<Shell mode={{ source: 'live', auth: 'user', capture: true, history: { source: 'api', days: 30 } }}><p /></Shell>);
+    const badge = screen.getByText(/live data · history: API · 30 days/);
+    expect(badge).toBeTruthy();
+    expect(badge.getAttribute('title')).toBe('Run history from the API only');
+  });
+
+  it('shows capped status in both system tables and API history', () => {
+    const { rerender } = render(<Shell mode={{ source: 'live', auth: 'user', capture: true, history: { source: 'system-tables', days: 90, capped: true } }}><p /></Shell>);
+    expect(screen.getByText(/live data · history: system tables · 90 days · capped/)).toBeTruthy();
+    let badge = screen.getByText(/capped/);
+    expect(badge.getAttribute('title')).toContain('history limit reached');
+    rerender(<Shell mode={{ source: 'live', auth: 'user', capture: true, history: { source: 'api', days: 30, capped: true } }}><p /></Shell>);
+    badge = screen.getByText(/capped/);
+    expect(badge.getAttribute('title')).toContain('history limit reached');
+  });
+
+  it('does not change the badge for mock mode without history', () => {
+    render(<Shell mode={{ source: 'mock', capture: false }}><p /></Shell>);
+    expect(screen.getByText('mock data')).toBeTruthy();
+    const badge = screen.getByText('mock data');
+    expect(badge.getAttribute('title')).toBeNull();
+  });
+
   it('shows a busy state while the sweep runs', async () => {
     let finish: (r: Response) => void = () => {};
     const fetchMock = vi.fn(() => new Promise<Response>((r) => (finish = r)));
