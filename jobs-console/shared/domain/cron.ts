@@ -172,9 +172,11 @@ function stepOf(vals: number[], span: number): number | null {
 /**
  * The short trigger pill. Times are the viewer's local time; the cron and its zone go in the title. `starters`: for a
  * pipeline credited to the scheduled jobs that start it through a pipeline task, those jobs (the first one's pill shows).
+ * A continuous pipeline, or one with its own schedule, keeps its own pill.
  */
 export function triggerPill(item: Item, now: number, starters?: Item[]): { text: string; cls: 'sched' | 'cont' | 'none' | 'paused'; title: string } {
-  if (starters?.length) {
+  const ownTrigger = item.trigger === 'continuous' || (item.trigger === 'schedule' && !!item.schedule);
+  if (starters?.length && !ownTrigger) {
     return { text: `${triggerPill(starters[0], now).text} · by job`, cls: 'sched', title: `Started by the pipeline task of ${starters.map((j) => j.name).join(', ')}` };
   }
   if (item.trigger === 'continuous' && item.paused) return { text: 'paused', cls: 'paused', title: 'Continuous, paused' };

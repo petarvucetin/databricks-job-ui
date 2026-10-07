@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { loadRuns, loadCurve, niceTicks, fmtN, groupOf, runningIn } from './load';
+import { loadRuns, loadCurve, niceTicks, fmtN, groupOf, runningIn, isContinuous } from './load';
+import { linkStarters } from './items';
 import type { Item } from '../../../shared/domain/types';
 import { makeRun } from '../test/fixtures';
 
@@ -30,14 +31,47 @@ describe('load', () => {
     const lr = loadRuns(items, runs, FROM, FROM + 24 * H);
     expect(lr.map((r) => [r.end - r.start, r.estimated])).toEqual([[1800e3, false]]);
   });
-  it('starts in the next sample, and pipelines / unscheduled items add nothing', () => {
-    const items = [job('a', '0 0 1 * * ?'), job('b', '0 5 1 * * ?'), job('m', '', { trigger: 'manual', schedule: undefined }), { ...job('p', '0 0 1 * * ?'), type: 'pipeline' as const, trigger: 'continuous' as const }];
+  it('starts in the next sample, and paused continuous / uncredited pipelines / unscheduled items add nothing', () => {
+    const items = [job('a', '0 0 1 * * ?'), job('b', '0 5 1 * * ?'), job('m', '', { trigger: 'manual', schedule: undefined }), { ...job('p', '0 0 1 * * ?'), type: 'pipeline' as const, trigger: 'continuous' as const, paused: true }, job('t', '', { type: 'pipeline', trigger: 'manual', schedule: undefined })];
     const lr = loadRuns(items, [], FROM, FROM + 24 * H);
     expect(lr.map((r) => r.item.id)).toEqual(['a', 'b']);
     const { running, startsIn } = loadCurve(lr, FROM, FROM + 24 * H, 5 * 60e3);
     expect(running).toHaveLength(289);
     expect(startsIn).toHaveLength(288);
     expect([startsIn[11], startsIn[12], startsIn[13], startsIn[14]]).toEqual([0, 1, 1, 0]);
+  });
+  it('a continuous pipeline runs the whole range, one run flagged always, counted as a pipeline', () => {
+    const p = job('p', '', { type: 'pipeline', trigger: 'continuous', schedule: undefined });
+    const items = [job('a', '0 0 1 * * ?'), p, job('cj', '', { trigger: 'continuous', schedule: undefined })];
+    expect([isContinuous(p), isContinuous({ ...p, paused: true }), isContinuous(items[2])]).toEqual([true, false, false]);
+    const lr = loadRuns(items, [], FROM, FROM + 24 * H);
+    const always = lr.filter((r) => r.always);
+    expect(always.map((r) => [r.item.id, r.start, r.end, r.estimated])).toEqual([['p', FROM - 24 * H, FROM + 48 * H, false]]);
+    const c = loadCurve(lr, FROM, FROM + 24 * H, 5 * 60e3);
+    expect(c.running.every((n, i) => n === (i === 12 || i === 13 ? 2 : 1))).toBe(true);
+    expect(c.runningPipelines.every((n) => n === 1)).toBe(true);
+    expect([c.runningJobs[0], c.runningJobs[12], c.runningJobs[13], c.runningJobs[14]]).toEqual([0, 1, 1, 0]);
+    // the always run starts before the range: no start in any sample
+    expect(c.startsIn.reduce((a, b) => a + b, 0)).toBe(1);
+  });
+  it("a continuous pipeline also credited to a scheduled job is one always run, not the job's starts", () => {
+    const a = job('a', '0 0 1 * * ?');
+    const p = job('p', '', { type: 'pipeline', trigger: 'continuous', schedule: undefined, startedBy: [{ jobId: 'a', jobName: 'a' }] });
+    const items = [a, p];
+    linkStarters(items);
+    expect(loadRuns(items, [], FROM, FROM + 24 * H).filter((r) => r.item === p).map((r) => r.always)).toEqual([true]);
+  });
+  it("a pipeline credited to a scheduled job: the job's starts with the pipeline's own typical runtime", () => {
+    const a = job('a', '0 0 1 * * ?');
+    const p = job('p', '', { type: 'pipeline', trigger: 'manual', schedule: undefined, startedBy: [{ jobId: 'a', jobName: 'a' }] });
+    const items = [a, p];
+    linkStarters(items);
+    const runs = [makeRun({ id: 9, type: 'pipeline', jobId: undefined, pipelineId: 'p', name: 'p', usualSec: 1200, result: 'succeeded' })];
+    const lr = loadRuns(items, runs, FROM, FROM + 24 * H).filter((r) => r.item === p);
+    expect(lr.map((r) => [r.start - FROM, r.end - r.start, r.estimated])).toEqual([[H, 1200e3, false]]);
+    const c = loadCurve(loadRuns(items, runs, FROM, FROM + 24 * H), FROM, FROM + 24 * H, 5 * 60e3);
+    expect([c.running[13], c.runningJobs[13], c.runningPipelines[13]]).toEqual([2, 1, 1]);
+    expect([c.running[15], c.runningJobs[15], c.runningPipelines[15]]).toEqual([1, 0, 1]);
   });
   it('nice ticks and number format', () => {
     expect(niceTicks(14)).toEqual({ step: 5, top: 15, ticks: [0, 5, 10, 15] });

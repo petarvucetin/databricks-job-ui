@@ -149,27 +149,28 @@ describe('JobsPage', () => {
     stubItems([...ITEMS, base({ id: 'e', name: 'every_five', trigger: 'schedule', schedule: { cron: '0 0/5 * * * ?', tz: 'UTC', paused: false } })]);
     page();
     await waitFor(() => expect(rows()).toHaveLength(4));
-    fireEvent.click(screen.getByRole('button', { name: /^Load/ }));
-    expect(screen.getByText('Scheduled jobs running at once')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Load' }));
+    expect(screen.getByText('Running at once')).toBeTruthy();
     expect(screen.getByText('drag across the chart to list the jobs running then')).toBeTruthy();
-    // without a selection: everything starting in range, by first start (every_five at 16:00, the daily job at 02:00)
-    expect(document.querySelector('.list-meta')!.textContent).toContain('2 scheduled to start in range, by first start');
-    expect([...rows()].map((r) => r.getAttribute('data-id'))).toEqual(['e', '2']);
+    // without a selection: the continuous pipeline, everything starting in range by first start (every_five at 16:00,
+    // the daily job at 02:00), then the manual job not on the chart
+    expect(document.querySelector('.list-meta')!.textContent).toContain('2 scheduled to start in range, by first start · 1 continuous');
+    expect([...rows()].map((r) => r.getAttribute('data-id'))).toEqual(['p1', 'e', '2', '1']);
 
     const plot = document.querySelector('.ld-plot')!;
     fireEvent.mouseMove(plot, { clientX: 0, clientY: 0 });
-    expect(document.querySelector('.tip')!.textContent).toBe('16:00 · 2 running · 1 start in the next 5 min\nprod / no prefix  2\n(runtimes estimated for 1 jobs)');
+    expect(document.querySelector('.tip')!.textContent).toBe('16:00 · 3 running: 2 jobs · 1 pipelines · 1 start in the next 5 min\nprod / no prefix  3\n(runtimes estimated for 1 jobs)');
     expect(document.querySelector('.ld-x')).not.toBeNull();
     fireEvent.mouseLeave(plot);
     expect(document.querySelector('.tip')).toBeNull();
 
     fireEvent.pointerDown(plot, { clientX: 0 });
     fireEvent.pointerUp(plot, { clientX: 0 });
-    expect(document.querySelector('.list-meta')!.textContent).toContain('1 jobs running between 16:00 and 16:05');
-    expect(rows()).toHaveLength(1);
-    expect(rows()[0].querySelector('.starts')!.textContent).toBe('15:55–16:05 · 16:00–16:10');
+    expect(document.querySelector('.list-meta')!.textContent).toContain('2 jobs and pipelines running between 16:00 and 16:05');
+    expect([...rows()].map((r) => r.getAttribute('data-id'))).toEqual(['p1', 'e', '1']);
+    expect(byId('e').querySelector('.starts')!.textContent).toBe('15:55–16:05 · 16:00–16:10');
     fireEvent.click(screen.getByText('clear selection ✕'));
-    expect(rows()).toHaveLength(2);
+    expect(rows()).toHaveLength(4);
   });
 
   it('the pane: facts, recent runs, tasks from the detail, See runs →', async () => {
@@ -245,6 +246,31 @@ describe('JobsPage', () => {
     expect(rows()).toHaveLength(4);
   });
 
+  it('Load: the type filter toggles the bands; Unscheduled shows the continuous pipeline on the chart, the rest under it', async () => {
+    stubItems([...ITEMS, base({ id: 'p2', type: 'pipeline', name: 'silver_merge', trigger: 'manual', startedBy: [{ jobId: '2', jobName: 'aiges_finance_daily_report_prod' }] })]);
+    page();
+    await waitFor(() => expect(rows()).toHaveLength(4));
+    fireEvent.click(screen.getByRole('button', { name: 'Load' }));
+    const fills = () => [...document.querySelectorAll('.ld-plot svg polygon')].map((p) => p.getAttribute('fill'));
+    const ids = () => [...document.querySelectorAll('.ld-list > .ir, .ld-list > .ld-off')].map((r) => r.getAttribute('data-id') ?? 'OFF');
+    expect(fills()).toEqual(['#eadfce', '#ddd3f3']);
+
+    fireEvent.click(screen.getByRole('button', { name: /^Pipelines/ }));
+    expect(fills()).toEqual(['#ddd3f3']);
+    // the credited pipeline starts with its job at 02:00, the continuous one runs throughout
+    expect(ids()).toEqual(['p1', 'p2']);
+    fireEvent.click(screen.getByRole('button', { name: /^Jobs/ }));
+    expect(fills()).toEqual(['#eadfce']);
+    expect(ids()).toEqual(['2', 'OFF', '1']);
+    fireEvent.click(document.querySelector('.seg[aria-label="type"] button')!);
+
+    fireEvent.click(screen.getByRole('button', { name: /^Unscheduled/ }));
+    expect(fills()).toEqual(['#ddd3f3']);
+    expect(document.querySelector('.list-meta')!.textContent).toContain('1 continuous on the chart');
+    expect(ids()).toEqual(['p1', 'OFF', '1']);
+    expect(document.querySelector('.ld-head')!.textContent).toContain('continuous ones (1) run the whole time');
+  });
+
   it('T collapses the timeline to one line and expands it; the line says when the schedule filter is on', async () => {
     stubItems(ITEMS);
     page();
@@ -270,9 +296,9 @@ describe('JobsPage', () => {
     const sw = [...document.querySelectorAll('.vsw button')];
     expect(sw.map((b) => [b.textContent, b.getAttribute('title')])).toEqual([['ListL', 'List (L)'], ['LoadD', 'Load (D)']]);
     fireEvent.keyDown(document, { key: 'd' });
-    expect(screen.getByText('Scheduled jobs running at once')).toBeTruthy();
+    expect(screen.getByText('Running at once')).toBeTruthy();
     fireEvent.keyDown(document, { key: 'L' });
-    expect(screen.queryByText('Scheduled jobs running at once')).toBeNull();
+    expect(screen.queryByText('Running at once')).toBeNull();
     expect(rows()).toHaveLength(3);
   });
 
@@ -283,7 +309,7 @@ describe('JobsPage', () => {
     fireEvent.keyDown(document, { key: 't' });
     fireEvent.keyDown(document, { key: 'd' });
     expect(document.querySelector('.tl-min')).toBeNull();
-    expect(screen.queryByText('Scheduled jobs running at once')).toBeNull();
+    expect(screen.queryByText('Running at once')).toBeNull();
     rerender(<JobsPage data={runsData} active onSeeRuns={() => {}} onOpenRun={() => {}} />);
     const input = screen.getByPlaceholderText(/Name tokens/);
     fireEvent.keyDown(input, { key: 't' });
@@ -293,7 +319,7 @@ describe('JobsPage', () => {
     fireEvent.keyDown(document, { key: 'd', metaKey: true });
     fireEvent.keyDown(document, { key: 'd', altKey: true });
     expect(document.querySelector('.tl-min')).toBeNull();
-    expect(screen.queryByText('Scheduled jobs running at once')).toBeNull();
+    expect(screen.queryByText('Running at once')).toBeNull();
     fireEvent.keyDown(document, { key: 't' });
     expect(document.querySelector('.tl-min')).not.toBeNull();
   });

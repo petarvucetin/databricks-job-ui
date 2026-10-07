@@ -21,7 +21,7 @@ export function ViewSwitch({ view, onView }: { view: ItemsView; onView: (v: Item
   return (
     <span className="vsw">
       {(['list', 'load'] as const).map((v) => (
-        <button key={v} type="button" className={view === v ? 'on' : ''} title={v === 'list' ? 'List (L)' : 'Load (D)'} onClick={() => onView(v)}>{v === 'list' ? 'List' : 'Load'}<kbd>{v === 'list' ? 'L' : 'D'}</kbd></button>
+        <button key={v} type="button" className={view === v ? 'on' : ''} title={v === 'list' ? 'List (L)' : 'Load (D)'} aria-keyshortcuts={v === 'list' ? 'L' : 'D'} onClick={() => onView(v)}>{v === 'list' ? 'List' : 'Load'}<kbd aria-hidden="true">{v === 'list' ? 'L' : 'D'}</kbd></button>
       ))}
     </span>
   );

@@ -9,15 +9,25 @@ export interface LoadRun {
   start: number;
   end: number;
   estimated: boolean;
+  /** A continuous pipeline: running for the whole range. */
+  always?: boolean;
 }
+
+/** A continuous pipeline that isn't paused: it counts as running the whole time (U2). */
+export const isContinuous = (item: Item): boolean => item.type === 'pipeline' && item.trigger === 'continuous' && !item.paused;
 
 /**
  * Expected runs of the scheduled items: every start in [from − 24 h, to) that is still going after `from`, each lasting
- * the item's typical runtime. Items without starts (pipelines, manual, paused, unparsed) add none.
+ * the item's typical runtime (a credited pipeline: its jobs' starts, its own runtime). A continuous pipeline is one run
+ * over [from − 24 h, to + 24 h], flagged `always`. Items without starts (manual, paused, unparsed, uncredited) add none.
  */
 export function loadRuns(items: Item[], runs: Run[], from: number, to: number): LoadRun[] {
   const out: LoadRun[] = [];
   for (const item of items) {
+    if (isContinuous(item)) {
+      out.push({ item, start: from - 24 * H, end: to + 24 * H, estimated: false, always: true });
+      continue;
+    }
     const starts = startsOf(item, from - 24 * H, to);
     if (!starts.length) continue;
     const { sec, estimated } = typicalSec(item, runs);
@@ -38,20 +48,32 @@ function countLE(arr: number[], t: number): number {
   return lo;
 }
 
+export interface LoadCurve {
+  running: number[];
+  runningJobs: number[];
+  runningPipelines: number[];
+  startsIn: number[];
+}
+
 /**
- * Sampled every `step` from `from`: `running[i]` is the runs going at from + i·step (N + 1 samples), `startsIn[i]` the
- * starts in [from + i·step, from + (i + 1)·step) (N samples). Sorted start and end arrays, binary search.
+ * Sampled every `step` from `from`: `running[i]` is the runs going at from + i·step (N + 1 samples), split into
+ * `runningJobs` and `runningPipelines`; `startsIn[i]` the starts in [from + i·step, from + (i + 1)·step) (N samples).
+ * Sorted start and end arrays, binary search.
  */
-export function loadCurve(lr: LoadRun[], from: number, to: number, step: number): { running: number[]; startsIn: number[] } {
-  const S = lr.map((r) => r.start).sort((a, b) => a - b);
-  const E = lr.map((r) => r.end).sort((a, b) => a - b);
+export function loadCurve(lr: LoadRun[], from: number, to: number, step: number): LoadCurve {
+  const sorted = (xs: number[]) => xs.sort((a, b) => a - b);
+  const S = sorted(lr.map((r) => r.start));
+  const E = sorted(lr.map((r) => r.end));
+  const pr = lr.filter((r) => r.item.type === 'pipeline');
+  const SP = sorted(pr.map((r) => r.start));
+  const EP = sorted(pr.map((r) => r.end));
   const N = Math.round((to - from) / step);
-  const running = Array.from({ length: N + 1 }, (_, i) => {
-    const t = from + i * step;
-    return countLE(S, t) - countLE(E, t);
-  });
-  const startsIn = Array.from({ length: N }, (_, i) => countLE(S, from + (i + 1) * step - 1) - countLE(S, from + i * step - 1));
-  return { running, startsIn };
+  const at = (i: number) => from + i * step;
+  const running = Array.from({ length: N + 1 }, (_, i) => countLE(S, at(i)) - countLE(E, at(i)));
+  const runningPipelines = Array.from({ length: N + 1 }, (_, i) => countLE(SP, at(i)) - countLE(EP, at(i)));
+  const runningJobs = running.map((n, i) => n - runningPipelines[i]);
+  const startsIn = Array.from({ length: N }, (_, i) => countLE(S, at(i + 1) - 1) - countLE(S, at(i) - 1));
+  return { running, runningJobs, runningPipelines, startsIn };
 }
 
 /** 1 / 2 / 5 × 10ⁿ at or above raw, at least 1. */

@@ -102,4 +102,14 @@ describe('triggerPill', () => {
     expect(triggerPill(p, now, [b, a])).toEqual({ text: 'hourly · :45 · by job', cls: 'sched', title: 'Started by the pipeline task of hourly_sync, nightly_load' });
     expect(triggerPill(p, now, []).text).toBe('triggered');
   });
+  it('a continuous pipeline, or one with its own schedule, keeps its own pill even when credited', () => {
+    const a = { ...sched('0 0 2 * * ?'), id: '7', name: 'nightly_load' };
+    const cont = item({ type: 'pipeline', id: 'p1', name: 'raw_bronze', trigger: 'continuous' });
+    expect(triggerPill(cont, now, [a])).toEqual(triggerPill(cont, now));
+    expect(triggerPill(cont, now, [a]).text).toBe('continuous');
+    expect(triggerPill({ ...cont, paused: true }, now, [a]).text).toBe('paused');
+    const own = { ...sched('0 45 * * * ?'), type: 'pipeline' as const, id: 'p2', name: 'silver' };
+    expect(triggerPill(own, now, [a])).toEqual(triggerPill(own, now));
+    expect(triggerPill(own, now, [a]).text).toBe('hourly · :45');
+  });
 });

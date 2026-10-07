@@ -1,8 +1,8 @@
-import { useLayoutEffect, useMemo, useRef, useState, type PointerEvent as RPointerEvent } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState, type PointerEvent as RPointerEvent, type ReactNode } from 'react';
 import type { Item, Run } from '../../../shared/domain/types';
 import { pad } from '../../../shared/domain/format';
 import { isOnTimeline, itemKey, startsOf } from '../model/items';
-import { fmtN, groupOf, loadCurve, loadRuns, niceTicks, runningIn } from '../model/load';
+import { fmtN, groupOf, isContinuous, loadCurve, loadRuns, niceTicks, runningIn } from '../model/load';
 import { dayName, hhmm, when as whenAt, type SchedScale } from '../model/schedule';
 import { ItemRow, ViewSwitch, type ItemsView } from './ItemList';
 
@@ -14,9 +14,11 @@ const HT = 200;
 type At = { f: number; i: number; t: number };
 
 /**
- * Load view: scheduled jobs expected to be running at once over the schedule window (from each schedule and its typical
- * runtime), with a y-axis, a crosshair tooltip, and drag-to-select; the list under it shows the jobs running in the
- * selection, or everything starting in range by first start. Ported from renderLoad() in the mockup.
+ * Load view: jobs and pipelines expected to be running at once over the schedule window (from each schedule and its
+ * typical runtime; credited pipelines from their jobs' starts; continuous pipelines the whole time), jobs at the bottom
+ * and pipelines stacked on top, with a y-axis, a crosshair tooltip, and drag-to-select. The list under it shows what runs
+ * in the selection, or the continuous pipelines and everything starting in range by first start; then the items not on
+ * the chart (U2, U4). Ported from renderLoad() in the mockup.
  */
 export function LoadView({ items, runs, from, to, now, scale, selected, onSelect, view, onView, partial }: {
   /** The filtered items (type, scope, tags, search), schedule window not applied. */
@@ -38,8 +40,8 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
   const when = (t: number) => whenAt(t, scale);
 
   const lr = useMemo(() => loadRuns(items, runs, from, to), [items, runs, from, to]);
-  const { running, startsIn } = useMemo(() => loadCurve(lr, from, to, step), [lr, from, to, step]);
-  const scheduled = useMemo(() => items.filter(isOnTimeline).length, [items]);
+  const { running, runningJobs, runningPipelines, startsIn } = useMemo(() => loadCurve(lr, from, to, step), [lr, from, to, step]);
+  const contN = useMemo(() => lr.filter((r) => r.always).length, [lr]);
   const peak = useMemo(() => running.reduce((b, n, i) => (n > running[b] ? i : b), 0), [running]);
   const maxR = running[peak] ?? 0;
   const { ticks, top } = niceTicks(maxR);
@@ -113,7 +115,18 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
   };
 
   const pc = (t: number) => ((t - from) / span) * 100;
-  const pts = running.map((n, i) => `${(i / N) * W},${HT - (n / top) * HT}`).join(' ');
+  // Jobs at the bottom, pipelines stacked on top (between the jobs line and the total); each band only when non-zero.
+  const bands = useMemo(() => {
+    const xy = (n: number, i: number) => `${(i / N) * W},${HT - (n / top) * HT}`;
+    const ptsJ = runningJobs.map(xy);
+    return {
+      pts: running.map(xy).join(' '),
+      ptsJ: ptsJ.join(' '),
+      ptsJrev: [...ptsJ].reverse().join(' '),
+      hasJ: runningJobs.some((n) => n > 0),
+      hasP: runningPipelines.some((n) => n > 0),
+    };
+  }, [running, runningJobs, runningPipelines, N, top]);
   const every = span <= 7 * H ? 1 : span <= 26 * H ? 2 : 24;
   const xt: number[] = [];
   for (let t = Math.ceil(from / H) * H; t <= to; t += H) if (new Date(t).getHours() % every === 0) xt.push(t);
@@ -135,47 +148,54 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
       ...(est ? [`(runtimes estimated for ${est} jobs)`] : []),
     ];
   }, [lr, hi, from, step]);
+  const hoverJ = hi === null ? 0 : runningJobs[hi] ?? 0;
+  const hoverP = hi === null ? 0 : runningPipelines[hi] ?? 0;
 
   const selList = useMemo(() => (sel ? runningIn(lr, sel.a, sel.b) : null), [lr, sel]);
   const startList = useMemo(
-    () => (sel ? [] : items.map((it) => ({ it, f: startsOf(it, from, to) })).filter((x) => x.f.length).sort((a, b) => a.f[0] - b.f[0])),
+    () => (sel ? [] : items.filter((it) => !isContinuous(it)).map((it) => ({ it, f: startsOf(it, from, to) })).filter((x) => x.f.length).sort((a, b) => a.f[0] - b.f[0])),
     [items, from, to, sel],
   );
+  const cont = useMemo(() => items.filter(isContinuous), [items]);
+  // Not on the chart: no fixed start times, and not continuous.
+  const off = useMemo(() => items.filter((it) => !isOnTimeline(it) && !isContinuous(it)), [items]);
+  const onChart = lr.length > 0;
 
   // Memoized so hovering the chart (which re-renders this view) leaves the rows alone.
-  const { meta, rows, more } = useMemo(() => {
+  const { meta, rows, more, offRows } = useMemo(() => {
     const when = (t: number) => whenAt(t, scale);
+    const row = (it: Item, right: ReactNode) => <ItemRow key={itemKey(it)} item={it} now={now} selected={selected} onSelect={onSelect} right={right} />;
+    const whole = <span className="ld-offr">running the whole time</span>;
+    const offRows = off.length ? (
+      <>
+        <div className="ld-off">Not on the chart · {fmtN(off.length)} with no fixed start times (manual, triggered by a file or a table, paused, or a pipeline no scheduled job starts)</div>
+        {off.slice(0, CAP).map((it) => row(it, <span className="ld-offr">no start times</span>))}
+        {off.length > CAP && <div className="list-note">+{fmtN(off.length - CAP)} more</div>}
+      </>
+    ) : null;
     if (selList && sel) {
       return {
-        meta: <><b>{fmtN(selList.length)}</b> jobs running between {when(sel.a)} and {when(sel.b)}</>,
-        rows: selList.slice(0, CAP).map(({ item, runs: rs }) => (
-          <ItemRow
-            key={itemKey(item)}
-            item={item}
-            now={now}
-            selected={selected}
-            onSelect={onSelect}
-            right={<span className="starts">{rs.slice(0, 2).map((r) => `${when(r.start)}–${hhmm(r.end)}`).join(' · ')}{rs.length > 2 ? ` +${rs.length - 2}` : ''}</span>}
-          />
-        )),
+        meta: <><b>{fmtN(selList.length)}</b> jobs and pipelines running between {when(sel.a)} and {when(sel.b)}</>,
+        rows: selList.slice(0, CAP).map(({ item, runs: rs }) => row(item, rs[0].always ? whole : (
+          <span className="starts">{rs.slice(0, 2).map((r) => `${when(r.start)}–${hhmm(r.end)}`).join(' · ')}{rs.length > 2 ? ` +${rs.length - 2}` : ''}</span>
+        ))),
         more: selList.length > CAP ? `+${fmtN(selList.length - CAP)} more — narrow the selection or filter by type, scope, tags or name` : null,
+        offRows,
       };
     }
+    const empty = !onChart && off.length ? ' · nothing here has fixed start times, so the chart is empty' : '';
     return {
-      meta: <>{fmtN(startList.length)} scheduled to start in range, by first start</>,
-      rows: startList.slice(0, CAP).map(({ it, f }) => (
-        <ItemRow
-          key={itemKey(it)}
-          item={it}
-          now={now}
-          selected={selected}
-          onSelect={onSelect}
-          right={<span className="starts">⏱ {f.slice(0, 3).map(when).join(' · ')}{f.length > 3 ? ` +${f.length - 3}` : ''}</span>}
-        />
-      )),
+      meta: startList.length
+        ? <>{fmtN(startList.length)} scheduled to start in range, by first start{cont.length ? ` · ${fmtN(cont.length)} continuous` : ''}{empty}</>
+        : <>{cont.length ? `${fmtN(cont.length)} continuous on the chart` : 'Nothing on the chart'}{empty}</>,
+      rows: [
+        ...cont.map((it) => row(it, whole)),
+        ...startList.slice(0, CAP).map(({ it, f }) => row(it, <span className="starts">⏱ {f.slice(0, 3).map(when).join(' · ')}{f.length > 3 ? ` +${f.length - 3}` : ''}</span>)),
+      ],
       more: startList.length > CAP ? `+${fmtN(startList.length - CAP)} more — drag across the chart or filter to narrow` : null,
+      offRows,
     };
-  }, [selList, sel, startList, scale, now, selected, onSelect]);
+  }, [selList, sel, startList, cont, off, onChart, scale, now, selected, onSelect]);
 
   return (
     <div className="list">
@@ -183,9 +203,10 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
       {partial && <div className="partial">Partial list: {partial}.</div>}
       <div className="ld">
         <div className="ld-head">
-          <b>Scheduled jobs running at once</b>
+          <b>Running at once</b>
+          <span className="ld-key"><i className="kj" />jobs <i className="kp" />pipelines</span>
           <span>
-            from each job&apos;s schedule and its typical runtime · peak <b>{fmtN(maxR)}</b> at {when(from + peak * step)} · {fmtN(scheduled)} scheduled items · {fmtN(lr.length)} runs in range
+            from schedules and typical runtimes · pipelines count when a scheduled job starts them{contN ? `, continuous ones (${fmtN(contN)}) run the whole time` : ''} · peak <b>{fmtN(maxR)}</b> at {when(from + peak * step)}
           </span>
           {sel
             ? <button type="button" className="ld-clear" onClick={() => setSel(null)}>clear selection ✕</button>
@@ -211,8 +232,10 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
             {ticks.map((v) => <div key={v} className="ld-grid" style={{ bottom: `${(v / top) * 100}%` }} />)}
             {xt.map((t) => <div key={t} className="ld-vgrid" style={{ left: `${pc(t)}%` }} />)}
             <svg viewBox={`0 0 ${W} ${HT}`} preserveAspectRatio="none">
-              <polygon points={`0,${HT} ${pts} ${W},${HT}`} fill="#f8e4bd" />
-              <polyline points={pts} fill="none" stroke="#c07a0c" strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+              {bands.hasJ && <polygon points={`0,${HT} ${bands.ptsJ} ${W},${HT}`} fill="#eadfce" />}
+              {bands.hasP && <polygon points={`${bands.pts} ${bands.ptsJrev}`} fill="#ddd3f3" />}
+              {bands.hasJ && <polyline points={bands.ptsJ} fill="none" stroke="#9c8462" strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />}
+              {bands.hasP && <polyline points={bands.pts} fill="none" stroke="#6a4fb0" strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />}
             </svg>
             {now >= from && now < to && <div className="ld-now" style={{ left: `${pc(now)}%` }}><span>now</span></div>}
             {sel && <div className="ld-sel" style={{ left: `${pc(sel.a)}%`, width: `${pc(sel.b) - pc(sel.a)}%` }} />}
@@ -230,10 +253,11 @@ export function LoadView({ items, runs, from, to, now, scale, selected, onSelect
       <div className="ld-list">
         {rows}
         {more && <div className="list-note">{more}</div>}
+        {offRows}
       </div>
       {hi !== null && tip && (
         <div className="tip" ref={tipRef}>
-          <b>{when(from + hi * step)}</b> · {fmtN(hoverN)} running · {fmtN(startsIn[Math.min(hi, N - 1)] ?? 0)} start in the next {step / 60e3} min
+          <b>{when(from + hi * step)}</b> · {fmtN(hoverN)} running: {fmtN(hoverJ)} jobs · {fmtN(hoverP)} pipelines · {fmtN(startsIn[Math.min(hi, N - 1)] ?? 0)} start in the next {step / 60e3} min
           {tip.map((line) => `\n${line}`).join('')}
         </div>
       )}
