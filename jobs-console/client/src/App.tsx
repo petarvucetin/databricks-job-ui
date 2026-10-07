@@ -28,8 +28,10 @@ function Tabbed({ mode }: { mode: ReturnType<typeof useDataMode> }) {
   };
   const data = useRunsData();
   const [focus, setFocus] = useState<RunsFocus>();
+  // Where history came from is what the latest list says (finding 1); /api/mode's probe answer only until it arrives.
+  const shellMode = mode && data.runs.state === 'ready' ? { ...mode, history: data.runs.data.history } : mode;
   return (
-    <Shell mode={mode} tab={tab} onTab={setTab}>
+    <Shell mode={shellMode} tab={tab} onTab={setTab}>
       <div hidden={tab !== 'jobs'}>
         <TabActiveContext.Provider value={tab === 'jobs'}>
           <JobsPage

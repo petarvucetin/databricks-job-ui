@@ -17,7 +17,7 @@ function badgeText(mode: DataMode): string {
 
 function getHistoryPart(history: HistoryInfo): string {
   const source = history.source === 'system-tables' ? 'system tables' : 'API';
-  const base = `history: ${source} · ${history.days} days`;
+  const base = `history: ${source} · ${history.days} ${history.days === 1 ? 'day' : 'days'}`;
   return history.capped ? `${base} · capped` : base;
 }
 
@@ -35,7 +35,8 @@ function badgeTitle(mode: DataMode): string | null {
   }
 
   if (history.capped) {
-    return `${baseTitle}; history limit reached`;
+    // An incomplete job list caps a system-tables history too; it names that instead of a limit.
+    return `${baseTitle}; ${history.source === 'system-tables' && history.reason ? history.reason : 'history limit reached'}`;
   }
 
   return baseTitle;
