@@ -86,6 +86,23 @@ describe('createLiveItems', () => {
     await src.listItems();
     expect(api.calls.filter((c) => c === 'listJobs').length).toBe(2);
   });
+  it('credits pipelines to the jobs that start them (expand_tasks), ignoring unknown pipeline ids', async () => {
+    const withPipes = (id: number, ...pids: string[]): jobs.BaseJob => job(id, { tasks: pids.map((p, i) => ({ task_key: `t${i}`, pipeline_task: { pipeline_id: p } })) });
+    const inner = fakeApi({
+      jobs: [withPipes(1, 'p1'), withPipes(2, 'p1', 'p2'), withPipes(3, 'ghost'), job(4, {})],
+      pipelines: [{ pipeline_id: 'p1', name: 'pipe1' }, { pipeline_id: 'p2', name: 'pipe2' }, { pipeline_id: 'p3', name: 'pipe3' }],
+    });
+    const reqs: jobs.ListJobsRequest[] = [];
+    const api = { ...inner, listJobs: (req: jobs.ListJobsRequest) => (reqs.push(req), inner.listJobs(req)) };
+    const r = await createLiveItems({ ...base, api, state: createLiveState() }).listItems();
+    expect(reqs[0]).toMatchObject({ expand_tasks: true, limit: 100 });
+    const by = (id: string) => r.items.find((i) => i.type === 'pipeline' && i.id === id);
+    expect(by('p1')?.startedBy).toEqual([{ jobId: '1', jobName: 'job_1' }, { jobId: '2', jobName: 'job_2' }]);
+    expect(by('p2')?.startedBy).toEqual([{ jobId: '2', jobName: 'job_2' }]);
+    expect(by('p3')?.startedBy).toBeUndefined();
+    expect(r.items.filter((i) => i.type === 'job')).toHaveLength(4);
+    expect(r.items.filter((i) => i.type === 'pipeline')).toHaveLength(3);
+  });
   it('getItem: job tasks with deps, pipeline facts, 404 for unknown', async () => {
     const api = fakeApi({
       jobsById: { 9: { job_id: 9, run_as_user_name: SP, settings: { name: 'j9', tasks: [{ task_key: 'a', notebook_task: { notebook_path: '/x' } }, { task_key: 'b', depends_on: [{ task_key: 'a' }], pipeline_task: { pipeline_id: 'p1' } }] } } },

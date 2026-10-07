@@ -23,4 +23,20 @@ describe('mockItems', () => {
     expect(items.filter((i) => i.type === 'pipeline').every((i) => i.trigger !== 'schedule')).toBe(true);
     for (const i of jobs) if (i.schedule) expect(parseQuartz(i.schedule.cron)).not.toBeNull();
   });
+  it('credits some triggered pipelines to scheduled jobs, deterministically', () => {
+    const credited = items.filter((i) => i.startedBy);
+    expect(credited.length).toBeGreaterThan(0);
+    for (const p of credited) {
+      expect(p.type).toBe('pipeline');
+      expect(p.trigger).not.toBe('continuous');
+      for (const s of p.startedBy!) {
+        const j = items.find((x) => x.type === 'job' && x.id === s.jobId);
+        expect(j?.name).toBe(s.jobName);
+        expect(j?.trigger).toBe('schedule');
+        expect(j?.paused).toBe(false);
+        expect(parseQuartz(j!.schedule!.cron)).not.toBeNull();
+      }
+    }
+    expect(mockItems(runs, asOf).map((i) => i.startedBy)).toEqual(items.map((i) => i.startedBy));
+  });
 });

@@ -59,7 +59,9 @@ export function fakeApi(data: FakeData): LiveApi & { calls: string[] } {
         const all = data.jobs ?? [];
         const at = Number(req.page_token ?? 0);
         const next = at + jobSize;
-        return { jobs: all.slice(at, next), next_page_token: next < all.length ? String(next) : undefined, has_more: next < all.length };
+        // Like the real API, settings.tasks only comes back with expand_tasks.
+        const page = all.slice(at, next).map((j) => (req.expand_tasks || !j.settings?.tasks ? j : { ...j, settings: { ...j.settings, tasks: undefined } }));
+        return { jobs: page, next_page_token: next < all.length ? String(next) : undefined, has_more: next < all.length };
       }),
     getJob: (req) =>
       reply('getJob', () => {

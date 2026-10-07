@@ -166,6 +166,8 @@ export interface Item {
   paused: boolean;
   /** settings.deployment.kind === 'BUNDLE' (jobs) / spec.deployment.kind (pipelines). */
   bundle: boolean;
+  /** Pipelines only: the jobs that start it through a pipeline_task. */
+  startedBy?: { jobId: string; jobName: string }[];
   /** Item page in the workspace; absent in mock data. */
   url?: string;
 }

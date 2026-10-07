@@ -109,15 +109,24 @@ export function createLiveItems(o: LiveItemsOptions): { listItems: () => Promise
       try {
         const [host, me] = await Promise.all([o.api.host(), o.user().catch(() => '')]);
         const items: Item[] = [];
+        const starters = new Map<string, { jobId: string; jobName: string }[]>();
         let partial: string | undefined;
         let token: string | undefined;
         do {
-          const page = await dl.call(() => o.api.listJobs({ limit: 100, page_token: token }));
+          const page = await dl.call(() => o.api.listJobs({ limit: 100, expand_tasks: true, page_token: token }));
           if (page === TIMEOUT) {
             partial = `read ${items.length} jobs before the ${o.limits.itemsTimeoutMs / 1000}s limit`;
             break;
           }
-          for (const j of page.jobs ?? []) items.push(jobItem(j, me, host));
+          for (const j of page.jobs ?? []) {
+            const item = jobItem(j, me, host);
+            items.push(item);
+            for (const pid of new Set((j.settings?.tasks ?? []).map((t) => t.pipeline_task?.pipeline_id).filter((x): x is string => !!x))) {
+              const list = starters.get(pid) ?? [];
+              list.push({ jobId: item.id, jobName: item.name });
+              starters.set(pid, list);
+            }
+          }
           token = page.next_page_token;
         } while (token);
         const statuses: pipelines.PipelineStateInfo[] = [];
@@ -141,7 +150,10 @@ export function createLiveItems(o: LiveItemsOptions): { listItems: () => Promise
           else if (r) specs.set(p.pipeline_id!, r);
         });
         if (cut && !partial) partial = `${cut} pipeline details cut by the time limit`;
-        for (const p of statuses) items.push(pipelineItem(p, specs.get(p.pipeline_id ?? ''), me, host));
+        for (const p of statuses) {
+          const by = starters.get(p.pipeline_id ?? '');
+          items.push({ ...pipelineItem(p, specs.get(p.pipeline_id ?? ''), me, host), ...(by ? { startedBy: by } : {}) });
+        }
         const data: ItemsResponse = { asOf: now, source: o.source ?? 'live', items, ...(partial ? { partial: { reason: partial } } : {}) };
         if (!partial) o.state.items.set(o.userKey, { at: now, data });
         return data;

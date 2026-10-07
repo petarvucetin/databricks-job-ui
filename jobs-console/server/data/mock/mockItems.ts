@@ -1,4 +1,5 @@
 import type { Item, ItemDetail, Run } from '../../../shared/domain/types';
+import { parseQuartz } from '../../../shared/domain/cron';
 
 function hash(s: string): number {
   let h = 2166136261;
@@ -64,6 +65,19 @@ export function mockItems(runs: Run[], _asOf: number): Item[] {
       jobIndex++;
       out.push({ type: 'job', id: free('job', h % 900000, (n) => String(100000 + n), 900000), ...base, ...shape });
     }
+  }
+  // Credit some triggered pipelines to a scheduled job (name order, name hash), as a pipeline_task would.
+  const starters = out.filter((i) => i.type === 'job' && i.trigger === 'schedule' && !i.paused && i.schedule && parseQuartz(i.schedule.cron));
+  if (starters.length) {
+    let first = true;
+    out.forEach((p, n) => {
+      if (p.type !== 'pipeline' || p.trigger === 'continuous') return;
+      const h = hash(p.name);
+      if (!first && h % 2 !== 0) return;
+      first = false;
+      const j = starters[h % starters.length];
+      out[n] = { ...p, startedBy: [{ jobId: j.id, jobName: j.name }] };
+    });
   }
   return out;
 }
