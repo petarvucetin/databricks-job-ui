@@ -3,7 +3,7 @@ import type { Item, Run } from '../../../shared/domain/types';
 import type { RunsData } from '../hooks/useRunsData';
 import { useItems } from '../hooks/useItems';
 import { useNow } from '../hooks/useNow';
-import { DEFAULT_FILTERS, filterItems, itemKey, sortItems, type ItemFilters } from '../model/items';
+import { DEFAULT_FILTERS, filterItems, itemKey, linkStarters, sortItems, type ItemFilters } from '../model/items';
 import { schedBuckets, schedRange, type SchedState } from '../model/schedule';
 import { ItemsFilterBar } from '../components/ItemsFilterBar';
 import { ScheduleTimeline } from '../components/ScheduleTimeline';
@@ -17,7 +17,8 @@ const NO_RUNS: Run[] = [];
 
 /**
  * The Jobs & ETL tab: filter bar, schedule timeline, and the list (or Load view) with the detail pane.
- * `active`: the tab is showing; document-level keys (Esc) are only handled then.
+ * `active`: the tab is showing; document-level keys are only handled then: Esc closes the pane, and (not while typing)
+ * T collapses or expands the timeline, L shows the list, D shows Load.
  */
 export function JobsPage({ data, active, onSeeRuns, onOpenRun }: { data: RunsData; active: boolean; onSeeRuns: (name: string) => void; onOpenRun: (runId: number) => void }) {
   // The list refreshes with every runs load (the interval and the manual ↻).
@@ -25,6 +26,7 @@ export function JobsPage({ data, active, onSeeRuns, onOpenRun }: { data: RunsDat
   const [filters, setFilters] = useState<ItemFilters>(DEFAULT_FILTERS);
   const [sched, setSched] = useState<SchedState>({ scale: 'hour', win: null, cube: null });
   const [view, setView] = useState<ItemsView>('list');
+  const [tlCollapsed, setTlCollapsed] = useState(false);
   // "type:id" of the selected item; nothing is selected on load (J4).
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -34,6 +36,8 @@ export function JobsPage({ data, active, onSeeRuns, onOpenRun }: { data: RunsDat
   const now = ready ? ready.data.asOf + Math.max(0, tick - ready.loadedAt) : tick;
   const items = ready?.data.items ?? NO_ITEMS;
   const runs = data.runs.state === 'ready' ? data.runs.data.runs : NO_RUNS;
+  // Credit pipelines to the jobs that start them, from the full list (once per list; the model reads it from then on).
+  linkStarters(items);
 
   // The timeline buckets only move when the local hour changes: key them on it so a minute tick doesn't recount.
   const hour = new Date(now).setMinutes(0, 0, 0);
@@ -58,6 +62,12 @@ export function JobsPage({ data, active, onSeeRuns, onOpenRun }: { data: RunsDat
     if (!active) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setSelected(null);
+      const typing = /^(INPUT|SELECT|TEXTAREA)$/.test((e.target as HTMLElement | null)?.tagName ?? '') || e.ctrlKey || e.metaKey || e.altKey;
+      if (typing) return;
+      const k = e.key.toLowerCase();
+      if (k === 't') setTlCollapsed((c) => !c);
+      else if (k === 'l') setView('list');
+      else if (k === 'd') setView('load');
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
@@ -71,7 +81,7 @@ export function JobsPage({ data, active, onSeeRuns, onOpenRun }: { data: RunsDat
   return (
     <div className="jobs">
       <ItemsFilterBar items={items} filters={filters} onChange={setFilters} />
-      {ready && <ScheduleTimeline items={pool} bks={bks} state={sched} onChange={setSched} />}
+      {ready && <ScheduleTimeline items={pool} bks={bks} state={sched} collapsed={tlCollapsed} onChange={setSched} />}
       <div className={`split${selItem ? ' sel' : ''}`}>
         {view === 'load' && ready && rows.length ? (
           <LoadView

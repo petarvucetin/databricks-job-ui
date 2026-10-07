@@ -94,4 +94,12 @@ describe('triggerPill', () => {
   it('a paused continuous job shows paused, not continuous', () => {
     expect(triggerPill(item({ trigger: 'continuous', paused: true }), now)).toEqual({ text: 'paused', cls: 'paused', title: 'Continuous, paused' });
   });
+  it('a pipeline credited to the jobs that start it: the first job\'s pill and "· by job"', () => {
+    const p = item({ type: 'pipeline', id: 'p1', name: 'raw_bronze' });
+    const a = { ...sched('0 0 2 * * ?'), id: '7', name: 'nightly_load' };
+    const b = { ...sched('0 45 * * * ?'), id: '8', name: 'hourly_sync' };
+    expect(triggerPill(p, now, [a])).toEqual({ text: 'daily 02:00 · by job', cls: 'sched', title: 'Started by the pipeline task of nightly_load' });
+    expect(triggerPill(p, now, [b, a])).toEqual({ text: 'hourly · :45 · by job', cls: 'sched', title: 'Started by the pipeline task of hourly_sync, nightly_load' });
+    expect(triggerPill(p, now, []).text).toBe('triggered');
+  });
 });

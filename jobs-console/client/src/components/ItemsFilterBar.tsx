@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Item } from '../../../shared/domain/types';
-import { scopeCounts, tagCounts, typeCounts, type ItemFilters } from '../model/items';
+import { scopeCounts, tagCounts, triggerCounts, typeCounts, type ItemFilters } from '../model/items';
 import './filterbar.css';
 
-/** The Jobs & ETL filter bar: search, type, scope, Tags menu and Sort. Counts are over all items. */
+/** The Jobs & ETL filter bar: search, type, trigger (Scheduled = has fixed start times), scope, Tags menu and Sort. Counts are over all items. */
 export function ItemsFilterBar({ items, filters, onChange }: { items: Item[]; filters: ItemFilters; onChange: (f: ItemFilters) => void }) {
   const tc = useMemo(() => typeCounts(items), [items]);
+  const trc = useMemo(() => triggerCounts(items), [items]);
   const sc = useMemo(() => scopeCounts(items), [items]);
   const tags = useMemo(() => tagCounts(items), [items]);
   const set = (p: Partial<ItemFilters>) => onChange({ ...filters, ...p });
   const types: [ItemFilters['type'], string, number][] = [['all', 'All', tc.all], ['job', 'Jobs', tc.job], ['pipeline', 'Pipelines', tc.pipeline]];
+  const triggers: [ItemFilters['trigger'], string, number][] = [['any', 'Any trigger', trc.any], ['sched', 'Scheduled', trc.sched], ['unsched', 'Unscheduled', trc.unsched]];
   const scopes: [ItemFilters['scope'], string, number][] = [['mine', 'Mine', sc.mine], ['deployed', 'Deployed', sc.deployed], ['all', 'All', sc.all]];
   return (
     <div className="fbar">
@@ -18,6 +20,11 @@ export function ItemsFilterBar({ items, filters, onChange }: { items: Item[]; fi
       <div className="seg" role="group" aria-label="type">
         {types.map(([k, l, n]) => (
           <button key={k} type="button" className={filters.type === k ? 'on' : ''} onClick={() => set({ type: k })}>{l}<i>{n}</i></button>
+        ))}
+      </div>
+      <div className="seg" role="group" aria-label="trigger">
+        {triggers.map(([k, l, n]) => (
+          <button key={k} type="button" className={filters.trigger === k ? 'on' : ''} onClick={() => set({ trigger: k })}>{l}<i>{n}</i></button>
         ))}
       </div>
       <div className="vr" />

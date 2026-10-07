@@ -16,12 +16,12 @@ const ago = (ms: number) => {
   return m < 60 ? `${m}m ago` : m < 1440 ? `${Math.round(m / 60)}h ago` : `${Math.round(m / 1440)}d ago`;
 };
 
-/** The list header's List · Load switch. */
+/** The list header's List · Load switch, with its keys (L, D). */
 export function ViewSwitch({ view, onView }: { view: ItemsView; onView: (v: ItemsView) => void }) {
   return (
     <span className="vsw">
       {(['list', 'load'] as const).map((v) => (
-        <button key={v} type="button" className={view === v ? 'on' : ''} onClick={() => onView(v)}>{v === 'list' ? 'List' : 'Load'}</button>
+        <button key={v} type="button" className={view === v ? 'on' : ''} title={v === 'list' ? 'List (L)' : 'Load (D)'} onClick={() => onView(v)}>{v === 'list' ? 'List' : 'Load'}<kbd>{v === 'list' ? 'L' : 'D'}</kbd></button>
       ))}
     </span>
   );
@@ -105,6 +105,7 @@ export function ItemList({ load, rows, total, range, scale, runs, now, selected,
     const words = [
       filters.query ? `“${filters.query}”` : null,
       filters.type === 'all' ? 'all types' : `${filters.type}s`,
+      filters.trigger === 'any' ? null : filters.trigger === 'sched' ? 'scheduled' : 'unscheduled',
       filters.scope,
       ...filters.tags,
       range ? `scheduled to start ${when(range.from, scale)}–${when(range.to, scale)}` : null,

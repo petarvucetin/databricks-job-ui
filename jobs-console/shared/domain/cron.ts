@@ -169,8 +169,14 @@ function stepOf(vals: number[], span: number): number | null {
   return vals.every((v, i) => v === vals[0] + i * k) && vals[0] < k && vals[vals.length - 1] + k >= span ? k : null;
 }
 
-/** The short trigger pill. Times are the viewer's local time; the cron and its zone go in the title. */
-export function triggerPill(item: Item, now: number): { text: string; cls: 'sched' | 'cont' | 'none' | 'paused'; title: string } {
+/**
+ * The short trigger pill. Times are the viewer's local time; the cron and its zone go in the title. `starters`: for a
+ * pipeline credited to the scheduled jobs that start it through a pipeline task, those jobs (the first one's pill shows).
+ */
+export function triggerPill(item: Item, now: number, starters?: Item[]): { text: string; cls: 'sched' | 'cont' | 'none' | 'paused'; title: string } {
+  if (starters?.length) {
+    return { text: `${triggerPill(starters[0], now).text} · by job`, cls: 'sched', title: `Started by the pipeline task of ${starters.map((j) => j.name).join(', ')}` };
+  }
   if (item.trigger === 'continuous' && item.paused) return { text: 'paused', cls: 'paused', title: 'Continuous, paused' };
   if (item.trigger === 'continuous') return { text: 'continuous', cls: 'cont', title: 'Continuous: always on, no scheduled starts' };
   if (item.paused) return { text: 'paused', cls: 'paused', title: `Trigger paused${item.schedule ? ` (cron ${item.schedule.cron}, ${item.schedule.tz})` : ''}` };

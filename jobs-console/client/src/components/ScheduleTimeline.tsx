@@ -13,9 +13,10 @@ function spanText(ms: number) {
 /**
  * "Scheduled starts by hour / day": job and pipeline starts per column over the next 24 hours or 7 days. Handles,
  * presets, a column head or a box narrow the window; the list then keeps only items starting inside it.
- * `items` are the filtered items, the schedule window itself not applied.
+ * `items` are the filtered items, the schedule window itself not applied. `collapsed` (the T key): one line with the
+ * window and whether the schedule filter is on.
  */
-export function ScheduleTimeline({ items, bks, state, onChange }: { items: Item[]; bks: Bucket[]; state: SchedState; onChange: (s: SchedState) => void }) {
+export function ScheduleTimeline({ items, bks, state, collapsed = false, onChange }: { items: Item[]; bks: Bucket[]; state: SchedState; collapsed?: boolean; onChange: (s: SchedState) => void }) {
   const { scale, cube } = state;
   const counts = useMemo(() => schedCounts(items, bks), [items, bks]);
   const foot = useMemo(() => unscheduledCounts(items), [items]);
@@ -27,6 +28,17 @@ export function ScheduleTimeline({ items, bks, state, onChange }: { items: Item[
   const a = w.a / bks.length, b = w.b / bks.length;
   const crosses = scale === 'hour' && new Date(from).getDate() !== new Date(to).getDate();
   const set = (p: Partial<SchedState>) => onChange({ ...state, ...p });
+
+  if (collapsed) {
+    return (
+      <section className="tl tl-min">
+        <span className="tl-span">
+          {crosses ? `${dayName(from)} ` : ''}{when(from, scale)} to {crosses ? `${dayName(to)} ` : ''}{when(to, scale)}, {spanText(to - from)}{narrowed ? ' · schedule filter on' : ''}
+        </span>
+        <span className="tl-key"><kbd>T</kbd> expand</span>
+      </section>
+    );
+  }
 
   const startHandleDrag = (which: 'a' | 'b') => (e: ReactPointerEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -57,6 +69,7 @@ export function ScheduleTimeline({ items, bks, state, onChange }: { items: Item[
     <section className="tl">
       <div className="tl-head-row">
         <span className="tl-t">Scheduled starts by {scale}</span>
+        <span className="tl-hint"><kbd>T</kbd> collapse</span>
         <span className="tl-scale">
           {(['hour', 'day'] as const).map((s) => (
             <button key={s} type="button" className={scale === s ? 'on' : ''} onClick={() => onChange({ scale: s, win: null, cube: null })}>{s}</button>

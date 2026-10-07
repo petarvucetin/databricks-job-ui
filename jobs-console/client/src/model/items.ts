@@ -5,13 +5,15 @@ import { bareName } from './filters';
 export interface ItemFilters {
   query: string;
   type: 'all' | 'job' | 'pipeline';
+  /** Scheduled = has fixed start times (isOnTimeline); Unscheduled = everything else. */
+  trigger: 'any' | 'sched' | 'unsched';
   scope: 'mine' | 'deployed' | 'all';
   /** "k:v" */
   tags: string[];
   sort: 'name' | 'last' | 'failed' | 'next';
 }
 
-export const DEFAULT_FILTERS: ItemFilters = { query: '', type: 'all', scope: 'all', tags: [], sort: 'name' };
+export const DEFAULT_FILTERS: ItemFilters = { query: '', type: 'all', trigger: 'any', scope: 'all', tags: [], sort: 'name' };
 
 const DAY = 24 * 3600e3;
 
@@ -51,9 +53,45 @@ function parsed(item: Item): ReturnType<typeof scheduleOf> | null {
   return p;
 }
 
-/** A schedule trigger, not paused, that the cron parser understands: the only items with starts. */
-export function isOnTimeline(item: Item): boolean {
+/** Its own schedule trigger, not paused, that the cron parser understands. */
+function hasOwnStarts(item: Item): boolean {
   return !item.paused && !item.schedule?.paused && parsed(item)?.kind === 'ok';
+}
+
+/**
+ * Pipelines credited to the jobs that start them (U1): pipeline -> the starting jobs the item list contains. Linked once
+ * per items array from the full list, so a pipeline keeps its jobs' starts when filters drop the jobs themselves.
+ */
+const startersCache = new WeakMap<Item, Item[]>();
+const linkedLists = new WeakSet<Item[]>();
+export function linkStarters(items: Item[]): void {
+  if (linkedLists.has(items)) return;
+  linkedLists.add(items);
+  let jobs: Map<string, Item> | null = null;
+  for (const it of items) {
+    if (it.type !== 'pipeline' || !it.startedBy?.length) continue;
+    jobs ??= new Map(items.filter((j) => j.type === 'job').map((j) => [j.id, j]));
+    const found: Item[] = [];
+    for (const s of it.startedBy) {
+      const j = jobs.get(s.jobId);
+      if (j && !found.includes(j)) found.push(j);
+    }
+    startersCache.set(it, found);
+    // a pill or search text cached before the link would miss the credit
+    pillCache.delete(it);
+    hayCache.delete(it);
+  }
+}
+
+/** The starting jobs (in the list, linked by linkStarters) that have starts of their own: what a pipeline is credited with. */
+function creditedBy(item: Item): Item[] {
+  const by = item.type === 'pipeline' ? startersCache.get(item) : undefined;
+  return by?.length ? by.filter(hasOwnStarts) : [];
+}
+
+/** Has fixed start times: its own unpaused schedule that parses, or a pipeline credited to scheduled jobs that start it. */
+export function isOnTimeline(item: Item): boolean {
+  return hasOwnStarts(item) || creditedBy(item).length > 0;
 }
 
 /** A schedule trigger, not paused, whose cron or time zone the parser doesn't understand. */
@@ -67,7 +105,12 @@ export function isUnparsed(item: Item): boolean {
  */
 const startsCache = new BoundedMap<{ lo: number; hi: number; starts: number[] }>(CACHE_MAX);
 export function startsOf(item: Item, from: number, to: number): number[] {
-  if (!isOnTimeline(item)) return [];
+  if (!hasOwnStarts(item)) {
+    // a credited pipeline: its jobs' starts (each cached), merged
+    const by = creditedBy(item);
+    if (by.length < 2) return by.length ? startsOf(by[0], from, to) : [];
+    return [...new Set(by.flatMap((j) => startsOf(j, from, to)))].sort((a, b) => a - b);
+  }
   const key = schedKey(item);
   let c = startsCache.get(key);
   if (!c || from < c.lo || to > c.hi) {
@@ -145,7 +188,7 @@ export function pillOf(item: Item, now: number): Pill {
   const minute = Math.floor(now / 60e3);
   const c = pillCache.get(item);
   if (c && c.minute === minute) return c.pill;
-  const pill = triggerPill(item, now);
+  const pill = triggerPill(item, now, creditedBy(item));
   pillCache.set(item, { minute, pill });
   return pill;
 }
@@ -170,6 +213,7 @@ export function filterItems(items: Item[], f: ItemFilters, sched: { from: number
   });
   return items.filter((it) => {
     if (f.type !== 'all' && it.type !== f.type) return false;
+    if (f.trigger !== 'any' && isOnTimeline(it) !== (f.trigger === 'sched')) return false;
     if (f.scope === 'mine' && !it.mine) return false;
     if (f.scope === 'deployed' && !it.deployed) return false;
     for (const [k, v] of tags) if (it.tags[k] !== v) return false;
@@ -205,6 +249,12 @@ export function typeCounts(items: Item[]): { all: number; job: number; pipeline:
   let job = 0;
   for (const it of items) if (it.type === 'job') job++;
   return { all: items.length, job, pipeline: items.length - job };
+}
+
+export function triggerCounts(items: Item[]): { any: number; sched: number; unsched: number } {
+  let sched = 0;
+  for (const it of items) if (isOnTimeline(it)) sched++;
+  return { any: items.length, sched, unsched: items.length - sched };
 }
 
 export function scopeCounts(items: Item[]): { mine: number; deployed: number; all: number } {

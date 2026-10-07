@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { filterItems, sortItems, lastRun, typicalSec, runsFor, scopeCounts, startsOf, isOnTimeline, tagCounts, pillOf } from './items';
+import { filterItems, sortItems, lastRun, typicalSec, runsFor, scopeCounts, startsOf, isOnTimeline, tagCounts, pillOf, linkStarters, triggerCounts } from './items';
 import { makeRun } from '../test/fixtures';
 import type { Item } from '../../../shared/domain/types';
 import * as cron from '../../../shared/domain/cron';
@@ -17,7 +17,7 @@ const items: Item[] = [
   base({ id: '2', name: 'aiges_finance_daily_report_prod', deployed: true, trigger: 'schedule', schedule: { cron: '0 0 2 * * ?', tz: 'UTC', paused: false } }),
   base({ id: 'p1', type: 'pipeline', name: 'raw_bronze_mfg_dev', trigger: 'continuous' }),
 ];
-const F = { query: '', type: 'all' as const, scope: 'all' as const, tags: [], sort: 'name' as const };
+const F = { query: '', type: 'all' as const, trigger: 'any' as const, scope: 'all' as const, tags: [], sort: 'name' as const };
 
 describe('items model', () => {
   it('search tokens in any order, ids too', () => {
@@ -103,5 +103,58 @@ describe('items model', () => {
     const changed = { ...copy, schedule: { ...copy.schedule!, cron: '0 0 6 * * ?' } };
     expect(startsOf(changed, from, to)).toEqual([Date.UTC(2026, 9, 6, 6), Date.UTC(2026, 9, 7, 6)]);
     expect(startsBetweenSpy).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('pipelines credited to the jobs that start them', () => {
+  const daily = base({ id: 'j2', name: 'nightly_load', trigger: 'schedule', schedule: { cron: '0 0 2 * * ?', tz: 'UTC', paused: false } });
+  const hourly = base({ id: 'j3', name: 'hourly_sync', trigger: 'schedule', schedule: { cron: '0 30 * * * ?', tz: 'UTC', paused: false } });
+  const manual = base({ id: 'j4', name: 'adhoc_job' });
+  const pipe = (id: string, by: Item[], over: Partial<Item> = {}) =>
+    base({ type: 'pipeline', id, name: `pipe_${id}`, startedBy: by.map((j) => ({ jobId: j.id, jobName: j.name })), ...over });
+
+  it('starts are the union of the starting jobs\' starts, sorted and deduped; on the timeline', () => {
+    const p = pipe('cp1', [daily, hourly, daily]);
+    linkStarters([daily, hourly, p]);
+    const from = Date.UTC(2026, 9, 7, 1), to = Date.UTC(2026, 9, 7, 3);
+    expect(isOnTimeline(p)).toBe(true);
+    expect(startsOf(p, from, to)).toEqual([Date.UTC(2026, 9, 7, 1, 30), Date.UTC(2026, 9, 7, 2), Date.UTC(2026, 9, 7, 2, 30)]);
+  });
+
+  it('only jobs the list contains count; a pipeline whose jobs are absent or unscheduled is not on the timeline', () => {
+    const absent = pipe('cp2', [daily]);
+    const byManual = pipe('cp3', [manual]);
+    linkStarters([absent, byManual, manual]);
+    expect(isOnTimeline(absent)).toBe(false);
+    expect(startsOf(absent, 0, Date.UTC(2030, 0, 1))).toEqual([]);
+    expect(isOnTimeline(byManual)).toBe(false);
+    expect(pillOf(absent, Date.UTC(2026, 9, 6, 16)).text).toBe('triggered');
+    expect(pillOf(byManual, Date.UTC(2026, 9, 6, 16)).text).toBe('triggered');
+  });
+
+  it('the pill: the job\'s pill and "· by job", the job names in the title; search finds it', () => {
+    const p = pipe('cp4', [daily]);
+    const list = [daily, p];
+    linkStarters(list);
+    const now = Date.UTC(2026, 9, 6, 16, 16);
+    expect(pillOf(p, now)).toEqual({ text: 'daily 02:00 · by job', cls: 'sched', title: 'Started by the pipeline task of nightly_load' });
+    expect(filterItems(list, { ...F, query: 'by job' }, null, now).map((i) => i.id)).toEqual(['cp4']);
+  });
+
+  it('a type filter of Pipelines keeps the credited starts (the jobs are linked from the full list)', () => {
+    const p = pipe('cp5', [daily]);
+    const list = [daily, p];
+    linkStarters(list);
+    const from = Date.UTC(2026, 9, 7, 1), to = Date.UTC(2026, 9, 7, 3);
+    expect(filterItems(list, { ...F, type: 'pipeline' }, { from, to }).map((i) => i.id)).toEqual(['cp5']);
+  });
+
+  it('Scheduled · Unscheduled: counts and filtering by "on the timeline"', () => {
+    const p = pipe('cp6', [daily]);
+    const list = [daily, manual, p, base({ type: 'pipeline', id: 'cont', trigger: 'continuous' })];
+    linkStarters(list);
+    expect(triggerCounts(list)).toEqual({ any: 4, sched: 2, unsched: 2 });
+    expect(filterItems(list, { ...F, trigger: 'sched' }, null).map((i) => i.id)).toEqual(['j2', 'cp6']);
+    expect(filterItems(list, { ...F, trigger: 'unsched' }, null).map((i) => i.id)).toEqual(['j4', 'cont']);
   });
 });

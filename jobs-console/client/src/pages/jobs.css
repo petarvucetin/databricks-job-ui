@@ -14,6 +14,15 @@
 /* Schedule timeline (same parts as the Runs timeline) */
 .jobs .tl { margin: 0 24px 8px; padding: 10px 14px 12px; }
 .jobs .tl-head-row { margin-bottom: 4px; }
+/* collapsed (T): one line; after .jobs .tl, whose padding it overrides */
+.jobs .tl-min { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 8px 14px; }
+.jobs .tl-min .tl-span { grid-column: 2; font-size: 15px; font-weight: 500; color: var(--ink); }
+.jobs .tl-min .tl-key { grid-column: 3; justify-self: end; font-size: 11px; color: var(--ink-3); }
+/* key hints: T on the timeline, L / D on the List · Load switch */
+.jobs kbd { display: inline-block; min-width: 14px; padding: 0 4px; margin-left: 6px; border: 1px solid #d9cfc2; border-bottom-width: 2px; border-radius: 3px; background: var(--sheet); font-family: var(--mono); font-size: 10px; line-height: 14px; color: var(--ink-3); text-align: center; }
+.jobs .vsw button.on kbd { border-color: #e2c27e; color: var(--amber-ink); }
+.jobs .tl-hint { font-size: 11px; color: var(--ink-3); }
+.jobs .tl-hint kbd, .jobs .tl-key kbd { margin: 0 3px 0 0; }
 .jobs .tl-span b { font-weight: 500; color: var(--ink-2); }
 .jobs .tl-grid { margin-top: 18px; }
 .jobs .tl-col { cursor: default; }

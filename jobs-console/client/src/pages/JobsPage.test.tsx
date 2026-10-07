@@ -149,7 +149,7 @@ describe('JobsPage', () => {
     stubItems([...ITEMS, base({ id: 'e', name: 'every_five', trigger: 'schedule', schedule: { cron: '0 0/5 * * * ?', tz: 'UTC', paused: false } })]);
     page();
     await waitFor(() => expect(rows()).toHaveLength(4));
-    fireEvent.click(screen.getByRole('button', { name: 'Load' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Load/ }));
     expect(screen.getByText('Scheduled jobs running at once')).toBeTruthy();
     expect(screen.getByText('drag across the chart to list the jobs running then')).toBeTruthy();
     // without a selection: everything starting in range, by first start (every_five at 16:00, the daily job at 02:00)
@@ -224,6 +224,78 @@ describe('JobsPage', () => {
     expect(rows()).toHaveLength(3);
     expect(document.querySelector('.ir.on')).toBeNull();
     expect(document.querySelector('.split.sel')).toBeNull();
+  });
+
+  it('a pipeline started by a scheduled job: its starts on the timeline, the "· by job" pill; Scheduled · Unscheduled filter', async () => {
+    stubItems([...ITEMS, base({ id: 'p2', type: 'pipeline', name: 'silver_merge', trigger: 'manual', startedBy: [{ jobId: '2', jobName: 'aiges_finance_daily_report_prod' }] })]);
+    page();
+    await waitFor(() => expect(rows()).toHaveLength(4));
+    expect([...document.querySelectorAll('.cube.pipeline')].map((c) => c.textContent)).toEqual(['1']);
+    const pill = byId('p2').querySelector('.trg')!;
+    expect(pill.textContent).toBe('⏱ daily 02:00 · by job');
+    expect(pill.getAttribute('title')).toBe('Started by the pipeline task of aiges_finance_daily_report_prod');
+    expect(document.querySelector('.tl-foot')!.textContent).toContain('2 have no schedule');
+    const seg = document.querySelector('.seg[aria-label="trigger"]')!;
+    expect([...seg.querySelectorAll('button')].map((b) => b.textContent)).toEqual(['Any trigger4', 'Scheduled2', 'Unscheduled2']);
+    fireEvent.click(screen.getByRole('button', { name: /^Scheduled/ }));
+    expect([...rows()].map((r) => r.getAttribute('data-id'))).toEqual(['2', 'p2']);
+    fireEvent.click(screen.getByRole('button', { name: /^Unscheduled/ }));
+    expect([...rows()].map((r) => r.getAttribute('data-id')).sort()).toEqual(['1', 'p1']);
+    fireEvent.click(screen.getByRole('button', { name: /^Any trigger/ }));
+    expect(rows()).toHaveLength(4);
+  });
+
+  it('T collapses the timeline to one line and expands it; the line says when the schedule filter is on', async () => {
+    stubItems(ITEMS);
+    page();
+    await waitFor(() => expect(rows()).toHaveLength(3));
+    expect(document.querySelector('.tl-hint')!.textContent).toBe('T collapse');
+    fireEvent.keyDown(document, { key: 't' });
+    expect(document.querySelector('.tl-grid')).toBeNull();
+    expect(document.querySelector('.tl-min .tl-span')!.textContent).toBe('Tue 16:00 to Wed 16:00, 1 day');
+    expect(document.querySelector('.tl-min .tl-key')!.textContent).toBe('T expand');
+    fireEvent.keyDown(document, { key: 'T' });
+    expect(document.querySelector('.tl-min')).toBeNull();
+    fireEvent.click(document.querySelectorAll('.tl-head')[10]);
+    fireEvent.keyDown(document, { key: 't' });
+    expect(document.querySelector('.tl-min .tl-span')!.textContent).toBe('02:00 to 03:00, 1 hour · schedule filter on');
+    // the schedule filter still applies to the list while collapsed
+    expect([...rows()].map((r) => r.getAttribute('data-id'))).toEqual(['2']);
+  });
+
+  it('L and D switch List and Load; the switch shows the keys', async () => {
+    stubItems(ITEMS);
+    page();
+    await waitFor(() => expect(rows()).toHaveLength(3));
+    const sw = [...document.querySelectorAll('.vsw button')];
+    expect(sw.map((b) => [b.textContent, b.getAttribute('title')])).toEqual([['ListL', 'List (L)'], ['LoadD', 'Load (D)']]);
+    fireEvent.keyDown(document, { key: 'd' });
+    expect(screen.getByText('Scheduled jobs running at once')).toBeTruthy();
+    fireEvent.keyDown(document, { key: 'L' });
+    expect(screen.queryByText('Scheduled jobs running at once')).toBeNull();
+    expect(rows()).toHaveLength(3);
+  });
+
+  it('T, L and D are ignored while typing, with a modifier, and while the tab is inactive', async () => {
+    stubItems(ITEMS);
+    const { rerender } = page(false);
+    await waitFor(() => expect(rows()).toHaveLength(3));
+    fireEvent.keyDown(document, { key: 't' });
+    fireEvent.keyDown(document, { key: 'd' });
+    expect(document.querySelector('.tl-min')).toBeNull();
+    expect(screen.queryByText('Scheduled jobs running at once')).toBeNull();
+    rerender(<JobsPage data={runsData} active onSeeRuns={() => {}} onOpenRun={() => {}} />);
+    const input = screen.getByPlaceholderText(/Name tokens/);
+    fireEvent.keyDown(input, { key: 't' });
+    fireEvent.keyDown(input, { key: 'd' });
+    fireEvent.keyDown(document.querySelector('.sortsel select')!, { key: 'd' });
+    fireEvent.keyDown(document, { key: 't', ctrlKey: true });
+    fireEvent.keyDown(document, { key: 'd', metaKey: true });
+    fireEvent.keyDown(document, { key: 'd', altKey: true });
+    expect(document.querySelector('.tl-min')).toBeNull();
+    expect(screen.queryByText('Scheduled jobs running at once')).toBeNull();
+    fireEvent.keyDown(document, { key: 't' });
+    expect(document.querySelector('.tl-min')).not.toBeNull();
   });
 
   it('the list refreshes with each runs load (the manual refresh too), not on the first one', async () => {
