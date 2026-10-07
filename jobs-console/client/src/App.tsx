@@ -32,6 +32,7 @@ function Tabbed({ mode }: { mode: ReturnType<typeof useDataMode> }) {
       <div hidden={tab !== 'jobs'}>
         <JobsPage
           data={data}
+          active={tab === 'jobs'}
           onSeeRuns={(name) => { setFocus({ seq: Date.now(), query: name }); setTab('runs'); }}
           onOpenRun={(runId) => { setFocus({ seq: Date.now(), runId }); setTab('runs'); }}
         />

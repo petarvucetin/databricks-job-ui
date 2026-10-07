@@ -1,0 +1,88 @@
+/* Jobs & ETL tab, ported from docs/design/mockups/jobs-etl-tab.html. Every rule is scoped to .jobs so the Runs screen
+   (which shares filterbar.css / timeline.css class names, and uses .tag / .vsw in the drawer) never changes. */
+
+/* Filter bar: the parts filterbar.css doesn't have */
+.jobs .search input { width: 300px; }
+.jobs .fm-btn.on { padding-right: 12px; }
+.jobs .fm-menu { min-width: 230px; max-height: 60vh; overflow-y: auto; }
+.jobs .fm-menu .k { font-family: var(--mono); font-size: 12px; }
+.jobs .fm-menu .k b { font-weight: 400; color: var(--ink-3); }
+.jobs .fm-menu .fm-none { color: var(--ink-3); cursor: default; }
+.jobs .sortsel { margin-left: auto; color: var(--ink-3); font-size: 12.5px; display: inline-flex; gap: 6px; align-items: center; }
+.jobs .sortsel select { border: 0; background: none; font: inherit; color: var(--ink-2); cursor: pointer; }
+
+/* Schedule timeline (same parts as the Runs timeline) */
+.jobs .tl { margin: 0 24px 8px; padding: 10px 14px 12px; }
+.jobs .tl-head-row { margin-bottom: 4px; }
+.jobs .tl-span b { font-weight: 500; color: var(--ink-2); }
+.jobs .tl-grid { margin-top: 18px; }
+.jobs .tl-col { cursor: default; }
+.jobs .tl-col.dim .tl-head, .jobs .tl-col.dim .cube { opacity: .45; }
+.jobs .tl-head small.now { color: var(--blue); font-weight: 600; }
+.jobs .cube.job { background: var(--wash-sand); border-color: #c9b79f; color: var(--ink-2); }
+.jobs .cube.pipeline { background: var(--wash-purple); border-color: #b9a8e3; color: var(--purple); }
+.jobs .tl-sel { cursor: default; }
+.jobs .tl-sel:hover::before { top: 4px; height: 4px; }
+.jobs .tl-foot { display: flex; gap: 14px; margin-top: 2px; font-size: 11.5px; color: var(--ink-3); }
+.jobs .tl-foot .k { display: inline-flex; align-items: center; gap: 5px; }
+.jobs .tl-foot .k i { width: 10px; height: 10px; border-radius: 2px; border: 1px solid; }
+.jobs .tl-foot .k.job i { background: var(--wash-sand); border-color: #c9b79f; }
+.jobs .tl-foot .k.pipeline i { background: var(--wash-purple); border-color: #b9a8e3; }
+.jobs .tl-clear { margin-left: auto; border: 0; background: none; color: var(--ink-3); cursor: pointer; font: inherit; font-size: 12px; padding: 0; }
+.jobs .tl-clear:hover { color: var(--ink); }
+/* row cell when the schedule window is narrowed: the starts inside it */
+.jobs .starts { justify-self: end; font-size: 12px; color: var(--amber-ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.jobs .starts b { font-weight: 500; }
+
+/* Split: list + detail pane */
+.jobs .split { display: grid; grid-template-columns: minmax(0, 1fr); margin: 0 24px 24px; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; height: max(440px, calc(100vh - 300px)); }
+.jobs .split.sel { grid-template-columns: minmax(0, 1fr) clamp(360px, 36vw, 560px); }
+.jobs .list { overflow-y: auto; }
+.jobs .list-meta { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 6px 16px; font-size: 12px; color: var(--ink-3); background: var(--paper); border-bottom: 1px solid var(--rule); }
+.jobs .partial { padding: 5px 16px; font-size: 11.5px; color: var(--amber-ink); border-bottom: 1px solid var(--rule); }
+.jobs .list-note { padding: 8px 16px; font-size: 11.5px; color: var(--ink-3); }
+
+/* Trigger pill (inline in the row) */
+.jobs .trg { justify-self: end; display: inline-flex; align-items: center; gap: 5px; padding: 0 9px; border-radius: 999px; border: 1px solid var(--rule); background: var(--sheet); font-size: 11.5px; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; line-height: 1.6; }
+.jobs .trg.sched { background: var(--wash-amber); border-color: #e8c98a; color: var(--amber-ink); }
+.jobs .trg.cont { background: var(--wash-blue); border-color: #c5d6ec; color: var(--blue); }
+.jobs .trg.none { color: var(--ink-3); border-style: dashed; }
+.jobs .trg.paused { color: var(--ink-3); background: #f1ede7; border-color: #c9bfb2; }
+/* List / Load switch, in the list header */
+.jobs .vsw { flex: none; margin-left: auto; display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; }
+.jobs .vsw button { padding: 1px 12px; font-size: 12px; border: 0; background: var(--sheet); color: var(--ink-2); cursor: pointer; }
+.jobs .vsw button + button { border-left: 1px solid var(--rule); }
+.jobs .vsw button.on { background: var(--wash-amber); color: var(--ink); font-weight: 500; }
+
+/* Row: one line */
+.jobs .ir { display: grid; grid-template-columns: 86px minmax(0, 1fr) auto 170px; align-items: center; gap: 12px; padding: 8px 16px; border-bottom: 1px solid var(--rule); cursor: pointer; }
+.jobs .ir:hover { background: #f6efe3; }
+.jobs .ir.on { background: #f8ebd0; }
+.jobs .tag { justify-self: start; display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; line-height: 1.5; }
+.jobs .tag.job { background: var(--wash-sand); color: var(--ink-2); border: 1px solid #e3d7c6; }
+.jobs .tag.pipeline { background: var(--wash-purple); color: var(--purple); border: 1px solid #d6cbee; }
+/* the name is cut at its start when too long: the suffix is the distinguishing part */
+.jobs .nm { font-family: var(--mono); font-size: 13.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; direction: rtl; text-align: left; }
+.jobs .nm span { direction: ltr; unicode-bidi: plaintext; }
+.jobs .nm i { font-style: normal; font-weight: 400; color: var(--ink-3); }
+.jobs .last { justify-self: end; display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.jobs .mk { width: 16px; height: 16px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 10px; font-weight: 700; }
+.jobs .mk.succeeded { background: var(--wash-green); color: var(--green); }
+.jobs .mk.failed { background: var(--wash-red); color: var(--red); }
+.jobs .mk.partial { background: var(--wash-amber); color: var(--amber-ink); }
+.jobs .mk.cancelled { background: #f1ede7; color: var(--ink-3); }
+.jobs .mk.running { background: var(--wash-blue); color: var(--blue); animation: blink 1.4s ease-in-out infinite; }
+.jobs .mk.none { color: var(--ink-3); }
+
+/* Detail pane (filled by the next task) */
+.jobs .pane { display: none; border-left: 1px solid var(--rule); background: var(--sheet); overflow-y: auto; }
+.jobs .split.sel .pane { display: block; }
+
+/* States */
+.jobs .state { padding: 60px 24px; text-align: center; color: var(--ink-2); }
+.jobs .state p { margin: 4px 0; }
+.jobs .state .sub { color: var(--ink-3); font-size: 12.5px; }
+.jobs .state button { margin-top: 10px; border: 1px solid var(--rule); background: var(--sheet); border-radius: 999px; padding: 4px 14px; cursor: pointer; font: inherit; }
+.jobs .skel { height: 14px; margin: 11px 16px; border-radius: 4px; background: linear-gradient(90deg, #f1e9de, #f8f2ea, #f1e9de); background-size: 200% 100%; animation: jobs-sh 1.4s linear infinite; }
+@keyframes jobs-sh { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .jobs .mk.running, .jobs .skel { animation: none; } }
