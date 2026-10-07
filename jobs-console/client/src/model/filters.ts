@@ -103,9 +103,21 @@ export function matchesQuery(r: Run, q: string): boolean {
   return tokens.every((tok) => hay.includes(tok));
 }
 
-export function passes(r: Run, f: Filters): boolean {
-  if (!passesExceptStatus(r, f) || !matchesQuery(r, f.query)) return false;
+export function passesStatus(r: Run, f: Filters): boolean {
   return f.statuses.length ? f.statuses.includes(r.kind) : r.kind !== 'succeeded';
+}
+
+export function passes(r: Run, f: Filters): boolean {
+  return passesExceptStatus(r, f) && matchesQuery(r, f.query) && passesStatus(r, f);
+}
+
+/**
+ * The list rows: each job's latest run among the runs the other filters let through, kept only when that latest run
+ * has a selected status. So Failed lists a job only when its last run failed, and a job that failed earlier but has
+ * since run again shows that newer run (and its runtime), not the old failure.
+ */
+export function jobRows(runs: Run[], f: Filters): Run[] {
+  return latestPerJob(runs.filter((r) => passesExceptStatus(r, f) && matchesQuery(r, f.query))).filter((r) => passesStatus(r, f));
 }
 
 export function autoStatuses(runs: Run[], f: Filters): RunKind[] {

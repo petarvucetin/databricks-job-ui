@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { makeRun } from '../test/fixtures';
 import type { Filters } from './filters';
-import { latestPerJob, passes, passesExceptStatus, matchesQuery, autoStatuses, sortRuns, scopeCounts, menuCounts, liveCount, tileCounts, tileSubtitle, codeOf } from './filters';
+import { jobRows, latestPerJob, passes, passesExceptStatus, matchesQuery, autoStatuses, sortRuns, scopeCounts, menuCounts, liveCount, tileCounts, tileSubtitle, codeOf } from './filters';
 
 const day = 86400000;
 const end = new Date(2026, 8, 23).getTime();
@@ -115,6 +115,21 @@ describe('one row per job', () => {
     // With a runtime filter that drops the recent short run, the job shows its older long run instead.
     const f = { ...base, window: { from: 0, to: end }, statuses: [], runtime: { min: 1800, max: Infinity } };
     expect(latestPerJob([old, recent, other].filter((r) => passes(r, f))).map((r) => r.id)).toEqual([50]);
+  });
+
+  it('Failed lists a job only when its latest run failed; otherwise the job shows its latest run', () => {
+    const w = { from: 0, to: end };
+    const failedThenOk = [
+      makeRun({ id: 60, name: 'a', kind: 'failed', startTime: 1000, durationSec: 2000 }),
+      makeRun({ id: 61, name: 'a', kind: 'succeeded', startTime: 5000, durationSec: 60 }),
+    ];
+    const okThenFailed = [
+      makeRun({ id: 62, name: 'b', kind: 'succeeded', startTime: 1000 }),
+      makeRun({ id: 63, name: 'b', kind: 'failed', startTime: 5000 }),
+    ];
+    const runs = [...failedThenOk, ...okThenFailed];
+    expect(jobRows(runs, { ...base, window: w, statuses: ['failed'] }).map((r) => r.id)).toEqual([63]);
+    expect(jobRows(runs, { ...base, window: w, statuses: ['failed', 'succeeded'] }).map((r) => r.id).sort()).toEqual([61, 63]);
   });
 });
 

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { RunsResponse } from '../../../shared/domain/types';
-import { latestPerJob, liveCount, matchesQuery, menuCounts, passes, passesExceptStatusAndRuntime, scopeCounts, sortRuns, tileCounts, type RowSort } from '../model/filters';
+import { jobRows, liveCount, matchesQuery, menuCounts, passesExceptStatusAndRuntime, scopeCounts, sortRuns, tileCounts, type RowSort } from '../model/filters';
 import { timelineEnd } from '../model/timeline';
 import { historyByJob } from '../model/history';
 import { applyAction, initialState, type Action, type MenuKey, type ViewCtx } from '../model/viewState';
@@ -82,7 +82,7 @@ export function AttentionView({ data, loadedAt, refresh, runRefresh, initialQuer
     localStorage.setItem('jobs-console:sort', s);
     setSortState(s);
   }, []);
-  const rows = useMemo(() => sortRuns(latestPerJob(data.runs.filter((r) => passes(r, f))), sort), [data.runs, f, sort]);
+  const rows = useMemo(() => sortRuns(jobRows(data.runs, f), sort), [data.runs, f, sort]);
   const tiles = useMemo(() => tileCounts(data.runs, f), [data.runs, f]);
   const runtimeRuns = useMemo(() => data.runs.filter((r) => passesExceptStatusAndRuntime(r, f) && matchesQuery(r, f.query)), [data.runs, f]);
   const history = useMemo(() => historyByJob(data.runs, f.window), [data.runs, f.window]);
