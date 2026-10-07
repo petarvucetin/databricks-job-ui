@@ -229,7 +229,10 @@ Logs: `databricks apps logs jobs-console --profile gov`, or `<app url>/logz` in 
 
 Runs before today come from the `system.lakeflow` tables through a serverless SQL warehouse, so history reaches back months instead of what the Jobs API keeps. Today's runs still come from the API. If the history read fails (no warehouse, no access, too large, too slow), the app falls back to the API automatically and the header says why (`history: API · 30 days`, reason in the tooltip).
 
-Enable it by giving the app a warehouse: deploy with `databricks bundle deploy --var warehouse_id=<id>` (the `sql-warehouse` resource in `databricks.yml` binds it as `DATABRICKS_WAREHOUSE_ID` in `app.yaml`; the variable must be set for history), or run locally with `.un-local.ps1 -Profile <profile> -Warehouse <id>`.
+It is opt-in, so existing deploys keep working. To enable it:
+
+- **On Databricks Apps:** in `databricks.yml` uncomment the `sql-warehouse` resource and put a real warehouse id in it; in `app.yaml` uncomment the `DATABRICKS_WAREHOUSE_ID` / `valueFrom: sql-warehouse` entry (it needs that resource). Then `npm run package`, commit `deploy/`, `databricks bundle deploy` and `databricks bundle run app`.
+- **Locally:** `.un-local.ps1 -Profile <profile> -Warehouse <id>`, or set `DATABRICKS_WAREHOUSE_ID` in `.env` for dev mode.
 
 | Variable | Meaning | Default |
 | --- | --- | --- |
