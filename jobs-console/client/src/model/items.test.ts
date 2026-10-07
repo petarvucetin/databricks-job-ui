@@ -1,7 +1,15 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { filterItems, sortItems, lastRun, typicalSec, runsFor, scopeCounts, startsOf, isOnTimeline, tagCounts, pillOf } from './items';
 import { makeRun } from '../test/fixtures';
 import type { Item } from '../../../shared/domain/types';
+import * as cron from '../../../shared/domain/cron';
+
+// startsBetween passes through to the real one; the spy counts how often the starts cache misses.
+vi.mock('../../../shared/domain/cron', async (importOriginal) => {
+  const real = await importOriginal<typeof import('../../../shared/domain/cron')>();
+  return { ...real, startsBetween: vi.fn(real.startsBetween) };
+});
+const startsBetweenSpy = vi.mocked(cron.startsBetween);
 
 const base = (over: Partial<Item>): Item => ({ type: 'job', id: '1', name: 'x', deployed: false, mine: false, tags: {}, trigger: 'manual', paused: false, bundle: false, ...over });
 const items: Item[] = [
@@ -82,5 +90,18 @@ describe('items model', () => {
     const y = [base({ id: 'y', name: 'year_bound', trigger: 'schedule', schedule: { cron: '0 0 2 * * ? 2026', tz: 'UTC', paused: false } })];
     expect(filterItems(y, { ...F, query: 'daily' }, null, Date.UTC(2026, 11, 30)).map((i) => i.id)).toEqual(['y']);
     expect(filterItems(y, { ...F, query: 'daily' }, null, Date.UTC(2027, 0, 1))).toEqual([]);
+  });
+  it('starts are cached by the schedule, not the object: a refetched copy reuses them; a changed cron recomputes', () => {
+    const a = base({ id: 'c1', trigger: 'schedule', schedule: { cron: '0 0 5 * * ?', tz: 'UTC', paused: false } });
+    const from = Date.UTC(2026, 9, 6), to = Date.UTC(2026, 9, 8);
+    startsBetweenSpy.mockClear();
+    const first = startsOf(a, from, to);
+    expect(startsBetweenSpy).toHaveBeenCalledTimes(1);
+    const copy = JSON.parse(JSON.stringify(a)) as Item;
+    expect(startsOf(copy, from, to)).toEqual(first);
+    expect(startsBetweenSpy).toHaveBeenCalledTimes(1);
+    const changed = { ...copy, schedule: { ...copy.schedule!, cron: '0 0 6 * * ?' } };
+    expect(startsOf(changed, from, to)).toEqual([Date.UTC(2026, 9, 6, 6), Date.UTC(2026, 9, 7, 6)]);
+    expect(startsBetweenSpy).toHaveBeenCalledTimes(2);
   });
 });

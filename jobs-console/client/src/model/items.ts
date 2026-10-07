@@ -18,12 +18,36 @@ const DAY = 24 * 3600e3;
 /** "type:id": how the page keys and selects an item. */
 export const itemKey = (it: Item) => `${it.type}:${it.id}`;
 
+/**
+ * A Map capped at `max` entries that drops the oldest-set entry when full. The schedule caches below are keyed by the
+ * item's schedule as a string, not the object, so they survive a refetch that hands back new objects for the same items.
+ */
+class BoundedMap<V> extends Map<string, V> {
+  readonly max: number;
+  constructor(max: number) {
+    super();
+    this.max = max;
+  }
+  override set(key: string, value: V): this {
+    if (!this.has(key) && this.size >= this.max) {
+      const oldest = this.keys().next();
+      if (!oldest.done) this.delete(oldest.value);
+    }
+    return super.set(key, value);
+  }
+}
+const CACHE_MAX = 20000;
+
+/** "type:id|trigger|cron|tz|paused": what the parse and the starts depend on. */
+const schedKey = (it: Item) => `${it.type}:${it.id}|${it.trigger}|${it.schedule?.cron ?? ''}|${it.schedule?.tz ?? ''}|${it.paused}|${it.schedule?.paused ?? ''}`;
+
 /** scheduleOf per item, cached: the pill, the timeline and the footer all ask. */
-const parsedCache = new WeakMap<Item, ReturnType<typeof scheduleOf> | null>();
+const parsedCache = new BoundedMap<ReturnType<typeof scheduleOf> | null>(CACHE_MAX);
 function parsed(item: Item): ReturnType<typeof scheduleOf> | null {
-  if (parsedCache.has(item)) return parsedCache.get(item) ?? null;
+  const key = schedKey(item);
+  if (parsedCache.has(key)) return parsedCache.get(key) ?? null;
   const p = item.trigger === 'schedule' && item.schedule ? scheduleOf(item.schedule) : null;
-  parsedCache.set(item, p);
+  parsedCache.set(key, p);
   return p;
 }
 
@@ -41,16 +65,17 @@ export function isUnparsed(item: Item): boolean {
  * Starts cached per item over a horizon (yesterday through +11 days from the first range asked for), sliced by binary
  * search, so 10k items stay fast. A range outside the cached horizon recomputes it around that range.
  */
-const startsCache = new WeakMap<Item, { lo: number; hi: number; starts: number[] }>();
+const startsCache = new BoundedMap<{ lo: number; hi: number; starts: number[] }>(CACHE_MAX);
 export function startsOf(item: Item, from: number, to: number): number[] {
   if (!isOnTimeline(item)) return [];
-  let c = startsCache.get(item);
+  const key = schedKey(item);
+  let c = startsCache.get(key);
   if (!c || from < c.lo || to > c.hi) {
     const p = parsed(item);
     if (p?.kind !== 'ok' || !item.schedule) return [];
     const lo = from - DAY, hi = Math.max(to, from + 11 * DAY);
     c = { lo, hi, starts: startsBetween(p.spec, item.schedule.tz, lo, hi) };
-    startsCache.set(item, c);
+    startsCache.set(key, c);
   }
   const a = c.starts;
   let lo = 0, hi = a.length;
