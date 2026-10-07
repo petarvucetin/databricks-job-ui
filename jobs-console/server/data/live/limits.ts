@@ -6,9 +6,17 @@ export interface LiveLimits {
   concurrency: number;
   /** Time budget of the Jobs & ETL definitions list, separate from the runs budget. */
   itemsTimeoutMs: number;
+  /** How far run history from system tables reaches (days, at most 365). */
+  historyDays: number;
+  /** Cap on history runs. */
+  historyMaxRuns: number;
+  /** Hours the API reaches back before the history cutoff. */
+  apiOverlapHours: number;
 }
 
-export const DEFAULT_LIMITS: LiveLimits = { windowDays: 30, maxRuns: 2000, timeoutMs: 12000, concurrency: 8, itemsTimeoutMs: 30000 };
+export const DEFAULT_LIMITS: LiveLimits = { windowDays: 30, maxRuns: 2000, timeoutMs: 12000, concurrency: 8, itemsTimeoutMs: 30000, historyDays: 90, historyMaxRuns: 20000, apiOverlapHours: 3 };
+
+const MAX_HISTORY_DAYS = 365;
 
 const ENV: Record<keyof LiveLimits, string> = {
   windowDays: 'JOBS_CONSOLE_WINDOW_DAYS',
@@ -16,6 +24,9 @@ const ENV: Record<keyof LiveLimits, string> = {
   timeoutMs: 'JOBS_CONSOLE_TIMEOUT_MS',
   concurrency: 'JOBS_CONSOLE_CONCURRENCY',
   itemsTimeoutMs: 'JOBS_CONSOLE_ITEMS_TIMEOUT_MS',
+  historyDays: 'JOBS_CONSOLE_HISTORY_DAYS',
+  historyMaxRuns: 'JOBS_CONSOLE_HISTORY_MAX_RUNS',
+  apiOverlapHours: 'JOBS_CONSOLE_API_OVERLAP_HOURS',
 };
 
 /** How /api/runs refreshes: deltas over a per-user base snapshot, with a full load at least every fullRefreshMs. */
@@ -51,5 +62,6 @@ export function readLimits(env: Record<string, string | undefined>): LiveLimits 
     if (!/^\d+$/.test(raw) || Number(raw) < 1) throw new Error(`${ENV[key]} must be a positive integer, got "${raw}"`);
     out[key] = Number(raw);
   }
+  out.historyDays = Math.min(out.historyDays, MAX_HISTORY_DAYS);
   return out;
 }

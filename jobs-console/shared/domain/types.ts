@@ -103,6 +103,8 @@ export interface DataMode {
   user?: string;
   /** The identity the Databricks APIs are called as, when it isn't `user` (deployed with JOBS_CONSOLE_AUTH=app: the app's service principal). */
   readAs?: string;
+  /** Live with a warehouse: where run history comes from. Absent in mock mode. */
+  history?: HistoryInfo;
 }
 
 export interface RunsResponse {
@@ -114,7 +116,13 @@ export interface RunsResponse {
   runs: Run[];
   /** Live and replay: how the server got this list. The client ignores it (tests and diagnostics read it). */
   refresh?: RefreshInfo;
+  /** Live and replay: where the older runs came from. Absent in mock mode. */
+  history?: HistoryInfo;
 }
+
+export type HistoryInfo =
+  | { source: 'system-tables'; days: number; capped?: boolean }
+  | { source: 'api'; days: number; reason?: string; capped?: boolean };
 
 /** A full load re-reads the whole window; a delta only what can have changed since the last list. */
 export interface RefreshInfo {

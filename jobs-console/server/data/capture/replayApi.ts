@@ -3,7 +3,7 @@ import { workspaceOrigin } from '../live/links';
 import type { Diag } from '../live/trace';
 import type { CallRecord, RecordedError, SessionRecord } from './recorder';
 
-const METHODS: Exclude<keyof LiveApi, 'host'>[] = ['me', 'listJobRuns', 'getRun', 'getRunOutput', 'listPipelines', 'getPipeline', 'listUpdates', 'getUpdate', 'listPipelineEvents', 'listJobs', 'getJob'];
+const METHODS: Exclude<keyof LiveApi, 'host'>[] = ['me', 'listJobRuns', 'getRun', 'getRunOutput', 'listPipelines', 'getPipeline', 'listUpdates', 'getUpdate', 'listPipelineEvents', 'listJobs', 'getJob', 'executeStatement', 'getStatement', 'getStatementChunk', 'workspaceId'];
 
 /** JSON with object keys sorted and undefined dropped, so equal requests give equal strings. */
 export function canon(v: unknown): string {
@@ -23,7 +23,7 @@ export function canon(v: unknown): string {
 }
 
 /** Args that name what a call is about; a fallback that agrees on these is much nearer than one that doesn't. */
-const IDENTITY = new Set(['page_token', 'pipeline_id', 'run_id', 'update_id']);
+const IDENTITY = new Set(['page_token', 'pipeline_id', 'run_id', 'update_id', 'statement_id', 'chunk_index']);
 
 function nearness(want: Record<string, unknown>, have: Record<string, unknown>): number {
   let score = 0;

@@ -1,4 +1,4 @@
-import type { jobs, pipelines } from '@databricks/sdk-experimental';
+import type { jobs, pipelines, sql } from '@databricks/sdk-experimental';
 import type { LiveApi } from './api';
 import { isTerminated } from './jobs';
 
@@ -18,6 +18,10 @@ export interface FakeData {
   events?: Record<string, pipelines.PipelineEvent[]>;
   runsById?: Record<number, jobs.Run>;
   outputs?: Record<number, jobs.RunOutput>;
+  /** Answers executeStatement inline (state SUCCEEDED); an Error is thrown. Params are the request's parameters by name. */
+  sql?: (statement: string, params: Record<string, string>) => string[][] | Error;
+  /** What workspaceId() answers ('' when absent). */
+  workspaceId?: string;
   /** Delay (ms) before each call resolves. */
   delay?: number;
   fail?: Partial<Record<keyof LiveApi, Error>>;
@@ -74,5 +78,15 @@ export function fakeApi(data: FakeData): LiveApi & { calls: string[] } {
         return { update: u };
       }),
     listPipelineEvents: (req) => reply('listPipelineEvents', () => ({ events: data.events?.[req.pipeline_id] ?? [] })),
+    executeStatement: (req) =>
+      reply('executeStatement', (): sql.StatementResponse => {
+        const params = Object.fromEntries((req.parameters ?? []).map((p) => [p.name, p.value ?? '']));
+        const rows = data.sql?.(req.statement, params) ?? [];
+        if (rows instanceof Error) throw rows;
+        return { statement_id: 'fake-statement', status: { state: 'SUCCEEDED' }, result: { data_array: rows, row_count: rows.length } };
+      }),
+    getStatement: (req) => reply('getStatement', () => ({ statement_id: req.statement_id, status: { state: 'SUCCEEDED' } })),
+    getStatementChunk: () => reply('getStatementChunk', () => ({ data_array: [] })),
+    workspaceId: () => reply('workspaceId', () => data.workspaceId ?? ''),
   };
 }

@@ -3,7 +3,7 @@ import type { LiveApi } from '../live/api';
 import { Deadline, TIMEOUT, pool } from '../live/collect';
 import { apiErrorParts } from '../live/apiError';
 import { createLiveRunSource, createLiveState } from '../live/liveRunSource';
-import type { LiveLimits } from '../live/limits';
+import { DEFAULT_LIMITS, type LiveLimits } from '../live/limits';
 import type { Session } from './recorder';
 
 export const SWEEP_DEFAULT_DAYS = 90;
@@ -68,7 +68,7 @@ export async function runSweep(o: SweepOptions): Promise<RunsResponse> {
   const timer = o.timer ?? clock;
   const { session } = o;
   const endAt = timer() + o.timeoutMs;
-  const limits: LiveLimits = { windowDays: o.days, maxRuns: Number.MAX_SAFE_INTEGER, timeoutMs: o.timeoutMs, concurrency: o.concurrency, itemsTimeoutMs: o.timeoutMs };
+  const limits: LiveLimits = { ...DEFAULT_LIMITS, windowDays: o.days, maxRuns: Number.MAX_SAFE_INTEGER, timeoutMs: o.timeoutMs, concurrency: o.concurrency, itemsTimeoutMs: o.timeoutMs };
   const source = createLiveRunSource({
     api: onceGetRun(session.wrap(o.api)),
     user: o.user,
