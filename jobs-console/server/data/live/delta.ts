@@ -164,7 +164,8 @@ const runEnd = (r: jobs.BaseRun): number => r.end_time || (r.start_time ?? 0) + 
  * R10). Every active run, and the runs of the `old` base from before `from`: all of them when it is the same window;
  * at a new day (`endAfter` given) only those still live or that ended at or after `endAfter`, which the day's history
  * may not have yet. Old runs no longer active are read once more with getRun: gone ones are dropped, and any other
- * failure but a sign-in one keeps the old copy with a diagnostic (R12). Runs in `have` are left out. A timeout throws DeltaError.
+ * failure but a sign-in one keeps the old copy with a diagnostic (R12), within the same window only: at a new day it is
+ * dropped. Runs in `have` are left out. A timeout throws DeltaError.
  */
 export async function collectEarlier(api: LiveApi, o: { from: number; maxRuns: number; concurrency: number; dl: Deadline; diag: Diag; old?: Base; endAfter?: number; have: Set<number> }): Promise<jobs.BaseRun[]> {
   const active = await allRunPages(api, { active_only: true }, o.maxRuns, o.dl, 'active runs');
@@ -181,8 +182,10 @@ export async function collectEarlier(api: LiveApi, o: { from: number; maxRuns: n
     const got = await o.dl.call(() => api.getRun({ run_id: runId })).catch((e: unknown): jobs.Run | null | undefined => {
       if (isGone(e)) return undefined;
       if (apiErrorParts(e).status === 401) throw e;
-      o.diag({ level: 'warn', code: 'run-reread-failed', message: `kept the last copy: ${apiErrorParts(e).message}`, ref: `run ${runId}` });
-      return null;
+      // Only within the same day: a stale live copy carried past midnight would stay a ghost row all day.
+      const keep = o.endAfter === undefined;
+      o.diag({ level: 'warn', code: 'run-reread-failed', message: `${keep ? 'kept the last copy' : 'dropped the copy from yesterday'}: ${apiErrorParts(e).message}`, ref: `run ${runId}` });
+      return keep ? null : undefined;
     });
     if (got === TIMEOUT) throw new DeltaError(`the time budget ran out reading run ${runId}`);
     if (got === null) out.push(old);

@@ -151,4 +151,14 @@ describe('collectEarlier (history mode, full load)', () => {
     api.getRun = () => Promise.reject(Object.assign(new Error('expired'), { statusCode: 401 }));
     await expect(collectEarlier(api, { from: NOW - 60 * MIN, maxRuns: 100, concurrency: 2, dl: new Deadline(Date.now() + 5000), diag: () => {}, old, have: new Set() })).rejects.toThrow('expired');
   });
+
+  it('at a new day (endAfter given) a stale copy is dropped, not carried over: no ghost run past midnight (R12)', async () => {
+    const notes: DiagNote[] = [];
+    const old = base([running(1, 600)], []);
+    const api = fakeApi({});
+    api.getRun = () => Promise.reject(Object.assign(new Error('Too many requests'), { statusCode: 429 }));
+    const got = await collectEarlier(api, { from: NOW - 60 * MIN, maxRuns: 100, concurrency: 2, dl: new Deadline(Date.now() + 5000), diag: (n) => notes.push(n), old, endAfter: NOW - 120 * MIN, have: new Set() });
+    expect(got).toEqual([]);
+    expect(notes).toEqual([expect.objectContaining({ level: 'warn', code: 'run-reread-failed', ref: 'run 1', message: expect.stringContaining('dropped') as unknown })]);
+  });
 });
