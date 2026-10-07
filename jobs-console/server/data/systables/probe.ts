@@ -1,0 +1,70 @@
+import type { LiveApi } from '../live/api';
+import { apiErrorParts } from '../live/apiError';
+import { Deadline, TIMEOUT } from '../live/collect';
+import type { HistoryConfig } from './config';
+import { runSql } from './sql';
+
+export const PROBE_SQL = 'SELECT 1 AS ok FROM system.lakeflow.job_run_timeline WHERE workspace_id = :ws LIMIT 1';
+
+export type ProbeResult = { ok: true; workspaceId: string } | { ok: false; reason: string };
+
+/** How long one user's answer is kept before the probe runs again (decision H5). */
+const TTL_MS = 10 * 60_000;
+/** Codes that mean the reading identity cannot read system.lakeflow (no grant, or the tables are not there). */
+const NO_ACCESS = new Set(['PERMISSION_DENIED', 'INSUFFICIENT_PERMISSIONS', 'UNAUTHORIZED', 'TABLE_OR_VIEW_NOT_FOUND', 'SCHEMA_NOT_FOUND', 'CATALOG_NOT_FOUND']);
+
+/**
+ * The most specific code of a failed probe. The Statement API's own error_code is coarse (BAD_REQUEST, NOT_FOUND), so a
+ * known code named in the message ("[INSUFFICIENT_PERMISSIONS] ...") wins; then the error's code; an HTTP 403 is PERMISSION_DENIED.
+ */
+function failure(e: unknown): { code: string; message: string } {
+  const { status, code: sdkCode, message } = apiErrorParts(e);
+  const own = (e as { code?: unknown } | null)?.code;
+  const named = /\[([A-Z][A-Z0-9_]+)\]/.exec(message)?.[1];
+  const code = (named && NO_ACCESS.has(named) ? named : '') || (typeof own === 'string' ? own : '') || sdkCode || (status === 403 ? 'PERMISSION_DENIED' : '');
+  return { code, message };
+}
+
+/**
+ * Can this reading identity read the system tables? Answers ok with the workspace id to filter by, or the reason the
+ * app falls back to the API alone. Each user's answer (either way) is kept for 10 minutes.
+ */
+export function createHistoryProbe(o: { api: LiveApi; config: HistoryConfig; clock?: () => number; timeoutMs?: number }): { check(userKey: string): Promise<ProbeResult> } {
+  const clock = o.clock ?? Date.now;
+  const timeoutMs = o.timeoutMs ?? 30_000;
+  const cache = new Map<string, { at: number; result: Promise<ProbeResult> }>();
+
+  async function probe(): Promise<ProbeResult> {
+    const { api, config } = o;
+    if (config.off) return { ok: false, reason: 'history off' };
+    if (!config.warehouseId) return { ok: false, reason: 'no SQL warehouse configured' };
+    // The budget is real time (Date.now), not `clock`, which only ages the cache.
+    const dl = new Deadline(Date.now() + timeoutMs);
+    let ws = config.workspaceId ?? '';
+    if (!ws) {
+      const got = await dl.call(() => api.workspaceId()).catch(() => '');
+      if (got === TIMEOUT) return { ok: false, reason: 'timed out' };
+      ws = got;
+    }
+    if (!ws) return { ok: false, reason: 'no workspace id' };
+    try {
+      const rows = await runSql(api, config.warehouseId, PROBE_SQL, { ws }, dl);
+      if (rows === TIMEOUT) return { ok: false, reason: 'timed out' };
+      return { ok: true, workspaceId: ws };
+    } catch (e) {
+      const { code, message } = failure(e);
+      return NO_ACCESS.has(code) ? { ok: false, reason: `no access to system.lakeflow (${code})` } : { ok: false, reason: `warehouse error: ${message}` };
+    }
+  }
+
+  return {
+    check(userKey) {
+      const now = clock();
+      const hit = cache.get(userKey);
+      if (hit && now - hit.at < TTL_MS) return hit.result;
+      const result = probe();
+      cache.set(userKey, { at: now, result });
+      return result;
+    },
+  };
+}

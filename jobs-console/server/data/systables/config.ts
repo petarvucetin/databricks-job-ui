@@ -1,6 +1,8 @@
 export interface HistoryConfig {
   warehouseId?: string;
   workspaceId?: string;
+  /** JOBS_CONSOLE_HISTORY=off: history is switched off on purpose (told apart from "no warehouse" for the header reason). */
+  off: boolean;
   /** False when JOBS_CONSOLE_HISTORY=off or no warehouse is configured: the API alone serves runs. */
   enabled: boolean;
 }
@@ -8,5 +10,6 @@ export interface HistoryConfig {
 export function readHistoryConfig(env: Record<string, string | undefined>): HistoryConfig {
   const warehouseId = env.DATABRICKS_WAREHOUSE_ID || undefined;
   const workspaceId = env.DATABRICKS_WORKSPACE_ID || undefined;
-  return { warehouseId, workspaceId, enabled: env.JOBS_CONSOLE_HISTORY !== 'off' && !!warehouseId };
+  const off = env.JOBS_CONSOLE_HISTORY === 'off';
+  return { warehouseId, workspaceId, off, enabled: !off && !!warehouseId };
 }

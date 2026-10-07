@@ -18,8 +18,16 @@ export interface FakeData {
   events?: Record<string, pipelines.PipelineEvent[]>;
   runsById?: Record<number, jobs.Run>;
   outputs?: Record<number, jobs.RunOutput>;
-  /** Answers executeStatement inline (state SUCCEEDED); an Error is thrown. Params are the request's parameters by name. */
-  sql?: (statement: string, params: Record<string, string>) => string[][] | Error;
+  /**
+   * Answers executeStatement inline (state SUCCEEDED); an Error is thrown. Params are the request's parameters by name.
+   * Row objects also give the manifest's column names (the first row's keys); bare arrays carry no manifest.
+   */
+  sql?: (statement: string, params: Record<string, string>) => string[][] | Record<string, string | null>[] | Error;
+  /**
+   * Scripted statement responses, served in order: the first answers executeStatement, each further one a getStatement
+   * poll (the last repeats). `chunks` answers getStatementChunk by chunk_index. Wins over `sql`.
+   */
+  statements?: { responses: sql.StatementResponse[]; chunks?: Record<number, sql.ResultData> };
   /** What workspaceId() answers ('' when absent). */
   workspaceId?: string;
   /** Delay (ms) before each call resolves. */
@@ -37,6 +45,11 @@ export function fakeApi(data: FakeData): LiveApi & { calls: string[] } {
   };
   const size = data.runPageSize ?? 25;
   const jobSize = data.jobPageSize ?? 100;
+  let served = 0;
+  const next = (): sql.StatementResponse => {
+    const all = data.statements?.responses ?? [];
+    return all[Math.min(served++, all.length - 1)] ?? {};
+  };
   return {
     calls,
     host: () => Promise.resolve(data.host ?? ''),
@@ -80,13 +93,25 @@ export function fakeApi(data: FakeData): LiveApi & { calls: string[] } {
     listPipelineEvents: (req) => reply('listPipelineEvents', () => ({ events: data.events?.[req.pipeline_id] ?? [] })),
     executeStatement: (req) =>
       reply('executeStatement', (): sql.StatementResponse => {
+        if (data.statements) return next();
         const params = Object.fromEntries((req.parameters ?? []).map((p) => [p.name, p.value ?? '']));
         const rows = data.sql?.(req.statement, params) ?? [];
         if (rows instanceof Error) throw rows;
-        return { statement_id: 'fake-statement', status: { state: 'SUCCEEDED' }, result: { data_array: rows, row_count: rows.length } };
+        const first = rows[0];
+        if (first === undefined || Array.isArray(first)) {
+          return { statement_id: 'fake-statement', status: { state: 'SUCCEEDED' }, result: { data_array: rows as string[][], row_count: rows.length } };
+        }
+        const names = Object.keys(first);
+        const dataArray = (rows as Record<string, string | null>[]).map((r) => names.map((n) => r[n] ?? null)) as string[][];
+        return {
+          statement_id: 'fake-statement',
+          status: { state: 'SUCCEEDED' },
+          manifest: { schema: { columns: names.map((name, position) => ({ name, position })) } },
+          result: { data_array: dataArray, row_count: rows.length },
+        };
       }),
-    getStatement: (req) => reply('getStatement', () => ({ statement_id: req.statement_id, status: { state: 'SUCCEEDED' } })),
-    getStatementChunk: () => reply('getStatementChunk', () => ({ data_array: [] })),
+    getStatement: (req) => reply('getStatement', () => (data.statements ? next() : { statement_id: req.statement_id, status: { state: 'SUCCEEDED' } })),
+    getStatementChunk: (req) => reply('getStatementChunk', () => data.statements?.chunks?.[req.chunk_index] ?? { data_array: [] }),
     workspaceId: () => reply('workspaceId', () => data.workspaceId ?? ''),
   };
 }

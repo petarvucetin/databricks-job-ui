@@ -134,7 +134,7 @@ function taskState(t: jobs.RunTask): TaskState {
  * first (not started last, then API order). The drawer's timeline then reads top to bottom like the run went, and every
  * dependency arrow points down. A cycle (never expected) is broken by start time, with a diagnostic.
  */
-function taskOrder(keys: string[], deps: number[][], starts: number[], ref: string, diag: Diag): number[] {
+export function taskOrder(keys: string[], deps: number[][], starts: number[], ref: string, diag: Diag): number[] {
   const n = keys.length;
   const placed = new Array<boolean>(n).fill(false);
   const order: number[] = [];
@@ -206,7 +206,7 @@ const causeOf = (r: { status?: jobs.RunStatus; state?: jobs.RunState }) =>
   failureCause(r.status?.termination_details?.code, r.status?.termination_details?.message || r.state?.state_message, r.state?.result_state === 'TIMEDOUT');
 
 /** Run-level codes that only say "something failed"; the first failed task says more. */
-const GENERIC = new Set(['', 'RUN_EXECUTION_ERROR', 'SUCCESS_WITH_FAILURES']);
+export const GENERIC = new Set(['', 'RUN_EXECUTION_ERROR', 'SUCCESS_WITH_FAILURES']);
 
 /** `host`: the workspace the run was read from, for its link when runs/list gave no run_page_url. */
 export function jobDraft(run: jobs.BaseRun, now: number, diag: Diag = noDiag, host?: string): Draft {
