@@ -233568,41 +233568,71 @@ function parseEnvs(envsRaw, warehousesRaw) {
 			profile: profile ?? name
 		});
 	}
+	const warehouses = /* @__PURE__ */ new Set();
 	for (const [name, id] of pairs(warehousesRaw ?? "")) {
 		if (id === void 0 || id === "") throw new Error(`JOBS_CONSOLE_WAREHOUSES: "${name}" must be name=id`);
 		const spec = isEnvName(name) ? byName.get(name) : void 0;
 		if (!spec) throw new Error(`JOBS_CONSOLE_WAREHOUSES: "${name}" is not in JOBS_CONSOLE_ENVS`);
+		if (warehouses.has(name)) throw new Error(`JOBS_CONSOLE_WAREHOUSES: env "${name}" is listed twice`);
+		warehouses.add(name);
 		spec.warehouseId = id;
 	}
 	return ENV_NAMES.flatMap((n) => byName.get(n) ?? []);
 }
-/** A copy of `base` pinned to one env's profile and warehouse, with ambient host/token credentials removed. */
-function envRecord(base, spec) {
-	const out = { ...base };
-	out.DATABRICKS_CONFIG_PROFILE = spec.profile;
-	out.DATABRICKS_WAREHOUSE_ID = spec.warehouseId;
-	delete out.DATABRICKS_HOST;
-	delete out.DATABRICKS_TOKEN;
-	delete out.DATABRICKS_WORKSPACE_ID;
-	return out;
-}
 /**
-* Process-wide target and credentials each env's own profile replaces. DATABRICKS_CONFIG_PROFILE stays: the SDK never
-* lets it override an explicit profile, and AppKit's own startup client (currentUser.me() in createApp) signs in with it.
+* Process-wide target and credentials each env's own profile replaces: every credential attribute the SDK's Config
+* reads from the environment (it reads them before the profile file, so one there wins over an env's profile), plus
+* the warehouse. Not a DATABRICKS_* prefix: DATABRICKS_CONFIG_PROFILE stays (the SDK never lets it override an explicit
+* profile, and AppKit's startup client, currentUser.me() in createApp, signs in with it), as do DATABRICKS_CONFIG_FILE
+* and the DATABRICKS_APP_* settings.
 */
 const AMBIENT = [
 	"DATABRICKS_HOST",
 	"DATABRICKS_TOKEN",
-	"DATABRICKS_WAREHOUSE_ID"
+	"DATABRICKS_WAREHOUSE_ID",
+	"DATABRICKS_WORKSPACE_ID",
+	"DATABRICKS_AUTH_TYPE",
+	"DATABRICKS_CLIENT_ID",
+	"DATABRICKS_CLIENT_SECRET",
+	"DATABRICKS_ACCOUNT_ID",
+	"DATABRICKS_USERNAME",
+	"DATABRICKS_PASSWORD",
+	"DATABRICKS_AZURE_RESOURCE_ID",
+	"DATABRICKS_AZURE_LOGIN_APP_ID",
+	"DATABRICKS_GOOGLE_SERVICE_ACCOUNT",
+	"GOOGLE_CREDENTIALS",
+	"DATABRICKS_METADATA_SERVICE_URL",
+	"ARM_CLIENT_ID",
+	"ARM_CLIENT_SECRET",
+	"ARM_TENANT_ID",
+	"ARM_ENVIRONMENT",
+	"ARM_USE_MSI"
 ];
 /**
-* Multi-env (JOBS_CONSOLE_ENVS set): deletes the ambient DATABRICKS_HOST / _TOKEN / _WAREHOUSE_ID from `env`
-* (process.env: the SDK's Config reads environment variables before the profile file, so a host or token there would
-* win over an env's profile). Returns the names it deleted; [] when single-workspace, which is left alone. Throws on a
+* A copy of `base` pinned to one env's profile and warehouse (none when the env has none), without the ambient
+* credentials (AMBIENT) or the other envs' config (JOBS_CONSOLE_ENVS / _WAREHOUSES, which captures would record).
+*/
+function envRecord(base, spec) {
+	const out = { ...base };
+	for (const k of AMBIENT) delete out[k];
+	delete out.JOBS_CONSOLE_ENVS;
+	delete out.JOBS_CONSOLE_WAREHOUSES;
+	out.DATABRICKS_CONFIG_PROFILE = spec.profile;
+	if (spec.warehouseId) out.DATABRICKS_WAREHOUSE_ID = spec.warehouseId;
+	return out;
+}
+/** Replay serves one captured workspace: JOBS_CONSOLE_ENVS (e.g. from .env) doesn't apply. */
+function isReplay(env) {
+	return env.JOBS_CONSOLE_DATA === "replay";
+}
+/**
+* Multi-env (JOBS_CONSOLE_ENVS set, not replay): deletes the AMBIENT credentials and warehouse from `env` (process.env:
+* the SDK's Config reads environment variables before the profile file, so a host or token there would win over an
+* env's profile). Returns the names it deleted; [] when single-workspace or replay, which are left alone. Throws on a
 * bad JOBS_CONSOLE_ENVS, as parseEnvs does.
 */
 function dropAmbientCredentials(env) {
-	if (parseEnvs(env.JOBS_CONSOLE_ENVS, env.JOBS_CONSOLE_WAREHOUSES).length === 0) return [];
+	if (isReplay(env) || parseEnvs(env.JOBS_CONSOLE_ENVS, env.JOBS_CONSOLE_WAREHOUSES).length === 0) return [];
 	const dropped = AMBIENT.filter((k) => env[k] !== void 0);
 	for (const k of dropped) delete env[k];
 	return dropped;
@@ -234767,14 +234797,18 @@ function causeChain(e) {
 	}
 	return parts.length ? ` (cause: ${parts.join(" <- ")})` : "";
 }
-/** SDK credential failures ("default auth: ...", "databricks-cli: cannot get access token") and unreachable workspaces. */
-const SIGN_IN_OR_CONNECTION = /default auth|cannot configure default credentials|cannot get access token|failed to retrieve token|invalid_grant|refresh token|fetch failed|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|ECONNRESET/i;
+/**
+* SDK credential failures ("default auth: ...", "databricks-cli: cannot get access token", "... has no prod profile
+* configured"), refused or expired tokens (some 403s carry them), and unreachable workspaces.
+*/
+const SIGN_IN_OR_CONNECTION = /default auth|cannot configure default credentials|cannot get access token|failed to retrieve token|invalid_grant|refresh token|invalid (access )?token|unauthenticated|expired|has no .* profile configured|fetch failed|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|ECONNRESET/i;
 /**
 * A sign-in or connection failure (expired or missing CLI login, refused token, unreachable workspace) rather than a
-* fault in one request: 401/403 (as toSourceError keeps them), or an SDK credential or network error by its message.
+* fault in one request: a 401, or an SDK credential, token or network error by its message. A 403 alone is a
+* permission refusal (PERMISSION_DENIED), which signing in again doesn't fix.
 */
 function isSignInOrConnectionFailure(status, message) {
-	return status === 401 || status === 403 || SIGN_IN_OR_CONNECTION.test(message);
+	return status === 401 || SIGN_IN_OR_CONNECTION.test(message);
 }
 /** SDK failures as SourceError: auth stays 401/403, the rest is a bad gateway. With `lookup`, a missing or invalid id is 404. */
 function toSourceError(e, lookup = false) {
@@ -238385,9 +238419,12 @@ function createWorkspaceEnv(name, env, deps = {}) {
 /**
 * Multi-env when JOBS_CONSOLE_ENVS is set (throws on a bad value): each env built on first use from `envRecord`, mock
 * envs told their variant. Else one WorkspaceEnv over `base`, built now, labelled by JOBS_CONSOLE_ENV; `?env=` ignored.
+* Replay is always single (E15: the capture's env, no switch); a JOBS_CONSOLE_ENVS (e.g. from .env) is logged and ignored.
 */
 function createEnvRouter(base, make = createWorkspaceEnv) {
-	const specs = parseEnvs(base.JOBS_CONSOLE_ENVS, base.JOBS_CONSOLE_WAREHOUSES);
+	const replay = isReplay(base);
+	if (replay && base.JOBS_CONSOLE_ENVS?.trim()) console.log("JOBS_CONSOLE_ENVS is ignored in replay: serving the capture's one workspace");
+	const specs = replay ? [] : parseEnvs(base.JOBS_CONSOLE_ENVS, base.JOBS_CONSOLE_WAREHOUSES);
 	if (specs.length === 0) {
 		const single = make(readEnvLabel(base), base);
 		return {
