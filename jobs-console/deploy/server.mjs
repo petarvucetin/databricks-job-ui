@@ -233539,6 +233539,83 @@ var ServingPlugin = class extends Plugin {
 const serving = toPlugin(ServingPlugin);
 
 //#endregion
+//#region server/envs.ts
+const ENV_NAMES = [
+	"dev",
+	"stg",
+	"prod"
+];
+function isEnvName(s) {
+	return ENV_NAMES.includes(s);
+}
+/** Split "a=b, c=d" into trimmed [key, value] pairs; a bare item has value undefined. */
+function pairs(raw) {
+	return raw.split(",").map((s) => s.trim()).filter(Boolean).map((item) => {
+		const i = item.indexOf("=");
+		return i < 0 ? [item, void 0] : [item.slice(0, i).trim(), item.slice(i + 1).trim()];
+	});
+}
+/** Parse JOBS_CONSOLE_ENVS ("dev,stg=gov-stg") and JOBS_CONSOLE_WAREHOUSES ("dev=abc") into specs in dev→stg→prod order. */
+function parseEnvs(envsRaw, warehousesRaw) {
+	if (!envsRaw?.trim()) return [];
+	const byName = /* @__PURE__ */ new Map();
+	for (const [name, profile] of pairs(envsRaw)) {
+		if (!isEnvName(name)) throw new Error(`JOBS_CONSOLE_ENVS: unknown env "${name}" (expected one of ${ENV_NAMES.join(", ")})`);
+		if (byName.has(name)) throw new Error(`JOBS_CONSOLE_ENVS: env "${name}" is listed twice`);
+		if (profile === "") throw new Error(`JOBS_CONSOLE_ENVS: env "${name}" has an empty profile`);
+		byName.set(name, {
+			name,
+			profile: profile ?? name
+		});
+	}
+	for (const [name, id] of pairs(warehousesRaw ?? "")) {
+		if (id === void 0 || id === "") throw new Error(`JOBS_CONSOLE_WAREHOUSES: "${name}" must be name=id`);
+		const spec = isEnvName(name) ? byName.get(name) : void 0;
+		if (!spec) throw new Error(`JOBS_CONSOLE_WAREHOUSES: "${name}" is not in JOBS_CONSOLE_ENVS`);
+		spec.warehouseId = id;
+	}
+	return ENV_NAMES.flatMap((n) => byName.get(n) ?? []);
+}
+/** A copy of `base` pinned to one env's profile and warehouse, with ambient host/token credentials removed. */
+function envRecord(base, spec) {
+	const out = { ...base };
+	out.DATABRICKS_CONFIG_PROFILE = spec.profile;
+	out.DATABRICKS_WAREHOUSE_ID = spec.warehouseId;
+	delete out.DATABRICKS_HOST;
+	delete out.DATABRICKS_TOKEN;
+	delete out.DATABRICKS_WORKSPACE_ID;
+	return out;
+}
+/**
+* Process-wide target and credentials each env's own profile replaces. DATABRICKS_CONFIG_PROFILE stays: the SDK never
+* lets it override an explicit profile, and AppKit's own startup client (currentUser.me() in createApp) signs in with it.
+*/
+const AMBIENT = [
+	"DATABRICKS_HOST",
+	"DATABRICKS_TOKEN",
+	"DATABRICKS_WAREHOUSE_ID"
+];
+/**
+* Multi-env (JOBS_CONSOLE_ENVS set): deletes the ambient DATABRICKS_HOST / _TOKEN / _WAREHOUSE_ID from `env`
+* (process.env: the SDK's Config reads environment variables before the profile file, so a host or token there would
+* win over an env's profile). Returns the names it deleted; [] when single-workspace, which is left alone. Throws on a
+* bad JOBS_CONSOLE_ENVS, as parseEnvs does.
+*/
+function dropAmbientCredentials(env) {
+	if (parseEnvs(env.JOBS_CONSOLE_ENVS, env.JOBS_CONSOLE_WAREHOUSES).length === 0) return [];
+	const dropped = AMBIENT.filter((k) => env[k] !== void 0);
+	for (const k of dropped) delete env[k];
+	return dropped;
+}
+/** The deployed env label from JOBS_CONSOLE_ENV; an invalid value warns and yields undefined. */
+function readEnvLabel(env) {
+	const v = env.JOBS_CONSOLE_ENV?.trim();
+	if (!v) return void 0;
+	if (isEnvName(v)) return v;
+	console.warn(`JOBS_CONSOLE_ENV: ignoring unknown env "${v}" (expected one of ${ENV_NAMES.join(", ")})`);
+}
+
+//#endregion
 //#region shared/domain/cron.ts
 const MONTHS = [
 	"JAN",
@@ -234405,21 +234482,59 @@ function shiftTo(data, nowMs) {
 		}))
 	};
 }
-function createMockRunSource(clock = Date.now) {
+const KEEP = {
+	prod: () => true,
+	stg: (h) => h % 3 !== 0,
+	dev: (h) => h % 2 === 0
+};
+function nameHash(s) {
+	let h = 2166136261;
+	for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
+	return h >>> 0;
+}
+/** Drops the runs of jobs this variant lacks; the rest keep their names (prefixed later, see prefixed). */
+function applyVariant(data, variant) {
+	const keep = KEEP[variant];
+	return {
+		...data,
+		runs: data.runs.filter((r) => keep(nameHash(`${r.type}|${r.name}`)))
+	};
+}
+/** `variant` (multi-env mock) gives each environment its own subset of the data with names prefixed `<variant>_`; none leaves the data as generated. */
+function createMockRunSource(clock = Date.now, variant) {
+	const prefixed = (name) => variant ? `${variant}_${name}` : name;
 	const cache = /* @__PURE__ */ new Map();
 	let items;
 	const dataFor = (tzOffsetMin) => {
 		let data = cache.get(tzOffsetMin);
 		if (!data) {
 			data = generateRuns(tzOffsetMin);
+			if (variant) data = applyVariant(data, variant);
 			cache.set(tzOffsetMin, data);
 		}
 		return data;
 	};
+	/** Runs as the UI sees them: names prefixed. */
+	const named = (data) => variant ? {
+		...data,
+		runs: data.runs.map((r) => ({
+			...r,
+			name: prefixed(r.name)
+		}))
+	} : data;
+	/** Items built from the unprefixed runs (so ids, tags and trigger shapes match the base data), then named. */
+	const itemsFor = (data) => mockItems(data.runs, data.asOf).map((i) => ({
+		...i,
+		name: prefixed(i.name),
+		...i.startedBy && { startedBy: i.startedBy.map((s) => ({
+			...s,
+			jobName: prefixed(s.jobName)
+		})) }
+	}));
 	return {
 		kind: "mock",
 		listRuns(since, tzOffsetMin) {
-			const data = shiftTo(dataFor(tzOffsetMin ?? DEFAULT_TZ_OFFSET_MIN), clock());
+			const data = named(shiftTo(dataFor(tzOffsetMin ?? DEFAULT_TZ_OFFSET_MIN), clock()));
 			return Promise.resolve({
 				...data,
 				runs: since === void 0 ? data.runs : data.runs.filter((r) => r.startTime >= since)
@@ -234429,12 +234544,12 @@ function createMockRunSource(clock = Date.now) {
 			return Promise.resolve(mockTaskLog(runId, task, hint));
 		},
 		getRun(runId, tzOffsetMin) {
-			const run = shiftTo(dataFor(tzOffsetMin ?? DEFAULT_TZ_OFFSET_MIN), clock()).runs.find((r) => r.id === runId);
+			const run = named(shiftTo(dataFor(tzOffsetMin ?? DEFAULT_TZ_OFFSET_MIN), clock())).runs.find((r) => r.id === runId);
 			return run ? Promise.resolve(run) : Promise.reject(new SourceError(404, `Run ${runId} does not exist`));
 		},
 		listItems() {
 			const data = shiftTo(dataFor(DEFAULT_TZ_OFFSET_MIN), clock());
-			items ??= mockItems(data.runs, data.asOf);
+			items ??= itemsFor(data);
 			return Promise.resolve({
 				asOf: data.asOf,
 				source: "mock",
@@ -234443,9 +234558,9 @@ function createMockRunSource(clock = Date.now) {
 		},
 		getItem(type, id) {
 			const data = dataFor(DEFAULT_TZ_OFFSET_MIN);
-			items ??= mockItems(data.runs, data.asOf);
+			items ??= itemsFor(data);
 			const item = items.find((i) => i.type === type && i.id === id);
-			return item ? Promise.resolve(mockDetail(item, data.runs)) : Promise.reject(new SourceError(404, `${type} ${id} does not exist`));
+			return item ? Promise.resolve(mockDetail(item, named(data).runs)) : Promise.reject(new SourceError(404, `${type} ${id} does not exist`));
 		}
 	};
 }
@@ -234497,21 +234612,21 @@ function pipelineUpdateUrl(host, pipelineId, updateId) {
 
 //#endregion
 //#region server/data/live/api.ts
-/** Workspace URL the SDK default auth chain resolves to (local dev: the DATABRICKS_CONFIG_PROFILE host). */
-async function resolveDefaultHost() {
+/** Workspace URL the SDK default auth chain resolves to (`profile` given: that CLI profile's host; else DATABRICKS_HOST / the default profile). */
+async function resolveDefaultHost(profile) {
 	try {
-		return (await new import_dist.Config({}).getHost()).origin;
+		return (await new import_dist.Config(profile ? { profile } : {}).getHost()).origin;
 	} catch {
 		return;
 	}
 }
-/** `token` given: that user's token (Databricks Apps forwards it). Omitted: the SDK default auth chain (local dev profile). */
+/** `token` given: that user's token (Databricks Apps forwards it). Omitted: the SDK default auth chain, on the CLI `profile` when given. */
 function createSdkApi(opts) {
 	const client = opts.token ? new import_dist.WorkspaceClient({
 		host: opts.host,
 		token: opts.token,
 		authType: "pat"
-	}) : new import_dist.WorkspaceClient({});
+	}) : new import_dist.WorkspaceClient(opts.profile ? { profile: opts.profile } : {});
 	const page = (path, query) => {
 		const q = Object.fromEntries(Object.entries(query).filter(([k, v]) => v !== void 0 && k !== "pipeline_id"));
 		return client.apiClient.request({
@@ -234651,6 +234766,15 @@ function causeChain(e) {
 		c = x.cause;
 	}
 	return parts.length ? ` (cause: ${parts.join(" <- ")})` : "";
+}
+/** SDK credential failures ("default auth: ...", "databricks-cli: cannot get access token") and unreachable workspaces. */
+const SIGN_IN_OR_CONNECTION = /default auth|cannot configure default credentials|cannot get access token|failed to retrieve token|invalid_grant|refresh token|fetch failed|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|ECONNRESET/i;
+/**
+* A sign-in or connection failure (expired or missing CLI login, refused token, unreachable workspace) rather than a
+* fault in one request: 401/403 (as toSourceError keeps them), or an SDK credential or network error by its message.
+*/
+function isSignInOrConnectionFailure(status, message) {
+	return status === 401 || status === 403 || SIGN_IN_OR_CONNECTION.test(message);
 }
 /** SDK failures as SourceError: auth stays 401/403, the rest is a bad gateway. With `lookup`, a missing or invalid id is 404. */
 function toSourceError(e, lookup = false) {
@@ -237506,7 +237630,7 @@ function createLiveProvider(env, deps = { makeApi: createSdkApi }) {
 	let shared;
 	const defaultChain = () => {
 		if (!shared) {
-			const api = deps.makeApi({});
+			const api = deps.makeApi(env.DATABRICKS_CONFIG_PROFILE ? { profile: env.DATABRICKS_CONFIG_PROFILE } : {});
 			shared = {
 				api,
 				user: cachedUser(api)
@@ -237652,18 +237776,21 @@ function buildCapture(input) {
 		config: captureConfig(input.env, input.authMode),
 		workspace: {
 			host: input.host ?? input.env.DATABRICKS_HOST,
-			user: input.user
+			user: input.user,
+			...input.envName ? { env: input.envName } : {},
+			...input.profile ? { profile: input.profile } : {}
 		},
 		sessions: input.sessions,
 		clientErrors: input.clientErrors,
 		process: input.process
 	};
 }
-/** jobs-console-capture-<host>-<yyyymmdd-hhmm>.json.gz, UTC. */
-function captureFileName(host, at = /* @__PURE__ */ new Date()) {
+/** jobs-console-capture-[<env>-]<host>-<yyyymmdd-hhmm>.json.gz, UTC. */
+function captureFileName(host, at = /* @__PURE__ */ new Date(), env) {
 	const h = (host ?? "local").replace(/^https?:\/\//, "").replace(/\/.*$/, "").toLowerCase().replace(/[^a-z0-9.-]+/g, "-") || "local";
 	const p = (n) => String(n).padStart(2, "0");
-	return `jobs-console-capture-${h}-${`${at.getUTCFullYear()}${p(at.getUTCMonth() + 1)}${p(at.getUTCDate())}-${p(at.getUTCHours())}${p(at.getUTCMinutes())}`}.json.gz`;
+	const stamp = `${at.getUTCFullYear()}${p(at.getUTCMonth() + 1)}${p(at.getUTCDate())}-${p(at.getUTCHours())}${p(at.getUTCMinutes())}`;
+	return `jobs-console-capture-${env ? `${env}-` : ""}${h}-${stamp}.json.gz`;
 }
 const gzipAsync = promisify(gzip);
 function gzipCapture(file) {
@@ -237980,7 +238107,8 @@ function createReplayProvider(env, deps = {}) {
 function selectRunSource(env) {
 	const mode = env.JOBS_CONSOLE_DATA ?? "mock";
 	if (mode === "mock") {
-		const source = createMockRunSource();
+		const v = env.JOBS_CONSOLE_MOCK_VARIANT;
+		const source = createMockRunSource(void 0, v === "dev" || v === "stg" || v === "prod" ? v : void 0);
 		return {
 			kind: "mock",
 			forRequest: () => source
@@ -238166,6 +238294,155 @@ var CaptureStore = class {
 		return [...this.processList];
 	}
 };
+
+//#endregion
+//#region server/workspaceEnv.ts
+/** People by email (matches the deployed viewer header); service principals by display name (their userName is a GUID). */
+function sdkSelfName(profile) {
+	return createSdkApi({ profile }).me().then((u) => (u.userName?.includes("@") ? u.userName : u.displayName || u.userName) || void 0);
+}
+const asEnvName = (v) => ENV_NAMES.includes(v) ? v : void 0;
+/** Builds one env's provider (and capture store when live) from `env`, with its own workspace and identity memos. */
+function createWorkspaceEnv(name, env, deps = {}) {
+	const provider = (deps.select ?? selectRunSource)(env);
+	const live = provider.kind === "live" ? provider : void 0;
+	const store = live ? new CaptureStore(readCaptureLimits(env)) : void 0;
+	const profile = env.DATABRICKS_CONFIG_PROFILE || void 0;
+	const file = provider.kind === "replay" ? provider.file : void 0;
+	const lookupSelf = deps.selfName ?? sdkSelfName;
+	const resolveHost = deps.resolveHost ?? resolveDefaultHost;
+	const base = {
+		source: provider.kind,
+		auth: provider.auth,
+		capture: !!store
+	};
+	const envOf = file ? asEnvName(file.workspace?.env) ?? name : name;
+	/**
+	* Which workspace the top bar names. Deployed: DATABRICKS_HOST (set by Databricks Apps, sometimes without a scheme).
+	* Local: the CLI profile's host. Replay: the capture's workspace. Cached.
+	*/
+	let workspace;
+	async function monitoredWorkspace() {
+		if (file) return { workspace: file.workspace?.host || void 0 };
+		if (!live) return {};
+		const host = env.DATABRICKS_HOST;
+		if (host) return { workspace: (/^https?:\/\//.test(host) ? new URL(host) : new URL(`https://${host}`)).origin };
+		return {
+			workspace: await resolveHost(profile),
+			profile
+		};
+	}
+	/** The SDK default chain's own identity: the CLI login locally, the app's service principal on Databricks Apps. Cached; retried after a failure. */
+	let defaultIdentity;
+	function selfName() {
+		defaultIdentity ??= lookupSelf(profile).catch(() => {
+			defaultIdentity = void 0;
+		});
+		return defaultIdentity;
+	}
+	/** Who is looking, and (when different) who the APIs are called as. See DataMode.user / readAs. */
+	async function identity(viewer) {
+		if (file) return { user: file.workspace?.user || void 0 };
+		if (!live) return {};
+		if (!viewer) return { user: await selfName() };
+		return provider.auth === "app" ? {
+			user: viewer,
+			readAs: await selfName()
+		} : { user: viewer };
+	}
+	return {
+		name,
+		profile,
+		env,
+		provider,
+		live,
+		store,
+		async mode(viewer, req) {
+			if (provider.kind === "mock") return {
+				source: "mock",
+				capture: false,
+				env: name
+			};
+			const history = provider.history ? provider.history(req).catch(() => void 0) : Promise.resolve(void 0);
+			const [ws, who, h] = await Promise.all([
+				workspace ??= monitoredWorkspace(),
+				identity(viewer),
+				history
+			]);
+			return {
+				...base,
+				...ws,
+				...who,
+				...h ? { history: h } : {},
+				env: envOf
+			};
+		}
+	};
+}
+
+//#endregion
+//#region server/envRouter.ts
+/**
+* Multi-env when JOBS_CONSOLE_ENVS is set (throws on a bad value): each env built on first use from `envRecord`, mock
+* envs told their variant. Else one WorkspaceEnv over `base`, built now, labelled by JOBS_CONSOLE_ENV; `?env=` ignored.
+*/
+function createEnvRouter(base, make = createWorkspaceEnv) {
+	const specs = parseEnvs(base.JOBS_CONSOLE_ENVS, base.JOBS_CONSOLE_WAREHOUSES);
+	if (specs.length === 0) {
+		const single = make(readEnvLabel(base), base);
+		return {
+			names: [],
+			pick: () => single,
+			modeFor: () => ({ env: single }),
+			built: () => [single]
+		};
+	}
+	const names = specs.map((s) => s.name);
+	const mock = (base.JOBS_CONSOLE_DATA ?? "mock") === "mock";
+	const envs = /* @__PURE__ */ new Map();
+	const get = (spec) => {
+		let ws = envs.get(spec.name);
+		if (!ws) {
+			const record = envRecord(base, spec);
+			if (mock) record.JOBS_CONSOLE_MOCK_VARIANT = spec.name;
+			ws = make(spec.name, record);
+			envs.set(spec.name, ws);
+		}
+		return ws;
+	};
+	/** The configured spec `?env=` names; undefined when missing or empty; null when anything else (unknown, repeated, not a string). */
+	const specOf = (req) => {
+		const v = req.query.env;
+		if (v === void 0 || v === "") return void 0;
+		return typeof v === "string" && specs.find((s) => s.name === v) || null;
+	};
+	return {
+		names,
+		pick(req) {
+			const spec = specOf(req);
+			if (spec) return get(spec);
+			if (spec === void 0) {
+				if (specs.length === 1) return get(specs[0]);
+				return {
+					status: 400,
+					error: `Pick an environment: ?env=${names.join("|")}`
+				};
+			}
+			return {
+				status: 400,
+				error: `Unknown environment "${String(req.query.env)}"; configured: ${names.join(", ")}`
+			};
+		},
+		modeFor(req) {
+			const env = get(specOf(req) || specs[0]);
+			return names.length > 1 ? {
+				env,
+				envs: [...names]
+			} : { env };
+		},
+		built: () => [...envs.values()]
+	};
+}
 
 //#endregion
 //#region server/api/listRuns.ts
@@ -238442,15 +238719,24 @@ const header$1 = (req, name) => {
 /**
 * Live mode only. GET /api/diag/capture downloads the capture (gzipped JSON); GET /api/diag/sweep?days=N runs a wide
 * collection first and downloads the capture with it as the newest session; POST /api/diag/client-error stores a
-* browser error. Everything is scoped to the requester.
+* browser error. Every route picks its env first; everything is scoped to the requester and that env.
 */
 function registerDiag(app, deps) {
-	const { provider, store, env } = deps;
-	const sweepLimits = readSweepLimits(env);
+	const { pick } = deps;
+	/** `${env name}|${userKey}` of the sweeps running. */
 	const sweeping = /* @__PURE__ */ new Set();
-	let host;
-	const hostOf = () => host ??= env.DATABRICKS_HOST ? Promise.resolve(env.DATABRICKS_HOST) : resolveDefaultHost();
-	async function sendCapture(req, res) {
+	/** Workspace host per env name, looked up once. */
+	const hosts = /* @__PURE__ */ new Map();
+	const hostOf = ({ name, env }) => {
+		let host = hosts.get(name ?? "");
+		if (!host) {
+			host = env.DATABRICKS_HOST ? Promise.resolve(env.DATABRICKS_HOST) : resolveDefaultHost(env.DATABRICKS_CONFIG_PROFILE);
+			hosts.set(name ?? "", host);
+		}
+		return host;
+	};
+	async function sendCapture(req, res, d) {
+		const { provider, store } = d;
 		const id = provider.identify(req);
 		if ("error" in id) {
 			res.status(id.status).json({ error: id.error });
@@ -238458,25 +238744,33 @@ function registerDiag(app, deps) {
 		}
 		const user = await id.user().catch(() => header$1(req, "x-forwarded-email"));
 		const dev = id.userKey === "dev";
-		const workspaceHost = await hostOf();
+		const workspaceHost = await hostOf(d);
 		const body = await gzipCapture(buildCapture({
-			env,
+			env: d.env,
 			host: workspaceHost,
 			authMode: provider.auth,
 			user,
+			envName: d.name,
+			profile: d.profile,
 			sessions: visibleTo(store.sessions(), user, dev),
 			clientErrors: visibleTo(store.clientErrors(), user, dev),
 			process: store.process()
 		}));
 		res.setHeader("Content-Type", "application/gzip");
-		res.setHeader("Content-Disposition", `attachment; filename="${captureFileName(workspaceHost)}"`);
+		res.setHeader("Content-Disposition", `attachment; filename="${captureFileName(workspaceHost, /* @__PURE__ */ new Date(), d.name)}"`);
 		res.setHeader("Cache-Control", "no-store");
 		res.status(200).send(body);
 	}
+	/** Picks the env (answering a refusal), then runs `fn`; a failure is recorded into that env's store and answered 500. */
 	const guarded = (route, fn) => (req, res) => {
-		fn(req, res).catch((e) => {
+		const d = pick(req);
+		if ("error" in d) {
+			res.status(d.status).json({ error: d.error });
+			return;
+		}
+		fn(req, res, d).catch((e) => {
 			const err = e instanceof Error ? e : new Error(String(e));
-			store.addProcess({
+			d.store.addProcess({
 				kind: "serverError",
 				message: err.message,
 				stack: err.stack,
@@ -238487,7 +238781,8 @@ function registerDiag(app, deps) {
 		});
 	};
 	app.get("/api/diag/capture", guarded("/api/diag/capture", sendCapture));
-	app.get(SWEEP_ROUTE, guarded(SWEEP_ROUTE, async (req, res) => {
+	app.get(SWEEP_ROUTE, guarded(SWEEP_ROUTE, async (req, res, d) => {
+		const { provider, store } = d;
 		const days = parseSweepDays(req.query.days);
 		if (days === void 0) {
 			res.status(400).json({ error: "days must be a whole number from 1 to 180" });
@@ -238498,11 +238793,12 @@ function registerDiag(app, deps) {
 			res.status(id.status).json({ error: id.error });
 			return;
 		}
-		if (sweeping.has(id.userKey)) {
+		const key = `${d.name ?? ""}|${id.userKey}`;
+		if (sweeping.has(key)) {
 			res.status(409).json({ error: "A sweep is already running for you" });
 			return;
 		}
-		sweeping.add(id.userKey);
+		sweeping.add(key);
 		const session = new Session({
 			id: newSessionId(),
 			route: SWEEP_ROUTE,
@@ -238516,7 +238812,7 @@ function registerDiag(app, deps) {
 				user: id.user,
 				session,
 				days,
-				...sweepLimits,
+				...readSweepLimits(d.env),
 				concurrency: provider.limits.concurrency,
 				history: provider.historyConfig
 			});
@@ -238530,18 +238826,23 @@ function registerDiag(app, deps) {
 				error: e
 			}));
 		} finally {
-			sweeping.delete(id.userKey);
+			sweeping.delete(key);
 		}
-		await sendCapture(req, res);
+		await sendCapture(req, res, d);
 	}));
 	app.post("/api/diag/client-error", (req, res) => {
+		const d = pick(req);
+		if ("error" in d) {
+			res.status(d.status).json({ error: d.error });
+			return;
+		}
 		const e = clientErrorFrom(req.body);
 		if (!e) {
 			res.status(400).json({ error: "body must be JSON with a message" });
 			return;
 		}
 		const user = header$1(req, "x-forwarded-email");
-		store.addClientError({
+		d.store.addClientError({
 			...e,
 			receivedAt: Date.now(),
 			...user ? { user } : {}
@@ -238593,15 +238894,148 @@ function sendJson(req, res, status, body) {
 }
 
 //#endregion
+//#region server/routes.ts
+const header = (req, name) => {
+	const v = req.headers[name];
+	return (Array.isArray(v) ? v[0] : v) || void 0;
+};
+/** E10: a sign-in or connection failure's message with the command that fixes it; anything else unchanged. */
+function withLoginHint(message, status, profile) {
+	return isSignInOrConnectionFailure(status, message) ? `${message} — run: databricks auth login --profile ${profile}` : message;
+}
+/** Diagnostics exist when the server reads live: always with several envs (each refuses unless live), else when the one env is live. */
+function hasDiagnostics(router) {
+	return router.names.length > 0 || router.built().some((e) => !!e.live);
+}
+/**
+* The console's routes over `router`: every data request reads the env its `?env=` picks (a 400 before any provider
+* call when that fails), /api/mode describes it, and diagnostics act on it.
+*/
+function registerRoutes(app, router) {
+	const multi = router.names.length > 0;
+	/**
+	* Resolves the request's env and RunSource (live: as the signed-in user, recorded) and sends the handler's result;
+	* `gzipped`: compressed when the browser accepts it (the runs and items lists, megabytes at 10k items and 90 days of
+	* history). With several envs, a sign-in or connection failure names its fix (E10).
+	*/
+	function serve(req, res, next, route, handle, gzipped = false) {
+		const ws = router.pick(req);
+		if ("error" in ws) {
+			res.status(ws.status).json({ error: ws.error });
+			return;
+		}
+		const { live, store, profile } = ws;
+		const hinted = (message, status) => multi && profile ? withLoginHint(message, status, profile) : message;
+		const session = live && store ? new Session({
+			id: newSessionId(),
+			route,
+			query: {
+				...req.query,
+				...req.params
+			},
+			authMode: live.auth,
+			user: header(req, "x-forwarded-email")
+		}) : void 0;
+		/** A thrown failure: with several envs, a sign-in or connection failure is answered with its fix; anything else is a bug. */
+		const failed = (e) => {
+			const { status, message } = e instanceof SourceError ? {
+				status: e.status,
+				message: e.message
+			} : apiErrorParts(e);
+			const signIn = multi && !!profile && isSignInOrConnectionFailure(status, message);
+			const answer = signIn ? status === 401 || status === 403 ? status : 502 : 500;
+			if (session) store?.add(session.finish({
+				status: answer,
+				error: e
+			}));
+			if (signIn) res.status(answer).json({ error: hinted(message, status) });
+			else next(e);
+		};
+		let source;
+		try {
+			source = ws.provider.forRequest(req, session);
+		} catch (e) {
+			failed(e);
+			return;
+		}
+		if ("error" in source) {
+			if (session) store?.add(session.finish({
+				status: source.status,
+				error: source.status >= 500 ? source.error : void 0
+			}));
+			res.status(source.status).json({ error: hinted(source.error, source.status) });
+			return;
+		}
+		handle(source).then((result) => {
+			const err = result.body?.error;
+			if (session) {
+				const error = result.status >= 500 ? (typeof err === "string" ? err : void 0) ?? `HTTP ${result.status}` : void 0;
+				store?.add(session.finish({
+					status: result.status,
+					body: result.body,
+					error
+				}));
+			}
+			const body = multi && result.status >= 400 && typeof err === "string" ? {
+				...result.body,
+				error: hinted(err, result.status)
+			} : result.body;
+			if (gzipped) sendJson(req, res, result.status, body);
+			else res.status(result.status).json(body);
+		}).catch(failed);
+	}
+	app.get("/api/mode", (req, res, next) => {
+		const { env, envs } = router.modeFor(req);
+		env.mode(header(req, "x-forwarded-email"), req).then((mode) => res.json({
+			...mode,
+			...envs ? { envs } : {}
+		})).catch(next);
+	});
+	app.get("/api/runs", (req, res, next) => {
+		serve(req, res, next, "/api/runs", (source) => listRuns(source, req.query), true);
+	});
+	app.get("/api/runs/:id", (req, res, next) => {
+		serve(req, res, next, "/api/runs/:id", (source) => getRun(source, req.params.id, req.query));
+	});
+	app.get("/api/runs/:id/log", (req, res, next) => {
+		serve(req, res, next, "/api/runs/:id/log", (source) => taskLog(source, req.params.id, req.query));
+	});
+	app.get("/api/items", (req, res, next) => {
+		serve(req, res, next, "/api/items", (source) => listItems(source, req.query), true);
+	});
+	app.get("/api/items/:type/:id", (req, res, next) => {
+		serve(req, res, next, "/api/items/:type/:id", (source) => getItem(source, req.params.type, req.params.id));
+	});
+	if (hasDiagnostics(router)) registerDiag(app, { pick: (req) => {
+		const ws = router.pick(req);
+		if ("error" in ws) return ws;
+		if (!ws.live || !ws.store) return {
+			status: 404,
+			error: "Capture is available in live mode only"
+		};
+		return {
+			provider: ws.live,
+			store: ws.store,
+			env: ws.env,
+			name: ws.name,
+			profile: ws.profile
+		};
+	} });
+	else registerNoDiag(app);
+}
+
+//#endregion
 //#region server/server.ts
-const provider = selectRunSource(process.env);
-const live = provider.kind === "live" ? provider : void 0;
-/** Live mode records every request (calls, diagnostics, errors) for GET /api/diag/capture. */
-const store = live ? new CaptureStore(readCaptureLimits(process.env)) : void 0;
-if (store) {
+const dropped = dropAmbientCredentials(process.env);
+if (dropped.length) console.log(`JOBS_CONSOLE_ENVS is set: ignoring ${dropped.join(", ")}; each env reads its own CLI profile`);
+const router = createEnvRouter(process.env);
+if (hasDiagnostics(router)) {
+	const record = (p) => {
+		for (const env of router.built()) env.store?.addProcess(p);
+	};
 	process.on("unhandledRejection", (reason) => {
 		const e = reason instanceof Error ? reason : new Error(String(reason));
-		store.addProcess({
+		record({
 			kind: "unhandledRejection",
 			message: e.message,
 			stack: e.stack
@@ -238609,136 +239043,18 @@ if (store) {
 		console.error("Unhandled rejection", reason);
 	});
 	process.on("uncaughtExceptionMonitor", (e) => {
-		store.addProcess({
+		record({
 			kind: "uncaughtException",
 			message: e.message,
 			stack: e.stack
 		});
 	});
 }
-const header = (req, name) => {
-	const v = req.headers[name];
-	return (Array.isArray(v) ? v[0] : v) || void 0;
-};
-/**
-* Resolves the request's RunSource (live: as the signed-in user, recorded) and sends the handler's result; `gzipped`:
-* compressed when the browser accepts it (the runs and items lists, megabytes at 10k items and 90 days of history).
-*/
-function serve(req, res, next, route, handle, gzipped = false) {
-	const session = live && store ? new Session({
-		id: newSessionId(),
-		route,
-		query: {
-			...req.query,
-			...req.params
-		},
-		authMode: live.auth,
-		user: header(req, "x-forwarded-email")
-	}) : void 0;
-	const source = provider.forRequest(req, session);
-	if ("error" in source) {
-		if (session) store?.add(session.finish({
-			status: source.status,
-			error: source.status >= 500 ? source.error : void 0
-		}));
-		res.status(source.status).json({ error: source.error });
-		return;
-	}
-	handle(source).then((result) => {
-		if (session) {
-			const error = result.status >= 500 ? result.body?.error ?? `HTTP ${result.status}` : void 0;
-			store?.add(session.finish({
-				status: result.status,
-				body: result.body,
-				error
-			}));
-		}
-		if (gzipped) sendJson(req, res, result.status, result.body);
-		else res.status(result.status).json(result.body);
-	}).catch((e) => {
-		if (session) store?.add(session.finish({
-			status: 500,
-			error: e
-		}));
-		next(e);
-	});
-}
-const mode = {
-	source: provider.kind,
-	auth: provider.auth,
-	capture: !!store
-};
-/**
-* Which workspace the top bar names. Deployed: DATABRICKS_HOST (set by Databricks Apps, sometimes without a scheme).
-* Local: the CLI profile's host. Replay: the capture's workspace. Mock: none.
-*/
-let workspace;
-async function monitoredWorkspace() {
-	if (provider.kind === "replay") return { workspace: provider.file?.workspace?.host || void 0 };
-	if (provider.kind !== "live") return {};
-	const env = process.env.DATABRICKS_HOST;
-	if (env) return { workspace: (/^https?:\/\//.test(env) ? new URL(env) : new URL(`https://${env}`)).origin };
-	return {
-		workspace: await resolveDefaultHost(),
-		profile: process.env.DATABRICKS_CONFIG_PROFILE || void 0
-	};
-}
-/** The SDK default chain's own identity: the CLI login locally, the app's service principal on Databricks Apps. Cached; retried after a failure. */
-let defaultIdentity;
-function selfName() {
-	defaultIdentity ??= createSdkApi({}).me().then((u) => (u.userName?.includes("@") ? u.userName : u.displayName || u.userName) || void 0).catch(() => {
-		defaultIdentity = void 0;
-	});
-	return defaultIdentity;
-}
-/** Who is looking, and (when different) who the APIs are called as. See DataMode.user / readAs. */
-async function identity(viewer) {
-	if (provider.kind === "replay") return { user: provider.file?.workspace?.user || void 0 };
-	if (provider.kind !== "live") return {};
-	if (!viewer) return { user: await selfName() };
-	return provider.auth === "app" ? {
-		user: viewer,
-		readAs: await selfName()
-	} : { user: viewer };
-}
 createApp({
 	plugins: [server()],
 	onPluginsReady(appkit) {
 		appkit.server.extend((app) => {
-			app.get("/api/mode", (req, res, next) => {
-				const history = provider.history ? provider.history(req).catch(() => void 0) : Promise.resolve(void 0);
-				Promise.all([
-					workspace ??= monitoredWorkspace(),
-					identity(header(req, "x-forwarded-email")),
-					history
-				]).then(([ws, who, h]) => res.json({
-					...mode,
-					...ws,
-					...who,
-					...h ? { history: h } : {}
-				})).catch(next);
-			});
-			app.get("/api/runs", (req, res, next) => {
-				serve(req, res, next, "/api/runs", (source) => listRuns(source, req.query), true);
-			});
-			app.get("/api/runs/:id", (req, res, next) => {
-				serve(req, res, next, "/api/runs/:id", (source) => getRun(source, req.params.id, req.query));
-			});
-			app.get("/api/runs/:id/log", (req, res, next) => {
-				serve(req, res, next, "/api/runs/:id/log", (source) => taskLog(source, req.params.id, req.query));
-			});
-			app.get("/api/items", (req, res, next) => {
-				serve(req, res, next, "/api/items", (source) => listItems(source, req.query), true);
-			});
-			app.get("/api/items/:type/:id", (req, res, next) => {
-				serve(req, res, next, "/api/items/:type/:id", (source) => getItem(source, req.params.type, req.params.id));
-			});
-			if (live && store) registerDiag(app, {
-				provider: live,
-				store,
-				env: process.env
-			});
-			else registerNoDiag(app);
+			registerRoutes(app, router);
 		});
 	}
 }).catch(console.error);
