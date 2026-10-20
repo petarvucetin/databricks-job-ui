@@ -36,9 +36,11 @@ variables:
     description: "App config (command + env) of the dev / stg / prod targets"
     default: {}
   # The dev / stg / prod app resources: none by default (history from the API).
-  # `deploy.ps1 -Warehouse <id>` turns on system-tables history for one deploy: it writes both variables to the
-  # gitignored .databricks/bundle/<target>/variable-overrides.json, adding the sql-warehouse resource and the
+  # `deploy.ps1 -Warehouse <id>` turns on system-tables history (later deploys keep the running app's warehouse;
+  # -NoWarehouse removes it). For each deploy it writes both variables to the gitignored, temporary
+  # .databricks/bundle/<target>/variable-overrides.json, adding the sql-warehouse resource and the
   # DATABRICKS_WAREHOUSE_ID entry (value_from: sql-warehouse) together. No warehouse id is committed.
+  # A plain `databricks bundle deploy -t <target>` has neither, so it removes a running app's warehouse.
   app_resources:
     type: complex
     description: "App resources of the dev / stg / prod targets"
