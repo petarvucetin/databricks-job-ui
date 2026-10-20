@@ -39,6 +39,18 @@ function causeChain(e: unknown): string {
   return parts.length ? ` (cause: ${parts.join(' <- ')})` : '';
 }
 
+/** SDK credential failures ("default auth: ...", "databricks-cli: cannot get access token") and unreachable workspaces. */
+const SIGN_IN_OR_CONNECTION =
+  /default auth|cannot configure default credentials|cannot get access token|failed to retrieve token|invalid_grant|refresh token|fetch failed|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|ECONNRESET/i;
+
+/**
+ * A sign-in or connection failure (expired or missing CLI login, refused token, unreachable workspace) rather than a
+ * fault in one request: 401/403 (as toSourceError keeps them), or an SDK credential or network error by its message.
+ */
+export function isSignInOrConnectionFailure(status: number | undefined, message: string): boolean {
+  return status === 401 || status === 403 || SIGN_IN_OR_CONNECTION.test(message);
+}
+
 /** SDK failures as SourceError: auth stays 401/403, the rest is a bad gateway. With `lookup`, a missing or invalid id is 404. */
 export function toSourceError(e: unknown, lookup = false): SourceError {
   if (e instanceof SourceError) return e;

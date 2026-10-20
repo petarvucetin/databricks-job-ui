@@ -67,6 +67,9 @@ export function buildCapture(input: {
   /** Workspace URL; default DATABRICKS_HOST. */
   host?: string;
   user?: string;
+  /** The env (dev / stg / prod) and CLI profile recorded from; written to `workspace` when given. */
+  envName?: string;
+  profile?: string;
   sessions: SessionRecord[];
   clientErrors: ClientErrorRecord[];
   process: ProcessRecord[];
@@ -79,19 +82,24 @@ export function buildCapture(input: {
     createdAt: (input.now ?? new Date()).toISOString(),
     app: input.app ?? appInfo(input.env),
     config: captureConfig(input.env, input.authMode),
-    workspace: { host: input.host ?? input.env.DATABRICKS_HOST, user: input.user },
+    workspace: {
+      host: input.host ?? input.env.DATABRICKS_HOST,
+      user: input.user,
+      ...(input.envName ? { env: input.envName } : {}),
+      ...(input.profile ? { profile: input.profile } : {}),
+    },
     sessions: input.sessions,
     clientErrors: input.clientErrors,
     process: input.process,
   };
 }
 
-/** jobs-console-capture-<host>-<yyyymmdd-hhmm>.json.gz, UTC. */
-export function captureFileName(host: string | undefined, at: Date = new Date()): string {
+/** jobs-console-capture-[<env>-]<host>-<yyyymmdd-hhmm>.json.gz, UTC. */
+export function captureFileName(host: string | undefined, at: Date = new Date(), env?: string): string {
   const h = (host ?? 'local').replace(/^https?:\/\//, '').replace(/\/.*$/, '').toLowerCase().replace(/[^a-z0-9.-]+/g, '-') || 'local';
   const p = (n: number) => String(n).padStart(2, '0');
   const stamp = `${at.getUTCFullYear()}${p(at.getUTCMonth() + 1)}${p(at.getUTCDate())}-${p(at.getUTCHours())}${p(at.getUTCMinutes())}`;
-  return `jobs-console-capture-${h}-${stamp}.json.gz`;
+  return `jobs-console-capture-${env ? `${env}-` : ''}${h}-${stamp}.json.gz`;
 }
 
 const gzipAsync = promisify(gzip);

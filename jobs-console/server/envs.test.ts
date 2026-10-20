@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { envRecord, parseEnvs, readEnvLabel } from './envs';
+import { dropAmbientCredentials, envRecord, parseEnvs, readEnvLabel } from './envs';
 
 describe('parseEnvs', () => {
   it('sorts into canonical order and defaults profile to the name', () => {
@@ -73,5 +73,39 @@ describe('readEnvLabel', () => {
 
   it('returns undefined when unset', () => {
     expect(readEnvLabel({})).toBeUndefined();
+  });
+});
+
+describe('dropAmbientCredentials (multi-env)', () => {
+  const ambient = () => ({
+    DATABRICKS_HOST: 'h',
+    DATABRICKS_TOKEN: 't',
+    DATABRICKS_CONFIG_PROFILE: 'x',
+    DATABRICKS_WAREHOUSE_ID: 'w0',
+    JOBS_CONSOLE_DATA: 'live',
+  });
+
+  it('removes host, token and warehouse when JOBS_CONSOLE_ENVS is set, and names them', () => {
+    const env: Record<string, string | undefined> = { ...ambient(), JOBS_CONSOLE_ENVS: 'dev,prod' };
+    expect(dropAmbientCredentials(env)).toEqual(['DATABRICKS_HOST', 'DATABRICKS_TOKEN', 'DATABRICKS_WAREHOUSE_ID']);
+    expect(env).toEqual({ DATABRICKS_CONFIG_PROFILE: 'x', JOBS_CONSOLE_DATA: 'live', JOBS_CONSOLE_ENVS: 'dev,prod' });
+  });
+
+  it('keeps the profile (AppKit signs in with it; it never overrides an explicit one)', () => {
+    const env: Record<string, string | undefined> = { DATABRICKS_CONFIG_PROFILE: 'x', JOBS_CONSOLE_ENVS: 'dev' };
+    expect(dropAmbientCredentials(env)).toEqual([]);
+    expect(env.DATABRICKS_CONFIG_PROFILE).toBe('x');
+  });
+
+  it('names only what was set', () => {
+    const env: Record<string, string | undefined> = { DATABRICKS_HOST: 'h', JOBS_CONSOLE_ENVS: 'dev' };
+    expect(dropAmbientCredentials(env)).toEqual(['DATABRICKS_HOST']);
+    expect(dropAmbientCredentials({ JOBS_CONSOLE_ENVS: 'dev' })).toEqual([]);
+  });
+
+  it('leaves a single-workspace env alone', () => {
+    const env: Record<string, string | undefined> = ambient();
+    expect(dropAmbientCredentials(env)).toEqual([]);
+    expect(env).toEqual(ambient());
   });
 });

@@ -32,19 +32,40 @@ const header = (req: Request, name: string): string | undefined => {
   return (Array.isArray(v) ? v[0] : v) || undefined;
 };
 
+/** One live env's diagnostics: its provider, capture store and env record; `name` / `profile` go into the capture. */
+export interface DiagEnv {
+  provider: LiveProvider;
+  store: CaptureStore;
+  env: Record<string, string | undefined>;
+  name?: string;
+  profile?: string;
+}
+
+/** The env a diagnostics request acts on, or the status to refuse it with (no or unknown env; a non-live env). */
+export type DiagPick = (req: Request) => DiagEnv | { status: number; error: string };
+
 /**
  * Live mode only. GET /api/diag/capture downloads the capture (gzipped JSON); GET /api/diag/sweep?days=N runs a wide
  * collection first and downloads the capture with it as the newest session; POST /api/diag/client-error stores a
- * browser error. Everything is scoped to the requester.
+ * browser error. Every route picks its env first; everything is scoped to the requester and that env.
  */
-export function registerDiag(app: Application, deps: { provider: LiveProvider; store: CaptureStore; env: Record<string, string | undefined> }): void {
-  const { provider, store, env } = deps;
-  const sweepLimits = readSweepLimits(env);
+export function registerDiag(app: Application, deps: { pick: DiagPick }): void {
+  const { pick } = deps;
+  /** `${env name}|${userKey}` of the sweeps running. */
   const sweeping = new Set<string>();
-  let host: Promise<string | undefined> | undefined;
-  const hostOf = () => (host ??= env.DATABRICKS_HOST ? Promise.resolve(env.DATABRICKS_HOST) : resolveDefaultHost(env.DATABRICKS_CONFIG_PROFILE));
+  /** Workspace host per env name, looked up once. */
+  const hosts = new Map<string, Promise<string | undefined>>();
+  const hostOf = ({ name, env }: DiagEnv): Promise<string | undefined> => {
+    let host = hosts.get(name ?? '');
+    if (!host) {
+      host = env.DATABRICKS_HOST ? Promise.resolve(env.DATABRICKS_HOST) : resolveDefaultHost(env.DATABRICKS_CONFIG_PROFILE);
+      hosts.set(name ?? '', host);
+    }
+    return host;
+  };
 
-  async function sendCapture(req: Request, res: Response): Promise<void> {
+  async function sendCapture(req: Request, res: Response, d: DiagEnv): Promise<void> {
+    const { provider, store } = d;
     const id = provider.identify(req);
     if ('error' in id) {
       res.status(id.status).json({ error: id.error });
@@ -52,27 +73,35 @@ export function registerDiag(app: Application, deps: { provider: LiveProvider; s
     }
     const user = await id.user().catch(() => header(req, 'x-forwarded-email'));
     const dev = id.userKey === 'dev';
-    const workspaceHost = await hostOf();
+    const workspaceHost = await hostOf(d);
     const file = buildCapture({
-      env,
+      env: d.env,
       host: workspaceHost,
       authMode: provider.auth,
       user,
+      envName: d.name,
+      profile: d.profile,
       sessions: visibleTo(store.sessions(), user, dev),
       clientErrors: visibleTo(store.clientErrors(), user, dev),
       process: store.process(),
     });
     const body = await gzipCapture(file);
     res.setHeader('Content-Type', 'application/gzip');
-    res.setHeader('Content-Disposition', `attachment; filename="${captureFileName(workspaceHost)}"`);
+    res.setHeader('Content-Disposition', `attachment; filename="${captureFileName(workspaceHost, new Date(), d.name)}"`);
     res.setHeader('Cache-Control', 'no-store');
     res.status(200).send(body);
   }
 
-  const guarded = (route: string, fn: (req: Request, res: Response) => Promise<void>) => (req: Request, res: Response) => {
-    fn(req, res).catch((e: unknown) => {
+  /** Picks the env (answering a refusal), then runs `fn`; a failure is recorded into that env's store and answered 500. */
+  const guarded = (route: string, fn: (req: Request, res: Response, d: DiagEnv) => Promise<void>) => (req: Request, res: Response) => {
+    const d = pick(req);
+    if ('error' in d) {
+      res.status(d.status).json({ error: d.error });
+      return;
+    }
+    fn(req, res, d).catch((e: unknown) => {
       const err = e instanceof Error ? e : new Error(String(e));
-      store.addProcess({ kind: 'serverError', message: err.message, stack: err.stack, route });
+      d.store.addProcess({ kind: 'serverError', message: err.message, stack: err.stack, route });
       console.error(`[diag] ${route} failed`, err);
       if (!res.headersSent) res.status(500).json({ error: err.message });
     });
@@ -82,7 +111,8 @@ export function registerDiag(app: Application, deps: { provider: LiveProvider; s
 
   app.get(
     SWEEP_ROUTE,
-    guarded(SWEEP_ROUTE, async (req, res) => {
+    guarded(SWEEP_ROUTE, async (req, res, d) => {
+      const { provider, store } = d;
       const days = parseSweepDays(req.query.days);
       if (days === undefined) {
         res.status(400).json({ error: 'days must be a whole number from 1 to 180' });
@@ -93,33 +123,39 @@ export function registerDiag(app: Application, deps: { provider: LiveProvider; s
         res.status(id.status).json({ error: id.error });
         return;
       }
-      if (sweeping.has(id.userKey)) {
+      const key = `${d.name ?? ''}|${id.userKey}`;
+      if (sweeping.has(key)) {
         res.status(409).json({ error: 'A sweep is already running for you' });
         return;
       }
-      sweeping.add(id.userKey);
+      sweeping.add(key);
       const session = new Session({ id: newSessionId(), route: SWEEP_ROUTE, query: { ...req.query }, authMode: provider.auth, user: header(req, 'x-forwarded-email') });
       try {
-        const out = await runSweep({ api: id.api, user: id.user, session, days, ...sweepLimits, concurrency: provider.limits.concurrency, history: provider.historyConfig });
+        const out = await runSweep({ api: id.api, user: id.user, session, days, ...readSweepLimits(d.env), concurrency: provider.limits.concurrency, history: provider.historyConfig });
         store.add(session.finish({ status: 200, body: out }));
       } catch (e) {
         // A failed sweep is still worth bringing home: it goes in as the newest session, with its error.
         store.add(session.finish({ status: 502, error: e }));
       } finally {
-        sweeping.delete(id.userKey);
+        sweeping.delete(key);
       }
-      await sendCapture(req, res);
+      await sendCapture(req, res, d);
     })
   );
 
   app.post('/api/diag/client-error', (req, res) => {
+    const d = pick(req);
+    if ('error' in d) {
+      res.status(d.status).json({ error: d.error });
+      return;
+    }
     const e = clientErrorFrom(req.body);
     if (!e) {
       res.status(400).json({ error: 'body must be JSON with a message' });
       return;
     }
     const user = header(req, 'x-forwarded-email');
-    store.addClientError({ ...e, receivedAt: Date.now(), ...(user ? { user } : {}) });
+    d.store.addClientError({ ...e, receivedAt: Date.now(), ...(user ? { user } : {}) });
     res.status(204).end();
   });
 }

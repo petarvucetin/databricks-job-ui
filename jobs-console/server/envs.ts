@@ -60,6 +60,25 @@ export function envRecord(
   return out;
 }
 
+/**
+ * Process-wide target and credentials each env's own profile replaces. DATABRICKS_CONFIG_PROFILE stays: the SDK never
+ * lets it override an explicit profile, and AppKit's own startup client (currentUser.me() in createApp) signs in with it.
+ */
+const AMBIENT = ['DATABRICKS_HOST', 'DATABRICKS_TOKEN', 'DATABRICKS_WAREHOUSE_ID'] as const;
+
+/**
+ * Multi-env (JOBS_CONSOLE_ENVS set): deletes the ambient DATABRICKS_HOST / _TOKEN / _WAREHOUSE_ID from `env`
+ * (process.env: the SDK's Config reads environment variables before the profile file, so a host or token there would
+ * win over an env's profile). Returns the names it deleted; [] when single-workspace, which is left alone. Throws on a
+ * bad JOBS_CONSOLE_ENVS, as parseEnvs does.
+ */
+export function dropAmbientCredentials(env: Record<string, string | undefined>): string[] {
+  if (parseEnvs(env.JOBS_CONSOLE_ENVS, env.JOBS_CONSOLE_WAREHOUSES).length === 0) return [];
+  const dropped = AMBIENT.filter((k) => env[k] !== undefined);
+  for (const k of dropped) delete env[k];
+  return dropped;
+}
+
 /** The deployed env label from JOBS_CONSOLE_ENV; an invalid value warns and yields undefined. */
 export function readEnvLabel(env: Record<string, string | undefined>): EnvName | undefined {
   const v = env.JOBS_CONSOLE_ENV?.trim();
