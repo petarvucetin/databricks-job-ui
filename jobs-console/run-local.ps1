@@ -39,18 +39,25 @@ if ($PSCmdlet.ParameterSetName -eq 'Envs') {
   $databricks = Get-Command databricks -ErrorAction SilentlyContinue
   if (-not $databricks) { throw 'The Databricks CLI is not on PATH.' }
   $startup = ''
-  $failed = @()
   foreach ($e in $list) {
     $ok = $false
-    $out = [IO.Path]::GetTempFileName()
-    $err = [IO.Path]::GetTempFileName()
+    $p = $null
     try {
-      $p = Start-Process -FilePath $databricks.Source -ArgumentList @('auth', 'token', '--profile', $e.Profile) -PassThru -WindowStyle Hidden -RedirectStandardOutput $out -RedirectStandardError $err
+      # No temp files: the token goes to a pipe that is read and dropped. Bounded to 30 s.
+      $psi = New-Object Diagnostics.ProcessStartInfo
+      $psi.FileName = $databricks.Source
+      $psi.Arguments = "auth token --profile `"$($e.Profile)`""
+      $psi.UseShellExecute = $false
+      $psi.CreateNoWindow = $true
+      $psi.RedirectStandardOutput = $true
+      $psi.RedirectStandardError = $true
+      $p = [Diagnostics.Process]::Start($psi)
+      $null = $p.StandardOutput.ReadToEndAsync()
+      $null = $p.StandardError.ReadToEndAsync()
       if ($p.WaitForExit(30000)) { $ok = ($p.ExitCode -eq 0) } else { try { $p.Kill() } catch { } }
-    } catch { $ok = $false } finally { Remove-Item $out, $err -ErrorAction SilentlyContinue }
+    } catch { $ok = $false } finally { if ($p) { $p.Dispose() } }
     if ($ok) { if (-not $startup) { $startup = $e.Profile } }
     else {
-      $failed += $e
       Write-Warning "Login for '$($e.Name)' (profile $($e.Profile)) failed: run  databricks auth login --profile $($e.Profile)"
     }
   }
