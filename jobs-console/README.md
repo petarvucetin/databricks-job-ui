@@ -79,6 +79,7 @@ cd jobs-console
 
 - It reads Databricks as you (the CLI profile), so you see every job and pipeline you can see in the workspace UI.
 - Options: `-Port 8001` and `-Data mock`.
+- Several workspaces (dev / stg / prod) in one console: `-Envs` instead of `-Profile` (see [Three environments](#three-environments-dev--stg--prod)).
 - The Capture menu (download, and the 90-day sweep) works locally too.
 
 If you'd rather not use the script, this does the same by hand:
@@ -162,6 +163,109 @@ $env:JOBS_CONSOLE_DATA='live'; npm run dev   # live data from the workspace in .
 - Press `L` in the app to show the numbered reference rows used in design reviews.
 - The npm scripts work in any shell: environment variables are set through `scripts/with-env.mjs`, not `NAME=value` syntax (which fails in Command Prompt with "'NODE_ENV' is not recognized"). Never add a project `.npmrc`: the bundle uploads it, and a Windows-only setting there breaks `npm install` on the Linux Databricks Apps runtime.
 
+## Three environments (dev / stg / prod)
+
+The client has three workspaces: dev, stg and prod. On a laptop one console serves all three, with a dev · stg · prod switch right after the "Jobs console" title. On Databricks each workspace runs its own `jobs-console` app, labeled with its env and without a switch.
+
+- **dev** has no color. **stg** has an amber edge along the top of the header and an amber label. **prod** has a red edge and a red label.
+- The browser tab title names the env: `DEV · Jobs console`, `STG · Jobs console`, `PROD · Jobs console`.
+- The env is in the URL (`?env=prod`), so a bookmark opens the same workspace. Switching env reloads the page and keeps the current tab (Jobs & ETL or Runs). Filters, search and the open run start fresh.
+
+### Laptop: one console, three workspaces
+
+Sign in once per machine, one CLI profile per env:
+
+```powershell
+databricks auth login --host https://<dev workspace url>  --profile dev
+databricks auth login --host https://<stg workspace url>  --profile stg
+databricks auth login --host https://<prod workspace url> --profile prod
+```
+
+Then run:
+
+```powershell
+cd jobs-console
+.\run-local.ps1 -Envs 'dev,stg,prod'                                   # http://127.0.0.1:8000, Ctrl+C to stop
+.\run-local.ps1 -Envs 'dev=gov-dev,stg=gov-stg,prod=gov'               # name=profile: use profiles with other names
+.\run-local.ps1 -Envs 'dev,stg,prod' -Warehouse 'dev=<id>,prod=<id>'   # system-tables run history per env
+```
+
+- A bare name uses the CLI profile of the same name; `name=profile` maps an env to another profile. List any subset of the three; the switch shows only those.
+- `-Warehouse` takes the same per-env form. An env without a warehouse reads run history from the API.
+- `-Envs` and `-Profile` can't be combined. `-Profile <profile>` still runs one workspace with no switch and no label, as before.
+- Before starting, the script checks each env's login. For one that fails it prints `databricks auth login --profile <profile>`, and that env shows the same fix in the app while the others work. If no login works, it stops.
+- `-Data mock -Envs 'dev,stg,prod'` serves different mock data per env (names start with `dev_`, `stg_`, `prod_`), to check the switch without a workspace. It still needs one working login to start.
+- From a Command Prompt tab: `powershell -ExecutionPolicy Bypass -File .\run-local.ps1 -Envs "dev,stg,prod"`.
+
+### Deploy: one app per workspace
+
+`deploy.ps1` deploys the prebuilt `deploy/` folder to one env's workspace. It needs only the Databricks CLI (no Node) and a login for the profile named exactly like the env (`dev`, `stg` or `prod`).
+
+```powershell
+cd jobs-console
+.\deploy.ps1 -Env prod                    # asks you to type "prod" after showing the workspace
+.\deploy.ps1 -Env prod -Warehouse <id>    # also turns on system-tables run history
+```
+
+It:
+
+1. Checks the `prod` login and shows the workspace host, your identity, whether `jobs-console` already exists there, and the warehouse it will use. You type the env name to continue; nothing is changed before that.
+2. Adopts an existing `jobs-console` app that this target doesn't manage yet (`bundle deployment bind`), keeping its service principal, grants and URL. A workspace without one gets a new app.
+3. Runs `bundle deploy` and `bundle run app` for the `prod` target, which labels the app "prod".
+4. Prints the app URL and the service principal that needs CAN_VIEW (see Grants below).
+
+Options:
+
+- `-Warehouse <id>`: deploy with that SQL warehouse (system-tables run history). The id is used for this deploy only and isn't written to the repo.
+- No `-Warehouse`: keeps the running app's warehouse, if it has one.
+- `-NoWarehouse`: removes the running app's warehouse (run history from the API).
+- `-Yes` skips the typed confirmation. `-WhatIf` prints the bind / deploy / run commands without running them.
+- From a Command Prompt tab: `powershell -ExecutionPolicy Bypass -File .\deploy.ps1 -Env prod`.
+
+### Plain-CLI fallback
+
+The same deploy without the script. Check first that the profile points at the right workspace, because `databricks.yml` pins no host for these targets: the profile decides where the app goes.
+
+```powershell
+cd jobs-console
+databricks auth describe --profile prod                                       # host must be the prod workspace
+databricks apps get jobs-console --profile prod                               # does the app already exist?
+databricks bundle deployment bind app jobs-console -t prod --profile prod     # only if it exists and this target doesn't manage it yet
+databricks bundle deploy -t prod --profile prod
+databricks bundle run app -t prod --profile prod
+```
+
+- Bind once per workspace. `databricks bundle summary -t prod --profile prod` shows whether the target already manages the app.
+- Always use the same name for `-t` and `--profile`. `-t prod --profile dev` deploys a "prod"-labeled app into dev.
+- **A plain `bundle deploy` removes the app's warehouse** (run history falls back to the API), because the warehouse is supplied only by `deploy.ps1`. Use `deploy.ps1`, or re-add it afterwards with `.\deploy.ps1 -Env prod -Warehouse <id>`.
+
+### Migrating from the `gov` target
+
+The `gov` target is gone; `dev`, `stg` and `prod` replace it. The workspace that `gov` deployed to is one of the three. Log in to it under that env's profile name, then deploy with the matching env:
+
+```powershell
+databricks auth login --host https://<workspace url> --profile prod   # the workspace the gov target used
+.\deploy.ps1 -Env prod
+```
+
+The script finds the existing `jobs-console` app and adopts it, so its service principal, grants and URL stay. It also keeps the app's warehouse. The old `gov` profile can stay for `run-local.ps1 -Profile gov`, or map it with `-Envs 'prod=gov'`.
+
+### Grants
+
+Each workspace's app has its own service principal, so grant in each workspace:
+
+- **CAN_VIEW** on the jobs and pipelines the app should show, for the service principal `deploy.ps1` prints (or `databricks apps get jobs-console --profile <env> -o json`, field `service_principal_client_id`). A group that already has that access works too.
+- **CAN_USE** on the SQL warehouse, if the app has one. The `sql-warehouse` app resource grants it on deploy. For system-tables history it also needs the `system.lakeflow` grants in [Run history from system tables](#run-history-from-system-tables).
+
+On the laptop the console reads as you (each env's CLI profile), so it shows what you can see in each workspace.
+
+### First real deploy: check
+
+The first deploy to each workspace confirms how the CLI combines the target's app config with `app.yaml`:
+
+- Open the app: the header shows the env label (`PROD`, with the red edge) and the tab title is `PROD · Jobs console`. No label means the env setting didn't reach the app.
+- `databricks bundle summary -t prod --profile prod` shows no pending change for the app.
+
 ## Code Quality
 
 There are a few commands to help you with code quality:
@@ -214,16 +318,11 @@ The service principal sees only the jobs and pipelines it has **CAN_VIEW** on. F
 
 ### Another workspace (e.g. AWS GovCloud)
 
-The `gov` target deploys the same app to the workspace of the `gov` CLI profile. The CLI does not substitute variables in `workspace.host`, so the host comes from the profile, and `--var gov_host=<url>` is informational only.
+The `dev`, `stg` and `prod` targets deploy the same `deploy/` folder to the client's GovCloud workspaces, one app per workspace, labeled with the env. They replace the old `gov` target. Use `.\deploy.ps1 -Env <env>`; see [Three environments](#three-environments-dev--stg--prod) for the deploy, the plain-CLI fallback and migrating from `gov`.
 
-```powershell
-$url = 'https://dbc-xxxxxxxx-xxxx.cloud.databricks.us'
-databricks auth login --host $url --profile gov
-databricks bundle deploy -t gov --profile gov
-databricks bundle run app -t gov --profile gov
-```
+These targets pin no host: the CLI does not substitute variables in `workspace.host`, so the workspace comes from the CLI profile named like the env (`databricks auth login --host https://<workspace url> --profile prod`).
 
-Logs: `databricks apps logs jobs-console --profile gov`, or `<app url>/logz` in the browser (app URL: `databricks apps get jobs-console --profile gov -o json`, field `url`).
+Logs: `databricks apps logs jobs-console --profile <env>`, or `<app url>/logz` in the browser (app URL: `databricks apps get jobs-console --profile <env> -o json`, field `url`).
 
 ### Run history from system tables
 
@@ -231,8 +330,9 @@ Runs before today come from the `system.lakeflow` tables through a serverless SQ
 
 It is opt-in, so existing deploys keep working. To enable it:
 
-- **On Databricks Apps:** in `databricks.yml` uncomment the `sql-warehouse` resource and put a real warehouse id in it; in `app.yaml` uncomment the `DATABRICKS_WAREHOUSE_ID` / `valueFrom: sql-warehouse` entry. Uncomment both together: the env line without the resource breaks the deploy. Then `npm run package`, commit `deploy/`, `databricks bundle deploy` and `databricks bundle run app`.
-- **Locally:** `.\run-local.ps1 -Profile <profile> -Warehouse <id>`, or set `DATABRICKS_WAREHOUSE_ID` in `.env` for dev mode.
+- **On Databricks Apps:** in `databricks.yml` uncomment the `sql-warehouse` resource and put a real warehouse id in it; in `app.yaml` uncomment the `DATABRICKS_WAREHOUSE_ID` / `valueFrom: sql-warehouse` entry. Uncomment both together: the env line without the resource breaks the deploy. Then `npm run package`, commit `deploy/`, `databricks bundle deploy` and `databricks bundle run app`. This is for the `default` target only.
+- **dev / stg / prod targets:** `.\deploy.ps1 -Env <env> -Warehouse <id>`. Nothing to uncomment; later deploys keep the warehouse (see [Deploy: one app per workspace](#deploy-one-app-per-workspace)).
+- **Locally:** `.\run-local.ps1 -Profile <profile> -Warehouse <id>`, with several envs `-Warehouse 'dev=<id>,prod=<id>'`, or set `DATABRICKS_WAREHOUSE_ID` in `.env` for dev mode.
 
 | Variable | Meaning | Default |
 | --- | --- | --- |
