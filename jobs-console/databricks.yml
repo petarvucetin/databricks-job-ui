@@ -28,12 +28,20 @@ resources:
       #       permission: CAN_USE
 
 variables:
-  # Accepted for the documented deploy command, but informational only: the CLI does not interpolate variables in
-  # workspace.host (it parses "${var.gov_host}" literally; https://github.com/databricks/cli/issues/1786), so the
-  # gov target takes its host from the profile: databricks auth login --host <url> --profile gov.
-  gov_host:
-    description: "Workspace URL of the gov target, e.g. https://dbc-1234abcd-5678.cloud.databricks.us"
-    default: ""
+  # The dev / stg / prod app config: command + env, with JOBS_CONSOLE_ENV as the label. Each target sets its own
+  # value below. It spells out the full config, so it doesn't matter whether `config` replaces or merges app.yaml.
+  app_config:
+    type: complex
+    description: "App config (command + env) of the dev / stg / prod targets"
+    default: {}
+  # The dev / stg / prod app resources: none by default (history from the API).
+  # `deploy.ps1 -Warehouse <id>` turns on system-tables history for one deploy: it writes both variables to the
+  # gitignored .databricks/bundle/<target>/variable-overrides.json, adding the sql-warehouse resource and the
+  # DATABRICKS_WAREHOUSE_ID entry (value_from: sql-warehouse) together. No warehouse id is committed.
+  app_resources:
+    type: complex
+    description: "App resources of the dev / stg / prod targets"
+    default: []
 
 targets:
   default:
@@ -41,6 +49,55 @@ targets:
     workspace:
       host: https://adb-7405612029409959.19.azuredatabricks.net
 
-  # AWS GovCloud (us-gov-west-1). Same app, same prebuilt deploy/ folder.
-  # No host here: it comes from --profile gov (see the gov_host note above).
-  gov: {}
+  # AWS GovCloud (us-gov-west-1), one workspace per env. Same app, same prebuilt deploy/ folder, labeled by
+  # JOBS_CONSOLE_ENV. Deploy with .\deploy.ps1 -Env <dev|stg|prod>, which uses the profile of the same name.
+  # No host here: the CLI does not interpolate variables in workspace.host (it parses "${var.x}" literally;
+  # https://github.com/databricks/cli/issues/1786), so each takes its host from the profile:
+  # databricks auth login --host <url> --profile prod.
+  dev:
+    variables:
+      app_config:
+        default:
+          command: ['node', 'server.mjs']
+          env:
+            - { name: NODE_ENV, value: production }
+            - { name: JOBS_CONSOLE_DATA, value: live }
+            - { name: JOBS_CONSOLE_AUTH, value: app }
+            - { name: JOBS_CONSOLE_ENV, value: dev }
+    resources:
+      apps:
+        app:
+          config: ${var.app_config}
+          resources: ${var.app_resources}
+
+  stg:
+    variables:
+      app_config:
+        default:
+          command: ['node', 'server.mjs']
+          env:
+            - { name: NODE_ENV, value: production }
+            - { name: JOBS_CONSOLE_DATA, value: live }
+            - { name: JOBS_CONSOLE_AUTH, value: app }
+            - { name: JOBS_CONSOLE_ENV, value: stg }
+    resources:
+      apps:
+        app:
+          config: ${var.app_config}
+          resources: ${var.app_resources}
+
+  prod:
+    variables:
+      app_config:
+        default:
+          command: ['node', 'server.mjs']
+          env:
+            - { name: NODE_ENV, value: production }
+            - { name: JOBS_CONSOLE_DATA, value: live }
+            - { name: JOBS_CONSOLE_AUTH, value: app }
+            - { name: JOBS_CONSOLE_ENV, value: prod }
+    resources:
+      apps:
+        app:
+          config: ${var.app_config}
+          resources: ${var.app_resources}
