@@ -27,8 +27,38 @@ describe('parseEnvs', () => {
     expect(() => parseEnvs('dev,dev', undefined)).toThrow(/dev.*twice/);
     expect(() => parseEnvs('dev', 'stg=abc')).toThrow(/stg.*not in JOBS_CONSOLE_ENVS/);
     expect(() => parseEnvs('dev', 'abc')).toThrow(/name=id/);
+    expect(() => parseEnvs('dev', 'dev=a,dev=b')).toThrow(/JOBS_CONSOLE_WAREHOUSES: env "dev" is listed twice/);
   });
 });
+
+/** Every SDK credential variable the ambient environment can carry, besides host / token / warehouse. */
+const SDK_CREDENTIALS = {
+  DATABRICKS_AUTH_TYPE: 'pat',
+  DATABRICKS_CLIENT_ID: 'cid',
+  DATABRICKS_CLIENT_SECRET: 'cs',
+  DATABRICKS_ACCOUNT_ID: 'acc',
+  DATABRICKS_USERNAME: 'u',
+  DATABRICKS_PASSWORD: 'p',
+  DATABRICKS_AZURE_RESOURCE_ID: '/subscriptions/x',
+  DATABRICKS_AZURE_LOGIN_APP_ID: 'app',
+  DATABRICKS_GOOGLE_SERVICE_ACCOUNT: 'sa',
+  GOOGLE_CREDENTIALS: '{}',
+  DATABRICKS_METADATA_SERVICE_URL: 'http://127.0.0.1:1',
+  ARM_CLIENT_ID: 'a',
+  ARM_CLIENT_SECRET: 'b',
+  ARM_TENANT_ID: 'c',
+  ARM_ENVIRONMENT: 'usgovernment',
+  ARM_USE_MSI: 'true',
+};
+
+/** Process settings that are not credentials and must survive. */
+const KEPT = {
+  DATABRICKS_CONFIG_PROFILE: 'x',
+  DATABRICKS_CONFIG_FILE: 'C:/cfg',
+  DATABRICKS_APP_PORT: '8001',
+  DATABRICKS_APP_NAME: 'jobs-console',
+  JOBS_CONSOLE_DATA: 'live',
+};
 
 describe('envRecord', () => {
   const base = {
@@ -56,6 +86,26 @@ describe('envRecord', () => {
     const copy = { ...base };
     envRecord(base, { name: 'stg', profile: 'gov-stg', warehouseId: 'w1' });
     expect(base).toEqual(copy);
+  });
+
+  it('drops every other SDK credential variable and keeps the non-credential DATABRICKS_* settings', () => {
+    const out = envRecord({ ...base, ...SDK_CREDENTIALS, ...KEPT }, { name: 'dev', profile: 'gov-dev', warehouseId: 'w1' });
+    expect(out).toEqual({ ...KEPT, DATABRICKS_CONFIG_PROFILE: 'gov-dev', DATABRICKS_WAREHOUSE_ID: 'w1' });
+  });
+
+  it('clears an ambient warehouse when the env has none', () => {
+    const out = envRecord(base, { name: 'dev', profile: 'gov-dev' });
+    expect('DATABRICKS_WAREHOUSE_ID' in out).toBe(false);
+  });
+
+  it("does not carry the other envs' config (captures record the env), but keeps the mock variant", () => {
+    const out = envRecord(
+      { ...base, JOBS_CONSOLE_ENVS: 'dev=gov-dev,prod=gov-prod', JOBS_CONSOLE_WAREHOUSES: 'dev=w1,prod=w2', JOBS_CONSOLE_MOCK_VARIANT: 'dev' },
+      { name: 'dev', profile: 'gov-dev', warehouseId: 'w1' },
+    );
+    expect('JOBS_CONSOLE_ENVS' in out).toBe(false);
+    expect('JOBS_CONSOLE_WAREHOUSES' in out).toBe(false);
+    expect(out.JOBS_CONSOLE_MOCK_VARIANT).toBe('dev');
   });
 });
 
@@ -107,5 +157,19 @@ describe('dropAmbientCredentials (multi-env)', () => {
     const env: Record<string, string | undefined> = ambient();
     expect(dropAmbientCredentials(env)).toEqual([]);
     expect(env).toEqual(ambient());
+  });
+
+  it('removes every other SDK credential variable too, keeping profile, config file and app settings', () => {
+    const env: Record<string, string | undefined> = { ...SDK_CREDENTIALS, ...KEPT, JOBS_CONSOLE_ENVS: 'dev,prod' };
+    expect(dropAmbientCredentials(env).sort()).toEqual(Object.keys(SDK_CREDENTIALS).sort());
+    expect(env).toEqual({ ...KEPT, JOBS_CONSOLE_ENVS: 'dev,prod' });
+  });
+
+  it('leaves a replay alone (one captured workspace), even with JOBS_CONSOLE_ENVS set', () => {
+    const env: Record<string, string | undefined> = { ...ambient(), JOBS_CONSOLE_DATA: 'replay', JOBS_CONSOLE_ENVS: 'dev,prod' };
+    const before = { ...env };
+    expect(dropAmbientCredentials(env)).toEqual([]);
+    expect(env).toEqual(before);
+    expect(dropAmbientCredentials({ JOBS_CONSOLE_DATA: 'replay', JOBS_CONSOLE_ENVS: 'qa' })).toEqual([]);
   });
 });
