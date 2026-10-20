@@ -38,6 +38,12 @@ function Invoke-Cli([string[]]$cliArgs) {
   [pscustomobject]@{ Code = $code; Out = $out; Err = $err }
 }
 
+# A failed Invoke-Cli's message: stderr, or stdout when the CLI wrote its error there.
+function Get-CliError($r) {
+  if ("$($r.Err)".Trim()) { return "$($r.Err)" }
+  "$($r.Out)"
+}
+
 # Runs a CLI command that changes the workspace, streaming its output; -WhatIf only prints it.
 function Invoke-Change([string[]]$cliArgs) {
   $line = "databricks $($cliArgs -join ' ')"
@@ -85,7 +91,7 @@ try {
   $running = $null
   $r = Invoke-Cli (@('apps', 'get', $app, '-o', 'json') + $profileArgs)
   if ($r.Code -eq 0) { $running = $r.Out | ConvertFrom-Json }
-  elseif ("$($r.Err)" -notmatch 'does not exist') { Stop-Deploy "databricks apps get $app failed: $($r.Err)" }
+  elseif ((Get-CliError $r) -notmatch 'does not exist') { Stop-Deploy "databricks apps get $app failed: $(Get-CliError $r)" }
   $wh = Resolve-Warehouse $running $Warehouse $NoWarehouse.IsPresent
 
   Write-Host "Workspace: $wsHost  (profile $Env)"
@@ -102,7 +108,7 @@ try {
   # principal, grants and URL. A missing app is created by the deploy.
   if ($running) {
     $s = Invoke-Cli (@('bundle', 'summary', '-t', $Env, '-o', 'json') + $profileArgs)
-    if ($s.Code -ne 0) { Stop-Deploy "databricks bundle summary failed: $($s.Err)" }
+    if ($s.Code -ne 0) { Stop-Deploy "databricks bundle summary failed: $(Get-CliError $s)" }
     $bound = ($s.Out | ConvertFrom-Json).resources.apps.app
     if (-not $bound.id -or $bound.modified_status -eq 'created') {
       Write-Host "App '$app' exists in $wsHost but target '$Env' doesn't manage it yet: binding it."
@@ -118,7 +124,7 @@ try {
   # entry, so it can't drift from databricks.yml.
   if ($wh.Id) {
     $v = Invoke-Cli (@('bundle', 'validate', '-t', $Env, '-o', 'json') + $profileArgs)
-    if ($v.Code -ne 0) { Stop-Deploy "databricks bundle validate failed: $($v.Err)" }
+    if ($v.Code -ne 0) { Stop-Deploy "databricks bundle validate failed: $(Get-CliError $v)" }
     $config = ($v.Out | ConvertFrom-Json).resources.apps.app.config
     $envList = @($config.env | Where-Object { $_.name -ne 'DATABRICKS_WAREHOUSE_ID' })
     $envList += [pscustomobject]@{ name = 'DATABRICKS_WAREHOUSE_ID'; value_from = 'sql-warehouse' }
@@ -142,7 +148,7 @@ try {
   # 4. Where it is, and who needs access.
   if ($WhatIfPreference) { Write-Host 'What if: then print the app URL and its service principal.'; return }
   $r = Invoke-Cli (@('apps', 'get', $app, '-o', 'json') + $profileArgs)
-  if ($r.Code -ne 0) { Stop-Deploy "databricks apps get $app failed: $($r.Err)" }
+  if ($r.Code -ne 0) { Stop-Deploy "databricks apps get $app failed: $(Get-CliError $r)" }
   $info = $r.Out | ConvertFrom-Json
   $sp = $info.service_principal_name
   if (-not $sp) { $sp = $info.service_principal_client_id }
