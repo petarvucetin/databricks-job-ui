@@ -55,6 +55,14 @@ describe('App tabs', () => {
     expect(screen.getByTestId('runs-page').textContent).toBe('runs ctx=false focus=');
   });
 
+  it('clicking a tab keeps ?env', () => {
+    window.history.replaceState(null, '', '?env=prod&tab=runs');
+    render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Jobs & ETL' }));
+    expect(window.location.search).toContain('env=prod');
+    expect(window.location.search).toContain('tab=jobs');
+  });
+
   it('clicking Runs sets ?tab=runs with replaceState and keeps the Jobs page mounted, hidden', () => {
     window.history.replaceState(null, '', '/?tab=jobs');
     const replace = vi.spyOn(window.history, 'replaceState');

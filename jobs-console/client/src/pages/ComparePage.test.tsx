@@ -36,4 +36,13 @@ describe('ComparePage', () => {
     fireEvent.click(pool[0]);
     expect(window.location.search).toBe('?compare=1,2');
   });
+
+  it('keeps ?env when it writes ?compare=', async () => {
+    window.history.replaceState(null, '', '/?env=prod&compare=1,2');
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve(data) })));
+    const { container } = render(<ComparePage />);
+    await waitFor(() => expect(container.querySelectorAll('.cmpv .chip')).toHaveLength(2));
+    fireEvent.click(container.querySelectorAll('.cmpv .chip .cx')[0]);
+    expect(window.location.search).toBe('?compare=1&env=prod');
+  });
 });

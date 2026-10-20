@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Run, RunsResponse } from '../../../shared/domain/types';
+import { apiUrl } from '../lib/env';
 
 /** One run fetched on its own, and when it arrived. */
 export interface RunOverride {
@@ -55,7 +56,7 @@ export function mergeRuns(data: RunsResponse, loadedAt: number, startedAt: numbe
 }
 
 async function fetchRun(id: number): Promise<Run> {
-  const res = await fetch(`/api/runs/${id}?tzOffset=${new Date().getTimezoneOffset()}`, { signal: AbortSignal.timeout(60000) });
+  const res = await fetch(apiUrl(`/api/runs/${id}?tzOffset=${new Date().getTimezoneOffset()}`), { signal: AbortSignal.timeout(60000) });
   if (!res.ok) {
     const body = (await res.json().catch(() => null)) as { error?: unknown } | null;
     throw new Error(typeof body?.error === 'string' ? `HTTP ${res.status}: ${body.error}` : `HTTP ${res.status}`);

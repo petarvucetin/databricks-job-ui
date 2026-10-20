@@ -6,6 +6,7 @@ import { AttentionPage, type RunsFocus } from './pages/AttentionPage';
 import { ComparePage } from './pages/ComparePage';
 import { JobsPage } from './pages/JobsPage';
 import { TabActiveContext } from './hooks/useTabActive';
+import { pageQuery } from './lib/env';
 
 export default function App() {
   const compare = new URLSearchParams(window.location.search).has('compare');
@@ -24,7 +25,7 @@ function Tabbed({ mode }: { mode: ReturnType<typeof useDataMode> }) {
   const [tab, setTabState] = useState<Tab>(() => (new URLSearchParams(window.location.search).get('tab') === 'jobs' ? 'jobs' : 'runs'));
   const setTab = (t: Tab) => {
     setTabState(t);
-    window.history.replaceState(null, '', `?tab=${t}`);
+    window.history.replaceState(null, '', pageQuery({ tab: t }));
   };
   const data = useRunsData();
   const [focus, setFocus] = useState<RunsFocus>();

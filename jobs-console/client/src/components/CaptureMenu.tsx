@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { apiUrl } from '../lib/env';
 
 const SWEEP_DAYS = 90;
 
@@ -8,7 +9,7 @@ function fileNameOf(res: Response): string {
 }
 
 async function sweepAndDownload(): Promise<void> {
-  const res = await fetch(`/api/diag/sweep?days=${SWEEP_DAYS}`);
+  const res = await fetch(apiUrl(`/api/diag/sweep?days=${SWEEP_DAYS}`));
   if (!res.ok) {
     const body = (await res.json().catch(() => ({}))) as { error?: string };
     throw new Error(body.error ?? `HTTP ${res.status}`);
@@ -64,7 +65,7 @@ export function CaptureMenu() {
       {error && !busy && <span className="capture-error">{error}</span>}
       {open && (
         <div className="capture-menu" role="menu">
-          <a role="menuitem" href="/api/diag/capture" download onClick={() => setOpen(false)}>
+          <a role="menuitem" href={apiUrl('/api/diag/capture')} download onClick={() => setOpen(false)}>
             Download capture
           </a>
           <button type="button" role="menuitem" onClick={sweep}>

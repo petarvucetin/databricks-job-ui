@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Item, ItemsResponse } from '../../../shared/domain/types';
+import { apiUrl } from '../lib/env';
 
 export type ItemsState =
   | { state: 'loading' }
@@ -8,7 +9,7 @@ export type ItemsState =
   | { state: 'ready'; data: ItemsResponse; loadedAt: number };
 
 async function fetchItems(): Promise<ItemsResponse> {
-  const res = await fetch('/api/items', { signal: AbortSignal.timeout(60000) });
+  const res = await fetch(apiUrl('/api/items'), { signal: AbortSignal.timeout(60000) });
   if (!res.ok) {
     // The server answers errors as { error }: show its message (e.g. the missing scope), not just the status.
     const body = (await res.json().catch(() => null)) as { error?: unknown } | null;

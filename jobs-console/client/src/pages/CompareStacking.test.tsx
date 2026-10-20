@@ -97,4 +97,14 @@ describe('comparing runs', () => {
     expect(open).toHaveBeenLastCalledWith('/?compare=1', 'jobs-console-compare');
     expect(container.querySelector('.dr')).toBeNull();
   });
+
+  it('opens the comparison tab with ?env and a window name of its own per env', () => {
+    window.history.replaceState(null, '', '/?env=prod');
+    const open = vi.fn(() => ({ closed: false, location: { search: '' } }));
+    vi.stubGlobal('open', open);
+    const { container } = render(<AttentionView data={data} loadedAt={Date.now()} />);
+    fireEvent.click(boxes(container, 3)[0], { ctrlKey: true, shiftKey: true });
+    expect(open).toHaveBeenLastCalledWith('/?compare=2&env=prod', 'jobs-console-compare-prod');
+    window.history.replaceState(null, '', '/');
+  });
 });

@@ -4,6 +4,7 @@ import { useNow } from '../hooks/useNow';
 import { addToStack, idsFromSearch, stackRuns } from '../model/compare';
 import { CompareView } from '../components/CompareView';
 import type { RunsResponse } from '../../../shared/domain/types';
+import { pageQuery } from '../lib/env';
 
 /** The comparison tab (Ctrl+Shift+click): runs come from ?compare=ids; the opener adds to it by reading this URL. */
 export function ComparePage() {
@@ -21,7 +22,7 @@ function CompareTab({ data, loadedAt }: { data: RunsResponse; loadedAt: number }
   const update = useCallback((change: (cur: number[]) => number[]) => {
     setIds((cur) => {
       const next = change(cur);
-      window.history.replaceState(null, '', `?compare=${next.join(',')}`);
+      window.history.replaceState(null, '', pageQuery({ compare: next.join(',') }));
       return next;
     });
   }, []);

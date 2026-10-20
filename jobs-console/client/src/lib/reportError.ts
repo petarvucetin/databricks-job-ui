@@ -1,3 +1,4 @@
+import { apiUrl } from './env';
 /** Sends browser errors to /api/diag/client-error for the capture (live mode; elsewhere the POST just 404s). */
 export function createErrorReporter(max: number): (error: unknown) => void {
   let sent = 0;
@@ -13,7 +14,7 @@ export function createErrorReporter(max: number): (error: unknown) => void {
       at: new Date().toISOString(),
     };
     try {
-      fetch('/api/diag/client-error', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).catch(() => {});
+      fetch(apiUrl('/api/diag/client-error'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).catch(() => {});
     } catch {
       // reporting must never add an error of its own
     }

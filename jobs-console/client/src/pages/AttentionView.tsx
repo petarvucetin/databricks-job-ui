@@ -18,6 +18,7 @@ import { addToStack, idsFromSearch, stackRuns } from '../model/compare';
 import { ReferenceBlock } from '../components/ReferenceBlock';
 import type { RunRefresh } from '../hooks/useRunRefresh';
 import './attention.css';
+import { currentEnv, pageQuery } from '../lib/env';
 
 const CODE_OPTIONS = ['CLIENT_ERROR', 'CLOUD_FAILURE', 'TIMEDOUT', 'MAX_CONCURRENT_RUNS_REACHED', 'none'];
 
@@ -52,7 +53,7 @@ export function AttentionView({ data, loadedAt, refresh, runRefresh, initialQuer
         current = [];
       }
       const next = addToStack(current, runId, byId);
-      compareTab.current = window.open(`/?compare=${next.join(',')}`, 'jobs-console-compare');
+      compareTab.current = window.open(`/${pageQuery({ compare: next.join(',') })}`, `jobs-console-compare${currentEnv() ? `-${currentEnv()}` : ''}`);
       return;
     }
     setSelected(rowId);

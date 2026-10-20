@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { RunsResponse } from '../../../shared/domain/types';
+import { apiUrl } from '../lib/env';
 
 export type RunsState =
   | { state: 'loading' }
@@ -20,7 +21,7 @@ export type RunsState =
 
 /** `full`: re-read the whole window (`full=1`) instead of the server's delta over its last list. */
 async function fetchRuns(full = false): Promise<RunsResponse> {
-  const res = await fetch(`/api/runs?tzOffset=${new Date().getTimezoneOffset()}${full ? '&full=1' : ''}`, { signal: AbortSignal.timeout(60000) });
+  const res = await fetch(apiUrl(`/api/runs?tzOffset=${new Date().getTimezoneOffset()}${full ? '&full=1' : ''}`), { signal: AbortSignal.timeout(60000) });
   if (!res.ok) {
     // The server answers errors as { error }: show its message (e.g. the Databricks error), not just the status.
     const body = (await res.json().catch(() => null)) as { error?: unknown } | null;

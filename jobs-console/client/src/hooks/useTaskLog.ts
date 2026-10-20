@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { apiUrl } from '../lib/env';
 
 export type TaskLogState = { state: 'loading' } | { state: 'error' } | { state: 'ready'; text: string };
 
@@ -13,7 +14,7 @@ export function useTaskLog(runId: number, task: string, hint?: string, nonce = 0
   useEffect(() => {
     const ctl = new AbortController();
     const q = new URLSearchParams({ task, ...(hint ? { hint } : {}) });
-    fetch(`/api/runs/${runId}/log?${q.toString()}`, { signal: ctl.signal })
+    fetch(apiUrl(`/api/runs/${runId}/log?${q.toString()}`), { signal: ctl.signal })
       .then(async (res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const body = (await res.json()) as { text: string };

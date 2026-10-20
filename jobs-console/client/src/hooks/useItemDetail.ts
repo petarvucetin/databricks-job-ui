@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ItemDetail } from '../../../shared/domain/types';
+import { apiUrl } from '../lib/env';
 
 export type ItemDetailState =
   | { state: 'loading'; detail?: undefined; message?: undefined }
@@ -15,7 +16,7 @@ export function clearItemDetailCache(): void {
 }
 
 async function fetchDetail(type: string, id: string): Promise<ItemDetail> {
-  const res = await fetch(`/api/items/${encodeURIComponent(type)}/${encodeURIComponent(id)}`, { signal: AbortSignal.timeout(60000) });
+  const res = await fetch(apiUrl(`/api/items/${encodeURIComponent(type)}/${encodeURIComponent(id)}`), { signal: AbortSignal.timeout(60000) });
   if (!res.ok) {
     const body = (await res.json().catch(() => null)) as { error?: unknown } | null;
     throw new Error(typeof body?.error === 'string' ? `HTTP ${res.status}: ${body.error}` : `HTTP ${res.status}`);
