@@ -75,8 +75,11 @@ if ($PSCmdlet.ParameterSetName -eq 'Envs') {
   $names = ($list | ForEach-Object { "$($_.Name) (profile $($_.Profile))" }) -join ', '
   $banner = "jobs-console: $Data data, envs $names, http://127.0.0.1:$Port  (Ctrl+C to stop) $([char]183) startup login: $startup"
 } else {
+  # $env: changes outlive the script in this PowerShell tab: clear what an earlier -Envs or -Warehouse run left.
+  Remove-Item Env:JOBS_CONSOLE_ENVS -ErrorAction SilentlyContinue
+  Remove-Item Env:JOBS_CONSOLE_WAREHOUSES -ErrorAction SilentlyContinue
   $env:DATABRICKS_CONFIG_PROFILE = $Profile
-  if ($Warehouse) { $env:DATABRICKS_WAREHOUSE_ID = $Warehouse }
+  if ($Warehouse) { $env:DATABRICKS_WAREHOUSE_ID = $Warehouse } else { Remove-Item Env:DATABRICKS_WAREHOUSE_ID -ErrorAction SilentlyContinue }
   $banner = "jobs-console: $Data data, profile '$Profile', http://127.0.0.1:$Port  (Ctrl+C to stop)"
 }
 
