@@ -42,7 +42,7 @@ export function registerDiag(app: Application, deps: { provider: LiveProvider; s
   const sweepLimits = readSweepLimits(env);
   const sweeping = new Set<string>();
   let host: Promise<string | undefined> | undefined;
-  const hostOf = () => (host ??= env.DATABRICKS_HOST ? Promise.resolve(env.DATABRICKS_HOST) : resolveDefaultHost());
+  const hostOf = () => (host ??= env.DATABRICKS_HOST ? Promise.resolve(env.DATABRICKS_HOST) : resolveDefaultHost(env.DATABRICKS_CONFIG_PROFILE));
 
   async function sendCapture(req: Request, res: Response): Promise<void> {
     const id = provider.identify(req);

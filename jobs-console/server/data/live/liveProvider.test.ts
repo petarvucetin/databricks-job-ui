@@ -8,8 +8,8 @@ const NOW = 1_800_000_000_000;
 const run = { run_id: 1, job_id: 1, run_name: 'j', creator_user_name: 'ann@x.com', start_time: NOW - 60000, run_duration: 1000, status: { state: 'TERMINATED' as const, termination_details: { code: 'SUCCESS' as const } } };
 
 function setup(env: Record<string, string | undefined>) {
-  const apis: { opts: { host?: string; token?: string }; api: ReturnType<typeof fakeApi> }[] = [];
-  const makeApi = vi.fn((opts: { host?: string; token?: string }) => {
+  const apis: { opts: { host?: string; token?: string; profile?: string }; api: ReturnType<typeof fakeApi> }[] = [];
+  const makeApi = vi.fn((opts: { host?: string; token?: string; profile?: string }) => {
     const api = fakeApi({ user: 'dev@x.com', runs: [run] });
     apis.push({ opts, api });
     return api;
@@ -63,6 +63,18 @@ describe('live provider auth', () => {
     expect(apis).toHaveLength(1);
     expect(apis[0].opts).toEqual({});
     expect(() => setup({ JOBS_CONSOLE_AUTH: 'robot' })).toThrow('JOBS_CONSOLE_AUTH must be user or app');
+  });
+
+  it("app auth builds its client from the env's CLI profile", async () => {
+    const { provider, apis } = setup({ JOBS_CONSOLE_AUTH: 'app', DATABRICKS_CONFIG_PROFILE: 'gov-stg', DATABRICKS_HOST: undefined });
+    await (provider.forRequest({ headers: {} }) as RunSource).listRuns();
+    expect(apis[0].opts).toEqual({ profile: 'gov-stg' });
+  });
+
+  it('no profile → empty opts', async () => {
+    const { provider, apis } = setup({ JOBS_CONSOLE_AUTH: 'app', DATABRICKS_HOST: undefined });
+    await (provider.forRequest({ headers: {} }) as RunSource).listRuns();
+    expect(apis[0].opts).toEqual({});
   });
 
   it('defaults to user auth', () => {

@@ -8,7 +8,7 @@ import { readHistoryConfig, type HistoryConfig } from '../systables/config';
 import { knownProbe } from '../systables/probe';
 
 export interface LiveProviderDeps {
-  makeApi: (opts: { host?: string; token?: string }) => LiveApi;
+  makeApi: (opts: { host?: string; token?: string; profile?: string }) => LiveApi;
   clock?: () => number;
 }
 
@@ -84,7 +84,7 @@ export function createLiveProvider(env: Record<string, string | undefined>, deps
   let shared: { api: LiveApi; user: () => Promise<string> } | undefined;
   const defaultChain = () => {
     if (!shared) {
-      const api = deps.makeApi({});
+      const api = deps.makeApi(env.DATABRICKS_CONFIG_PROFILE ? { profile: env.DATABRICKS_CONFIG_PROFILE } : {});
       shared = { api, user: cachedUser(api) };
     }
     return shared;

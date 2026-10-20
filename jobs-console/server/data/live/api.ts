@@ -34,18 +34,18 @@ export interface LiveApi {
   workspaceId: () => Promise<string>;
 }
 
-/** Workspace URL the SDK default auth chain resolves to (local dev: the DATABRICKS_CONFIG_PROFILE host). */
-export async function resolveDefaultHost(): Promise<string | undefined> {
+/** Workspace URL the SDK default auth chain resolves to (`profile` given: that CLI profile's host; else DATABRICKS_HOST / the default profile). */
+export async function resolveDefaultHost(profile?: string): Promise<string | undefined> {
   try {
-    return (await new Config({}).getHost()).origin;
+    return (await new Config(profile ? { profile } : {}).getHost()).origin;
   } catch {
     return undefined;
   }
 }
 
-/** `token` given: that user's token (Databricks Apps forwards it). Omitted: the SDK default auth chain (local dev profile). */
-export function createSdkApi(opts: { host?: string; token?: string }): LiveApi {
-  const client = opts.token ? new WorkspaceClient({ host: opts.host, token: opts.token, authType: 'pat' }) : new WorkspaceClient({});
+/** `token` given: that user's token (Databricks Apps forwards it). Omitted: the SDK default auth chain, on the CLI `profile` when given. */
+export function createSdkApi(opts: { host?: string; token?: string; profile?: string }): LiveApi {
+  const client = opts.token ? new WorkspaceClient({ host: opts.host, token: opts.token, authType: 'pat' }) : new WorkspaceClient(opts.profile ? { profile: opts.profile } : {});
   // The SDK's list methods are async iterators over every page; these fetch exactly one page, same paths and fields.
   const page = <T>(path: string, query: Record<string, unknown>): Promise<T> => {
     const q = Object.fromEntries(Object.entries(query).filter(([k, v]) => v !== undefined && k !== 'pipeline_id'));
