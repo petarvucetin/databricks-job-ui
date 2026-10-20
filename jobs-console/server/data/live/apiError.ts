@@ -39,16 +39,20 @@ function causeChain(e: unknown): string {
   return parts.length ? ` (cause: ${parts.join(' <- ')})` : '';
 }
 
-/** SDK credential failures ("default auth: ...", "databricks-cli: cannot get access token") and unreachable workspaces. */
+/**
+ * SDK credential failures ("default auth: ...", "databricks-cli: cannot get access token", "... has no prod profile
+ * configured"), refused or expired tokens (some 403s carry them), and unreachable workspaces.
+ */
 const SIGN_IN_OR_CONNECTION =
-  /default auth|cannot configure default credentials|cannot get access token|failed to retrieve token|invalid_grant|refresh token|fetch failed|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|ECONNRESET/i;
+  /default auth|cannot configure default credentials|cannot get access token|failed to retrieve token|invalid_grant|refresh token|invalid (access )?token|unauthenticated|expired|has no .* profile configured|fetch failed|ECONNREFUSED|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|ECONNRESET/i;
 
 /**
  * A sign-in or connection failure (expired or missing CLI login, refused token, unreachable workspace) rather than a
- * fault in one request: 401/403 (as toSourceError keeps them), or an SDK credential or network error by its message.
+ * fault in one request: a 401, or an SDK credential, token or network error by its message. A 403 alone is a
+ * permission refusal (PERMISSION_DENIED), which signing in again doesn't fix.
  */
 export function isSignInOrConnectionFailure(status: number | undefined, message: string): boolean {
-  return status === 401 || status === 403 || SIGN_IN_OR_CONNECTION.test(message);
+  return status === 401 || SIGN_IN_OR_CONNECTION.test(message);
 }
 
 /** SDK failures as SourceError: auth stays 401/403, the rest is a bad gateway. With `lookup`, a missing or invalid id is 404. */

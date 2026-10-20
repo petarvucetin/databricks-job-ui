@@ -7,6 +7,7 @@ import { createEnvRouter, type EnvRouter } from './envRouter';
 import { createWorkspaceEnv } from './workspaceEnv';
 import { createLiveProvider } from './data/live/liveProvider';
 import { SourceError } from './data/sourceError';
+import { toSourceError } from './data/live/apiError';
 import type { RunSource, RunSourceProvider } from './data/runSource';
 
 let server: Server | undefined;
@@ -118,6 +119,12 @@ describe('one env failing names its fix (E10, Review Focus 3)', () => {
     expect(await get(`${base}/api/runs?env=prod`)).toEqual({ status: 502, body: { error: 'fetch failed — run: databricks auth login --profile prod' } });
   });
 
+  it('a permission refusal (PERMISSION_DENIED, 403) does not', async () => {
+    const denied = Object.assign(new Error('User ann@agency.gov does not have permission to view job 7'), { statusCode: 403, errorCode: 'PERMISSION_DENIED' });
+    const base = await listen(withProd(MULTI, () => failing(toSourceError(denied))));
+    expect(await get(`${base}/api/runs/1?env=prod`)).toEqual({ status: 403, body: { error: 'User ann@agency.gov does not have permission to view job 7' } });
+  });
+
   it('a missing run does not', async () => {
     const base = await listen(withProd(MULTI, () => failing(new SourceError(404, 'Run 1 does not exist'))));
     expect(await get(`${base}/api/runs/1?env=prod`)).toEqual({ status: 404, body: { error: 'Run 1 does not exist' } });
@@ -128,10 +135,26 @@ describe('withLoginHint', () => {
   const hint = ' — run: databricks auth login --profile gov-prod';
   it('appends the login command to sign-in and connection failures', () => {
     expect(withLoginHint('Invalid access token', 401, 'gov-prod')).toBe('Invalid access token' + hint);
-    expect(withLoginHint('nope', 403, 'gov-prod')).toBe('nope' + hint);
+    expect(withLoginHint('nope', 401, 'gov-prod')).toBe('nope' + hint);
     expect(withLoginHint('default auth: cannot configure default credentials, please check ...', 502, 'gov-prod')).toContain(hint);
     expect(withLoginHint('databricks-cli: cannot get access token: exit 1', undefined, 'gov-prod')).toContain(hint);
     expect(withLoginHint('fetch failed (cause: getaddrinfo ENOTFOUND x [ENOTFOUND])', 502, 'gov-prod')).toContain(hint);
+  });
+
+  it('a 403 from a bad, expired or missing token still gets it', () => {
+    expect(withLoginHint('Invalid access token', 403, 'gov-prod')).toBe('Invalid access token' + hint);
+    expect(withLoginHint('Invalid Token', 403, 'gov-prod')).toContain(hint);
+    expect(withLoginHint('Unauthenticated', 403, 'gov-prod')).toContain(hint);
+    expect(withLoginHint('Token is expired', 403, 'gov-prod')).toContain(hint);
+  });
+
+  it('a missing CLI profile gets it', () => {
+    expect(withLoginHint('resolve: C:\\Users\\ann\\.databrickscfg has no gov-prod profile configured', 502, 'gov-prod')).toContain(hint);
+  });
+
+  it('a permission refusal (403) does not: signing in again would not help', () => {
+    expect(withLoginHint('nope', 403, 'gov-prod')).toBe('nope');
+    expect(withLoginHint('User ann@agency.gov does not have permission to view job 7', 403, 'gov-prod')).toBe('User ann@agency.gov does not have permission to view job 7');
   });
 
   it('leaves everything else alone', () => {
