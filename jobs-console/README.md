@@ -196,6 +196,7 @@ cd jobs-console
 - Before starting, the script checks each env's login. For one that fails it prints `databricks auth login --profile <profile>`, and that env shows the same fix in the app while the others work. If no login works, it stops.
 - `-Data mock -Envs 'dev,stg,prod'` serves different mock data per env (names start with `dev_`, `stg_`, `prod_`), to check the switch without a workspace. It still needs one working login to start.
 - From a Command Prompt tab: `powershell -ExecutionPolicy Bypass -File .\run-local.ps1 -Envs "dev,stg,prod"`.
+- Under `npm run dev` (dev machine): put `JOBS_CONSOLE_ENVS=dev,stg,prod` (same form as `-Envs`) in `.env`. `DATABRICKS_HOST` and any other credential variable are dropped at startup, since each env reads its own profile, but AppKit's startup sign-in still needs a working `DATABRICKS_CONFIG_PROFILE` (or the `DEFAULT` profile).
 
 ### Deploy: one app per workspace
 
@@ -216,7 +217,7 @@ It:
 
 Options:
 
-- `-Warehouse <id>`: deploy with that SQL warehouse (system-tables run history). The id is used for this deploy only and isn't written to the repo.
+- `-Warehouse <id>`: deploy with that SQL warehouse (system-tables run history). The id isn't written to the repo; later deploys keep it.
 - No `-Warehouse`: keeps the running app's warehouse, if it has one.
 - `-NoWarehouse`: removes the running app's warehouse (run history from the API).
 - `-Yes` skips the typed confirmation. `-WhatIf` prints the bind / deploy / run commands without running them.
@@ -264,7 +265,7 @@ On the laptop the console reads as you (each env's CLI profile), so it shows wha
 The first deploy to each workspace confirms how the CLI combines the target's app config with `app.yaml`:
 
 - Open the app: the header shows the env label (`PROD`, with the red edge) and the tab title is `PROD · Jobs console`. No label means the env setting didn't reach the app.
-- `databricks bundle summary -t prod --profile prod` shows no pending change for the app.
+- `databricks bundle summary -t prod --profile prod` shows the app with an id (the target manages it).
 
 ## Code Quality
 
