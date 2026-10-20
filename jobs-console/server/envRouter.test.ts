@@ -97,7 +97,17 @@ describe('createEnvRouter', () => {
     expect(() => createEnvRouter({ JOBS_CONSOLE_ENVS: 'qa' })).toThrow(/unknown env "qa"/);
   });
 
-  it.todo('mock envs serve different data');
+  it('mock envs serve different data', async () => {
+    const router = createEnvRouter({ JOBS_CONSOLE_DATA: 'mock', JOBS_CONSOLE_ENVS: 'dev,prod' });
+    const names = async (env: string) => {
+      const source = asEnv(router.pick(req({ env }))).provider.forRequest({ headers: {} });
+      if ('status' in source) throw new Error(source.error);
+      return new Set((await source.listItems()).items.map((i) => i.name));
+    };
+    const [dev, prod] = [await names('dev'), await names('prod')];
+    expect(dev).not.toEqual(prod);
+    expect([...dev].every((n) => n.startsWith('dev_'))).toBe(true);
+  });
 });
 
 describe('createWorkspaceEnv', () => {

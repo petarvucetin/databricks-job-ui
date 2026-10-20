@@ -49,7 +49,8 @@ export interface RunSourceProvider {
 export function selectRunSource(env: Record<string, string | undefined>): RunSourceProvider {
   const mode = env.JOBS_CONSOLE_DATA ?? 'mock';
   if (mode === 'mock') {
-    const source = createMockRunSource();
+    const v = env.JOBS_CONSOLE_MOCK_VARIANT;
+    const source = createMockRunSource(undefined, v === 'dev' || v === 'stg' || v === 'prod' ? v : undefined);
     return { kind: 'mock', forRequest: () => source };
   }
   if (mode === 'live') return createLiveProvider(env);
