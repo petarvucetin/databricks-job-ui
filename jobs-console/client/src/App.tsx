@@ -8,6 +8,8 @@ import { JobsPage } from './pages/JobsPage';
 import { TabActiveContext } from './hooks/useTabActive';
 import { currentEnv, envUrl, pageQuery } from './lib/env';
 import type { DataMode } from '../../shared/domain/types';
+// The Runs list's status line (.att-status), reused for /api/mode failing.
+import './pages/attention.css';
 
 /**
  * Makes the URL's env the one /api/mode describes: set (or corrected) when there is a switch, dropped when there isn't (E6).
@@ -22,9 +24,20 @@ function syncEnvInUrl(mode: DataMode) {
 }
 
 export default function App() {
-  const mode = useDataMode();
+  const modeState = useDataMode();
   // Until the env is known nothing that fetches is mounted, so no request goes out without it.
-  if (!mode) return <Shell />;
+  if (modeState.state === 'loading') return <Shell />;
+  if (modeState.state === 'error') {
+    return (
+      <Shell>
+        <p className="att-status">
+          <span>{modeState.message}</span>
+          <button type="button" onClick={modeState.retry}>Retry</button>
+        </p>
+      </Shell>
+    );
+  }
+  const { mode } = modeState;
   syncEnvInUrl(mode);
   if (new URLSearchParams(window.location.search).has('compare')) {
     return (
