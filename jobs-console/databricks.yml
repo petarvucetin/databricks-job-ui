@@ -21,6 +21,7 @@ resources:
       # Optional: run history from system tables. To enable, uncomment this block with a real warehouse id, and
       # uncomment the DATABRICKS_WAREHOUSE_ID env entry in app.yaml (it needs this resource). Then `npm run package`
       # and deploy. The app's service principal gets CAN_USE; see README "Run history from system tables".
+      # This is for the default target only: dev / stg / prod take `deploy.ps1 -Warehouse <id>` (see app_resources).
       # resources:
       #   - name: sql-warehouse
       #     sql_warehouse:
