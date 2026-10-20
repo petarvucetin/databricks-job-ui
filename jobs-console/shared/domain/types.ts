@@ -105,6 +105,10 @@ export interface DataMode {
   readAs?: string;
   /** Live with a warehouse: where run history comes from. Absent in mock mode. */
   history?: HistoryInfo;
+  /** The environment this response describes (multi-env, or deployed with JOBS_CONSOLE_ENV). */
+  env?: 'dev' | 'stg' | 'prod';
+  /** Every configured environment, dev → stg → prod; present only with more than one, meaning "show a switch". */
+  envs?: ('dev' | 'stg' | 'prod')[];
 }
 
 export interface RunsResponse {

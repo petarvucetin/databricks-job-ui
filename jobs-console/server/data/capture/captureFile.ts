@@ -16,7 +16,8 @@ export interface CaptureFile {
   app: { version: string; gitSha?: string; node: string };
   /** Every JOBS_CONSOLE_* value, DATABRICKS_HOST / _WAREHOUSE_ID / _WORKSPACE_ID and the auth mode: enough to replay with the same limits. */
   config: Record<string, string>;
-  workspace: { host?: string; user?: string };
+  /** `env` / `profile`: the environment and CLI profile the capture was recorded from (multi-env). */
+  workspace: { host?: string; user?: string; env?: string; profile?: string };
   /** Oldest first. */
   sessions: SessionRecord[];
   clientErrors: ClientErrorRecord[];
