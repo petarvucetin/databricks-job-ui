@@ -29,11 +29,20 @@ vi.mock('./pages/AttentionPage', () => ({
 const runs = vi.hoisted(() => ({ state: { state: 'loading' } as Record<string, unknown> }));
 vi.mock('./hooks/useRunsData', () => ({ useRunsData: () => ({ runs: runs.state, single: undefined, intervalMs: 0, setIntervalMs: () => {} }) }));
 
+// /api/mode answers with `modeAnswer` (mock data, no env, unless a test sets one); anything else is a 404.
+let modeAnswer: unknown;
+const stubMode = (mode: unknown) => {
+  modeAnswer = mode;
+  vi.stubGlobal('fetch', vi.fn((input: string) => Promise.resolve(
+    input.startsWith('/api/mode') ? new Response(JSON.stringify(modeAnswer), { status: 200 }) : new Response('{}', { status: 404 }),
+  )));
+};
+
 beforeEach(() => {
   runs.state = { state: 'loading' };
   mounted.jobs.mockClear();
   mounted.runs.mockClear();
-  vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response('{}', { status: 404 }))));
+  stubMode({ source: 'mock', capture: false });
 });
 afterEach(() => {
   cleanup();
@@ -45,30 +54,31 @@ afterEach(() => {
 const wrapper = (testId: string) => screen.getByTestId(testId).parentElement!;
 
 describe('App tabs', () => {
-  it('?tab=jobs opens on Jobs & ETL; the Runs page is mounted too, in a hidden wrapper, with its tab inactive', () => {
+  it('?tab=jobs opens on Jobs & ETL; the Runs page is mounted too, in a hidden wrapper, with its tab inactive', async () => {
     window.history.replaceState(null, '', '/?tab=jobs');
     render(<App />);
-    expect(screen.getByRole('button', { name: 'Jobs & ETL' }).className).toBe('on');
+    expect((await screen.findByRole('button', { name: 'Jobs & ETL' })).className).toBe('on');
     expect(wrapper('jobs-page').hidden).toBe(false);
     expect(wrapper('runs-page').hidden).toBe(true);
     expect(screen.getByTestId('jobs-page').textContent).toBe('jobs active=true ctx=true');
     expect(screen.getByTestId('runs-page').textContent).toBe('runs ctx=false focus=');
   });
 
-  it('clicking a tab keeps ?env', () => {
+  it('clicking a tab keeps ?env', async () => {
+    stubMode({ source: 'mock', capture: false, env: 'prod', envs: ['dev', 'prod'] });
     window.history.replaceState(null, '', '?env=prod&tab=runs');
     render(<App />);
-    fireEvent.click(screen.getByRole('button', { name: 'Jobs & ETL' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Jobs & ETL' }));
     expect(window.location.search).toContain('env=prod');
     expect(window.location.search).toContain('tab=jobs');
   });
 
-  it('clicking Runs sets ?tab=runs with replaceState and keeps the Jobs page mounted, hidden', () => {
+  it('clicking Runs sets ?tab=runs with replaceState and keeps the Jobs page mounted, hidden', async () => {
     window.history.replaceState(null, '', '/?tab=jobs');
     const replace = vi.spyOn(window.history, 'replaceState');
     const before = window.history.length;
     render(<App />);
-    fireEvent.click(screen.getByRole('button', { name: 'Runs' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Runs' }));
     expect(replace).toHaveBeenLastCalledWith(null, '', '?tab=runs');
     expect(window.location.search).toBe('?tab=runs');
     expect(window.history.length).toBe(before);
@@ -81,9 +91,9 @@ describe('App tabs', () => {
     expect(mounted.runs).toHaveBeenCalledTimes(1);
   });
 
-  it('no ?tab opens on Runs; See runs from Jobs & ETL switches to Runs focused on the job', () => {
+  it('no ?tab opens on Runs; See runs from Jobs & ETL switches to Runs focused on the job', async () => {
     render(<App />);
-    expect(screen.getByRole('button', { name: 'Runs' }).className).toBe('on');
+    expect((await screen.findByRole('button', { name: 'Runs' })).className).toBe('on');
     expect(wrapper('runs-page').hidden).toBe(false);
     fireEvent.click(screen.getByRole('button', { name: 'Jobs & ETL' }));
     expect(window.location.search).toBe('?tab=jobs');
@@ -93,9 +103,53 @@ describe('App tabs', () => {
   });
 });
 
+describe('App: the env in the URL', () => {
+  it('shows only the header, no tabs and no pages, until /api/mode answers', () => {
+    vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>(() => {})));
+    const { container } = render(<App />);
+    expect(screen.getByRole('heading', { name: 'Jobs console' })).toBeTruthy();
+    expect(container.querySelector('.tabs')).toBeNull();
+    expect(screen.queryByTestId('jobs-page')).toBeNull();
+    expect(screen.queryByTestId('runs-page')).toBeNull();
+  });
+
+  it('no env in the URL: it is set to the env /api/mode describes, keeping the tab', async () => {
+    stubMode({ source: 'mock', capture: false, env: 'dev', envs: ['dev', 'prod'] });
+    window.history.replaceState(null, '', '/?tab=jobs');
+    render(<App />);
+    await screen.findByTestId('jobs-page');
+    const q = new URLSearchParams(window.location.search);
+    expect(q.get('env')).toBe('dev');
+    expect(q.get('tab')).toBe('jobs');
+  });
+
+  it('an unknown env in the URL is replaced by the one /api/mode fell back to', async () => {
+    stubMode({ source: 'mock', capture: false, env: 'dev', envs: ['dev', 'prod'] });
+    window.history.replaceState(null, '', '/?env=qa&tab=runs');
+    render(<App />);
+    await screen.findByTestId('runs-page');
+    expect(window.location.search).toBe('?tab=runs&env=dev');
+  });
+
+  it('no switch (single profile, or deployed with a label): an env in the URL is dropped', async () => {
+    stubMode({ source: 'live', capture: false, env: 'prod' });
+    window.history.replaceState(null, '', '/?env=stg&tab=jobs');
+    render(<App />);
+    await screen.findByTestId('jobs-page');
+    expect(window.location.search).toBe('?tab=jobs');
+  });
+
+  it('the compare page keeps ?compare when the env is set', async () => {
+    stubMode({ source: 'mock', capture: false, env: 'stg', envs: ['dev', 'stg'] });
+    window.history.replaceState(null, '', '/?compare=1,2');
+    render(<App />);
+    await waitFor(() => expect(new URLSearchParams(window.location.search).get('env')).toBe('stg'));
+    expect(new URLSearchParams(window.location.search).get('compare')).toBe('1,2');
+  });
+});
+
 describe('App header: where history came from', () => {
   const OK_PROBE = { source: 'live', auth: 'user', capture: false, history: { source: 'system-tables', days: 90 } };
-  const stubMode = (mode: unknown) => vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(new Response(JSON.stringify(mode), { status: 200 }))));
   const ready = (history: unknown) => ({ state: 'ready', data: { asOf: 0, source: 'live', runs: [], ...(history ? { history } : {}) }, loadedAt: 0, startedAt: 0, refreshing: false, refreshError: null, refresh: () => {} });
   const badge = () => document.querySelector('.shell-badge')!;
 

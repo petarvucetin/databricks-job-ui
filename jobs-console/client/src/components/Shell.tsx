@@ -1,7 +1,9 @@
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import type { DataMode, HistoryInfo } from '../../../shared/domain/types';
 import appVersion from 'virtual:app-version';
 import { CaptureMenu } from './CaptureMenu';
+import { EnvSwitch } from './EnvSwitch';
+import { pageTitle } from '../lib/env';
 import './shell.css';
 
 function badgeText(mode: DataMode): string {
@@ -75,11 +77,17 @@ function Identity({ mode }: { mode: DataMode }) {
 
 export type Tab = 'jobs' | 'runs';
 
-export function Shell({ mode, tab, onTab, children }: { mode?: DataMode; tab?: Tab; onTab?: (t: Tab) => void; children: ReactNode }) {
+export function Shell({ mode, tab, onTab, children }: { mode?: DataMode; tab?: Tab; onTab?: (t: Tab) => void; children?: ReactNode }) {
+  const env = mode?.env;
+  useEffect(() => {
+    // With no env the static title stays (E8).
+    if (env) document.title = pageTitle('Jobs console', env);
+  }, [env]);
   return (
     <div className="shell">
-      <header className={`shell-top${onTab ? ' has-tabs' : ''}`}>
+      <header className={`shell-top${onTab ? ' has-tabs' : ''}${env ? ` env-${env}` : ''}`}>
         <h1>Jobs console</h1>
+        {env && <EnvSwitch env={env} envs={mode?.envs} tab={tab} />}
         {onTab && (
           <nav className="tabs">
             <button type="button" className={tab === 'jobs' ? 'on' : undefined} onClick={() => onTab('jobs')}>Jobs &amp; ETL</button>

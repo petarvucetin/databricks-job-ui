@@ -132,6 +132,33 @@ describe('Shell', () => {
     expect(badge.getAttribute('title')).toBeNull();
   });
 
+  it('with an env: the switch after the title, the env class on the header, and the env in the tab title', () => {
+    document.title = 'jobs-console';
+    const { container } = render(<Shell mode={{ source: 'mock', capture: false, env: 'prod', envs: ['dev', 'prod'] }} tab="runs" onTab={() => {}}><p /></Shell>);
+    const top = container.querySelector('.shell-top')!;
+    expect(top.className).toContain('env-prod');
+    expect(top.children[0].tagName).toBe('H1');
+    expect(top.children[1].className).toBe('env');
+    expect(screen.getByRole('button', { name: 'prod' }).getAttribute('aria-pressed')).toBe('true');
+    expect(document.title).toBe('PROD · Jobs console');
+  });
+
+  it('deployed with an env: a label in the same place', () => {
+    const { container } = render(<Shell mode={{ source: 'live', capture: false, env: 'stg' }}><p /></Shell>);
+    expect(container.querySelector('.shell-top')!.className).toBe('shell-top env-stg');
+    expect(container.querySelector('.env-label')!.textContent).toBe('stg');
+    expect(container.querySelector('.env')).toBeNull();
+  });
+
+  it('with no env: no switch, no label, no env class, and the tab title as it was', () => {
+    document.title = 'jobs-console';
+    const { container } = render(<Shell mode={{ source: 'mock', capture: false }}><p /></Shell>);
+    expect(container.querySelector('.env')).toBeNull();
+    expect(container.querySelector('.env-label')).toBeNull();
+    expect(container.querySelector('.shell-top')!.className).toBe('shell-top');
+    expect(document.title).toBe('jobs-console');
+  });
+
   it('shows a busy state while the sweep runs', async () => {
     let finish: (r: Response) => void = () => {};
     const fetchMock = vi.fn(() => new Promise<Response>((r) => (finish = r)));

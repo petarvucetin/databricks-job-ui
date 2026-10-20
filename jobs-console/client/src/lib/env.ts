@@ -24,3 +24,8 @@ export function pageQuery(params: Record<string, string>, search = window.locati
 export function envUrl(env: string, tab?: string): string {
   return `?env=${encodeURIComponent(env)}${tab ? `&tab=${encodeURIComponent(tab)}` : ''}`;
 }
+
+/** A tab title naming the env (`PROD · Jobs console`); unchanged without one. */
+export function pageTitle(base: string, env?: string): string {
+  return env ? `${env.toUpperCase()} · ${base}` : base;
+}

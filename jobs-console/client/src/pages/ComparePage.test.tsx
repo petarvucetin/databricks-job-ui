@@ -45,4 +45,15 @@ describe('ComparePage', () => {
     fireEvent.click(container.querySelectorAll('.cmpv .chip .cx')[0]);
     expect(window.location.search).toBe('?compare=1&env=prod');
   });
+
+  it('names the env in the tab title, and only the runs without one', async () => {
+    window.history.replaceState(null, '', '/?compare=1,2');
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve(data) })));
+    const { container, unmount } = render(<ComparePage env="stg" />);
+    await waitFor(() => expect(container.querySelectorAll('.cmpv .chip')).toHaveLength(2));
+    expect(document.title).toBe('STG · Compare 2 runs');
+    unmount();
+    render(<ComparePage />);
+    await waitFor(() => expect(document.title).toBe('Compare 2 runs'));
+  });
 });

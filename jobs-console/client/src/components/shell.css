@@ -22,3 +22,16 @@
 .capture-menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 20; display: flex; flex-direction: column; gap: 2px; min-width: 190px; padding: 6px 0; background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; box-shadow: 0 4px 14px rgba(39, 33, 28, .08); }
 .capture-menu a, .capture-menu button { display: block; padding: 4px 12px; font-size: 12.5px; color: var(--ink-2); text-align: left; text-decoration: none; background: none; border: 0; cursor: pointer; white-space: nowrap; }
 .capture-menu a:hover, .capture-menu button:hover { color: var(--ink); background: var(--wash-sand); }
+/* dev / stg / prod (variant A of docs/design/mockups/env-switch.html): stg amber, prod red, dev plain with an ink selection. */
+.shell-top { position: relative; }
+.env { display: inline-flex; border: 1px solid #d9cdbd; border-radius: 5px; overflow: hidden; background: var(--sheet); }
+.env button { border: 0; background: none; padding: 2px 11px; cursor: pointer; font-size: 12px; font-weight: 500; letter-spacing: .02em; color: var(--ink-2); }
+.env button + button { border-left: 1px solid #e6ddd2; }
+.env button:hover { color: var(--ink); }
+.env button.on { background: var(--ink); color: #fff; }
+.env-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; padding: 1px 8px; border-radius: 4px; border: 1px solid #d9cdbd; color: var(--ink-2); background: var(--sheet); }
+.shell-top.env-stg::before, .shell-top.env-prod::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; }
+.shell-top.env-stg::before { background: var(--amber); }
+.shell-top.env-prod::before { background: var(--red); }
+.shell-top.env-stg .env button.on, .shell-top.env-stg .env-label { background: var(--amber); color: #fff; border-color: var(--amber); }
+.shell-top.env-prod .env button.on, .shell-top.env-prod .env-label { background: var(--red); color: #fff; border-color: var(--red); }
