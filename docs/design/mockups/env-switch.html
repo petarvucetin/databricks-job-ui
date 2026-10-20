@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Env switch — mockup</title>
+<style>
+@font-face { font-family: "IBM Plex Sans"; font-weight: 400; src: url("fonts/IBMPlexSans-400.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 500; src: url("fonts/IBMPlexSans-500.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Sans"; font-weight: 600; src: url("fonts/IBMPlexSans-600.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 400; src: url("fonts/IBMPlexMono-400.woff2") format("woff2"); }
+:root {
+  --paper: #f6f0e7; --sheet: #fffdf9; --ink: #27211c; --ink-2: #5b524a; --ink-3: #948a80; --rule: #e6ddd2;
+  --red: #d6452f; --amber: #d98a12; --green: #2c8c6a; --blue: #2f6fb3; --wash-sand: #f4ece1; --wash-amber: #fdf0d8; --wash-blue: #e3ecf7;
+  --sans: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --call: #6b3fd6;
+}
+html, body { margin: 0; background: #ebe5dc; color: var(--ink); font-family: var(--sans); font-size: 13.5px; line-height: 1.45; }
+button { font: inherit; color: inherit; }
+
+/* mockup chrome */
+.mk { padding: 18px 28px 6px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.mk h2 { margin: 0; font-size: 14px; font-weight: 600; }
+.seg-mk { display: inline-flex; border: 1px solid #cfc4b6; border-radius: 6px; overflow: hidden; background: #fff; }
+.seg-mk button { border: 0; background: none; padding: 5px 12px; cursor: pointer; font-size: 12.5px; color: var(--ink-2); }
+.seg-mk button + button { border-left: 1px solid #e0d6c9; }
+.seg-mk button.on { background: var(--ink); color: #fff; }
+.mk small { color: var(--ink-3); font-size: 12px; }
+.frame { margin: 12px 28px 0; border: 1px solid #d6ccbf; border-radius: 8px; overflow: hidden; background: var(--sheet); box-shadow: 0 6px 24px rgba(39,33,28,.08); }
+.tabbar { display: flex; align-items: center; gap: 8px; padding: 7px 12px; background: #ded6cb; font-size: 12px; color: var(--ink-2); }
+.tabbar .t { background: var(--sheet); border-radius: 6px 6px 0 0; padding: 4px 14px; margin-bottom: -7px; max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tabbar .t.dim { background: transparent; color: var(--ink-3); }
+.tabbar .url { margin-left: auto; font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); }
+
+/* real header, copied from shell.css */
+.shell-top { position: relative; display: flex; align-items: center; gap: 12px; padding: 10px 24px 0; background: var(--paper); border-bottom: 1px solid var(--rule); }
+.shell-top > :not(.tabs) { margin-bottom: 10px; }
+.shell-top h1 { margin: 0 0 10px; font-size: 15px; font-weight: 600; letter-spacing: .01em; }
+.shell-badge { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); background: var(--wash-sand); border: 1px solid #e3d7c6; border-radius: 4px; padding: 1px 7px; }
+.shell-ws { font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
+.shell-user { font-size: 12px; color: var(--ink-2); padding-left: 10px; border-left: 1px solid var(--rule); }
+.shell-ver { margin-left: auto; font-size: 11.5px; color: var(--ink-3); }
+.tabs { display: flex; gap: 4px; margin-left: 18px; align-self: flex-end; }
+.tabs button { border: 0; background: none; padding: 6px 14px 9px; font-size: 13.5px; color: var(--ink-2); border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; }
+.tabs button.on { color: var(--ink); font-weight: 600; border-bottom-color: var(--ink); }
+
+/* ---- the new piece ---- */
+.env { display: inline-flex; border: 1px solid #d9cdbd; border-radius: 5px; overflow: hidden; background: var(--sheet); }
+.env button { border: 0; background: none; padding: 2px 11px; cursor: pointer; font-size: 12px; font-weight: 500; letter-spacing: .02em; color: var(--ink-2); }
+.env button + button { border-left: 1px solid #e6ddd2; }
+.env button:hover { color: var(--ink); }
+.env button.on { background: var(--ink); color: #fff; }
+.env-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; padding: 1px 8px; border-radius: 4px; border: 1px solid #d9cdbd; color: var(--ink-2); background: var(--sheet); }
+
+/* A: color rule along the top edge */
+.vA .shell-top::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: transparent; }
+.vA.e-stg .shell-top::before { background: var(--amber); }
+.vA.e-prod .shell-top::before { background: var(--red); }
+.vA.e-stg .env button.on, .vA.e-stg .env-label { background: var(--amber); color: #fff; border-color: var(--amber); }
+.vA.e-prod .env button.on, .vA.e-prod .env-label { background: var(--red); color: #fff; border-color: var(--red); }
+
+/* B: whole header goes dark in prod, warm in stg */
+.vB.e-stg .shell-top { background: var(--wash-amber); border-bottom-color: #ecd9b4; }
+.vB.e-prod .shell-top { background: #2b2420; border-bottom-color: #2b2420; }
+.vB.e-prod .shell-top h1, .vB.e-prod .shell-ws, .vB.e-prod .shell-user, .vB.e-prod .tabs button { color: #efe7dc; }
+.vB.e-prod .tabs button.on { color: #fff; border-bottom-color: #fff; }
+.vB.e-prod .shell-ver { color: #a89c90; }
+.vB.e-prod .shell-user { border-left-color: #4a403a; }
+.vB.e-prod .shell-badge { background: #3a322c; border-color: #4a403a; color: #d8cec2; }
+.vB.e-prod .env { background: #3a322c; border-color: #4a403a; }
+.vB.e-prod .env button { color: #d8cec2; }
+.vB.e-prod .env button + button { border-left-color: #4a403a; }
+.vB.e-prod .env button.on { background: #fff; color: var(--ink); }
+.vB.e-prod .env-label { background: #fff; color: var(--ink); border-color: #fff; }
+.vB.e-stg .env button.on, .vB.e-stg .env-label { background: var(--amber); color: #fff; border-color: var(--amber); }
+
+/* C: no color at all, the switch is the only signal */
+
+/* body placeholder */
+.body { padding: 14px 24px 22px; position: relative; }
+.bar { display: flex; gap: 8px; margin-bottom: 12px; }
+.chip { font-size: 12px; padding: 3px 10px; border: 1px solid var(--rule); border-radius: 12px; color: var(--ink-2); background: #fff; }
+.chip.set { border-color: var(--ink-2); color: var(--ink); }
+.row { display: flex; align-items: center; gap: 12px; padding: 7px 0; border-bottom: 1px solid #f0e9df; }
+.row .n { flex: 1; height: 9px; border-radius: 3px; background: #ece4d8; }
+.row .s { width: 54px; height: 9px; border-radius: 3px; background: #ece4d8; }
+.fresh { position: absolute; right: 24px; top: 14px; font-size: 12px; color: var(--ink-3); }
+
+/* callouts */
+.c { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--call); color: #fff; font-size: 11px; font-weight: 600; flex: none; }
+.pin { position: absolute; z-index: 5; }
+.notes { margin: 14px 28px 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 28px; max-width: 1100px; }
+.notes div { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: var(--ink-2); }
+.notes b { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="mk">
+  <h2>Environment switch</h2>
+  <span class="seg-mk" id="where"><button data-v="laptop">Laptop (switch)</button><button data-v="deployed">Deployed app (label)</button></span>
+  <span class="seg-mk" id="variant"><button data-v="A">A · color edge</button><button data-v="B">B · dark prod header</button><button data-v="C">C · no color</button></span>
+  <small>Click dev / stg / prod in the header to switch.</small>
+</div>
+
+<div class="frame" id="frame">
+  <div class="tabbar">
+    <span class="t" id="tab1"></span><span class="t dim" id="tab2"></span>
+    <span class="url" id="url"></span>
+  </div>
+  <header class="shell-top">
+    <h1>Jobs console</h1>
+    <span id="envslot"></span>
+    <nav class="tabs"><button class="on">Jobs &amp; ETL</button><button>Runs</button></nav>
+    <span class="shell-badge">live data · as app · history: system tables · 30 days</span>
+    <span class="shell-ws" id="host"></span>
+    <span class="shell-user" id="user"></span>
+    <span class="shell-ver">v1.0.412 · 25d568a</span>
+  </header>
+  <div class="body">
+    <div class="bar" id="chips"></div>
+    <span class="fresh" id="fresh"></span>
+    <div class="row"><span class="n" style="max-width:62%"></span><span class="s"></span></div>
+    <div class="row"><span class="n" style="max-width:48%"></span><span class="s"></span></div>
+    <div class="row"><span class="n" style="max-width:70%"></span><span class="s"></span></div>
+    <div class="row"><span class="n" style="max-width:55%"></span><span class="s"></span></div>
+    <div class="row"><span class="n" style="max-width:40%"></span><span class="s"></span></div>
+  </div>
+</div>
+
+<div class="notes" id="notes"></div>
+
+<script>
+const HOSTS = { dev: 'dbc-dev-1a2b.cloud.databricks.us', stg: 'dbc-stg-3c4d.cloud.databricks.us', prod: 'dbc-prod-5e6f.cloud.databricks.us' };
+const st = Object.assign({ where: 'laptop', variant: 'A', env: 'prod', touched: false }, JSON.parse(decodeURIComponent(location.hash.slice(1) || '{}')));
+const save = () => { location.hash = encodeURIComponent(JSON.stringify(st)); };
+
+function render() {
+  const f = document.getElementById('frame');
+  f.className = `frame v${st.variant} e-${st.env}`;
+  for (const id of ['where', 'variant']) document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('on', b.dataset.v === st[id]));
+
+  const laptop = st.where === 'laptop';
+  document.getElementById('envslot').innerHTML = laptop
+    ? `<span class="env">${['dev', 'stg', 'prod'].map(e => `<button data-e="${e}" class="${e === st.env ? 'on' : ''}">${e}</button>`).join('')}</span>`
+    : `<span class="env-label">${st.env}</span>`;
+  document.querySelectorAll('#envslot button').forEach(b => b.onclick = () => { st.env = b.dataset.e; st.touched = true; save(); render(); });
+
+  document.getElementById('host').textContent = HOSTS[st.env] + (laptop ? '' : '');
+  document.getElementById('user').textContent = laptop ? 'petar@station5solutions.com' : 'petar@station5solutions.com · reads as jobs-console SP';
+  document.getElementById('tab1').textContent = `${st.env.toUpperCase()} · Jobs console`;
+  document.getElementById('tab2').textContent = laptop ? 'DEV · Jobs console' : 'Inbox';
+  document.getElementById('url').textContent = laptop ? `127.0.0.1:8000/?env=${st.env}&tab=jobs` : `jobs-console-….${st.env}.databricksapps.us/?tab=jobs`;
+
+  document.getElementById('chips').innerHTML = st.touched
+    ? `<span class="chip">Status</span><span class="chip">Mine</span><span class="chip">Search…</span><span class="chip">Last 24 h</span>`
+    : `<span class="chip set">Status: Failed</span><span class="chip set">Mine</span><span class="chip set">“ingest_claims”</span><span class="chip">Last 24 h</span>`;
+  document.getElementById('fresh').textContent = st.touched ? `opened ${st.env} fresh: filters, search and selection cleared` : '';
+
+  const n = [];
+  if (laptop) {
+    n.push(['1', '<b>Switch</b> sits right after the title. One click changes environment. The console only reads, so there is no confirm step.']);
+    n.push(['2', '<b>Opens fresh.</b> Switching clears filters, search and the selected job; the default time window comes back. Click a different env to see it.']);
+    n.push(['3', '<b>Host</b> shows the workspace you are looking at; hover names the CLI profile (dev / stg / prod by default).']);
+    n.push(['4', '<b>Tab title and URL</b> carry the env (<code>?env=prod</code>), so a refresh or bookmark stays put and tabs are easy to tell apart.']);
+  } else {
+    n.push(['1', '<b>Label, no switch.</b> Each workspace runs its own app; the label comes from the bundle target it was deployed with.']);
+    n.push(['2', '<b>Same coloring</b> as the laptop variant you pick, so prod looks like prod everywhere.']);
+    n.push(['3', '<b>Host</b> is that workspace; data is read as the app’s service principal there.']);
+    n.push(['4', '<b>Tab title</b> also starts with the env.']);
+  }
+  n.push(['', `<b>Variant ${st.variant}:</b> ${{ A: 'dev stays plain; stg gets an amber edge and pill, prod a red edge and pill.', B: 'dev stays plain; stg header turns warm, prod header goes dark. Hard to miss, but heavy.', C: 'no color: only the selected button shows the env. Calmest, easiest to overlook.' }[st.variant]}${st.variant === 'A' ? ' Note: it reuses the red that marks failed runs.' : ''}`]);
+  document.getElementById('notes').innerHTML = n.map(([k, t]) => `<div>${k ? `<span class="c">${k}</span>` : '<span style="width:18px"></span>'}<span>${t}</span></div>`).join('');
+
+  // pins on the frame
+  document.querySelectorAll('.pin').forEach(p => p.remove());
+  const fr = f.getBoundingClientRect();
+  const at = (el, k, dx = -10, dy = -10) => { if (!el) return; const r = el.getBoundingClientRect(); const p = document.createElement('span'); p.className = 'c pin'; p.textContent = k; p.style.left = (r.left - fr.left + dx) + 'px'; p.style.top = (r.top - fr.top + dy) + 'px'; f.appendChild(p); };
+  f.style.position = 'relative';
+  at(document.querySelector('#envslot > *'), '1');
+  at(document.getElementById('chips'), '2', -12, -6);
+  at(document.getElementById('host'), '3');
+  at(document.getElementById('tab1'), '4', -6, -4);
+}
+document.querySelectorAll('#where button, #variant button').forEach(b => b.onclick = () => { st[b.parentElement.id] = b.dataset.v; save(); render(); });
+window.onresize = render;
+document.fonts.ready.then(render);
+render();
+</script>
+</body>
+</html>
