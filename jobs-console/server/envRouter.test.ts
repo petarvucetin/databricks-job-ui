@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { createEnvRouter } from './envRouter';
 import { createWorkspaceEnv, type WorkspaceEnv } from './workspaceEnv';
 import type { RunSourceProvider } from './data/runSource';
+import { createLiveProvider } from './data/live/liveProvider';
+import { fakeApi } from './data/live/fakeApi';
 
 const req = (query: Record<string, unknown> = {}) => ({ query });
 const asEnv = (r: WorkspaceEnv | { status: 400; error: string }): WorkspaceEnv => {
@@ -95,6 +97,77 @@ describe('createEnvRouter', () => {
 
   it('multi: bad JOBS_CONSOLE_ENVS throws at construction', () => {
     expect(() => createEnvRouter({ JOBS_CONSOLE_ENVS: 'qa' })).toThrow(/unknown env "qa"/);
+  });
+
+  it('replay: one workspace even with JOBS_CONSOLE_ENVS set (E15: the captured env, no switch), logged once', () => {
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const make = vi.fn((name: Parameters<typeof createWorkspaceEnv>[0], env: Record<string, string | undefined>) =>
+      createWorkspaceEnv(name, env, { select: () => ({ kind: 'replay', forRequest: () => ({ status: 500, error: 'x' }) }) }),
+    );
+    const base = { JOBS_CONSOLE_DATA: 'replay', JOBS_CONSOLE_ENVS: 'dev,stg,prod', JOBS_CONSOLE_ENV: 'stg' };
+    const router = createEnvRouter(base, make);
+    expect(router.names).toEqual([]);
+    expect(make).toHaveBeenCalledTimes(1);
+    expect(make.mock.calls[0][0]).toBe('stg');
+    expect(make.mock.calls[0][1]).toBe(base);
+    expect(router.modeFor(req({ env: 'prod' }))).toEqual({ env: router.built()[0] });
+    expect(asEnv(router.pick(req())).name).toBe('stg');
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(String(log.mock.calls[0][0])).toMatch(/JOBS_CONSOLE_ENVS is ignored in replay/);
+    log.mockRestore();
+  });
+
+  it('replay: a bad JOBS_CONSOLE_ENVS does not stop a replay', () => {
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const make = vi.fn((name: Parameters<typeof createWorkspaceEnv>[0], env: Record<string, string | undefined>) =>
+      createWorkspaceEnv(name, env, { select: () => ({ kind: 'replay', forRequest: () => ({ status: 500, error: 'x' }) }) }),
+    );
+    expect(createEnvRouter({ JOBS_CONSOLE_DATA: 'replay', JOBS_CONSOLE_ENVS: 'qa' }, make).names).toEqual([]);
+    log.mockRestore();
+  });
+
+  it('two live envs: own profile, own provider state, and runs listed through one never appear in the other (Review Focus 5)', async () => {
+    const NOW = 1_800_000_000_000;
+    const runOf = (run_id: number, job: string) => ({
+      run_id,
+      job_id: run_id,
+      run_name: job,
+      creator_user_name: 'ann@x.com',
+      start_time: NOW - 60_000,
+      run_duration: 1000,
+      status: { state: 'TERMINATED' as const, termination_details: { code: 'SUCCESS' as const } },
+    });
+    const runsByProfile: Record<string, ReturnType<typeof runOf>[]> = {
+      'gov-dev': [runOf(11, 'dev_ingest'), runOf(12, 'dev_report')],
+      'gov-prod': [runOf(21, 'prod_ingest'), runOf(22, 'prod_report')],
+    };
+    const makeApi = vi.fn((opts: { profile?: string }) => fakeApi({ user: 'ann@x.com', runs: runsByProfile[opts.profile ?? ''] ?? [] }));
+    const make = (name: Parameters<typeof createWorkspaceEnv>[0], env: Record<string, string | undefined>) =>
+      createWorkspaceEnv(name, env, { select: (e) => createLiveProvider(e, { makeApi, clock: () => NOW }) });
+    const router = createEnvRouter(
+      { JOBS_CONSOLE_DATA: 'live', JOBS_CONSOLE_AUTH: 'app', JOBS_CONSOLE_ENVS: 'dev=gov-dev,prod=gov-prod', DATABRICKS_HOST: 'https://ambient', DATABRICKS_TOKEN: 't' },
+      make,
+    );
+    const list = async (env: string) => {
+      const ws = asEnv(router.pick(req({ env })));
+      const source = ws.provider.forRequest({ headers: {} });
+      if ('status' in source) throw new Error(source.error);
+      return { ws, ids: (await source.listRuns()).runs.map((r) => r.runId) };
+    };
+    const dev = await list('dev');
+    const prod = await list('prod');
+
+    expect(makeApi.mock.calls.map((c) => c[0])).toEqual([{ profile: 'gov-dev' }, { profile: 'gov-prod' }]);
+    expect(dev.ws.live).toBeDefined();
+    expect(prod.ws.live).toBeDefined();
+    expect(dev.ws.live!.state).not.toBe(prod.ws.live!.state);
+    expect(dev.ws.store).not.toBe(prod.ws.store);
+    expect(dev.ids.sort()).toEqual(['11', '12']);
+    expect(prod.ids.sort()).toEqual(['21', '22']);
+    expect(dev.ids.filter((id) => prod.ids.includes(id))).toEqual([]);
+    // Listing again (from each env's cache) still keeps them apart.
+    expect((await list('dev')).ids.sort()).toEqual(['11', '12']);
+    expect((await list('prod')).ids.sort()).toEqual(['21', '22']);
   });
 
   it('mock envs serve different data', async () => {

@@ -1,4 +1,4 @@
-import { envRecord, parseEnvs, readEnvLabel, type EnvName, type EnvSpec } from './envs';
+import { envRecord, isReplay, parseEnvs, readEnvLabel, type EnvName, type EnvSpec } from './envs';
 import { createWorkspaceEnv, type WorkspaceEnv } from './workspaceEnv';
 
 /** Picks the WorkspaceEnv a request reads, from its `?env=` (multi-env), or the one workspace (single). */
@@ -16,9 +16,12 @@ export interface EnvRouter {
 /**
  * Multi-env when JOBS_CONSOLE_ENVS is set (throws on a bad value): each env built on first use from `envRecord`, mock
  * envs told their variant. Else one WorkspaceEnv over `base`, built now, labelled by JOBS_CONSOLE_ENV; `?env=` ignored.
+ * Replay is always single (E15: the capture's env, no switch); a JOBS_CONSOLE_ENVS (e.g. from .env) is logged and ignored.
  */
 export function createEnvRouter(base: Record<string, string | undefined>, make = createWorkspaceEnv): EnvRouter {
-  const specs = parseEnvs(base.JOBS_CONSOLE_ENVS, base.JOBS_CONSOLE_WAREHOUSES);
+  const replay = isReplay(base);
+  if (replay && base.JOBS_CONSOLE_ENVS?.trim()) console.log('JOBS_CONSOLE_ENVS is ignored in replay: serving the capture\'s one workspace');
+  const specs = replay ? [] : parseEnvs(base.JOBS_CONSOLE_ENVS, base.JOBS_CONSOLE_WAREHOUSES);
   if (specs.length === 0) {
     const single = make(readEnvLabel(base), base);
     return { names: [], pick: () => single, modeFor: () => ({ env: single }), built: () => [single] };
